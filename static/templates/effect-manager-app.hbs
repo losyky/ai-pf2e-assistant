@@ -1,0 +1,274 @@
+<div class="effect-manager">
+  <header class="app-header">
+    <h2>
+      <i class="fas fa-wand-sparkles"></i>
+      Effect管理器: {{sourceItemName}}
+    </h2>
+    <div class="header-actions">
+      <button class="refresh-list" title="刷新列表">
+        <i class="fas fa-sync"></i>
+      </button>
+      <button class="create-new-effect" title="创建新Effect">
+        <i class="fas fa-plus"></i> 新建
+      </button>
+      {{#if hasEffects}}
+      <button class="delete-all-effects" title="删除全部">
+        <i class="fas fa-trash"></i> 删除全部
+      </button>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="effects-list">
+    {{#if hasEffects}}
+    <table class="effects-table">
+      <thead>
+        <tr>
+          <th style="width: 40px;"></th>
+          <th>名称</th>
+          <th style="width: 80px;">等级</th>
+          <th style="width: 100px;">持续时间</th>
+          <th style="width: 80px;">规则数</th>
+          <th style="width: 120px;">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each effects}}
+        <tr class="effect-item">
+          <td class="effect-icon">
+            <img src="{{img}}" alt="{{name}}" />
+          </td>
+          <td class="effect-name" style="cursor: pointer;">
+            <strong>{{name}}</strong>
+          </td>
+          <td class="effect-level">{{level}}</td>
+          <td class="effect-duration">{{duration}}</td>
+          <td class="effect-rules">{{rulesCount}}个</td>
+          <td class="effect-actions">
+            <button class="edit-effect" data-effect-id="{{id}}" title="编辑">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="copy-uuid" data-uuid="{{uuid}}" title="复制UUID">
+              <i class="fas fa-copy"></i>
+            </button>
+            <button class="delete-effect" data-effect-id="{{id}}" title="删除">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr class="effect-details" style="display: none;">
+          <td colspan="6">
+            <div class="details-content">
+              <div class="detail-section">
+                <strong>UUID:</strong>
+                <code>{{uuid}}</code>
+              </div>
+              <div class="detail-section">
+                <strong>描述:</strong>
+                <div class="description-content">{{{description}}}</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <div class="no-effects">
+      <div class="empty-state">
+        <i class="fas fa-box-open fa-3x"></i>
+        <p>还没有创建任何effect物品</p>
+        <p class="hint">点击上方"新建"按钮创建第一个effect</p>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-info">
+      <i class="fas fa-info-circle"></i>
+      Effect物品用于实现非常态的自动化效果，通常配合RollOption（开关）使用
+    </div>
+  </footer>
+</div>
+
+<style>
+.effect-manager {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #5e0000;
+}
+
+.app-header h2 {
+  margin: 0;
+  font-size: 1.3em;
+  color: #5e0000;
+}
+
+.header-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.header-actions button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.header-actions button:hover {
+  background: #f0f0f0;
+  border-color: #5e0000;
+}
+
+.effects-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.effects-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.effects-table thead {
+  background: #f5f5f5;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.effects-table th {
+  padding: 8px;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+}
+
+.effects-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.effect-icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.effect-name {
+  color: #5e0000;
+}
+
+.effect-name:hover {
+  text-decoration: underline;
+}
+
+.effect-actions button {
+  padding: 4px 8px;
+  margin-right: 3px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.effect-actions button:hover {
+  background: #f0f0f0;
+}
+
+.effect-actions .delete-effect:hover {
+  background: #ffe6e6;
+  border-color: #cc0000;
+  color: #cc0000;
+}
+
+.effect-details {
+  background: #fafafa;
+}
+
+.details-content {
+  padding: 10px;
+}
+
+.detail-section {
+  margin-bottom: 10px;
+}
+
+.detail-section code {
+  display: block;
+  background: #eee;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  word-break: break-all;
+  margin-top: 3px;
+}
+
+.description-content {
+  margin-top: 5px;
+  padding: 5px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  min-height: 30px;
+}
+
+.no-effects {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.empty-state {
+  text-align: center;
+  color: #999;
+}
+
+.empty-state i {
+  margin-bottom: 15px;
+}
+
+.empty-state p {
+  margin: 5px 0;
+}
+
+.empty-state .hint {
+  font-size: 0.9em;
+  color: #bbb;
+}
+
+.app-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.footer-info {
+  font-size: 0.85em;
+  color: #666;
+  font-style: italic;
+}
+
+.footer-info i {
+  margin-right: 5px;
+}
+</style>
+

@@ -16,6 +16,8 @@ export class RuleElementConfigApp extends Application {
   private isReviewing: boolean = false; // 是否正在复查修正
   private generatorService: RuleElementGeneratorService;
   private customRequirements: string = ''; // 人工介入的自定义要求
+  private consoleWarnings: string[] = []; // 捕获的控制台警告
+  private originalConsoleWarn: any = null; // 原始的console.warn函数
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -181,29 +183,56 @@ export class RuleElementConfigApp extends Application {
       // 获取当前规则
       const currentRules = item.system?.rules || [];
       
+      let rulesToApply = this.generationResult.rules;
+
+      // 如果有Effect配置，先创建Effect并注入UUID
+      if (this.generationResult.effectConfigs && this.generationResult.effectConfigs.length > 0) {
+        ui.notifications?.info((game as any).i18n.format('AIPF2E.RuleElementConfig.creatingEffects', { 
+          count: this.generationResult.effectConfigs.length 
+        }) || `正在创建${this.generationResult.effectConfigs.length}个Effect物品...`);
+
+        const { rules: updatedRules, createdEffects } = await this.generatorService.applyRulesWithEffects(
+          item,
+          this.generationResult.rules,
+          this.generationResult.effectConfigs
+        );
+
+        rulesToApply = updatedRules;
+
+        if (createdEffects.length > 0) {
+          console.log(`${MODULE_ID} | 成功创建${createdEffects.length}个Effect物品`, createdEffects);
+        }
+      }
+      
       let newRules: any[];
       if (append) {
         // 追加模式：保留现有规则，添加新规则
-        newRules = [...currentRules, ...this.generationResult.rules];
+        newRules = [...currentRules, ...rulesToApply];
         ui.notifications?.info((game as any).i18n.localize('AIPF2E.RuleElementConfig.applyingAppend'));
       } else {
         // 覆盖模式：替换所有规则
-        newRules = this.generationResult.rules;
+        newRules = rulesToApply;
         ui.notifications?.info((game as any).i18n.localize('AIPF2E.RuleElementConfig.applyingReplace'));
       }
 
       // 清除之前的验证错误
       this.validationErrors = [];
 
+      // 开始监听控制台警告
+      this.startConsoleWarningCapture();
+
       // 更新物品数据
       await item.update({
         'system.rules': newRules
       });
 
-      // 等待一小段时间，让Foundry完成验证
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // 等待一小段时间，让Foundry完成验证和触发警告
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // 检查是否有验证错误（从控制台捕获）
+      // 停止监听控制台警告
+      this.stopConsoleWarningCapture();
+
+      // 检查是否有验证错误（包括控制台警告）
       const validationErrors = this.checkForValidationErrors(item);
       
       if (validationErrors.length > 0) {
@@ -219,8 +248,8 @@ export class RuleElementConfigApp extends Application {
         // 没有错误，应用成功
         ui.notifications?.success(
           append 
-            ? (game as any).i18n.format('AIPF2E.RuleElementConfig.applySuccessAppend', { count: this.generationResult.rules.length })
-            : (game as any).i18n.format('AIPF2E.RuleElementConfig.applySuccessReplace', { count: this.generationResult.rules.length })
+            ? (game as any).i18n.format('AIPF2E.RuleElementConfig.applySuccessAppend', { count: rulesToApply.length })
+            : (game as any).i18n.format('AIPF2E.RuleElementConfig.applySuccessReplace', { count: rulesToApply.length })
         );
 
         // 刷新物品表单
@@ -255,10 +284,66 @@ export class RuleElementConfigApp extends Application {
   }
 
   /**
+   * 开始监听控制台警告
+   */
+  private startConsoleWarningCapture(): void {
+    this.consoleWarnings = [];
+    
+    // 保存原始的console.warn
+    if (!this.originalConsoleWarn) {
+      this.originalConsoleWarn = console.warn;
+    }
+    
+    // 替换console.warn以捕获PF2e规则元素验证警告
+    console.warn = (...args: any[]) => {
+      // 调用原始的warn函数
+      this.originalConsoleWarn.apply(console, args);
+      
+      // 检查是否是PF2e规则元素相关的警告
+      const message = args.map(arg => {
+        if (typeof arg === 'string') return arg;
+        if (arg && typeof arg === 'object') return JSON.stringify(arg);
+        return String(arg);
+      }).join(' ');
+      
+      // 捕获PF2e规则验证警告
+      if (message.includes('rules element') || 
+          message.includes('failed to validate') ||
+          message.includes('PF2e System')) {
+        this.consoleWarnings.push(message);
+        console.log(`${MODULE_ID} | 捕获到规则警告:`, message);
+      }
+    };
+  }
+  
+  /**
+   * 停止监听控制台警告
+   */
+  private stopConsoleWarningCapture(): void {
+    // 恢复原始的console.warn
+    if (this.originalConsoleWarn) {
+      console.warn = this.originalConsoleWarn;
+    }
+  }
+
+  /**
    * 检查物品的验证错误
    */
   private checkForValidationErrors(item: any): string[] {
     const errors: string[] = [];
+    
+    // 添加从控制台捕获的警告
+    if (this.consoleWarnings.length > 0) {
+      console.log(`${MODULE_ID} | 发现${this.consoleWarnings.length}个控制台警告`);
+      errors.push(...this.consoleWarnings.map(warning => {
+        // 提取警告中的关键信息
+        const match = warning.match(/rules element on item .+ failed to validate: (.+)/);
+        if (match) {
+          return match[1];
+        }
+        return warning;
+      }));
+    }
     
     try {
       // 尝试从物品的规则元素中提取验证错误
@@ -435,6 +520,16 @@ export class RuleElementConfigApp extends Application {
    */
   async _updateObject(event: Event, formData: any) {
     // 不需要实现，因为这不是FormApplication
+  }
+
+  /**
+   * 关闭应用时的清理工作
+   */
+  async close(options?: any) {
+    // 恢复console.warn
+    this.stopConsoleWarningCapture();
+    
+    return super.close(options);
   }
 }
 

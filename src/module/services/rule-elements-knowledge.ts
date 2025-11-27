@@ -28,6 +28,322 @@ Rule Elements是PF2e系统处理自动化的核心机制。规则元素可以添
 - beforeRoll: 在投骰前
 - applyActiveEffects: 应用活动效果时
 
+## Effect物品与规则元素的配合使用
+
+### 什么时候需要独立的Effect物品？
+
+在PF2e系统中，很多自动化效果并不是直接在专长或道具中实现，而是通过创建独立的Effect物品来实现。
+
+**需要Effect物品的典型场景:**
+
+1. **可开关的效果（Toggle）**
+   - 战斗姿态、光环等可以激活/关闭的能力
+   - 示例：防御姿态、愤怒狂暴、鼓舞勇气
+   - 特点：持续时间为unlimited，配合RollOption的toggleable属性
+
+2. **施加给其他单位的效果（Target Effect）**
+   - 给盟友的buff、给敌人的debuff
+   - 示例：战术标记、祝福、诅咒
+   - 特点：需要将effect拖拽到目标角色身上
+
+3. **有条件触发的效果（Conditional）**
+   - 满足特定条件才生效的增益
+   - 示例：对特定敌人的伤害加值、在特定地形的速度加成
+   - 特点：effect中包含predicate判断条件
+
+4. **多阶段效果（Staged Effect）**
+   - 根据成功度不同产生不同效果
+   - 示例：Bon Mot（大成功-3，成功-2，大失败-2）
+   - 特点：使用ChoiceSet让玩家选择成功度
+
+5. **光环效果（Aura）**
+   - 影响周围一定范围内单位的持续效果
+   - 效果：当角色进入光环范围时，会自动获得效果
+   - 注意光环本身是一个规则元素，需要在主体能力中添加Aura规则元素来创建光环效果
+   - 示例：绝望光环、信念光环
+   - 特点：范围持续，通常unlimited持续时间
+
+### Effect物品的引用方式
+
+**⚠️ 重要设计原则**:
+
+除了**光环效果(Aura)**外,其他Effect物品应该由玩家手动施加,而不是通过GrantItem自动授予!
+
+**正确的引用方式**:
+
+**方式1: 描述中内联引用** (推荐)
+在专长/道具的description.value中添加Effect的UUID链接:
+\`\`\`html
+<p>你选择一把武器,在1分钟内获得增益。</p>
+<p><strong>效果</strong>: @UUID[Item.abc123xyz]{刀刃导师的恩赐效果}</p>
+<p>点击上方链接可将effect添加到角色身上。</p>
+\`\`\`
+
+**方式2: 使用Note规则元素**
+\`\`\`json
+{
+  "key": "Note",
+  "selector": "self",
+  "title": "使用说明",
+  "text": "使用此能力后,将 @UUID[Item.abc123xyz]{效果} 添加到角色身上"
+}
+\`\`\`
+
+**方式3: 仅限光环 - 使用Aura规则元素**
+\`\`\`json
+{
+  "key": "Aura",
+  "slug": "aura-of-despair",
+  "radius": 15,
+  "effects": [
+    {
+      "uuid": "Item.abc123xyz",
+      "affects": "enemies"
+    }
+  ]
+}
+\`\`\`
+
+**❌ 错误方式 - 不要直接GrantItem** (除非是光环):
+\`\`\`json
+{
+  "key": "GrantItem",
+  "uuid": "Item.abc123xyz",
+  "predicate": ["self:effect:some-toggle"]
+}
+\`\`\`
+这种方式会自动授予effect,剥夺了玩家的控制权!
+
+**方式4: 使用GrantItem + 内联创建** (仅用于简单effect)
+\`\`\`json
+{
+  "key": "GrantItem",
+  "onDeleteActions": {
+    "granter": "restrict"
+  },
+  "item": {
+    "type": "effect",
+    "name": "Effect: Defensive Stance",
+    "img": "icons/svg/aura.svg",
+    "system": {
+      "description": {
+        "value": "<p>由防御姿态授予</p>"
+      },
+      "duration": {
+        "expiry": null,
+        "sustained": false,
+        "unit": "unlimited",
+        "value": -1
+      },
+      "rules": [
+        {
+          "key": "FlatModifier",
+          "selector": "ac",
+          "value": 2,
+          "type": "circumstance"
+        }
+      ]
+    }
+  }
+}
+\`\`\`
+- 直接在规则中定义effect
+- 不需要预先创建effect物品
+- 适合简单的、不需要复用的effect
+
+### Effect物品与Toggle的配合
+
+**典型模式: RollOption + GrantItem**
+
+主物品（专长/道具）:
+\`\`\`json
+{
+  "rules": [
+    {
+      "key": "RollOption",
+      "domain": "all",
+      "option": "defensive-stance",
+      "toggleable": true,
+      "label": "防御姿态"
+    },
+    {
+      "key": "GrantItem",
+      "uuid": "Item.defensiveStanceEffect",
+      "predicate": ["self:effect:defensive-stance"]
+    }
+  ]
+}
+\`\`\`
+
+Effect物品:
+\`\`\`json
+{
+  "name": "Effect: Defensive Stance",
+  "type": "effect",
+  "system": {
+    "duration": {
+      "unit": "unlimited",
+      "value": -1
+    },
+    "rules": [
+      {
+        "key": "FlatModifier",
+        "selector": "ac",
+        "value": 2,
+        "type": "circumstance"
+      }
+    ]
+  }
+}
+\`\`\`
+
+**工作流程:**
+1. 玩家在角色卡上切换"防御姿态"开关
+2. RollOption创建self:effect:defensive-stance标记
+3. GrantItem的predicate检测到标记，授予effect
+4. Effect物品应用其内部的规则元素（AC+2）
+5. 玩家关闭开关时，effect自动移除
+
+### Effect物品的文件夹管理
+
+**最佳实践:**
+- 为每个专长/道具创建独立的effect文件夹
+- 文件夹命名: "[专长名] - Effects"
+- 便于管理和清理相关的effect物品
+- 示例: "防御姿态 - Effects"文件夹包含"Effect: Defensive Stance"
+
+### 效果划分指南 - 什么应该写在哪里?
+
+**核心原则**: 
+- **主物品(专长/道具)**: 包含触发条件、使用说明、频率限制等"元信息"
+- **Effect物品**: 只包含实际的游戏效果rules
+
+**主物品中应该包含:**
+
+1. ✅ **使用条件和限制**
+   - 频率限制 (Frequency)
+   - 需求 (Requirements)
+   - 触发条件 (Trigger)
+   - 动作消耗 (Actions)
+
+2. ✅ **被动永久效果**
+   - 技能熟练度提升
+   - 永久属性加值
+   - 感官能力 (如黑暗视觉)
+   - 速度修改
+
+3. ✅ **选择和配置**
+   - ChoiceSet (选择技能、专长等)
+   - 前置条件判断
+
+4. ✅ **Effect的引用说明**
+   - 描述中的UUID链接
+   - Note规则元素说明如何使用
+
+**Effect物品中应该包含:**
+
+1. ✅ **临时战术增益**
+   - 攻击检定加值
+   - 伤害加值
+   - AC加值
+   - 豁免加值
+
+2. ✅ **状态效果**
+   - 减值和惩罚
+   - 条件免疫
+   - 抗性/弱点
+
+3. ✅ **持续时间效果**
+   - 有明确结束时间的buff/debuff
+   - 需要玩家手动添加的效果
+
+4. ✅ **多目标效果**
+   - 施加给敌人的debuff
+   - 给予盟友的buff
+
+**实例对比**:
+
+**错误示例** - 都写在主物品里:
+\`\`\`json
+{
+  "name": "刀刃导师的恩赐",
+  "system": {
+    "rules": [
+      {"key": "FlatModifier", "selector": "strike-attack-roll", "value": 1},
+      {"key": "DamageDice", "selector": "strike-damage", "diceNumber": 1},
+      {"key": "AdjustStrike", "property": "range-increment", "value": 30}
+    ]
+  }
+}
+\`\`\`
+❌ 问题: 这些临时效果混在主物品里,无法控制何时生效
+
+**正确示例** - 分离主物品和Effect:
+
+主物品:
+\`\`\`json
+{
+  "name": "刀刃导师的恩赐",
+  "system": {
+    "description": {
+      "value": "<p><strong>频率</strong> 每天次数等于你的魅力调整值(最少1次)</p><p><strong>需求</strong> 你必须持握一把武器</p><p>选择你持握的武器,在1分钟内获得增益。</p><p>@UUID[Item.xyz]{点击此处添加效果}</p>"
+    },
+    "frequency": {"max": 1, "per": "day"},
+    "rules": []  // 主物品只包含说明,不包含临时效果
+  }
+}
+\`\`\`
+
+Effect物品:
+\`\`\`json
+{
+  "name": "Effect: 刀刃导师的恩赐",
+  "type": "effect",
+  "system": {
+    "duration": {"unit": "minutes", "value": 1},
+    "rules": [
+      {"key": "FlatModifier", "selector": "strike-attack-roll", "type": "status", "value": 1},
+      {"key": "DamageDice", "selector": "strike-damage", "diceNumber": 1, "dieSize": "d6"},
+      {"key": "AdjustStrike", "mode": "add", "property": "range-increment", "value": 30}
+    ]
+  }
+}
+\`\`\`
+✅ 好处: 玩家使用能力后手动添加effect,可以控制持续时间和目标
+
+**设计建议**
+
+**何时使用独立Effect:**
+- ✅ 需要玩家手动施加的临时效果
+- ✅ 需要施加给其他单位的效果
+- ✅ 有明确持续时间的效果
+- ✅ 需要被其他能力引用的效果
+- ✅ 官方示例中使用了effect的类似能力
+
+**何时直接写在主物品:**
+- ✅ 简单的被动永久增益（如技能加值）
+- ✅ 永久性的属性修改
+- ✅ 不需要开关的持续效果
+- ✅ 选择和配置类规则 (ChoiceSet)
+
+**光环效果的特殊处理:**
+光环是唯一应该使用Aura规则元素自动授予Effect的场景:
+\`\`\`json
+{
+  "key": "Aura",
+  "slug": "protective-aura",
+  "radius": 10,
+  "effects": [
+    {"uuid": "Item.effectUUID", "affects": "allies"}
+  ]
+}
+\`\`\`
+
+**命名规范:**
+- Effect物品名称格式: "Effect: [能力名]"
+- 例如: "Effect: Bon Mot", "Effect: Aura of Despair"
+- 保持与官方effect的命名风格一致
+
 ## Selectors（选择器）
 
 选择器指定规则元素影响什么。常见选择器包括：
@@ -88,13 +404,120 @@ Rule Elements是PF2e系统处理自动化的核心机制。规则元素可以添
 "predicate": ["condition1", "condition2"]
 \`\`\`
 
-### 常用谓词
-- "self:effect:EFFECT_SLUG" - 检查自己是否有特定效果
-- "target:condition:CONDITION" - 检查目标是否有特定状态
-- "item:trait:TRAIT" - 检查物品是否有特定特性
-- "action:ACTION" - 检查是否在执行特定动作
-- "weapon:group:GROUP" - 检查武器组
-- "weapon:trait:TRAIT" - 检查武器特性
+### 常用谓词格式总结
+
+PF2e系统中的谓词（predicate）使用冒号分隔的格式来描述游戏状态和条件。
+
+**基本格式**: [主体]:[类别]:[具体值]
+
+#### 主体（Subject）前缀
+- self: 检查施术者/持有者自身
+- target: 检查目标
+- origin: 检查效果的来源
+- item: 检查物品属性
+- weapon: 检查武器属性
+- action: 检查正在执行的动作
+- class: 检查职业
+- feature: 检查特性
+- skill: 检查技能
+- defense: 检查防御
+
+#### 常用谓词模式
+
+**效果和状态检查**:
+- self:effect:EFFECT_SLUG - 检查自己是否有特定效果
+  示例: self:effect:stance:defensive, self:effect:rage
+- target:condition:CONDITION - 检查目标是否有特定状态
+  示例: target:condition:off-guard, target:condition:frightened
+- self:condition:CONDITION - 检查自己是否有特定状态
+  示例: self:condition:prone, self:condition:dying
+
+**特性和标签检查**:
+- item:trait:TRAIT - 检查物品/法术是否有特定特性
+  示例: item:trait:fear, item:trait:fire, item:trait:emotion
+- target:trait:TRAIT - 检查目标是否有特定特性
+  示例: target:trait:undead, target:trait:unholy
+- self:trait:TRAIT - 检查自己是否有特定特性
+  示例: self:trait:elf, self:trait:dwarf
+
+**武器相关**:
+- weapon:group:GROUP - 检查武器组
+  示例: weapon:group:sword, weapon:group:bow
+- weapon:trait:TRAIT - 检查武器特性
+  示例: weapon:trait:agile, weapon:trait:finesse
+- item:category:CATEGORY - 检查物品类别
+  示例: item:category:unarmed, item:category:simple
+
+**动作和技能**:
+- action:ACTION - 检查是否在执行特定动作
+  示例: action:perform, action:attack, action:maneuver-in-flight
+- skill:SKILL:rank - 检查技能等级
+  示例: skill:acrobatics:rank, skill:athletics:rank
+
+**物品相关**:
+- item:damage:category:TYPE - 检查伤害类别
+  示例: item:damage:category:energy
+- item:tag:TAG - 检查物品标签
+  示例: item:tag:apparition-spell, item:tag:minor-spirit-power
+- item:ranged - 检查是否为远程物品
+- item:melee - 检查是否为近战物品
+
+**类型和等级**:
+- self:type:TYPE - 检查生物类型
+  示例: self:type:npc, self:type:pc
+- defense:ARMOR:rank:RANK - 检查防具熟练度
+  示例: defense:light:rank:0
+
+**标记和自定义选项**:
+- RollOption创建的自定义标记（不使用冒号前缀）
+  示例: channelers-stance, arc-of-destruction
+- origin:mark:MARK_NAME - 检查来源标记
+  示例: origin:mark:memories-of-failure
+
+#### 比较运算符
+
+在谓词中可以使用比较运算:
+\`\`\`json
+{
+  "gte": ["skill:acrobatics:rank", 1]  // 大于等于
+}
+{
+  "lte": ["@actor.level", 10]  // 小于等于
+}
+{
+  "gt": ["@actor.hp", 50]  // 大于
+}
+{
+  "lt": ["@actor.level", 5]  // 小于
+}
+\`\`\`
+
+#### 复杂谓词组合示例
+
+\`\`\`json
+"predicate": [
+  "channelers-stance",
+  "item:damage:category:energy",
+  {
+    "or": [
+      "item:tag:apparition-spell",
+      {
+        "and": [
+          "item:trait:animist",
+          "item:trait:focus"
+        ]
+      }
+    ]
+  }
+]
+\`\`\`
+
+**重要提示**:
+- 数组顶层的多个条件是AND关系（全部满足）
+- 使用 {"or": [...]} 表示OR关系（满足任一）
+- 使用 {"not": "..."} 表示NOT关系（不满足）
+- 使用 {"and": [...]} 在嵌套中明确AND关系
+- 冒号后的值通常使用 kebab-case (如 off-guard, maneuver-in-flight)
 
 ## 规则元素类型详解
 
@@ -136,9 +559,19 @@ Rule Elements是PF2e系统处理自动化的核心机制。规则元素可以添
 - key: "DamageDice"
 - selector: 伤害选择器
 - diceNumber: 骰子数量
-- dieSize: 骰子大小（"d4", "d6", "d8", "d10", "d12"）
+- dieSize: 骰子大小 **（必须是 "d4", "d6", "d8", "d10", "d12", "d20" 之一）**
 - damageType: 伤害类型
 - predicate: 生效条件（可选）
+
+**常见错误**:
+- ❌ "dieSize": "1d6" → 错误！应该是 "d6"
+- ❌ "dieSize": "d7" → 错误！没有d7这种骰子
+- ❌ "dieSize": null → 如果要使用null，必须配合其他规则，通常不需要
+- ✅ "dieSize": "d6" → 正确！
+
+**错误提示**: "Die size must be a recognized damage die size, null, or omitted"
+- 原因：dieSize的值不是有效的骰子大小
+- 解决：使用 "d4", "d6", "d8", "d10", "d12", "d20" 之一
 
 ### 3. AdjustModifier - 调整修正值
 修改已存在的修正值。
@@ -323,14 +756,52 @@ Rule Elements是PF2e系统处理自动化的核心机制。规则元素可以添
 ### 15. AdjustStrike - 调整攻击
 修改攻击的属性。
 
+**重要警告**:
+1. ❌ 不要使用AdjustStrike来修改伤害骰!应该使用DamageDice或StrikingRune。
+2. ❌ 不要给近战武器添加range-increment!只能给已有射程的远程武器调整射程。
+   - 错误示例：给剑添加30尺射程 → "A weapon that meets the definition lacks a range increment"
+   - 如果要让近战武器能远程攻击，应该创建临时投掷武器，而不是调整Strike
+
+**有效的property值**:
+- "weapon-traits": 添加或修改武器特性
+- "materials": 修改武器材质
+- "property-runes": 添加属性符文
+- "range-increment": 修改射程增量（仅用于已有射程的武器！）
+
+**示例 - 添加武器特性**:
 \`\`\`json
 {
   "key": "AdjustStrike",
   "mode": "add",
   "property": "weapon-traits",
-  "value": "magical"
+  "value": "magical",
+  "predicate": ["item:melee"]  // 可选：限定只影响近战武器
 }
 \`\`\`
+
+**示例 - 修改射程（仅用于远程武器）**:
+\`\`\`json
+{
+  "key": "AdjustStrike",
+  "mode": "add",
+  "property": "range-increment",
+  "value": 30,
+  "predicate": ["item:ranged"]  // 必须：确保只影响远程武器
+}
+\`\`\`
+
+**错误示例** (不要这样做):
+\`\`\`json
+{
+  "key": "AdjustStrike",
+  "mode": "upgrade",
+  "property": "damage-die",  // ❌ 错误!
+  "value": "one-step"
+}
+\`\`\`
+
+**正确做法 - 提升伤害骰**:
+使用StrikingRune或直接修改weapon的damage属性，而不是用AdjustStrike。
 
 ### 16. Strike - 创建攻击
 创建新的攻击选项。
@@ -394,24 +865,87 @@ Rule Elements是PF2e系统处理自动化的核心机制。规则元素可以添
 \`\`\`
 
 ### 20. ChoiceSet - 选择集
-让玩家做出选择。
+让玩家做出选择，并将选择结果保存到flag中供其他规则引用。
 
+**基础示例**:
 \`\`\`json
 {
   "key": "ChoiceSet",
-  "prompt": "PF2E.SpecificRule.Prompt.Skill",
+  "flag": "damage-type",
+  "prompt": "选择伤害类型",
   "choices": [
     {
-      "value": "acrobatics",
-      "label": "PF2E.SkillAcrobatics"
+      "value": "fire",
+      "label": "火焰"
     },
     {
-      "value": "athletics",
-      "label": "PF2E.SkillAthletics"
+      "value": "cold",
+      "label": "寒冷"
     }
   ]
 }
 \`\`\`
+
+**引用ChoiceSet的选择结果**:
+
+ChoiceSet通过 flag 参数设置flag名称，之后可以通过以下方式引用:
+
+\`\`\`json
+{
+  "key": "DamageDice",
+  "selector": "strike-damage",
+  "damageType": "@item.flags.pf2e.rulesSelections.damage-type",
+  "diceNumber": 1,
+  "dieSize": "d6"
+}
+\`\`\`
+
+**引用格式**: @item.flags.pf2e.rulesSelections.{flag名称}
+
+**实际示例 - Bon Mot**:
+\`\`\`json
+[
+  {
+    "key": "ChoiceSet",
+    "flag": "penalty",
+    "prompt": "PF2E.SpecificRule.Prompt.DegreeOfSuccess",
+    "choices": [
+      {
+        "label": "PF2E.Check.Result.Degree.Check.criticalSuccess",
+        "value": -3
+      },
+      {
+        "label": "PF2E.Check.Result.Degree.Check.success",
+        "value": -2
+      }
+    ]
+  },
+  {
+    "key": "FlatModifier",
+    "selector": ["perception", "will"],
+    "type": "status",
+    "value": "@item.flags.pf2e.rulesSelections.penalty"
+  }
+]
+\`\`\`
+
+**嵌套flag** (复杂场景):
+
+对于更复杂的flag结构，可以使用嵌套:
+\`\`\`json
+{
+  "key": "ChoiceSet",
+  "flag": "bosunsCommand.modifier",
+  "choices": [...]
+}
+\`\`\`
+
+引用: @item.flags.pf2e.rulesSelections.bosunsCommand.modifier
+
+**重要提醒**:
+- flag名称使用kebab-case (如 damage-type, wave-command-damage-type)
+- 引用时完整路径: @item.flags.pf2e.rulesSelections.{flag名}
+- 可以在description中引用: @Damage[2d6[@item.flags.pf2e.rulesSelections.damage-type]]
 
 ### 21. ItemAlteration - 物品改变
 修改其他物品的属性。
@@ -538,18 +1072,44 @@ rank值：0=未受训，1=受训，2=专家，3=大师，4=传奇
 
 ## 表达式和引用
 
-可以在value字段中使用表达式：
+### 常用引用路径
 
-- "@actor.level" - 角色等级
-- "@actor.abilities.str.mod" - 力量修正
-- "@actor.abilities.dex.mod" - 敏捷修正
-- "@item.level" - 物品等级
-- "@item.badge.value" - 物品徽章值
+**角色数据引用**:
+- @actor.level - 角色等级
+- @actor.abilities.str.mod - 力量修正
+- @actor.abilities.dex.mod - 敏捷修正
+- @actor.classDC.value - 职业DC
 
-算术运算：
-- "@actor.level * 2"
-- "@actor.level + 5"
-- "max(@actor.level, 10)"
+**物品数据引用**:
+- @item.level - 物品等级
+- @item.badge.value - 物品徽章值
+- @item.flags.pf2e.rulesSelections.{flag名} - ChoiceSet设置的flag值
+
+**Flag引用格式** (重要!):
+
+当ChoiceSet使用 flag 参数设置选择时:
+\`\`\`json
+{
+  "key": "ChoiceSet",
+  "flag": "damage-type",
+  "choices": [...]
+}
+\`\`\`
+
+引用该选择的正确格式:
+- 在rules中: @item.flags.pf2e.rulesSelections.damage-type
+- 在description中: @Damage[2d6[@item.flags.pf2e.rulesSelections.damage-type]]
+
+**嵌套flag引用**:
+- flag设置: "flag": "wave-command.damage-type"
+- 引用: @item.flags.pf2e.rulesSelections.wave-command.damage-type
+
+**算术运算**:
+- @actor.level * 2
+- @actor.level + 5
+- max(@actor.level, 10)
+- floor(@actor.level / 2)
+- (@actor.level + 3) * 2
 
 ## 常见模式和示例
 
@@ -587,12 +1147,67 @@ rank值：0=未受训，1=受训，2=专家，3=大师，4=传奇
 }
 \`\`\`
 
-### 示例4：授予专长并带条件
+### 示例4：ChoiceSet选择伤害类型 + 引用
+\`\`\`json
+[
+  {
+    "key": "ChoiceSet",
+    "flag": "elemental-damage",
+    "prompt": "选择元素伤害类型",
+    "choices": [
+      {"value": "fire", "label": "火焰"},
+      {"value": "cold", "label": "寒冷"},
+      {"value": "electricity", "label": "闪电"},
+      {"value": "acid", "label": "强酸"}
+    ]
+  },
+  {
+    "key": "DamageDice",
+    "selector": "strike-damage",
+    "damageType": "@item.flags.pf2e.rulesSelections.elemental-damage",
+    "diceNumber": 1,
+    "dieSize": "d6"
+  }
+]
+\`\`\`
+
+### 示例5：ChoiceSet选择成功度 + 引用 (Bon Mot模式)
+\`\`\`json
+[
+  {
+    "key": "ChoiceSet",
+    "flag": "penalty",
+    "prompt": "PF2E.SpecificRule.Prompt.DegreeOfSuccess",
+    "choices": [
+      {
+        "label": "PF2E.Check.Result.Degree.Check.criticalSuccess",
+        "value": -3
+      },
+      {
+        "label": "PF2E.Check.Result.Degree.Check.success",
+        "value": -2
+      },
+      {
+        "label": "PF2E.Check.Result.Degree.Check.criticalFailure",
+        "value": -2
+      }
+    ]
+  },
+  {
+    "key": "FlatModifier",
+    "selector": ["perception", "will"],
+    "type": "status",
+    "value": "@item.flags.pf2e.rulesSelections.penalty"
+  }
+]
+\`\`\`
+
+### 示例6：在描述中引用flag
 \`\`\`json
 {
-  "key": "GrantItem",
-  "uuid": "Compendium.pf2e.feats-srd.Item.SomeFeature",
-  "predicate": ["class:fighter"]
+  "description": {
+    "value": "<p>你造成 @Damage[2d6[@item.flags.pf2e.rulesSelections.damage-type]] 伤害。</p>"
+  }
 }
 \`\`\`
 
