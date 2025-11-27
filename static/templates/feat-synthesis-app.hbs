@@ -1,0 +1,635 @@
+{{!-- 专长合成器模板 --}}
+<div class="feat-synthesis-container">
+  <div class="synthesis-header">
+    <h2><i class="fas fa-flask"></i> 专长合成器</h2>
+    {{#if actor}}
+      <p class="actor-info">为角色 <strong>{{actor.name}}</strong> ({{actor.level}}级 {{actor.class}}) 合成专长</p>
+    {{else}}
+      <p class="general-info">合成通用专长到世界中</p>
+    {{/if}}
+  </div>
+
+  <form class="synthesis-form">
+    <div class="synthesis-layout">
+      {{!-- 左侧：材料选择和配置 --}}
+      <div class="synthesis-left">
+        {{!-- 合成配置 --}}
+        <div class="synthesis-config">
+          <h3><i class="fas fa-cog"></i> 合成配置</h3>
+          
+          <div class="config-row">
+            <div class="form-group">
+              <label for="synthesis-level">专长等级:</label>
+              <select id="synthesis-level" name="synthesis-level">
+                {{#each levelOptions}}
+                  <option value="{{value}}" {{#if (eq value 1)}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="synthesis-category">专长类别:</label>
+              <select id="synthesis-category" name="synthesis-category">
+                {{#each categoryOptions}}
+                  <option value="{{value}}">{{label}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group class-name-group" style="display: none;">
+            <label for="class-name">关联职业:</label>
+            <input type="text" id="class-name" name="class-name" 
+                   placeholder="输入职业名称（职业专长）" 
+                   value="{{actor.class}}" />
+          </div>
+        </div>
+
+        {{!-- 使用说明 --}}
+        <div class="usage-instructions">
+          <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+          <div class="instruction-content">
+            <p>将词条碎片物品拖拽到右侧的合成材料区域中，然后配置专长属性并点击开始合成。</p>
+            
+            <div class="instruction-steps">
+              <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-text">从物品栏或世界物品中拖拽<strong>词条碎片</strong>到合成区域</div>
+              </div>
+              <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-text">配置专长的<strong>等级和类别</strong></div>
+              </div>
+              <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-text">点击<strong>开始合成</strong>，AI将根据碎片内容生成专长</div>
+              </div>
+            </div>
+            
+            <div class="tip-box">
+              <i class="fas fa-lightbulb"></i>
+              <strong>提示：</strong>碎片的隐藏提示词将被组合用于生成专长，不同的碎片组合会产生不同的专长效果。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{!-- 右侧：合成区域和结果 --}}
+      <div class="synthesis-right">
+        {{!-- 合成材料区域 --}}
+        <div class="synthesis-area">
+          <h3><i class="fas fa-flask"></i> 合成材料</h3>
+          <div id="synthesis-materials" class="materials-container">
+            <p class="no-materials">拖拽物品到此处或点击下方的添加按钮</p>
+          </div>
+          
+          <div class="synthesis-actions">
+            <button type="button" id="clear-materials" class="danger-button">
+              <i class="fas fa-trash"></i> 清空材料
+            </button>
+          </div>
+        </div>
+
+        {{!-- 兼容性分析 --}}
+        <div id="compatibility-info" class="compatibility-section">
+        </div>
+
+        {{!-- 合成按钮 --}}
+        <div class="synthesis-execute">
+          <button type="button" id="synthesize-feat" class="primary-button large-button">
+            <i class="fas fa-magic"></i> 开始合成
+          </button>
+        </div>
+
+        {{!-- 合成结果 --}}
+        <div class="synthesis-output">
+          <h3><i class="fas fa-star"></i> 合成结果</h3>
+          <div id="synthesis-output" class="output-content">
+            <p class="no-result">选择材料并点击合成按钮开始创造新的专长</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<style>
+.feat-synthesis-container {
+  padding: 15px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.synthesis-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ddd;
+}
+
+.synthesis-header h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.actor-info,
+.general-info {
+  margin: 0;
+  color: #666;
+  font-style: italic;
+}
+
+.synthesis-layout {
+  display: flex;
+  gap: 20px;
+  min-height: 500px;
+}
+
+.synthesis-left,
+.synthesis-right {
+  flex: 1;
+}
+
+.synthesis-left {
+  max-width: 400px;
+}
+
+/* 合成配置样式 */
+.synthesis-config {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.synthesis-config h3 {
+  margin: 0 0 15px 0;
+  color: #495057;
+}
+
+.config-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  flex: 1;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #495057;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  font-family: inherit;
+}
+
+/* 使用说明样式 */
+.usage-instructions {
+  background: #e8f4f8;
+  border: 1px solid #bee5eb;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.usage-instructions h3 {
+  margin: 0 0 15px 0;
+  color: #0c5460;
+}
+
+.instruction-content p {
+  margin: 0 0 15px 0;
+  color: #0c5460;
+}
+
+.instruction-steps {
+  margin-bottom: 15px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.step-number {
+  background: #17a2b8;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9em;
+  flex-shrink: 0;
+}
+
+.step-text {
+  color: #0c5460;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.tip-box {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+  padding: 12px;
+  color: #856404;
+}
+
+.tip-box i {
+  margin-right: 8px;
+  color: #f39c12;
+}
+
+/* 合成区域样式 */
+.synthesis-area {
+  background: white;
+  border: 2px dashed #adb5bd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  min-height: 200px;
+}
+
+.synthesis-area h3 {
+  margin: 0 0 15px 0;
+  color: #495057;
+}
+
+.materials-container {
+  min-height: 120px;
+  margin-bottom: 15px;
+}
+
+.no-materials {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+.synthesis-material {
+  background: #e7f3ff;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.material-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.material-header i {
+  margin-right: 8px;
+  color: #007bff;
+}
+
+.material-name {
+  flex: 1;
+  font-weight: bold;
+  color: #495057;
+}
+
+.material-rarity {
+  margin-right: 10px;
+}
+
+.remove-material {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+
+.remove-material:hover {
+  background: #c82333;
+}
+
+.material-description {
+  color: #6c757d;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.material-prompt {
+  background: #fff3cd;
+  border-left: 3px solid #ffc107;
+  padding: 8px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.material-prompt strong {
+  color: #856404;
+}
+
+.synthesis-actions {
+  text-align: center;
+}
+
+/* 兼容性分析样式 */
+.compatibility-section {
+  margin-bottom: 20px;
+}
+
+.compatibility-analysis {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.compatibility-status {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.compatibility-status i {
+  margin-right: 8px;
+}
+
+.compatibility-status.success {
+  color: #28a745;
+}
+
+.compatibility-status.warning {
+  color: #ffc107;
+}
+
+.compatibility-warnings,
+.compatibility-suggestions {
+  margin-top: 10px;
+}
+
+.compatibility-warnings h5,
+.compatibility-suggestions h5 {
+  margin: 0 0 5px 0;
+  font-size: 0.9em;
+}
+
+.compatibility-warnings {
+  color: #dc3545;
+}
+
+.compatibility-suggestions {
+  color: #17a2b8;
+}
+
+.compatibility-warnings ul,
+.compatibility-suggestions ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.9em;
+}
+
+/* 合成执行样式 */
+.synthesis-execute {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.large-button {
+  padding: 15px 30px;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+/* 合成结果样式 */
+.synthesis-output {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.synthesis-output h3 {
+  margin: 0 0 15px 0;
+  color: #495057;
+}
+
+.output-content {
+  min-height: 200px;
+}
+
+.no-result {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+.synthesis-progress {
+  text-align: center;
+  color: #007bff;
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+.synthesis-result {
+  border: 2px solid #28a745;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.feat-display {
+  background: #d4edda;
+  padding: 15px;
+  border-bottom: 1px solid #c3e6cb;
+}
+
+.feat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.feat-header h3 {
+  margin: 0;
+  color: #155724;
+}
+
+.feat-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 0.9em;
+}
+
+.feat-level,
+.feat-category {
+  background: #28a745;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.feat-traits,
+.feat-description {
+  margin-bottom: 10px;
+}
+
+.feat-traits strong {
+  color: #155724;
+}
+
+.synthesis-details {
+  background: #f8f9fa;
+  padding: 15px;
+}
+
+.synthesis-notes,
+.balance-analysis,
+.used-materials {
+  margin-bottom: 15px;
+}
+
+.synthesis-notes h4,
+.balance-analysis h4,
+.used-materials h4 {
+  margin: 0 0 8px 0;
+  color: #495057;
+  font-size: 1em;
+}
+
+.used-materials ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.result-actions {
+  background: #e9ecef;
+  padding: 15px;
+  text-align: center;
+}
+
+/* 按钮样式 */
+.primary-button,
+.success-button,
+.danger-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0 5px;
+  transition: background-color 0.2s;
+}
+
+.primary-button {
+  background: #007bff;
+  color: white;
+}
+
+.success-button {
+  background: #28a745;
+  color: white;
+}
+
+.danger-button {
+  background: #dc3545;
+  color: white;
+}
+
+.primary-button:hover {
+  background: #0056b3;
+}
+
+.success-button:hover {
+  background: #1e7e34;
+}
+
+.danger-button:hover {
+  background: #c82333;
+}
+
+.primary-button:disabled,
+.success-button:disabled,
+.danger-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc3545;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .synthesis-layout {
+    flex-direction: column;
+  }
+  
+  .synthesis-left {
+    max-width: none;
+  }
+  
+  .config-row {
+    flex-direction: column;
+  }
+}
+</style>
+
+<script>
+// 材料搜索功能
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('material-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const items = document.querySelectorAll('.item-list .item');
+      
+      items.forEach(item => {
+        const itemName = item.querySelector('.item-name').textContent.toLowerCase();
+        const itemDesc = item.querySelector('.item-description').textContent.toLowerCase();
+        
+        if (itemName.includes(searchTerm) || itemDesc.includes(searchTerm)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  }
+  
+  // 类别选择变化处理
+  const categorySelect = document.getElementById('synthesis-category');
+  if (categorySelect) {
+    categorySelect.addEventListener('change', function() {
+      const classNameGroup = document.querySelector('.class-name-group');
+      if (this.value === 'class') {
+        classNameGroup.style.display = 'block';
+      } else {
+        classNameGroup.style.display = 'none';
+      }
+    });
+  }
+});
+</script>

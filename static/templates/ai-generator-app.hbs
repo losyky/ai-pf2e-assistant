@@ -1,0 +1,50 @@
+<div class="ai-pf2e-assistant-container">
+  {{#if hasDocument}}
+  <div class="current-document-info">
+    <h3><i class="fas fa-file-alt"></i> {{i18n.currentDocument}}</h3>
+    <div class="document-details">
+      <p><strong>{{i18n.name}}</strong>{{documentName}}</p>
+      <p><strong>{{i18n.type}}</strong>{{documentType}}</p>
+    </div>
+  </div>
+  {{else}}
+  <div class="no-document-warning">
+    <i class="fas fa-exclamation-triangle"></i>
+    <p>{{i18n.noDocument}}</p>
+  </div>
+  {{/if}}
+
+  <div class="form-group">
+    <label for="user-request">{{i18n.userRequest}}</label>
+    <p class="hint">{{i18n.userRequestHint}}</p>
+    <textarea name="user-request" id="user-request" rows="5" placeholder="{{i18n.userRequestPlaceholder}}" {{#unless hasDocument}}disabled{{/unless}}></textarea>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="use-mechanics-knowledge" id="use-mechanics-knowledge" checked {{#unless hasDocument}}disabled{{/unless}}>
+      <span class="checkbox-text">{{i18n.useMechanicsKnowledge}}</span>
+      <i class="fas fa-question-circle knowledge-help-icon" title="{{i18n.mechanicsKnowledgeTooltip}}"></i>
+    </label>
+    <p class="hint knowledge-hint">{{i18n.mechanicsKnowledgeHint}}</p>
+  </div>
+
+  <div class="form-group">
+    <button class="generate" type="button" {{#unless hasDocument}}disabled{{/unless}}>{{i18n.generate}}</button>
+    {{#unless hasDocument}}
+    <p class="hint error-hint">{{i18n.pleaseOpenFromDocument}}</p>
+    {{/unless}}
+  </div>
+
+  <div class="form-group">
+    <label for="result">{{i18n.modificationSuggestion}}</label>
+    <div id="modification-preview" class="modification-preview">
+      <p>{{i18n.waitingForGeneration}}</p>
+    </div>
+  </div>
+
+  <div class="form-group buttons">
+    <button class="apply-changes" type="button" disabled>{{i18n.applyChanges}}</button>
+    <button class="copy-result" type="button" disabled>{{i18n.copyResult}}</button>
+  </div>
+</div>

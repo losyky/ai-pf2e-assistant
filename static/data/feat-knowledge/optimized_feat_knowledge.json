@@ -1,0 +1,21 @@
+{
+  "unified_format_guide": "请参考 TypeScript 代码中的 FEAT_KNOWLEDGE_UNIFIED_GUIDE 常量获取完整的格式指南。该指南包含：1) JSON字段填写指南 2) HTML格式规范 3) 引用格式规范 4) 术语使用规范 5) 写作风格规范",
+  "metadata": {
+    "version": "2.5",
+    "generated_from": "AI深度分析官方数据 + 用户反馈优化",
+    "description": "格式指南已迁移到 prompt-templates.ts 中的 FEAT_KNOWLEDGE_UNIFIED_GUIDE，避免 JSON 转义问题",
+    "key_improvements": [
+      "格式指南迁移到 TypeScript 常量，更易维护",
+      "避免 JSON 字符串转义问题",
+      "保持与其他提示词模板的一致性",
+      "强化按需使用原则，增加大量负面示例",
+      "明确70%专长只需效果部分"
+    ],
+    "changes_from_v2.4": [
+      "将 unified_format_guide 内容迁移到 prompt-templates.ts",
+      "JSON 文件仅保留元数据和指向",
+      "简化文件结构，提高可维护性"
+    ],
+    "reference": "src/module/services/prompt-templates.ts::FEAT_KNOWLEDGE_UNIFIED_GUIDE"
+  }
+}

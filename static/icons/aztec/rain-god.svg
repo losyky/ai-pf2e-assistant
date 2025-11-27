@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- 雨神特拉洛克图标 -->
+  <defs>
+    <linearGradient id="rainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4169E1"/>
+      <stop offset="50%" style="stop-color:#1E90FF"/>
+      <stop offset="100%" style="stop-color:#0000CD"/>
+    </linearGradient>
+    <radialGradient id="cloudGradient" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" style="stop-color:#F0F8FF"/>
+      <stop offset="100%" style="stop-color:#B0C4DE"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- 云朵 -->
+  <ellipse cx="32" cy="20" rx="20" ry="12" fill="url(#cloudGradient)" stroke="#708090" stroke-width="1"/>
+  <circle cx="20" cy="20" r="8" fill="url(#cloudGradient)" stroke="#708090" stroke-width="1"/>
+  <circle cx="44" cy="20" r="8" fill="url(#cloudGradient)" stroke="#708090" stroke-width="1"/>
+  
+  <!-- 雨神面具 -->
+  <rect x="24" y="16" width="16" height="16" rx="2" fill="url(#rainGradient)" stroke="#000080" stroke-width="2"/>
+  
+  <!-- 面具眼睛 -->
+  <circle cx="28" cy="22" r="2" fill="#FFD700"/>
+  <circle cx="36" cy="22" r="2" fill="#FFD700"/>
+  
+  <!-- 面具嘴部 -->
+  <rect x="26" y="26" width="12" height="4" rx="2" fill="#000080"/>
+  <rect x="28" y="28" width="8" height="2" fill="#FFD700"/>
+  
+  <!-- 雨滴 -->
+  <g fill="url(#rainGradient)">
+    <ellipse cx="16" cy="40" rx="2" ry="4"/>
+    <ellipse cx="24" cy="44" rx="2" ry="4"/>
+    <ellipse cx="32" cy="42" rx="2" ry="4"/>
+    <ellipse cx="40" cy="46" rx="2" ry="4"/>
+    <ellipse cx="48" cy="40" rx="2" ry="4"/>
+    
+    <ellipse cx="20" cy="52" rx="1.5" ry="3"/>
+    <ellipse cx="28" cy="56" rx="1.5" ry="3"/>
+    <ellipse cx="36" cy="54" rx="1.5" ry="3"/>
+    <ellipse cx="44" cy="58" rx="1.5" ry="3"/>
+  </g>
+  
+  <!-- 阿兹特克装饰 -->
+  <g fill="#FFD700" stroke="#B8860B" stroke-width="0.5">
+    <polygon points="32,10 34,6 36,10 34,14"/>
+    <polygon points="14,24 10,22 14,20 18,22"/>
+    <polygon points="50,24 54,22 50,20 46,22"/>
+  </g>
+  
+  <!-- 雷电符号 -->
+  <path d="M 30 34 L 34 34 L 32 38 L 36 38 L 30 44 L 32 40 L 28 40 Z" 
+        fill="#FFD700" stroke="#B8860B" stroke-width="0.5"/>
+</svg>
+

@@ -1,0 +1,195 @@
+{
+  "version": "1.0",
+  "description": "PF2e专长格式标准指南",
+  "html_structure": {
+    "common_patterns": [
+      {
+        "template_id": "template_000",
+        "pattern": "P",
+        "frequency": 2543,
+        "examples": [
+          "Costume Change",
+          "Fight Choreography",
+          "Fit for the Role",
+          "More Real Than Real",
+          "Operatic Adventurer"
+        ]
+      },
+      {
+        "template_id": "template_005",
+        "pattern": "P|P",
+        "frequency": 571,
+        "examples": [
+          "Incredible Scout",
+          "Keen Follower",
+          "Supertaster",
+          "Mythic Allies",
+          "Unending Subsistence"
+        ]
+      },
+      {
+        "template_id": "template_012",
+        "pattern": "REQ|HR|P",
+        "frequency": 263,
+        "examples": [
+          "Sovereign's Blade",
+          "We've Met Before",
+          "You Can't Hide From Us",
+          "Battle Medicine",
+          "Fane's Escape"
+        ]
+      },
+      {
+        "template_id": "template_009",
+        "pattern": "TRIG|HR|P",
+        "frequency": 206,
+        "examples": [
+          "Shield Block",
+          "Arc of Destruction",
+          "Call From Death's Door",
+          "Correct the Story",
+          "Divert Destiny"
+        ]
+      },
+      {
+        "template_id": "template_003",
+        "pattern": "P|HR|P_EMPH",
+        "frequency": 193,
+        "examples": [
+          "Armor Proficiency",
+          "Weapon Proficiency",
+          "Mythic Magic",
+          "Additional Lore",
+          "Assurance"
+        ]
+      },
+      {
+        "template_id": "template_002",
+        "pattern": "P|P|P",
+        "frequency": 157,
+        "examples": [
+          "A Home in Every Port",
+          "Aerobatics Mastery",
+          "Armor Assist",
+          "Armored Stealth",
+          "Discreet Inquiry"
+        ]
+      },
+      {
+        "template_id": "template_006",
+        "pattern": "FREQ|HR|P",
+        "frequency": 152,
+        "examples": [
+          "Numb to Death",
+          "Summon Mythic Power",
+          "You Can't Keep Us Down",
+          "Automatic Writing",
+          "Webslinger"
+        ]
+      },
+      {
+        "template_id": "template_026",
+        "pattern": "FREQ|TRIG|HR|P",
+        "frequency": 106,
+        "examples": [
+          "Go with the Flow",
+          "Skeptic's Defense",
+          "Nanite Surge",
+          "Revivification Protocol",
+          "Black Cat Curse"
+        ]
+      },
+      {
+        "template_id": "template_004",
+        "pattern": "P|P_EMPH",
+        "frequency": 82,
+        "examples": [
+          "Different Worlds",
+          "Secret Speech",
+          "Arcane Camouflage",
+          "Arcane Communication",
+          "Arcane Eye"
+        ]
+      },
+      {
+        "template_id": "template_014",
+        "pattern": "REQ|HR|P|P",
+        "frequency": 63,
+        "examples": [
+          "Unbreaking Castle",
+          "Slip the Grasp",
+          "Life Leap",
+          "Haft Striker Stance",
+          "Posse"
+        ]
+      }
+    ],
+    "paragraph_distribution": {
+      "1": 2631,
+      "3": 682,
+      "2": 1590,
+      "8": 14,
+      "5": 111,
+      "6": 87,
+      "7": 35,
+      "4": 249,
+      "11": 1,
+      "14": 1,
+      "26": 1,
+      "16": 1,
+      "10": 2,
+      "17": 1,
+      "9": 2
+    },
+    "guidelines": [
+      "使用<p>标签分段，每个独立概念一段",
+      "使用<strong>标签标记关键词（Requirements, Trigger, Frequency等）",
+      "使用<hr />分隔先决条件/触发条件与效果描述",
+      "使用<em>标签强调重要的游戏机制",
+      "保持HTML结构清晰，避免过度嵌套"
+    ]
+  },
+  "embedded_references": {
+    "types": {
+      "UUID:Compendium": 5674,
+      "Damage": 438,
+      "Check": 524,
+      "Template": 241
+    },
+    "usage_examples": {
+      "UUID": "@UUID[Compendium.pf2e.actionspf2e.Item.Strike]",
+      "Template": "@Template[type:burst|distance:20]",
+      "Damage": "@Damage[2d6[fire]]",
+      "Check": "@Check[type:reflex|dc:20|basic:true]"
+    },
+    "guidelines": [
+      "对游戏规则的引用优先使用@UUID格式",
+      "区域效果使用@Template格式",
+      "伤害表达式使用@Damage格式",
+      "检定引用使用@Check格式"
+    ]
+  },
+  "structure_recommendations": {
+    "minimal": [
+      "P"
+    ],
+    "standard": [
+      "REQ",
+      "HR",
+      "P"
+    ],
+    "complex": [
+      "REQ",
+      "HR",
+      "P",
+      "P_EMPH",
+      "P"
+    ],
+    "with_trigger": [
+      "REQ",
+      "TRIG",
+      "HR",
+      "P"
+    ]
+  }
+}

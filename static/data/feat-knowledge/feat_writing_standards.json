@@ -1,0 +1,78 @@
+{
+  "version": "1.0",
+  "description": "PF2e专长书写规范标准",
+  "terminology": {},
+  "standard_phrases": {
+    "requirements": [
+      "You're trained in",
+      "You have",
+      "You're holding",
+      "Your target is"
+    ],
+    "triggers": [
+      "A creature within your reach",
+      "You roll initiative",
+      "An ally within",
+      "You take damage"
+    ],
+    "effects": [
+      "You gain a +{N} circumstance bonus to",
+      "The target takes {N}d{M} damage",
+      "You can attempt to",
+      "Until the end of your turn"
+    ],
+    "frequencies": [
+      "once per day",
+      "once per round",
+      "once per encounter",
+      "a number of times per day equal to"
+    ]
+  },
+  "numeric_formatting": {
+    "modifiers": [
+      "+1 status bonus",
+      "+2 circumstance bonus",
+      "+3 item bonus"
+    ],
+    "damage": [
+      "1d6 fire damage",
+      "2d8 slashing damage",
+      "3d10 piercing damage"
+    ],
+    "durations": [
+      "1 round",
+      "1 minute",
+      "10 minutes",
+      "1 hour"
+    ],
+    "ranges": [
+      "30 feet",
+      "60 feet",
+      "120 feet"
+    ],
+    "examples": []
+  },
+  "writing_guidelines": [
+    "使用标准PF2e术语，避免自创词汇",
+    "数值表述要精确，使用官方格式（如'+2状态加值'而非'+2加值'）",
+    "条件和触发要明确，避免模糊表述",
+    "效果描述要简洁清晰，一句话一个效果",
+    "频率限制要使用标准格式（每天一次、每轮一次等）",
+    "先决条件要具体可验证",
+    "避免过长的复合句，保持可读性"
+  ],
+  "common_mistakes": [
+    {
+      "mistake": "使用非标准术语（如'奖励'代替'加值'）",
+      "correct": "使用标准术语：状态加值、环境加值、物品加值"
+    },
+    {
+      "mistake": "数值表述不完整（如'+2攻击'）",
+      "correct": "完整表述：'+2状态加值到攻击检定'"
+    },
+    {
+      "mistake": "频率表述不规范（如'一天一次'）",
+      "correct": "使用标准格式：'每天一次'或'Frequency once per day'"
+    }
+  ]
+}

@@ -1,0 +1,440 @@
+/**
+ * 战术施法系统样式
+ */
+
+/* ===== 战术准备界面 ===== */
+.tactical-preparation-sheet {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--color-bg-primary, #f8f9fa);
+}
+
+.tactical-preparation-sheet .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--color-bg-header, #2c3e50);
+    color: white;
+    border-bottom: 2px solid var(--color-border-dark, #1a252f);
+}
+
+.tactical-preparation-sheet .sheet-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.tactical-preparation-sheet .header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tactical-preparation-sheet .header-actions button {
+    padding: 0.5rem 1rem;
+    background: var(--color-primary, #4a90e2);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tactical-preparation-sheet .header-actions button:hover {
+    background: var(--color-primary-dark, #357abd);
+}
+
+/* ===== 主体内容 ===== */
+.tactical-preparation-sheet .sheet-body {
+    flex: 1;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.tactical-preparation-sheet .preparation-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    height: 100%;
+}
+
+/* ===== 可用动作区域 ===== */
+.tactical-preparation-sheet .available-section {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tactical-preparation-sheet .available-section h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    color: var(--color-text-dark, #2c3e50);
+}
+
+.tactical-preparation-sheet .search-box {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.tactical-preparation-sheet .search-box input {
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    border: 1px solid var(--color-border-light, #ddd);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.tactical-preparation-sheet .search-box i {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-light, #999);
+}
+
+.tactical-preparation-sheet .available-actions {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* ===== 动作项 ===== */
+.tactical-preparation-sheet .action-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: var(--color-bg-light, #f5f5f5);
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: grab;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.tactical-preparation-sheet .action-item:hover {
+    background: var(--color-bg-hover, #e8e8e8);
+    border-color: var(--color-primary, #4a90e2);
+    transform: translateX(4px);
+}
+
+.tactical-preparation-sheet .action-item.prepared {
+    opacity: 0.6;
+    background: var(--color-bg-prepared, #e8f4f8);
+}
+
+.tactical-preparation-sheet .action-item.prepared .prepared-indicator {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-success, #28a745);
+    font-size: 1.2rem;
+}
+
+.tactical-preparation-sheet .action-item:active {
+    cursor: grabbing;
+}
+
+.tactical-preparation-sheet .action-icon {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+.tactical-preparation-sheet .action-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.tactical-preparation-sheet .action-icon .action-cost-icon {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    padding: 2px;
+}
+
+.tactical-preparation-sheet .action-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tactical-preparation-sheet .action-name {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-dark, #2c3e50);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tactical-preparation-sheet .action-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.tactical-preparation-sheet .tag {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    background: var(--color-tag-bg, #e0e0e0);
+    color: var(--color-tag-text, #555);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.tactical-preparation-sheet .tag.trait-sm {
+    padding: 0.1rem 0.4rem;
+    font-size: 0.7rem;
+}
+
+/* ===== 准备槽位区域 ===== */
+.tactical-preparation-sheet .prepared-section {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tactical-preparation-sheet .prepared-section h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    color: var(--color-text-dark, #2c3e50);
+}
+
+.tactical-preparation-sheet .slot-info {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: var(--color-bg-info, #e3f2fd);
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--color-info, #1976d2);
+}
+
+.tactical-preparation-sheet .prepared-slots {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tactical-preparation-sheet .slot-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: var(--color-bg-light, #f5f5f5);
+    border: 2px dashed var(--color-border-light, #ddd);
+    border-radius: 6px;
+    min-height: 70px;
+    transition: all 0.2s;
+}
+
+.tactical-preparation-sheet .slot-item:hover {
+    border-color: var(--color-primary, #4a90e2);
+    background: var(--color-bg-hover, #f0f7ff);
+}
+
+.tactical-preparation-sheet .slot-item.empty {
+    justify-content: center;
+}
+
+.tactical-preparation-sheet .slot-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-right: 0.75rem;
+    background: var(--color-primary, #4a90e2);
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.tactical-preparation-sheet .slot-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.tactical-preparation-sheet .slot-empty {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-light, #999);
+    font-style: italic;
+}
+
+.tactical-preparation-sheet .slot-empty i {
+    font-size: 1.5rem;
+}
+
+.tactical-preparation-sheet .slot-remove {
+    padding: 0.25rem 0.5rem;
+    margin-left: auto;
+    background: var(--color-danger, #dc3545);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tactical-preparation-sheet .slot-remove:hover {
+    background: var(--color-danger-dark, #c82333);
+}
+
+.tactical-preparation-sheet .preparation-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: var(--color-bg-hint, #fff3cd);
+    border-left: 4px solid var(--color-warning, #ffc107);
+    border-radius: 4px;
+}
+
+.tactical-preparation-sheet .preparation-hint i {
+    color: var(--color-warning, #ffc107);
+    font-size: 1.2rem;
+}
+
+.tactical-preparation-sheet .preparation-hint p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-dark, #2c3e50);
+}
+
+/* ===== 空状态 ===== */
+.tactical-preparation-sheet .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--color-text-light, #999);
+}
+
+.tactical-preparation-sheet .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.tactical-preparation-sheet .empty-state p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* ===== 底部 ===== */
+.tactical-preparation-sheet .sheet-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    background: var(--color-bg-footer, #f8f9fa);
+    border-top: 1px solid var(--color-border-light, #ddd);
+}
+
+.tactical-preparation-sheet .close-button {
+    padding: 0.5rem 1.5rem;
+    background: var(--color-secondary, #6c757d);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tactical-preparation-sheet .close-button:hover {
+    background: var(--color-secondary-dark, #5a6268);
+}
+
+/* ===== 角色表单中的战术按钮 ===== */
+.prepare-tactical-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    margin-left: 0.5rem;
+    background: var(--color-tactical, #6f42c1);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.prepare-tactical-button:hover {
+    background: var(--color-tactical-dark, #5a32a3);
+}
+
+.prepare-tactical-button i {
+    font-size: 0.9rem;
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 768px) {
+    .tactical-preparation-sheet .preparation-container {
+        grid-template-columns: 1fr;
+    }
+
+    .tactical-preparation-sheet .available-section {
+        max-height: 40vh;
+    }
+
+    .tactical-preparation-sheet .prepared-section {
+        max-height: 40vh;
+    }
+}
+
+/* ===== 滚动条样式 ===== */
+.tactical-preparation-sheet .available-actions::-webkit-scrollbar,
+.tactical-preparation-sheet .prepared-slots::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tactical-preparation-sheet .available-actions::-webkit-scrollbar-track,
+.tactical-preparation-sheet .prepared-slots::-webkit-scrollbar-track {
+    background: var(--color-bg-light, #f5f5f5);
+    border-radius: 4px;
+}
+
+.tactical-preparation-sheet .available-actions::-webkit-scrollbar-thumb,
+.tactical-preparation-sheet .prepared-slots::-webkit-scrollbar-thumb {
+    background: var(--color-border-dark, #ccc);
+    border-radius: 4px;
+}
+
+.tactical-preparation-sheet .available-actions::-webkit-scrollbar-thumb:hover,
+.tactical-preparation-sheet .prepared-slots::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-darker, #999);
+}
+

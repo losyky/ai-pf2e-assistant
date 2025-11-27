@@ -1,0 +1,60 @@
+{
+  "id": "ai-pf2e-assistant",
+  "title": "AI PF2e Assistant",
+  "description": "An AI-powered assistant for creating PF2e content in Foundry VTT",
+  "version": "0.2.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13",
+    "maximum": "13"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system",
+        "manifest": "https://github.com/foundryvtt/pf2e/releases/latest/download/system.json",
+        "compatibility": {
+          "minimum": "7.0.0",
+          "verified": "7.7.4"
+        }
+      }
+    ]
+  },
+  "authors": [
+    {
+      "name": "losyky",
+      "email": "losyfang@gmail.com",
+      "url": "https://github.com/losyky"
+    }
+  ],
+  "esmodules": [
+    "ai-pf2e-assistant.js"
+  ],
+  "styles": [
+    "styles/ai-pf2e-assistant.css",
+    "styles/feat-storage-sheet.css",
+    "styles/tactical-manual.css"
+  ],
+  "socket": false,
+  "url": "",
+  "manifest": "",
+  "download": "",
+  "license": "MIT",
+  "readme": "README.md",
+  "bugs": "",
+  "changelog": "",
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "cn",
+      "name": "中文（简体）",
+      "path": "lang/zh-CN.json"
+    }
+  ],
+  "packs": []
+} 

@@ -1,0 +1,115 @@
+{{!-- 神龛合成器模板 - 环形设计 --}}
+<div class="shrine-synthesis-container">
+  <div class="synthesis-header">
+    <h2><i class="fas fa-circle-notch"></i> {{themeTexts.blessing}}</h2>
+    {{#if actor}}
+      <p class="actor-info">为角色 <strong>{{actor.name}}</strong> ({{actor.level}}级 {{actor.class}}) {{themeTexts.synthesisAction}}</p>
+    {{else}}
+      <p class="general-info">{{themeTexts.description}}</p>
+    {{/if}}
+    
+    {{!-- 神龛点数显示 --}}
+    <div class="shrine-points-display">
+      {{#if isGM}}
+        <div class="gm-status">
+          <i class="fas fa-crown"></i>
+          <span>GM用户 - 无限制使用</span>
+        </div>
+      {{else}}
+        {{#if actor}}
+          <div class="player-points {{#if (lt shrinePoints 1)}}insufficient{{/if}}">
+            <i class="fas fa-coins"></i>
+            <span>神龛点数: <strong>{{shrinePoints}}</strong></span>
+            {{#if (lt shrinePoints 1)}}
+              <span class="warning-text">(点数不足，请联系GM)</span>
+            {{/if}}
+          </div>
+        {{else}}
+          <div class="no-actor-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>请选择角色以查看神龛点数</span>
+          </div>
+        {{/if}}
+      {{/if}}
+      
+      {{#if isGM}}
+        <button type="button" class="manage-points-btn" id="manage-points">
+          <i class="fas fa-cog"></i> 管理点数
+        </button>
+      {{/if}}
+    </div>
+  </div>
+
+  <form class="synthesis-form">
+    <div class="synthesis-layout">
+      {{!-- 主要合成区域 --}}
+      <div class="synthesis-main">
+        {{!-- SVG环形合成组件容器 --}}
+        <div class="circular-synthesis-container" id="circular-synthesis-container">
+          <!-- SVG环形界面将在这里动态生成 -->
+        </div>
+
+        {{!-- 合成控制 --}}
+        <div class="synthesis-controls">
+          <button type="button" id="clear-materials" class="control-button secondary">
+            {{themeTexts.clearMaterials}}
+          </button>
+          
+          <button type="button" id="synthesize-feat" class="control-button primary"
+                  {{#unless (and selectedShrine selectedMaterials)}}disabled{{/unless}}>
+            {{themeTexts.synthesisButton}}
+          </button>
+        </div>
+
+        {{!-- 合成进度条 --}}
+        <div class="synthesis-progress" id="synthesis-progress" style="display: none;">
+          <div class="progress-header">
+            <h3>{{themeTexts.progressWorking}}</h3>
+            <div class="progress-stage" id="progress-stage">{{themeTexts.progressPreparing}}</div>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-percentage" id="progress-percentage">0%</div>
+          </div>
+        </div>
+
+        {{!-- 合成完成显示 --}}
+        {{#if lastSynthesisResult}}
+          <div class="synthesis-complete">
+            <h3>{{themeTexts.synthesisCompleteTitle}}</h3>
+            
+            <div class="feat-summary">
+              <div class="feat-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="feat-info">
+                <h4 class="feat-name">{{lastSynthesisResult.feat.name}}</h4>
+                <div class="feat-meta">
+                  <span class="feat-level">{{lastSynthesisResult.feat.system.level.value}}级</span>
+                  <span class="feat-category">{{lastSynthesisResult.feat.system.category}}专长</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="import-success">
+              <p class="success-message">
+                {{#if actor}}
+                  专长已成功添加到角色 <strong>{{actor.name}}</strong>
+                {{else}}
+                  专长已成功导入到世界
+                {{/if}}
+              </p>
+            </div>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+
+    {{!-- 隐藏的表单字段 --}}
+    <input type="hidden" id="synthesis-level" name="synthesis-level" value="1">
+    <input type="hidden" id="synthesis-category" name="synthesis-category" value="general">
+    <input type="hidden" id="class-name" name="class-name" value="">
+  </form>
+</div>

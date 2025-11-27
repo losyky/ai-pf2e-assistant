@@ -1,0 +1,44 @@
+# 依赖目录
+node_modules/
+
+# 环境变量配置
+.env
+*.env.local
+
+# 构建输出
+dist/
+build/
+docs/
+
+# 测试结果
+*.log
+function-call-test-result.json
+document-modification-test-result.json
+
+# 编辑器相关
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 操作系统相关
+.DS_Store
+Thumbs.db
+
+# 调试文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 临时文件和备份文件
+temp.txt
+*.backup
+*.new
+*.tmp
+*.ps1
+
+# Git 配置文件（如果意外创建）
+h -u origin main
+
+# 空目录
+macros/ 

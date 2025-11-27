@@ -1,0 +1,623 @@
+{
+  "ai-pf2e-assistant": {
+    "buttons": {
+      "synthesizeFeat": "Synthesize Feat",
+      "synthesizeFeatTooltip": "Use fragments to synthesize feats",
+      "storage": "Storage",
+      "featStorageTooltip": "Open feat storage",
+      "spellStorageTooltip": "Open spell storage"
+    },
+    "aiGenerator": {
+      "currentDocument": "Current Document",
+      "name": "Name:",
+      "type": "Type:",
+      "noDocument": "No document selected. Please open the AI Assistant from the title bar button of a character sheet or item form.",
+      "userRequest": "Creation Request",
+      "userRequestHint": "Describe how you want the AI to modify the current document",
+      "userRequestPlaceholder": "For example: 'Increase weapon damage, add fire trait, raise level to 5.' or 'Help me write a background story, highlighting the character's warrior identity and northern origin.'",
+      "useMechanicsKnowledge": "Use PF2e Rules Knowledge Base",
+      "mechanicsKnowledgeTooltip": "When enabled, AI will reference complete PF2e rule mechanics knowledge to generate more balanced modification suggestions",
+      "mechanicsKnowledgeHint": "💡 Recommended: AI will understand action systems, modifier types, damage balance and other core rules",
+      "generate": "Generate Modification",
+      "pleaseOpenFromDocument": "Please open AI Assistant from document form first",
+      "modificationSuggestion": "Modification Suggestion",
+      "waitingForGeneration": "Waiting for generation...",
+      "applyChanges": "Apply Changes",
+      "copyResult": "Copy Result",
+      "unnamed": "Unnamed",
+      "character": "Character",
+      "npc": "NPC",
+      "creature": "Creature",
+      "spell": "Spell",
+      "weapon": "Weapon",
+      "armor": "Armor",
+      "equipment": "Equipment",
+      "item": "Item",
+      "unknown": "Unknown"
+    },
+    "settings": {
+      "apiUrl": {
+        "name": "API URL (GM)",
+        "hint": "AI service API URL for GM use, such as OpenAI, 302.AI and other compatible API endpoints"
+      },
+      "apiKey": {
+        "name": "API Key (GM)",
+        "hint": "API key for GM use, for unrestricted AI function access"
+      },
+      "playerApiUrl": {
+        "name": "API URL (Player)",
+        "hint": "AI service API URL for player use. Players can use this API for limited functions (such as shrine system, AI icon generation). Leave blank to use GM's API URL"
+      },
+      "playerApiKey": {
+        "name": "API Key (Player)",
+        "hint": "API key for player use, for limited AI function access (shrine system, AI icon generation). Leave blank to disable AI functions for players"
+      },
+      "aiModel": {
+        "name": "AI Model",
+        "hint": "AI model name to use, please enter the correct model name according to your API service"
+      },
+      "imageApiUrl": {
+        "name": "Image Generation API URL (GM)",
+        "hint": "Image generation API URL for GM use (such as DALL-E, Midjourney, etc.). Leave blank to use main API URL. Most third-party APIs don't support image generation, separate configuration recommended"
+      },
+      "imageApiKey": {
+        "name": "Image Generation API Key (GM)",
+        "hint": "Image generation API key for GM use. Leave blank to use main API key"
+      },
+      "playerImageApiUrl": {
+        "name": "Image Generation API URL (Player)",
+        "hint": "Image generation API URL for player use. Leave blank to fallback in order: GM image API URL → Player main API URL → GM main API URL"
+      },
+      "playerImageApiKey": {
+        "name": "Image Generation API Key (Player)",
+        "hint": "Image generation API key for player use. Leave blank to fallback in order: GM image API key → Player main API key → GM main API key"
+      },
+      "testConnection": {
+        "name": "Test AI Connection",
+        "label": "Test Connection",
+        "hint": "Test if the connection to the AI service is working properly"
+      },
+      "terminologyImporter": {
+        "name": "PF2e Terminology Management",
+        "label": "Terminology Management",
+        "hint": "Import and manage PF2e professional terminology glossary"
+      },
+      "balanceKeywordsManager": {
+        "name": "Balance Keywords Management",
+        "label": "Balance Management",
+        "hint": "Manage custom numerical balance keyword configurations"
+      },
+      "activeTheme": {
+        "name": "Interface Theme",
+        "hint": "Select the theme style for the shrine synthesis system",
+        "shrine": "Shrine Theme",
+        "pokemon": "Aidamon Theme"
+      },
+      "debugMode": {
+        "name": "Debug Mode",
+        "hint": "When enabled, detailed debug logs will be displayed in the F12 console (module loading, UI interaction, drag recognition, etc.). When disabled, only synthesis process, AI calls, and error/warning messages will be shown"
+      },
+      "terminologyTimestamp": {
+        "name": "Terminology Timestamp"
+      },
+      "terminology": {
+        "name": "Terminology Data",
+        "hint": "Moved to module directory storage, this setting is only for backward compatibility"
+      },
+      "autoCollectTerminology": {
+        "name": "Auto Collect New Terminology",
+        "hint": "When enabled, new proper nouns identified by AI during translation will be automatically added to the terminology list"
+      },
+      "balanceKeywords": {
+        "name": "Balance Keywords Data",
+        "hint": "Stored balance keyword configuration (internal use)"
+      },
+      "enableIconGeneration": {
+        "name": "Enable Icon Generation",
+        "hint": "When enabled, icons will be automatically generated for created items and monsters"
+      },
+      "imageModel": {
+        "name": "Image Generation Model",
+        "hint": "Select the AI model to use for icon generation"
+      },
+      "iconSize": {
+        "name": "Icon Size",
+        "hint": "Size of generated icons"
+      },
+      "iconStyle": {
+        "name": "Icon Style",
+        "hint": "Artistic style of generated icons"
+      },
+      "useShrineSystem": {
+        "name": "Enable Shrine System",
+        "hint": "When enabled, use the Aztec mythology-based shrine synthesis system, replacing the original feat synthesizer"
+      },
+      "shrineDesignModel": {
+        "name": "Shrine - Design Model",
+        "hint": "AI model name for creative design of feat/spell core concepts (Recommended: grok-beta for creativity, gpt-4o for balance)"
+      },
+      "shrineFormatModel": {
+        "name": "Shrine - Format Conversion Model",
+        "hint": "AI model name for converting designs to PF2e format (feat/spell universal, Recommended: gpt-4o for good Function Calling support)"
+      },
+      "shrineDirectModel": {
+        "name": "Shrine - Direct Generation Model",
+        "hint": "AI model name for directly generating complete feats/spells (Recommended: gpt-4o for good balance)"
+      },
+      "shrineIconPromptModel": {
+        "name": "Shrine - Icon Prompt Model",
+        "hint": "AI model name for generating icon prompts (feat/spell universal, Recommended: gpt-4o-mini is sufficient)"
+      },
+      "shrineEnableDesignPhase": {
+        "name": "Shrine - Enable Design Phase",
+        "hint": "When enabled, will first call the design agent to integrate shrine material information and formulate a plan, then pass to the generation agent"
+      },
+      "shrineEnableFormatPhase": {
+        "name": "Shrine - Enable Format Phase",
+        "hint": "When enabled, will use formatting agent to strictly convert to PF2e format after generation (recommended to enable for format correctness)"
+      },
+      "shrineSpellEnableDesignPhase": {
+        "name": "Shrine Spell - Enable Design Phase",
+        "hint": "When enabled, will first call the design agent to integrate shrine material information and formulate a plan, then pass to the generation agent"
+      },
+      "shrineSpellEnableFormatPhase": {
+        "name": "Shrine Spell - Enable Format Phase",
+        "hint": "When enabled, will use formatting agent to strictly convert to PF2e format after generation (recommended to enable for format correctness)"
+      },
+      "autoCollectTerminology": {
+        "name": "Auto Collect New Terms",
+        "hint": "When enabled, new proper nouns identified by AI during translation will be automatically added to the terminology glossary"
+      },
+      "useShrineSystem": {
+        "name": "Enable Shrine System",
+        "hint": "When enabled, the Aztec mythology-based shrine synthesis system will be used, replacing the original feat synthesizer"
+      }
+    },
+    "ui": {
+      "contentType": "Content Type",
+      "params": "Generation Parameters",
+      "paramsHint": "Can be JSON parameters or simple text description",
+      "generate": "Generate Content",
+      "result": "Generated Result",
+      "copy": "Copy Result",
+      "export": "Export Result",
+      "generating": "Generating...",
+      "success": "Successfully generated {type} content",
+      "copied": "Result copied to clipboard",
+      "exported": "Exported {type} content"
+    },
+    "errors": {
+      "noKey": "API key not set. Please set it in the module settings.",
+      "apiFailed": "API call failed: {status} {statusText}",
+      "noContent": "No content generated",
+      "copyFailed": "Copy failed: {message}",
+      "dataExtractionFailed": "Data extraction failed",
+      "unknownResponseFormat": "Unknown API response format"
+    }
+  },
+  "AIPF2E": {
+    "tools": {
+      "assistant": "AI PF2e Assistant",
+      "itemGenerator": "PF2e Item Generator",
+      "explorer": "PF2e Data Explorer",
+      "featureGenerator": "PF2e Feature Generator",
+      "featGenerator": "PF2e Feat Generator",
+      "fragmentGenerator": "PF2e Fragment Generator",
+      "shrineManager": "Shrine Point Manager"
+    },
+    "ItemGenerator": {
+      "title": "PF2e Item Generator",
+      "close": "Close",
+      "equipment": {
+        "title": "Equipment Generation",
+        "description": "Equipment Description",
+        "descriptionHint": "Describe the type of equipment you want to generate. Can be weapons, armor, tools, or magical items",
+        "descriptionPlaceholder": "For example: 'A magical weapon crafted by ancient elven artisans, imbued with natural forces, with unique appearance and abilities. Suitable for druids or rangers.' or 'Heavy armor forged from rare metals, providing powerful protection for knights and warriors.'",
+        "level": "Equipment Level",
+        "levelHint": "Level 1-20 equipment",
+        "count": "Generation Count",
+        "countHint": "Recommended 1-10 items",
+        "traits": "Expected Traits (Optional)",
+        "traitsPlaceholder": "e.g., magical, evocation, fire, weapon",
+        "traitsHint": "Enter expected PF2e traits, separated by commas. These traits will be used to search for similar reference items",
+        "enableCompendium": "Enable Compendium Search (reference official equipment)",
+        "enableCompendiumHint": "When enabled, will search official equipment compendia for generation reference",
+        "generate": "Generate Equipment List",
+        "generating": "Generating...",
+        "result": "Equipment Generation Result",
+        "resultPlaceholder": "Waiting for equipment list generation...",
+        "create": "Create Equipment",
+        "creating": "Creating...",
+        "clearPreview": "Clear Preview",
+        "generateIcon": "Generate Icon",
+        "iconGenerated": "Icon generated",
+        "iconFailed": "Icon generation failed",
+        "noDescription": "Please enter equipment description",
+        "generateFailed": "Equipment generation failed, please retry",
+        "noItems": "No equipment to create",
+        "createSuccess": "Successfully created {count} equipment items!"
+      },
+      "consumable": {
+        "title": "Consumable Generation",
+        "description": "Consumable Description",
+        "descriptionHint": "Describe the type of consumable you want to generate. Can be potions, scrolls, bombs, or other one-time items",
+        "descriptionPlaceholder": "For example: 'Various alchemist potions, including healing potions, enhancement elixirs, poisons, and practical tools. With different effects and rarities.' or 'Magic scrolls transcribed by wizards, containing various spell effects, suitable for different classes.'",
+        "level": "Consumable Level",
+        "levelHint": "Level 1-20 consumables",
+        "count": "Generation Count",
+        "countHint": "Recommended 1-15 items",
+        "traits": "Expected Traits (Optional)",
+        "traitsPlaceholder": "e.g., magical, consumable, healing, alchemical",
+        "traitsHint": "Enter expected PF2e traits, separated by commas. These traits will be used to search for similar reference items",
+        "enableCompendium": "Enable Compendium Search (reference official consumables)",
+        "enableCompendiumHint": "When enabled, will search official consumable compendia for generation reference",
+        "generate": "Generate Consumable List",
+        "generating": "Generating...",
+        "result": "Consumable Generation Result",
+        "resultPlaceholder": "Waiting for consumable list generation...",
+        "create": "Create Consumables",
+        "creating": "Creating...",
+        "clearPreview": "Clear Preview",
+        "generateIcon": "Generate Icon",
+        "iconGenerated": "Icon generated",
+        "iconFailed": "Icon generation failed",
+        "noDescription": "Please enter consumable description",
+        "generateFailed": "Consumable generation failed, please retry",
+        "noItems": "No consumables to create",
+        "createSuccess": "Successfully created {count} consumable items!"
+      }
+    },
+    "Explorer": {
+      "title": "PF2e Data Structure Explorer",
+      "close": "Close",
+      "description": "This tool helps understand item and actor data structures in the PF2e system",
+      "compendium": {
+        "title": "Compendium Exploration",
+        "select": "Select Compendium",
+        "selectPlaceholder": "-- Select Compendium --",
+        "load": "Load Compendium Contents",
+        "loading": "Loading...",
+        "items": "Compendium Items",
+        "itemsPlaceholder": "-- Load compendium first --",
+        "analyze": "Analyze Selected Item",
+        "analyzing": "Analyzing...",
+        "noCompendium": "Please select a compendium first",
+        "noItem": "Please select an item first"
+      },
+      "world": {
+        "title": "World Items Exploration",
+        "items": "Items in World",
+        "itemsPlaceholder": "-- Loading --",
+        "noItems": "-- No items in world --",
+        "analyze": "Analyze Selected Item",
+        "analyzing": "Analyzing...",
+        "noItem": "Please select an item first"
+      },
+      "analysis": {
+        "title": "Data Structure Analysis",
+        "placeholder": "Please select an item to analyze...",
+        "itemTitle": "Item Analysis: {name}",
+        "keyInfo": "Key Information",
+        "basicInfo": "Basic Information",
+        "systemData": "System Data",
+        "fullStructure": "Full Structure",
+        "effects": "Effects and Flags",
+        "effectCount": "Effects count:",
+        "flagCount": "Flags count:",
+        "copyKeyInfo": "Copy Key Info",
+        "copyStructure": "Copy Full Structure",
+        "logItem": "Log to Console",
+        "copied": "Copied to clipboard",
+        "copyFailed": "Copy failed, please copy manually",
+        "logged": "Full data logged to console"
+      }
+    },
+    "FeatGenerator": {
+      "title": "PF2e Feat Generator",
+      "prompt": "Feat Description",
+      "promptPlaceholder": "Describe the feat effect you want, for example: a feat that allows quick movement in combat",
+      "level": "Feat Level",
+      "category": "Feat Category",
+      "categories": {
+        "general": "General Feat",
+        "skill": "Skill Feat",
+        "combat": "Combat Feat",
+        "class": "Class Feat",
+        "ancestry": "Ancestry Feat",
+        "archetype": "Archetype Feat"
+      },
+      "className": "Class Name (for Class Feats)",
+      "classNamePlaceholder": "e.g., Fighter, Wizard, Cleric",
+      "enableCompendium": "Enable Compendium Search (search related content for reference)",
+      "generate": "Generate Feat",
+      "generating": "Generating...",
+      "generatingInfo": "Generating feat, please wait...",
+      "regenerate": "Regenerate",
+      "import": "Import to World",
+      "exportJson": "Export JSON",
+      "ui": {
+        "featInfo": "Feat Information",
+        "settings": "Generation Settings",
+        "balanceGuidance": "Balance Guidance",
+        "result": "Generated Result",
+        "resultPlaceholder": "Feat will be displayed here...",
+        "levelPrefix": "Level ",
+        "levelSuffix": ""
+      },
+      "noPrompt": "Please enter feat description",
+      "noService": "AI service not initialized",
+      "generateSuccess": "Feat generation completed!",
+      "generateFailed": "Feat generation failed",
+      "noFeat": "No feat to {action}",
+      "importSuccess": "Feat \"{name}\" successfully imported to world",
+      "importFailed": "Import failed",
+      "exportSuccess": "JSON file downloaded",
+      "manualImport": {
+        "title": "Manual Import Feat",
+        "intro": "Automatic import failed, please import manually:",
+        "step1": "Copy the JSON code below",
+        "step2": "Open \"Items\" tab in Foundry",
+        "step3": "Click \"Import Data\" button",
+        "step4": "Paste JSON code and confirm",
+        "copyButton": "Copy to Clipboard",
+        "ok": "OK"
+      }
+    },
+    "FeatureGenerator": {
+      "title": "Feature Generator",
+      "description": "Use AI to generate unique Pathfinder 2e class features. The system will design through three collaborative agents: Mechanism Design → Feature Design → Format Conversion.",
+      "featureDescription": "Feature Description:",
+      "featureDescriptionPlaceholder": "Describe the feature you want, for example:\n- A resource management mechanism based on fire\n- A system similar to skill cooldowns in MOBA games\n- An ability to switch between different stances in combat\n- A hand management mechanism referencing card games",
+      "featureLevel": "Feature Level:",
+      "targetClass": "Target Class (Optional):",
+      "targetClassPlaceholder": "e.g., Fighter, Wizard, Rogue...",
+      "enableCompendiumSearch": "Enable Compendium Search Assistance",
+      "compendiumSearchHint": "AI will extract keywords from the prompt and search PF2e compendia for relevant content as design reference. This helps generate features more consistent with official style.",
+      "generateFeature": "Generate Feature",
+      "generatedFeature": "Generated Feature",
+      "featureName": "Feature Name",
+      "featureCategory": "Category",
+      "featureAction": "Action Type",
+      "actions": " Actions",
+      "prerequisites": "Prerequisites:",
+      "ruleElements": "Rule Elements:",
+      "viewRuleDetails": "View Rule Details",
+      "importToWorld": "Import to World",
+      "exportJson": "Export JSON",
+      "checkBalance": "Check Balance",
+      "regenerate": "Regenerate",
+      "compendiumSearchHint": "AI will extract keywords from the prompt and search PF2e compendia for relevant content as design reference. This helps generate features more consistent with official style.",
+      "ui": {
+        "levelSuffix": ""
+      },
+      "helpTitle": "Usage Instructions",
+      "generationFlow": "Generation Flow:",
+      "step1": "Mechanism Design:",
+      "step1Description": "AI first designs unique game mechanics, considering balance and extensibility",
+      "step2": "Feature Design:",
+      "step2Description": "Converts mechanics into specific PF2e features, including rule elements",
+      "step3": "Format Conversion:",
+      "step3Description": "Converts to standard Foundry VTT item format",
+      "promptSuggestions": "Prompt Suggestions:",
+      "suggestion1": "Describe the type of mechanism you want (resource management, state switching, trigger effects, etc.)",
+      "suggestion2": "Can reference mechanics from other games (MOBA, card games, board games, etc.)",
+      "suggestion3": "Explain the feature's usage scenarios and target effects",
+      "suggestion4": "Mention any special balance requirements or restrictions",
+      "balanceData": "Balance Data:",
+      "balanceDataDescription": "The system will display appropriate balance reference data based on the selected level to help ensure generated features meet PF2e numerical standards.",
+      "notes": "Notes:",
+      "note1": "Generation process may take 1-2 minutes, please be patient",
+      "note2": "Generated features need GM review before use in game",
+      "note3": "Can generate the same concept multiple times to get different implementations",
+      "note4": "Use the balance check function to evaluate feature strength",
+      "prompt": "Feature Description",
+      "promptPlaceholder": "Describe the class feature you want to generate...",
+      "level": "Feature Level",
+      "className": "Class Name (Optional)",
+      "classNamePlaceholder": "e.g., Fighter, Wizard, etc.",
+      "enableCompendium": "Enable Compendium Search Assistance",
+      "generate": "Generate Feature",
+      "generating": "Generating...",
+      "regenerate": "Regenerate",
+      "import": "Import to World",
+      "exportJson": "Export JSON",
+      "noPrompt": "Please enter feature description",
+      "generatingInfo": "Starting feature generation, this may take some time...",
+      "generateSuccess": "Feature generation completed!",
+      "generateFailed": "Feature generation failed",
+      "noFeature": "No feature to {action}",
+      "importSuccess": "Feature \"{name}\" successfully imported to world",
+      "importFailed": "Import failed",
+      "exportSuccess": "JSON file downloaded",
+      "manualImport": {
+        "title": "Manual Import Feature",
+        "intro": "Automatic import failed, please import manually:",
+        "step1": "Copy the JSON code below",
+        "step2": "Open \"Items\" tab in Foundry",
+        "step3": "Click \"Import Data\" button",
+        "step4": "Paste JSON code and confirm",
+        "copyButton": "Copy to Clipboard",
+        "ok": "OK"
+      },
+      "levelInfo": "Feature design focuses on mechanical innovation. For detailed numerical balance, refer to the Feat Generator."
+    },
+    "FragmentGenerator": {
+      "title": "PF2e Fragment Generator",
+      "gmOnly": "This tool is GM-only",
+      "singleFragment": "Single Fragment",
+      "fragmentSet": "Fragment Set",
+      "createSingle": "Create Single Fragment",
+      "createSingleDescription": "Use AI to generate fragments based on requirement descriptions",
+      "generateSetDescription": "Use AI to automatically generate a set of related fragments based on a theme",
+      "requirementHint": "Describe the fragment effects and theme you want in detail, AI will generate appropriate fragments",
+      "rarityHint": "Rarity affects fragment power level",
+      "usageInstructions": "Usage Instructions",
+      "roleDescription": "Fragment Role:",
+      "rolePoint1": "Fragments only provide [Flavor Elements] and [Effect Content]",
+      "rolePoint2": "Not responsible for core mechanic design (mechanics provided by divinity or AI design)",
+      "rolePoint3": "Effect content can be directional guidance, not necessarily complete rules",
+      "requirement": "Fragment Requirement:",
+      "requirementPlaceholder": "Describe the fragment's purpose or effect...",
+      "rarity": "Rarity",
+      "rarities": {
+        "common": "Common",
+        "uncommon": "Uncommon",
+        "rare": "Rare",
+        "unique": "Unique"
+      },
+      "theme": "Fragment Theme",
+      "themePlaceholder": "Describe the theme of the fragment set...",
+      "fragmentCount": "Fragment Count",
+      "generateSingle": "Generate Fragment",
+      "generating": "AI Generating...",
+      "generateSet": "Generate Fragment Set",
+      "noService": "AI service not initialized",
+      "noRequirement": "Please enter fragment requirement",
+      "noTheme": "Please enter fragment theme",
+      "generateFailed": "Fragment generation failed",
+      "generateSetFailed": "Fragment set generation failed",
+      "createSuccess": "Fragment \"{name}\" created in world!",
+      "createSetSuccess": "Fragment set created! {count} fragments created in world.",
+      "createFailed": "Fragment creation failed",
+      "createSetFailed": "Fragment set creation failed",
+      "preview": {
+        "title": "Fragment Preview",
+        "setTitle": "Fragment Set Preview",
+        "name": "Fragment Name",
+        "rarity": "Rarity",
+        "description": "Visible Description",
+        "hiddenPrompt": "Hidden AI Prompt",
+        "aiPrompt": "AI Prompt",
+        "theme": "Theme",
+        "count": "Count",
+        "countSuffix": " fragments",
+        "noDescription": "No description",
+        "confirm": "Confirm and Create to World",
+        "confirmSet": "Confirm and Create All to World",
+        "regenerate": "Regenerate",
+        "cancel": "Cancel"
+      }
+    },
+    "FeatStorage": {
+      "title": "Feat Storage",
+      "sheetTitle": "Item Storage - {name}",
+      "deleteFeat": "Delete Feat",
+      "deleteSpell": "Delete Spell",
+      "clearNormalStorage": "Clear Normal Storage",
+      "confirmDeleteFeat": "Are you sure you want to delete feat <strong>{name}</strong> from storage?<p>This action cannot be undone.</p>",
+      "confirmDeleteSpell": "Are you sure you want to delete spell <strong>{name}</strong> from storage?<p>This action cannot be undone.</p>",
+      "confirmClearFeats": "Are you sure you want to delete all <strong>{count}</strong> feats from normal storage?<p>Feats in confirmed storage will not be deleted.</p><p><strong>This action cannot be undone!</strong></p>",
+      "confirmClearSpells": "Are you sure you want to delete all <strong>{count}</strong> spells from normal storage?<p>Spells in confirmed storage will not be deleted.</p><p><strong>This action cannot be undone!</strong></p>",
+      "normalStorage": "Normal Storage",
+      "normalStorageInfo": "(Synthesized feats will enter this area first)",
+      "normalStorageEmpty": "Normal storage is empty. Synthesized feats will automatically enter this area.",
+      "normalSpellStorageEmpty": "Normal storage is empty. Synthesized spells will automatically enter this area.",
+      "clearNormalArea": "Clear Normal Area",
+      "confirmedStorage": "Confirmed Storage",
+      "confirmedStorageInfo": "(Feats dragged to this area will not be cleared)",
+      "confirmedStorageEmpty": "Confirmed storage is empty. Drag important feats to this area, they will not be cleared.",
+      "confirmedSpellStorageEmpty": "Confirmed storage is empty. Drag important spells to this area, they will not be cleared.",
+      "featsCount": "Feats: {total} (Normal: {normal} / Confirmed: {confirmed})",
+      "spellsCount": "Spells: {total} (Normal: {normal} / Confirmed: {confirmed})",
+      "storageForPlayerCharacters": "Storage for Player Characters"
+    },
+    "ShrinePointManager": {
+      "title": "Shrine Point Manager",
+      "selectActor": "Please select an actor",
+      "actorNotFound": "Actor not found",
+      "setPointsSuccess": "Set shrine points for \"{name}\" to {points}",
+      "setPointsFailed": "Failed to set points",
+      "addPointsSuccess": "Added {points} shrine points to \"{name}\", current total: {total}",
+      "addPointsFailed": "Failed to add points",
+      "pointsMustBePositive": "Points to add must be greater than 0",
+      "distributePointsMustBePositive": "Points to distribute must be greater than 0",
+      "confirmDistribute": "Confirm Batch Distribution",
+      "confirmDistributeMessage": "Are you sure you want to distribute <strong>{points}</strong> shrine points to all player characters?",
+      "distributeSuccess": "Successfully distributed {points} shrine points to {count} actors",
+      "distributeFailed": "Failed to distribute to {count} actors: {names}",
+      "distributeBatchFailed": "Batch distribution failed",
+      "confirmReset": "Confirm Reset Points",
+      "confirmResetMessage": "<strong>Warning:</strong> This will reset all actors' shrine points to 0, this action cannot be undone!<p>Are you sure you want to continue?</p>",
+      "resetSuccess": "Successfully reset shrine points for {count} actors",
+      "resetFailed": "Failed to reset {count} actors: {names}",
+      "resetBatchFailed": "Failed to reset points"
+    },
+    "ShrineSynthesis": {
+      "title": "Divine Blessing",
+      "subtitle": "Sacred synthesis for {name} (Level {level} {class})",
+      "gmUserUnlimited": "GM User - Unlimited Use",
+      "managePoints": "Manage Points",
+      "shrineTab": "Divinity",
+      "offeringTab": "Offering",
+      "fragmentTab": "Fragment",
+      "dragShrine": "Drag shrine here",
+      "clearMaterials": "Clear Materials",
+      "startSynthesis": "Start Sacred Synthesis",
+      "maxMaterials": "Synthesis circle can hold a maximum of 8 materials",
+      "addMaterialFailed": "Failed to add material",
+      "dragShrineHint": "Please drag shrine directly to central area",
+      "selectMaterialsFirst": "Please select shrine and synthesis materials first",
+      "materialsCleared": "All materials cleared"
+    },
+    "RuleElementConfig": {
+      "title": "PF2e Rule Element Auto Configuration",
+      "noDescription": "(No description)",
+      "generatingCustom": "Generating rule elements based on your custom requirements...",
+      "generatingAuto": "Analyzing item description and generating rule elements...",
+      "validationWarning": "Generated rules have issues: {errors}",
+      "generateSuccess": "Successfully generated {count} rule elements",
+      "generateFailed": "Generation failed",
+      "noRules": "No rule elements to apply",
+      "applyingAppend": "Appending rule elements to item...",
+      "applyingReplace": "Applying rule elements to item...",
+      "validationErrors": "Applied successfully but found {count} validation errors. Click \"AI Auto-Fix\" to repair",
+      "applySuccessAppend": "Appended {count} rule elements",
+      "applySuccessReplace": "Applied {count} rule elements",
+      "applyFailed": "Application failed, validation errors found. Click \"AI Auto-Fix\" to repair",
+      "noErrorsToFix": "No validation errors to fix",
+      "fixSuccess": "Rule elements have been fixed, please reapply",
+      "fixFailed": "Review and fix failed",
+      "similarRulesTitle": "Rule Elements of {name}",
+      "itemInfo": {
+        "item": "Item",
+        "type": "Type",
+        "source": "Source",
+        "description": "Description"
+      },
+      "closeButton": "Close"
+    },
+    "TacticalManual": {
+      "Name": "Tactical Manual",
+      "PreparationType": "Tactical Manual",
+      "Prepare": "Prepare Tactics",
+      "Config": "Configure Tactical Manual",
+      "MaxSlots": "Maximum Slots",
+      "PreparedCount": "Prepared: {current} / {max}",
+      "NoActions": "No tactical actions available (requires tactic or tactical trait)",
+      "ActionNotPrepared": "This tactical action is not prepared",
+      "SlotsFull": "Maximum prepared slots reached ({max})",
+      "SlotsUpdated": "Tactical manual slots set to {slots}",
+      "PrepareTitle": "Tactical Manual - Prepare Actions",
+      "PrepareHeader": "Prepare Tactical Actions",
+      "PrepareInfo": "Select up to {max} tactical actions to prepare",
+      "PreparedSection": "Prepared ({current}/{max})",
+      "AvailableSection": "Available Tactical Actions ({count})",
+      "EmptyPrepared": "No tactical actions prepared",
+      "EmptyAvailable": "All tactical actions are prepared",
+      "Complete": "Complete",
+      "Unprepare": "Unprepare",
+      "PrepareAction": "Prepare",
+      "DeleteAction": "Delete",
+      "DropHint": "Drag and drop actions here to add as tactical actions",
+      "DeleteConfirmTitle": "Delete Tactical Action",
+      "DeleteConfirmContent": "Are you sure you want to delete tactical action '{name}'?",
+      "OnlyActions": "Only action items can be added",
+      "ActionAdded": "Tactical action '{name}' has been added",
+      "DropError": "Failed to add tactical action",
+      "ConfigTitle": "Tactical Manual Configuration",
+      "ConfigMaxSlots": "Maximum Prepared Slots:",
+      "Save": "Save",
+      "Cancel": "Cancel"
+    }
+  }
+} 

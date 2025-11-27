@@ -1,0 +1,1069 @@
+{
+  "version": "1.0",
+  "description": "按等级分类的PF2e官方专长模板示例",
+  "levels": {
+    "1": {
+      "examples": [
+        {
+          "name": "Adopted Ancestry",
+          "level": 1,
+          "category": "general",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general"
+          ],
+          "description": "<p>You're fully immersed in another ancestry's culture and traditions, whether born into them, earned through rite of passage, or bonded through a deep friendship or romance. Choose a common ancestry or another ancestry to which you have access. You can select ancestry feats from the ancestry you chose, in addition to your character's own ancestry, as long as the ancestry feats don't require any physiological feature that you lack, as determined by the GM.</p>",
+          "prerequisites": [],
+          "rules_count": 3,
+          "has_frequency": false
+        },
+        {
+          "name": "Armor Proficiency",
+          "level": 1,
+          "category": "general",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general"
+          ],
+          "description": "<p>You become trained in light armor. If you already were trained in light armor, you gain training in medium armor. If you were trained in both, you become trained in heavy armor. If you are at least 13th level, you become an expert in this armor type.</p>\n<hr />\n<p><strong>Special</strong> You can select this feat more than once. Each time, you become trained in the next type of armor, as detailed above.</p>",
+          "prerequisites": [],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Breath Control",
+          "level": 1,
+          "category": "general",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general"
+          ],
+          "description": "<p>You can breathe even in hazardous or sparse air. You can hold your breath for 25 times as long as usual before suffocating. You gain a +1 circumstance bonus to saving throws against inhaled threats, such as inhaled poisons, and if you roll a success on such a saving throw, you get a critical success instead.</p>",
+          "prerequisites": [],
+          "rules_count": 3,
+          "has_frequency": false
+        },
+        {
+          "name": "Canny Acumen",
+          "level": 1,
+          "category": "general",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general"
+          ],
+          "description": "<p>Your avoidance or observation is beyond the ken of most in your profession. Choose Fortitude saves, Reflex saves, Will saves, or Perception. You become an expert in your choice. At 17th level, you become a master in your choice.</p>",
+          "prerequisites": [],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Diehard",
+          "level": 1,
+          "category": "general",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general"
+          ],
+          "description": "<p>It takes more to kill you than most. You die from the @UUID[Compendium.pf2e.conditionitems.Item.Dying] condition at dying 5, rather than dying 4.</p>",
+          "prerequisites": [],
+          "rules_count": 1,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "2": {
+      "examples": [
+        {
+          "name": "Armored Stealth",
+          "level": 2,
+          "category": "skill",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general",
+            "skill"
+          ],
+          "description": "<p>You have learned techniques to adjust and modify your armor and movements to reduce the noise you make.</p>\n<p>When you wear non-noisy armor with which you are trained, your penalty to Stealth checks is reduced by 1 (to a minimum penalty of 0). If you're a master in Stealth, reduce the penalty by 2, and if you're legendary, reduce the penalty by 3.</p>\n<p>If your armor has the noisy trait, instead of reducing the penalty to Stealth checks, you ignore the effects of the noisy trait, enabling y",
+          "prerequisites": [
+            {
+              "value": "expert in Stealth"
+            }
+          ],
+          "rules_count": 3,
+          "has_frequency": false
+        },
+        {
+          "name": "Assured Identification",
+          "level": 2,
+          "category": "skill",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general",
+            "skill"
+          ],
+          "description": "<p>You rarely misidentify an item. When using Arcana, Nature, Occultism, or Religion checks to Identify Magic, if you roll a critical failure, you get a failure instead. If you would misidentify a cursed item because you roll a success but not a critical success, you simply can't identify it instead.</p>",
+          "prerequisites": [
+            {
+              "value": "expert in Arcana, Nature, Occultism, or Religion"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Continual Recovery",
+          "level": 2,
+          "category": "skill",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general",
+            "skill"
+          ],
+          "description": "<p>You zealously monitor a patient's progress to administer treatment faster. When you @UUID[Compendium.pf2e.actionspf2e.Item.Treat Wounds], your patient becomes immune for only 10 minutes instead of 1 hour. This applies only to your Treat Wounds activities, not any other the patient receives.</p>",
+          "prerequisites": [
+            {
+              "value": "expert in Medicine"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Exhort the Faithful",
+          "level": 2,
+          "category": "skill",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general",
+            "skill"
+          ],
+          "description": "<p>Your knowledge of the tenets of your faith gives you insight into the best ways to get others of your faith to help you or to follow your directions.</p>\n<p>When you @UUID[Compendium.pf2e.actionspf2e.Item.Request] something of or @UUID[Compendium.pf2e.actionspf2e.Item.Coerce] members of your own faith, you can attempt a Religion check instead of Diplomacy or Intimidation, and you gain a +2 circumstance bonus to the check. On a critically failed attempt to make a Request, the target's attitude",
+          "prerequisites": [
+            {
+              "value": "expert in Religion"
+            },
+            {
+              "value": "follower of a specific religion"
+            }
+          ],
+          "rules_count": 3,
+          "has_frequency": false
+        },
+        {
+          "name": "Fleeing Diversion",
+          "level": 2,
+          "category": "skill",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "general",
+            "skill"
+          ],
+          "description": "<p>You are quick to capitalize on your distractions. If you critically succeed at your check to @UUID[Compendium.pf2e.actionspf2e.Item.Create a Diversion] against the majority of the creatures (at least half of the creatures) whose attention you're trying to divert, you can use your reaction to immediately @UUID[Compendium.pf2e.actionspf2e.Item.Hide], @UUID[Compendium.pf2e.actionspf2e.Item.Sneak], or Step. As normal, you are only @UUID[Compendium.pf2e.conditionitems.Item.Hidden] to creatures aga",
+          "prerequisites": [
+            {
+              "value": "expert in Deception"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "4": {
+      "examples": [
+        {
+          "name": "Contortionist",
+          "level": 4,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You can squeeze out of tight situations surprisingly quickly, gaining an advantage against foes that try to pin you down. You gain the @UUID[Compendium.pf2e.feats-srd.Item.Quick Squeeze] skill feat, and if you're a master in Acrobatics, you can @UUID[Compendium.pf2e.actionspf2e.Item.Squeeze] at full Speed.</p>\n<p>Whenever you successfully @UUID[Compendium.pf2e.actionspf2e.Item.Escape] using Acrobatics, the creature you Escaped from is @UUID[Compendium.pf2e.conditionitems.Item.Off-Guard] again",
+          "prerequisites": [
+            {
+              "value": "Acrobat Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Advanced Alchemy",
+          "level": 4,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You gain the @UUID[Compendium.pf2e.journals.JournalEntry.vx5FGEG34AxI2dow.JournalEntryPage.Jkl5KOZih7MoMqAJ]{Advanced Alchemy} benefits, and you can create 4 alchemical consumables during your daily preparations.</p>",
+          "prerequisites": [
+            {
+              "value": "Alchemist Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Duelist's Edge",
+          "level": 4,
+          "category": "class",
+          "actionType": "free",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p><strong>Trigger</strong> You roll initiative, and you can observe at least one opponent.</p>\n<hr />\n<p>You hone your reaction time through duels and learn to draw your weapon seamlessly as you begin a fight. You gain a +2 circumstance bonus to the triggering initiative roll, and you can immediately Interact to draw your Aldori dueling sword.</p>",
+          "prerequisites": [
+            {
+              "value": "Aldori Duelist Dedication"
+            }
+          ],
+          "rules_count": 3,
+          "has_frequency": false
+        },
+        {
+          "name": "Loose Cannon",
+          "level": 4,
+          "category": "class",
+          "actionType": "action",
+          "actions": 1,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>Your unpredictable gunfire often catches enemies off guard or hits unprotected areas. Make a ranged Strike with a firearm against a creature that you haven't already attacked on this turn. You gain a circumstance bonus to damage on this Strike equal to the number of weapon damage dice. The Strike gains the following failure effect.</p><hr /><p><strong>Failure</strong> The firearm misfires, but it doesn't cause the other critical failure effects listed below.</p>\n<p><strong>Critical Failure</s",
+          "prerequisites": [
+            {
+              "value": "Alkenstar Agent Dedication"
+            }
+          ],
+          "rules_count": 4,
+          "has_frequency": false
+        },
+        {
+          "name": "Expert Backstabber",
+          "level": 4,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You excel at quickly dispatching your foes. When you Strike an @UUID[Compendium.pf2e.conditionitems.Item.Off-Guard] foe with a weapon that has the backstabber weapon trait, you deal 2 extra precision damage instead of 1. If the weapon is a <em>+3 weapon</em>, you deal 4 extra precision damage instead of 2.</p>",
+          "prerequisites": [
+            {
+              "value": "Assassin Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "6": {
+      "examples": [
+        {
+          "name": "Dodge Away",
+          "level": 6,
+          "category": "class",
+          "actionType": "reaction",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p><strong>Trigger</strong> You are the target of a melee attack.</p>\n<p><strong>Requirements</strong> You're aware of the attack and aren't @UUID[Compendium.pf2e.conditionitems.Item.Off-Guard].</p>\n<hr />\n<p>You use your acrobatic prowess to evade an attack, using momentum to keep yourself moving, if you choose.</p>\n<p>You gain a +1 circumstance bonus to AC against the triggering attack. If the attack misses you, you can @UUID[Compendium.pf2e.actionspf2e.Item.Step] after the Strike.</p>\n<p>If y",
+          "prerequisites": [
+            {
+              "value": "Acrobat Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Voluminous Vials",
+          "level": 6,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>Your number of versatile vials per day increases to 5.</p><hr /><p><strong>Special</strong> At 12th level or higher, you can select this feat a second time to increase your number of versatile vials per day to 6. At 18th level or higher, you can select this feat a third time to increase your number of versatile vials per day to 7.</p>",
+          "prerequisites": [
+            {
+              "value": "Alchemist Dedication"
+            },
+            {
+              "value": "expert in Crafting"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Crossbow Terror",
+          "level": 6,
+          "category": "class",
+          "actionType": "action",
+          "actions": 1,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>Your skill with a crossbow strikes terror into your opponents when you threaten them with the next bolt. Interact to reload a crossbow and then attempt an Intimidation check to @UUID[Compendium.pf2e.actionspf2e.Item.Demoralize]. You gain a +2 circumstance bonus to this check if you succeeded at a @UUID[Compendium.pf2e.actionspf2e.Item.Strike] with a crossbow this turn.</p>",
+          "prerequisites": [
+            {
+              "value": "Archer Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Advanced Fury",
+          "level": 6,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You gain one barbarian feat. For the purpose of meeting its prerequisites, your barbarian level is equal to half your character level.</p><hr /><p><strong>Special</strong> You can select this feat more than once. Each time you select it, you gain another barbarian feat.</p>",
+          "prerequisites": [
+            {
+              "value": "Basic Fury"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Harbinger's Protection",
+          "level": 6,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You often work on missions alone, making sure to cover up your weaknesses more effectively than other members of your faith. You are trained in heavy armor. When you gain expert or greater proficiency in any type of armor, you also gain that proficiency in heavy armor.</p>",
+          "prerequisites": [
+            {
+              "value": "Battle Harbinger Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "8": {
+      "examples": [
+        {
+          "name": "Archaeologist's Luck",
+          "level": 8,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype",
+            "fortune"
+          ],
+          "description": "<p><strong>Frequency</strong> once per hour</p>\n<p><strong>Trigger</strong> You fail a check against a trap, such as a Thievery check to @UUID[Compendium.pf2e.actionspf2e.Item.Disable a Device]{Disable} the trap or a Reflex save to avoid its effects.</p>\n<hr />\n<p>You are more than just skillful; your drive to find the secrets of the past manifests as a strange kind of luck. Reroll the failed check and use the new result.</p>",
+          "prerequisites": [
+            {
+              "value": "Archaeologist Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": true
+        },
+        {
+          "name": "Archer's Aim",
+          "level": 8,
+          "category": "class",
+          "actionType": "action",
+          "actions": 2,
+          "traits": [
+            "archetype",
+            "concentrate"
+          ],
+          "description": "<p>You slow down, focus, and take a careful shot. Make a ranged Strike with a weapon in the bow or crossbow weapon group. You gain a +2 circumstance bonus to the attack roll and ignore the target's @UUID[Compendium.pf2e.conditionitems.Item.Concealed] condition. If the target is @UUID[Compendium.pf2e.conditionitems.Item.Hidden], reduce the flat check from being hidden from 11 to 5.</p>",
+          "prerequisites": [
+            {
+              "value": "Archer Dedication"
+            }
+          ],
+          "rules_count": 4,
+          "has_frequency": false
+        },
+        {
+          "name": "Elude the Divine",
+          "level": 8,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You are able to escape inquisitions involving divine magic, allowing you to blend in well in Mzali but also to avoid unwanted attention in other oppressive theocracies. You gain the @UUID[Compendium.pf2e.feats-srd.Item.Slippery Secrets] skill feat, and its benefits also apply against divination effects that attempt to discern your deity. When using Slippery Secrets against a divine divination, you gain a +2 circumstance bonus, and on a critical success, the divination reveals false informatio",
+          "prerequisites": [
+            {
+              "value": "Bright Lion Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Lion's Fury",
+          "level": 8,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You gain access to the @UUID[Compendium.pf2e.equipment-srd.Item.Lion Scythe]{Lion Scythe's} and @UUID[Compendium.pf2e.equipment-srd.Item.Sun Sling]{Sun Sling's} critical specialization effects.</p>",
+          "prerequisites": [
+            {
+              "value": "Lion's Might"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Flickering Stories",
+          "level": 8,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype",
+            "divine"
+          ],
+          "description": "<p>Stories, like fires, can create shadows as much as they illuminate. When you Offer a Story, you can become @UUID[Compendium.pf2e.conditionitems.Item.Concealed] by shifting shadows for the duration instead of the normal benefits. The action then gains the shadow trait. You can't use this concealment to @UUID[Compendium.pf2e.actionspf2e.Item.Hide], as normal for concealing effects that leave your location obvious. The creature you share a story with can choose this benefit even if you did not.<",
+          "prerequisites": [
+            {
+              "value": "Campfire Chronicler Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "10": {
+      "examples": [
+        {
+          "name": "Angel of Death",
+          "level": 10,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>All your Strikes against a creature you have @UUID[Compendium.pf2e.actionspf2e.Item.Mark for Death]{Marked for Death} have the death trait, causing the mark to be instantly killed when reduced to 0 Hit Points.</p>\n<p>In addition, if the creature is killed this way, attempts to communicate with it, return it to life, turn it into an undead, or otherwise disturb its afterlife fail unless the effect's counteract rank is higher than half your level rounded up, or originates from an artifact or a ",
+          "prerequisites": [
+            {
+              "value": "Assassin Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Shadow of Death",
+          "level": 10,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>Strikes you make with your deity's favored weapon against a creature with the @UUID[Compendium.pf2e.conditionitems.Item.Doomed] condition have the death trait, causing the target to be instantly killed when reduced to 0 Hit Points. When killed in this way, attempts to communicate with it, return it to life, turn it into an undead, or otherwise disturb its afterlife fail unless the effect's counteract rank is higher than half your level when you killed the creature (rounded up), or originates ",
+          "prerequisites": [
+            {
+              "value": "Avenger Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Tales of the Road",
+          "level": 10,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype",
+            "divine"
+          ],
+          "description": "<p>The blessings of Isthralei connect you to the thrum of the stories that underlie all settlements. When attempting a check to @UUID[Compendium.pf2e.actionspf2e.Item.Recall Knowledge] about a city you have visited, you gain a +2 circumstance bonus and can use an associated Lore skill (such as Nerosyan Lore) with your level as your proficiency bonus even if you're untrained.</p>",
+          "prerequisites": [
+            {
+              "value": "Campfire Chronicler Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Ghost-Path Epiphany",
+          "level": 10,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>Deviating from the orthodox path, you tread an inauspicious descent littered with flowers of death; this heretical choice will, in time, earn you the enmity and fear of more traditional cultivators. You become sanctified with the unholy trait. You also learn the @UUID[Compendium.pf2e.spells-srd.Item.Call Spirit] and @UUID[Compendium.pf2e.spells-srd.Item.Commune] rituals, which can be used to contact only undead or entities from the Void or the Netherworld.</p>\n<p>When you cast a ritual, you c",
+          "prerequisites": [
+            {
+              "value": "Cultivator Dedication"
+            },
+            {
+              "value": "you aren't holy"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Three Pecks of Dew",
+          "level": 10,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>At this stage of cultivation, your body is as much spirit as flesh. While still fettered to the physical realm, your form flourishes without needing conventional food or drink, and your natural healing now rivals that brought by scalpel and suture.</p>\n<p>You become sanctified with the holy trait. When you perform the Subsist downtime activity, you can use Occultism for the skill check (instead of the skills normally associated with your environment). If you do so, this activity gains the vit",
+          "prerequisites": [
+            {
+              "value": "Cultivator Dedication"
+            },
+            {
+              "value": "you aren't unholy"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "12": {
+      "examples": [
+        {
+          "name": "Assassinate",
+          "level": 12,
+          "category": "class",
+          "actionType": "action",
+          "actions": 2,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p><strong>Requirements</strong> You have designated a mark using @UUID[Compendium.pf2e.actionspf2e.Item.Mark for Death] and are completely unnoticed by your mark.</p><hr /><p>You strike with one swift movement, trying to instantly slay your mark. Make a Strike against your mark. If you hit, your mark takes an additional 6d6 precision damage with a @Check[fortitude|against:class-spell|basic] save against the higher of your class DC or spell DC. If the mark critically fails, it dies unless its le",
+          "prerequisites": [
+            {
+              "value": "Assassin Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Slay",
+          "level": 12,
+          "category": "class",
+          "actionType": "action",
+          "actions": 2,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p><strong>Requirements</strong> Your target is @UUID[Compendium.pf2e.conditionitems.Item.Doomed]{Doomed 2} or greater.</p><hr /><p>You finish your target with a vicious attack. Make a Strike against the target. If you hit, the target takes 4d6 extra precision damage with a @Check[fortitude|against:class|basic|traits:incapacitation] save against your class DC. If the target critically fails, they die. This is an incapacitation effect. The creature then becomes temporarily immune to your Slay for",
+          "prerequisites": [
+            {
+              "value": "Avenger Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Surging Blood Magic",
+          "level": 12,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>Your blood courses with magic. You gain the @UUID[Compendium.pf2e.journals.JournalEntry.vx5FGEG34AxI2dow.JournalEntryPage.DOc3Pf8wmVxanTIv#expert-spellcasting-feat]{Expert Spellcasting Feat} benefits. In addition, when you Cast a Spell from your repertoire and you are at least @UUID[Compendium.pf2e.conditionitems.Item.Drained]{Drained 2}, increase the extra damage dealt by that spell from Rage by an additional 2 (for a total of 3).</p>",
+          "prerequisites": [
+            {
+              "value": "Rising Blood Magic"
+            },
+            {
+              "value": "master in Arcana or Religion, depending on your chosen tradition"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Second Ikon",
+          "level": 12,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You gain an additional ikon. When you Spark Transcendence, your spark moves automatically from the ikon you just used to the other ikon.</p>",
+          "prerequisites": [
+            {
+              "value": "Exemplar Dedication"
+            }
+          ],
+          "rules_count": 3,
+          "has_frequency": false
+        },
+        {
+          "name": "Vexing Tempest",
+          "level": 12,
+          "category": "class",
+          "actionType": "action",
+          "actions": 1,
+          "traits": [
+            "air",
+            "archetype",
+            "spellshape"
+          ],
+          "description": "<p>Your familiar channels elemental air around it to unleash a disruptive gust that sends creatures flying. If the next action you use is to Cast a Spell that has the air trait, all creatures within a @Template[type:emanation|distance:15] of your familiar must attempt a Reflex save against your spell DC or be pushed 10 feet away. On a critical failure, they're also knocked @UUID[Compendium.pf2e.conditionitems.Item.Prone].</p>",
+          "prerequisites": [
+            {
+              "value": "Familiar Sage Dedication"
+            },
+            {
+              "value": "Tempest Cloud's Speed"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "14": {
+      "examples": [
+        {
+          "name": "One Among the Masses",
+          "level": 14,
+          "category": "classfeature",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>It will take more than a gathered mass of foes to take you down. You gain resistance equal to your level to damage dealt by swarms, troops, and creatures who occupy the same space as you. In addition, you can briefly menace large groups of enemies to step aside. You gain the@UUID[Compendium.pf2e.actionspf2e.Item.Overawe Crowd]{ Overawe Crowd} activity.</p>",
+          "prerequisites": [
+            {
+              "value": "Apocalypse Rider Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Manipulate Realm",
+          "level": 14,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>Thanks to your continued belief in your ultimate transformation, you have learned greater control over your manifested realm. If you spend a Mythic Point when you Manifest your Realm, you can use the @UUID[Compendium.pf2e.actionspf2e.Item.Drain Realm], @UUID[Compendium.pf2e.actionspf2e.Item.Spread Realm], and @UUID[Compendium.pf2e.actionspf2e.Item.Unleash Realm] free actions.</p>",
+          "prerequisites": [
+            {
+              "value": "Archfiend Dedication"
+            }
+          ],
+          "rules_count": 3,
+          "has_frequency": false
+        },
+        {
+          "name": "Aegis for the Innocent",
+          "level": 14,
+          "category": "class",
+          "actionType": "action",
+          "actions": 1,
+          "traits": [
+            "manipulate",
+            "mythic"
+          ],
+          "description": "<p><strong>Requirements</strong> Your nimbus is active.</p><hr /><p>You transfer a portion of your divine spark to an ally, temporarily dimming your nimbus to encase an ally in a barrier of light that repels attackers. Select a willing creature within the bright light of your nimbus. You surround the target in a protective barrier of light; this is a @Template[type:emanation|distance:10] centered on the target. This barrier lasts for 1 minute, or until you Dismiss it. While the Aegis of the Inno",
+          "prerequisites": [
+            {
+              "value": "Ascended Celestial Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Ascend",
+          "level": 14,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>As you strive to ascend to the ranks of celestials, the pull of gravity loosens on your body. You gain a fly Speed equal to your land Speed and the @UUID[Compendium.pf2e.actionspf2e.Item.Flyby Attack] action. When you gain this feat, you can choose to sprout wings, if desired; these wings are permanent.</p>\n<p>Once per day as a single action, you can fly at incredible speeds. When you do, your fly Speed becomes equal to double your Speed for 5 rounds.</p>\n<p>@UUID[Compendium.pf2e.feat-effects",
+          "prerequisites": [
+            {
+              "value": "Ascended Celestial Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "We Are One",
+          "level": 14,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>You and your companion move as one, never tripping each other up. This fluid movement throws your enemies off balance. You and your united companion can share each other's spaces. When you do so, both you and your united companion provide @UUID[Compendium.pf2e.other-effects.Item.Effect: Cover]{Lesser Cover} to one another. You and your united companion also count as being adjacent to one another when sharing each other's spaces. A target is automatically @UUID[Compendium.pf2e.conditionitems.I",
+          "prerequisites": [
+            {
+              "value": "Beast Lord Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "16": {
+      "examples": [
+        {
+          "name": "Seat of Power",
+          "level": 16,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>Your sheer determination has created a demiplane that houses a grand residence which will serve as the heart of your planned realm. You determine the appearance of this seat of power, such as a duskwood longhouse, a crumbling stone castle, an ice tower, or a pagoda constructed from the solidified souls of the damned.</p>\n<p>You can enter your realm using the @UUID[Compendium.pf2e.actionspf2e.Item.Enter Seat Of Power] activity. You and any creatures you choose gain three times as many Hit Poin",
+          "prerequisites": [
+            {
+              "value": "Archfiend Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Cleansing Spell",
+          "level": 16,
+          "category": "class",
+          "actionType": "action",
+          "actions": 1,
+          "traits": [
+            "concentrate",
+            "mythic",
+            "spellshape"
+          ],
+          "description": "<p>Infused with celestial light, your magic can more effectively heal wounds and purge afflictions. If your next action is to Cast a Spell with the healing trait on a living creature, one target of that spell regains a @Damage[(@actor.level)[healing]]{number of Hit Points equal to your level} (in addition to any Hit Points they would normally gain). In addition, you can attempt to counteract a disease or poison affecting one target of that spell. These two targets can be the same creature or dif",
+          "prerequisites": [
+            {
+              "value": "Ascended Celestial Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Incorporeal Shot",
+          "level": 16,
+          "category": "class",
+          "actionType": "action",
+          "actions": 1,
+          "traits": [
+            "archetype",
+            "magical"
+          ],
+          "description": "<p><strong>Frequency</strong> once per day</p><hr /><p>You can concentrate an immense amount of magic to create a piece of ammunition that phases through everything but your target.</p>\n<p>Make a bow or crossbow Strike against a foe who is @UUID[Compendium.pf2e.conditionitems.Item.Observed] or @UUID[Compendium.pf2e.conditionitems.Item.Hidden] to you (but not @UUID[Compendium.pf2e.conditionitems.Item.Undetected]).</p>\n<p>The ammunition travels to your target in a straight line, passing through an",
+          "prerequisites": [
+            {
+              "value": "Eldritch Archer Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": true
+        },
+        {
+          "name": "Death from Above (Eternal Legend)",
+          "level": 16,
+          "category": "class",
+          "actionType": "action",
+          "actions": 2,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p><strong>Requirements</strong> You are adjacent to a climbable surface at least 10 feet tall.</p><hr /><p>Seemingly to defy gravity, you use a nearby vertical surface to propel yourself upward and then strike downward like the driving rain. Stride up to half your Speed upward on the required surface; if you have a climb Speed, you may use your full climb Speed instead. The surface does not need to span the full height of your Stride. You can then either make a ranged Strike at a target within ",
+          "prerequisites": [
+            {
+              "value": "Eternal Legend Dedication"
+            }
+          ],
+          "rules_count": 3,
+          "has_frequency": false
+        },
+        {
+          "name": "Pierce the Eye",
+          "level": 16,
+          "category": "class",
+          "actionType": "action",
+          "actions": 2,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p><strong>Requirements</strong> You are wielding a ranged weapon.</p><hr /><p>You aim a shot from your weapon directly at a foe's eye, blinding them in the process. Make a ranged Strike. On a hit, the target additionally takes 2d8 persistent bleed damage. The target must also attempt a @Check[fortitude|against:class] save against your class DC with the following effects.</p><hr /><p><strong>Critical Success</strong> The target is unaffected.</p>\n<p><strong>Success</strong> The target is @UUID[C",
+          "prerequisites": [
+            {
+              "value": "Eternal Legend Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "18": {
+      "examples": [
+        {
+          "name": "Contagious Spell",
+          "level": 18,
+          "category": "class",
+          "actionType": "action",
+          "actions": 1,
+          "traits": [
+            "concentrate",
+            "mythic",
+            "spellshape"
+          ],
+          "description": "<p>Your magic can bring devastation to more individuals. Spend a Mythic Point. If your next action is to Cast a Spell that inflicts damage or debilitating conditions and targets a specific number of creatures, you can target one additional creature.</p>",
+          "prerequisites": [
+            {
+              "value": "Apocalypse Rider Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Deathless Servant",
+          "level": 18,
+          "category": "classfeature",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "healing",
+            "mythic"
+          ],
+          "description": "<p>The servants of apocalypse know that it is impossible to cheat death, but your will is sufficient to help you outlive even your strongest enemies. The first time each day you would be reduced to 0 Hit Points but not immediately killed, you avoid being knocked out and instead of taking the damage, you regain a number of Hit Points equal to @Damage[(2*@actor.level)[healing]]{twice your level}. Your @UUID[Compendium.pf2e.conditionitems.Item.Wounded] condition increases by 1.</p>\n<p>In addition, ",
+          "prerequisites": [
+            {
+              "value": "Apocalypse Rider Dedication"
+            }
+          ],
+          "rules_count": 2,
+          "has_frequency": false
+        },
+        {
+          "name": "Eyes Unclouded",
+          "level": 18,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>Your senses are enhanced by your divine spark, enabling you to see things as they truly are, piercing through illusions, transformations, and lies. You're affected by a constant @UUID[Compendium.pf2e.spells-srd.Item.Truesight] spell. Additionally, you gain a +2 circumstance bonus to Perception checks to @UUID[Compendium.pf2e.actionspf2e.Item.Sense Motive] and to Perception DCs against attempts to @UUID[Compendium.pf2e.actionspf2e.Item.Lie] to you. When a creature attempts to Lie to you, they ",
+          "prerequisites": [
+            {
+              "value": "Ascended Celestial Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Scouring Spark",
+          "level": 18,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>When you unleash your divine spark, you become a being of living light that scours away the darkness. While @UUID[Compendium.pf2e.feats-srd.Item.Channel Divine Spark]{Channeling your Divine Spark}, you become immune to the @UUID[Compendium.pf2e.conditionitems.Item.Confused] and @UUID[Compendium.pf2e.conditionitems.Item.Frightened] conditions. Any creature that touches you or damages you with an unarmed melee attack or a non-reach melee weapon takes @Damage[3d6[fire]] damage, your unarmed atta",
+          "prerequisites": [
+            {
+              "value": "Ascended Celestial Dedication"
+            },
+            {
+              "value": "Channel Divine Spark"
+            }
+          ],
+          "rules_count": 6,
+          "has_frequency": false
+        },
+        {
+          "name": "Creature of Myth",
+          "level": 18,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>Your specialized united companion grows with unparalleled power and strength, becoming a creature of myth. It gains one of the following effects.</p><ul><li><p><strong>Baleful Body</strong> Your united companion's blood is boiling, its mechanical fluid is acidic, or its insides are otherwise destructive to the touch. Choose acid, fire, or poison. If your united companion would take damage from a melee attack, it deals half your level in damage of the chosen type to the creature that made the ",
+          "prerequisites": [
+            {
+              "value": "Beast Lord Dedication"
+            },
+            {
+              "value": "you have a united companion with a specialization"
+            }
+          ],
+          "rules_count": 4,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    },
+    "20": {
+      "examples": [
+        {
+          "name": "You Can't Kill an Idea",
+          "level": 20,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>Those who would destroy you instead transform you into a powerful yet formless entity. If you would be killed while you have an @UUID[Compendium.pf2e.actionspf2e.Item.Ultimatum of Liberation] active, you (along with your equipment) become an ideaform.</p>\n<p>As an ideaform, you are @UUID[Compendium.pf2e.conditionitems.Item.Invisible] and incorporeal. You have only 1 Hit Point and can't gain more, but you are immune to all damage; if your @UUID[Compendium.pf2e.conditionitems.Item.Dying] or @UU",
+          "prerequisites": [
+            {
+              "value": "Broken Chain Dedication"
+            }
+          ],
+          "rules_count": 4,
+          "has_frequency": false
+        },
+        {
+          "name": "Immortal Ruin",
+          "level": 20,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>Your commitment to ending all life earns you a measure of immortality, setting the stage for you to become a true Rider of the Apocalypse, possibly supplanting one of the Four. You gain the daemon, fiend, and unholy traits, and so does your apocalypse mount, but your fates are ever more entwined. As long as your apocalypse mount lives, you don't age and whenever your @UUID[Compendium.pf2e.conditionitems.Item.Doomed] or @UUID[Compendium.pf2e.conditionitems.Item.Dying] condition would increase ",
+          "prerequisites": [
+            {
+              "value": "Apocalypse Rider Dedication"
+            }
+          ],
+          "rules_count": 1,
+          "has_frequency": false
+        },
+        {
+          "name": "Fiend Eternal",
+          "level": 20,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>Through all your machinations and accumulation of power, you have completed your apotheosis and become a true archfiend. You gain the fiend and unholy traits and are immune to your realm's damage type. You don't age. Your planned realm becomes a complete reality, forming within a section of Hell, the Outer Rifts, the Netherworld, its own fiendish demiplane, or some other planar space of your choosing. If you have the @UUID[Compendium.pf2e.feats-srd.Item.Seat of Power] feat, that seat of power",
+          "prerequisites": [
+            {
+              "value": "Archfiend Dedication"
+            }
+          ],
+          "rules_count": 4,
+          "has_frequency": false
+        },
+        {
+          "name": "Finish Their Story!",
+          "level": 20,
+          "category": "class",
+          "actionType": "action",
+          "actions": 2,
+          "traits": [
+            "mythic"
+          ],
+          "description": "<p>Though your tale is immortal, your foes aren't afforded such an advantage and mainly serve only to further your legend. When the time is right, you can shepherd a weaker opponent off this mortal coil. Spend a Mythic Point and make a Strike at mythic proficiency against an enemy. This Strike counts as two attacks for your multiple attack penalty and either kills or damages the target depending on their level, as noted below. After you make this Strike, the target becomes temporarily immune to ",
+          "prerequisites": [
+            {
+              "value": "Eternal Legend Dedication"
+            }
+          ],
+          "rules_count": 4,
+          "has_frequency": false
+        },
+        {
+          "name": "Icy Apotheosis",
+          "level": 20,
+          "category": "class",
+          "actionType": "passive",
+          "actions": null,
+          "traits": [
+            "archetype"
+          ],
+          "description": "<p>You are as much a creature of cold as whatever ancestry you were born to. You are immune to cold damage and gain the cold trait. You automatically succeed on saving throws against effects that have the cold trait.</p>",
+          "prerequisites": [],
+          "rules_count": 3,
+          "has_frequency": false
+        }
+      ],
+      "count": 5
+    }
+  }
+}

@@ -1,0 +1,672 @@
+<div class="ai-pf2e-assistant-container rule-element-config-app">
+  <div class="rule-config-container">
+    
+    <!-- 物品信息 -->
+    <div class="section item-info-section">
+      <h3><i class="fas fa-scroll"></i> 物品信息</h3>
+      <div class="item-info">
+        <div class="info-row">
+          <span class="label">名称:</span>
+          <span class="value">{{itemName}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">类型:</span>
+          <span class="value">{{itemType}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">等级:</span>
+          <span class="value">{{itemLevel}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 物品描述 -->
+    <div class="section description-section">
+      <h3><i class="fas fa-align-left"></i> 物品描述</h3>
+      <div class="description-content">
+        <pre>{{description}}</pre>
+      </div>
+    </div>
+
+    <!-- 人工介入要求 -->
+    <div class="section custom-requirements-section">
+      <h3><i class="fas fa-user-edit"></i> 自定义实现要求（可选）</h3>
+      <div class="requirements-hint">
+        <p>如果你对规则元素的实现有特定要求，请在此输入。AI将优先考虑你的要求来生成规则。</p>
+        <p class="hint-examples">
+          <strong>示例：</strong>
+          <br>• "使用FlatModifier为攻击检定添加+2加值，仅对龙类生物有效"
+          <br>• "添加1d6火焰伤害，每回合开始时检定豁免"
+          <br>• "提供30尺光照，并给予低光视觉感官"
+        </p>
+      </div>
+      <textarea 
+        id="custom-requirements" 
+        class="custom-requirements-input" 
+        placeholder="例如：使用FlatModifier添加+2环境加值到力量相关的检定；当装备在头部槽位时生效；需要使用predicate限制生效条件..."
+        rows="4">{{customRequirements}}</textarea>
+      <div class="generate-button-container">
+        <button class="generate-rules primary-button">
+          <i class="fas fa-wand-magic-sparkles"></i> 开始生成规则元素
+        </button>
+        <p class="generate-hint">填写自定义要求后（或留空使用自动分析），点击按钮开始生成</p>
+      </div>
+    </div>
+
+    <!-- 相似物品参考 -->
+    {{#if similarItems}}
+    {{#if similarItems.length}}
+    <div class="section similar-items-section">
+      <h3><i class="fas fa-search"></i> 参考示例（来自合集包）</h3>
+      <div class="similar-items-list">
+        {{#each similarItems}}
+        <div class="similar-item">
+          <div class="similar-item-header">
+            <span class="item-name">{{this.name}}</span>
+            <span class="pack-name">({{this.packName}})</span>
+            <button class="view-similar-rules" data-index="{{@index}}" title="查看规则">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div class="similar-item-desc">{{this.description}}</div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+    {{/if}}
+
+    <!-- 验证错误 -->
+    {{#if hasValidationErrors}}
+    <div class="section validation-errors-section">
+      <h3><i class="fas fa-exclamation-triangle"></i> 验证错误</h3>
+      <div class="validation-errors">
+        <p class="error-intro">应用规则元素时发现以下错误:</p>
+        <ul class="error-list">
+          {{#each validationErrors}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        <div class="error-actions">
+          {{#if isReviewing}}
+          <div class="reviewing-indicator">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>AI正在分析并修正错误...</span>
+          </div>
+          {{else}}
+          <button class="review-and-fix warning-button" title="让AI分析错误并自动修正">
+            <i class="fas fa-tools"></i> AI自动修正
+          </button>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- 生成的规则元素 -->
+    <div class="section rules-section">
+      <h3><i class="fas fa-wand-magic-sparkles"></i> 生成的规则元素</h3>
+      
+      {{#if isGenerating}}
+      <div class="generating-indicator">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>正在分析物品描述并生成规则元素...</span>
+      </div>
+      {{else}}
+        {{#if hasResult}}
+        <!-- 规则说明 -->
+        {{#if explanation}}
+        <div class="rules-explanation">
+          <h4>规则说明:</h4>
+          <p style="white-space: pre-wrap;">{{explanation}}</p>
+        </div>
+        {{/if}}
+
+        <!-- 规则JSON -->
+        <div class="rules-json">
+          <h4>规则配置 ({{generationResult.rules.length}}个规则元素):</h4>
+          <pre class="json-preview">{{rulesJson}}</pre>
+        </div>
+
+        <!-- 重新生成按钮 -->
+        <div class="regenerate-section">
+          <button class="regenerate-rules" title="重新生成规则元素">
+            <i class="fas fa-redo"></i> 重新生成
+          </button>
+        </div>
+        {{else}}
+        <div class="no-result">
+          <p><i class="fas fa-info-circle"></i> 请在上方填写自定义要求（可选），然后点击"开始生成规则元素"按钮</p>
+        </div>
+        {{/if}}
+      {{/if}}
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="section actions-section">
+      {{#if hasResult}}
+      <div class="action-buttons">
+        <button class="apply-rules primary-button" title="覆盖现有规则元素">
+          <i class="fas fa-check"></i> 应用（覆盖）
+        </button>
+        <button class="append-rules success-button" title="追加到现有规则元素后">
+          <i class="fas fa-plus"></i> 追加
+        </button>
+        <button class="cancel-button secondary-button">
+          <i class="fas fa-times"></i> 取消
+        </button>
+      </div>
+      <div class="action-hint">
+        <p><strong>应用（覆盖）:</strong> 删除物品现有的所有规则元素，使用新生成的规则</p>
+        <p><strong>追加:</strong> 保留物品现有的规则元素，将新规则添加到末尾</p>
+      </div>
+      {{else}}
+      <div class="action-buttons">
+        <button class="cancel-button secondary-button">
+          <i class="fas fa-times"></i> 关闭
+        </button>
+      </div>
+      {{/if}}
+    </div>
+
+  </div>
+</div>
+
+<style>
+.rule-element-config-app {
+  font-family: "Signika", sans-serif;
+}
+
+.rule-config-container {
+  padding: 10px;
+}
+
+.section {
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.section h3 {
+  margin: 0 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  color: #4b4a44;
+}
+
+.section h3 i {
+  margin-right: 8px;
+  color: #5a4a7c;
+}
+
+/* 物品信息 */
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-row {
+  display: flex;
+  gap: 10px;
+}
+
+.info-row .label {
+  font-weight: bold;
+  min-width: 60px;
+  color: #4b4a44;
+}
+
+.info-row .value {
+  color: #191813;
+}
+
+/* 描述区域 */
+.description-content {
+  max-height: 150px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 10px;
+  border-radius: 3px;
+}
+
+.description-content pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* 相似物品 */
+.similar-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.similar-item {
+  background: rgba(255, 255, 255, 0.3);
+  padding: 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.similar-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.similar-item-header .item-name {
+  font-weight: bold;
+  color: #191813;
+}
+
+.similar-item-header .pack-name {
+  color: #666;
+  font-size: 12px;
+}
+
+.similar-item-header .view-similar-rules {
+  margin-left: auto;
+  padding: 4px 8px;
+  background: #5a4a7c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.similar-item-header .view-similar-rules:hover {
+  background: #7c5a9c;
+}
+
+.similar-item-desc {
+  font-size: 12px;
+  color: #555;
+  font-style: italic;
+}
+
+/* 验证错误 */
+.validation-errors-section {
+  background: rgba(255, 200, 200, 0.1);
+  border-color: #d9534f;
+}
+
+.validation-errors-section h3 {
+  color: #d9534f;
+  border-bottom-color: rgba(217, 83, 79, 0.3);
+}
+
+.validation-errors-section h3 i {
+  color: #d9534f;
+}
+
+.validation-errors .error-intro {
+  margin: 0 0 10px 0;
+  font-weight: bold;
+  color: #c9302c;
+}
+
+.validation-errors .error-list {
+  margin: 0 0 15px 0;
+  padding-left: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+  padding: 10px 10px 10px 30px;
+}
+
+.validation-errors .error-list li {
+  margin: 5px 0;
+  color: #a94442;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.validation-errors .error-actions {
+  text-align: center;
+}
+
+.reviewing-indicator {
+  text-align: center;
+  padding: 15px;
+  color: #f0ad4e;
+}
+
+.reviewing-indicator i {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.reviewing-indicator span {
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.warning-button {
+  padding: 10px 20px;
+  background: #f0ad4e;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.warning-button:hover {
+  background: #ec971f;
+  box-shadow: 0 2px 8px rgba(240, 173, 78, 0.3);
+}
+
+.warning-button i {
+  margin-right: 5px;
+}
+
+/* 生成指示器 */
+.generating-indicator {
+  text-align: center;
+  padding: 30px;
+  color: #5a4a7c;
+}
+
+.generating-indicator i {
+  font-size: 32px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.generating-indicator span {
+  font-size: 14px;
+}
+
+/* 规则说明 */
+.rules-explanation {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: rgba(90, 74, 124, 0.1);
+  border-left: 4px solid #5a4a7c;
+  border-radius: 3px;
+}
+
+.rules-explanation h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #5a4a7c;
+}
+
+.rules-explanation p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 规则JSON */
+.rules-json h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #4b4a44;
+}
+
+.json-preview {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  padding: 15px;
+  border-radius: 5px;
+  max-height: 300px;
+  overflow: auto;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 重新生成区域 */
+.regenerate-section {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.regenerate-rules {
+  padding: 8px 16px;
+  background: #7c5a4a;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.regenerate-rules:hover {
+  background: #9c7a5a;
+}
+
+.regenerate-rules i {
+  margin-right: 5px;
+}
+
+/* 无结果 */
+.no-result {
+  text-align: center;
+  padding: 30px;
+}
+
+.no-result p {
+  margin-bottom: 15px;
+  color: #666;
+}
+
+.generate-rules {
+  padding: 10px 20px;
+  background: #5a4a7c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.generate-rules:hover {
+  background: #7c5a9c;
+}
+
+.generate-rules i {
+  margin-right: 8px;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.action-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.action-buttons button i {
+  margin-right: 5px;
+}
+
+.primary-button {
+  background: #5a4a7c;
+  color: white;
+}
+
+.primary-button:hover {
+  background: #7c5a9c;
+  box-shadow: 0 2px 8px rgba(90, 74, 124, 0.3);
+}
+
+.success-button {
+  background: #4a7c59;
+  color: white;
+}
+
+.success-button:hover {
+  background: #5a9c69;
+  box-shadow: 0 2px 8px rgba(74, 124, 89, 0.3);
+}
+
+.secondary-button {
+  background: #888;
+  color: white;
+}
+
+.secondary-button:hover {
+  background: #999;
+}
+
+.action-hint {
+  font-size: 12px;
+  color: #666;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.action-hint p {
+  margin: 5px 0;
+}
+
+.action-hint strong {
+  color: #191813;
+}
+
+/* 自定义要求区域 */
+.custom-requirements-section {
+  background: rgba(90, 150, 200, 0.05);
+  border-color: rgba(90, 150, 200, 0.3);
+}
+
+.custom-requirements-section h3 i {
+  color: #5a96c8;
+}
+
+.requirements-hint {
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #4b4a44;
+}
+
+.requirements-hint p {
+  margin: 5px 0;
+  line-height: 1.5;
+}
+
+.hint-examples {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+  border-left: 3px solid #5a96c8;
+  font-size: 12px;
+}
+
+.hint-examples strong {
+  color: #5a96c8;
+}
+
+.custom-requirements-input {
+  width: 100%;
+  padding: 10px;
+  font-family: "Signika", sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  border: 2px solid rgba(90, 150, 200, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #191813;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s;
+}
+
+.custom-requirements-input:focus {
+  outline: none;
+  border-color: #5a96c8;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.custom-requirements-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* 生成按钮容器 */
+.generate-button-container {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.generate-button-container .generate-rules {
+  padding: 12px 30px;
+  background: #5a4a7c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.generate-button-container .generate-rules:hover {
+  background: #7c5a9c;
+  box-shadow: 0 4px 8px rgba(90, 74, 124, 0.4);
+  transform: translateY(-1px);
+}
+
+.generate-button-container .generate-rules:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.generate-button-container .generate-rules i {
+  margin-right: 8px;
+}
+
+.generate-hint {
+  margin: 10px 0 0 0;
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+/* 无结果提示 */
+.no-result {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.no-result p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.no-result i {
+  margin-right: 8px;
+  color: #5a96c8;
+  font-size: 16px;
+}
+</style>
+

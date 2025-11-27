@@ -1,0 +1,83 @@
+<div class="tactical-preparation-sheet">
+    <header>
+        <h1>{{i18n.prepareHeader}}</h1>
+        <p class="hint">{{i18n.prepareInfo}}</p>
+    </header>
+
+    <div class="sheet-content">
+        <!-- 已准备区域 -->
+        <section class="prepared-section">
+            <h3>{{i18n.preparedSection}}</h3>
+            <ol class="action-list">
+                {{#each preparedActions}}
+                    <li class="action-item prepared" data-action-id="{{id}}">
+                        <div class="action-image">
+                            <img src="{{img}}" alt="{{name}}">
+                            {{#if actionGlyph}}
+                                <span class="action-glyph">{{actionGlyph}}</span>
+                            {{/if}}
+                        </div>
+                        <div class="action-info">
+                            <h4 class="action-name">{{name}}</h4>
+                            {{#if system.traits.value}}
+                                <div class="action-traits">
+                                    {{#each system.traits.value}}
+                                        <span class="tag">{{this}}</span>
+                                    {{/each}}
+                                </div>
+                            {{/if}}
+                        </div>
+                        <div class="action-controls">
+                            <button class="unprepare-action" type="button" title="{{../i18n.unprepare}}">
+                                <i class="fa-solid fa-minus-circle"></i>
+                            </button>
+                            <button class="delete-tactical-action" type="button" title="{{../i18n.deleteAction}}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </li>
+                {{else}}
+                    <li class="empty-message">{{i18n.emptyPrepared}}</li>
+                {{/each}}
+            </ol>
+        </section>
+
+        <!-- 可用动作区域 -->
+        <section class="available-section">
+            <h3>{{i18n.availableSection}}</h3>
+            <ol class="action-list">
+                {{#each availableActions}}
+                    <li class="action-item" data-action-id="{{id}}">
+                        <div class="action-image">
+                            <img src="{{img}}" alt="{{name}}">
+                            {{#if actionGlyph}}
+                                <span class="action-glyph">{{actionGlyph}}</span>
+                            {{/if}}
+                        </div>
+                        <div class="action-info">
+                            <h4 class="action-name">{{name}}</h4>
+                            {{#if system.traits.value}}
+                                <div class="action-traits">
+                                    {{#each system.traits.value}}
+                                        <span class="tag">{{this}}</span>
+                                    {{/each}}
+                                </div>
+                            {{/if}}
+                        </div>
+                        <div class="action-controls">
+                            <button class="prepare-action" type="button" title="{{../i18n.prepareAction}}">
+                                <i class="fa-solid fa-plus-circle"></i>
+                            </button>
+                            <button class="delete-tactical-action" type="button" title="{{../i18n.deleteAction}}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </li>
+                {{else}}
+                    <li class="empty-message">{{i18n.emptyAvailable}}</li>
+                {{/each}}
+            </ol>
+        </section>
+    </div>
+</div>
+

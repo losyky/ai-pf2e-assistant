@@ -1,0 +1,340 @@
+<div class="ai-pf2e-terminology-importer">
+  <h2 class="title">PF2e术语词典管理工具</h2>
+  
+  <div class="form-group">
+    <p class="notes">查看和管理PF2e系统术语的中英文对照表。</p>
+  </div>
+  
+  <div class="form-group terminology-stats">
+    <p>总术语数: <span class="term-count">0</span></p>
+  </div>
+  
+  <div class="terminology-search">
+    <input type="text" name="search-term" placeholder="搜索术语..." class="search-input">
+    <button type="button" class="toggle-sort" title="按字母排序 / 按时间排序">
+      <i class="fas fa-sort-alpha-down"></i>
+    </button>
+  </div>
+  
+  <div class="form-group terminology-display">
+    <div class="terminology-list-wrapper">
+      {{#if terminologyList.length}}
+      <table class="terminology-list">
+        <thead>
+          <tr>
+            <th>英文术语</th>
+            <th>中文翻译</th>
+          </tr>
+        </thead>
+        <tbody class="terminology-list">
+          <!-- 将动态填充术语列表 -->
+        </tbody>
+      </table>
+      {{else}}
+      <div class="empty-message">
+        <h3><i class="fas fa-lightbulb"></i>术语列表为空</h3>
+        <p>您的术语列表当前没有任何条目。您可以通过以下方式添加术语：</p>
+        <ol>
+          <li>点击下方的<strong>"<i class="fas fa-file-import"></i> 导入CSV"</strong>按钮上传已有术语表</li>
+          <li>在术语管理器中手动添加新术语</li>
+          <li>从其他兼容的模组加载术语</li>
+        </ol>
+        <p>CSV文件格式应为: <code>英文术语,中文翻译,类别(可选)</code></p>
+        <div class="flexrow">
+          <button type="button" class="import-csv"><i class="fas fa-file-import"></i> 导入CSV</button>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+  </div>
+  
+  <div class="form-group csv-import">
+    <label><i class="fas fa-file-csv"></i> 导入/导出术语表</label>
+    <div class="file-input-wrapper">
+      <input type="file" id="csv-file" name="csv-file" accept=".csv,.txt" title="选择CSV文件" />
+      <span class="file-name">未选择文件</span>
+    </div>
+    <div class="csv-options">
+      <label>
+        <input type="checkbox" name="overwrite" /> 覆盖已有术语
+      </label>
+      <div class="encoding-options">
+        <label for="file-encoding">编码: </label>
+        <select name="encoding" id="file-encoding" aria-label="选择文件编码格式">
+          <option value="auto" selected>自动检测</option>
+          <option value="UTF-8">UTF-8</option>
+          <option value="GBK">GBK/GB2312</option>
+          <option value="BIG5">BIG5</option>
+          <option value="UTF-16LE">UTF-16LE</option>
+          <option value="UTF-16BE">UTF-16BE</option>
+        </select>
+        <span class="tooltip" title="如果导入后出现乱码，请尝试更换编码格式" aria-label="编码帮助提示">
+          <i class="fas fa-question-circle"></i>
+        </span>
+      </div>
+    </div>
+    <div class="flexrow import-export-buttons">
+      <button type="button" class="import-csv-file" title="从CSV文件导入术语"><i class="fas fa-file-import"></i> 导入CSV</button>
+      <button type="button" class="export-csv" title="将术语表导出为CSV文件"><i class="fas fa-file-export"></i> 导出CSV</button>
+    </div>
+  </div>
+  
+  <div class="form-group buttons action-buttons">
+    <button type="button" name="clear-terminology" class="danger-button">
+      <i class="fas fa-trash"></i> 清空术语库
+    </button>
+    <button type="button" name="close" class="close-button">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+  </div>
+  
+  <style>
+    .ai-pf2e-terminology-importer {
+      padding: 10px;
+    }
+    
+    .title {
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .terminology-search {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+      margin-bottom: 15px;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      min-width: 0;
+    }
+    
+    .toggle-sort {
+      background: #4361ee;
+      color: white;
+      padding: 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .toggle-sort:hover {
+      background: #3651de;
+    }
+    
+    .toggle-sort i {
+      margin: 0;
+      line-height: 1;
+    }
+    
+    .terminology-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .terminology-table th, 
+    .terminology-table td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    
+    .terminology-table th {
+      background-color: #f5f5f5;
+    }
+    
+    .terminology-display {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .file-input-wrapper {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    
+    .csv-file-input {
+      flex: 1;
+    }
+    
+    .file-name {
+      margin-left: 10px;
+      color: #666;
+    }
+    
+    .csv-options {
+      margin: 12px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .checkbox {
+      display: flex;
+      align-items: center;
+    }
+    
+    .checkbox input {
+      margin-right: 5px;
+    }
+    
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
+    }
+    
+    .import-csv-file, .export-csv {
+      background: #4361ee;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    .import-csv {
+      background: #4361ee;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    .danger-button {
+      background: #e63946;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .close-button {
+      background: #adb5bd;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .primary-button:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+    }
+    
+    .import-csv-file:disabled, .export-csv:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+    }
+    
+    .empty-message {
+      text-align: left;
+      padding: 20px !important;
+      color: #444;
+      background-color: #f2f7ff;
+      border-radius: 6px;
+      border: 1px dashed #4361ee;
+      margin: 15px 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .empty-message p {
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+    
+    .empty-message ol {
+      text-align: left;
+      padding-left: 30px;
+      margin: 12px 0;
+    }
+    
+    .empty-message li {
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+    
+    .empty-message i.fas {
+      color: #4361ee;
+      margin-right: 8px;
+      font-size: 1.1em;
+    }
+    
+    .empty-message code {
+      background: #f0f0f0;
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+      color: #e63946;
+      border: 1px solid #ddd;
+      font-weight: bold;
+    }
+    
+    .encoding-options {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .encoding-options select {
+      padding: 3px 5px;
+      border-radius: 3px;
+      border: 1px solid #ddd;
+    }
+    
+    .tooltip {
+      cursor: help;
+      color: #4361ee;
+    }
+    
+    .example-tip {
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #666;
+    }
+    
+    .example-tip a {
+      color: #4361ee;
+      text-decoration: none;
+    }
+    
+    .example-tip a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</div> 
+

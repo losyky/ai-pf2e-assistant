@@ -1,0 +1,797 @@
+/* AI PF2e Assistant 样式 */
+
+/* 主应用容器 */
+.ai-pf2e-assistant-container {
+  padding: 1rem;
+  min-height: 400px;
+}
+
+/* 兼容旧的类名 */
+.ai-pf2e-assistant {
+  padding: 1rem;
+  min-height: 400px;
+}
+
+/* 表单元素 */
+.ai-pf2e-assistant-container .form-group,
+.ai-pf2e-assistant .form-group {
+  margin-bottom: 1rem;
+}
+
+.ai-pf2e-assistant-container label,
+.ai-pf2e-assistant label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.ai-pf2e-assistant-container .hint,
+.ai-pf2e-assistant .hint {
+  font-size: 0.85em;
+  color: #666;
+  margin: 0 0 0.5rem 0;
+}
+
+.ai-pf2e-assistant-container select,
+.ai-pf2e-assistant select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.ai-pf2e-assistant-container textarea,
+.ai-pf2e-assistant textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-height: 60px;
+  font-family: monospace;
+  resize: vertical;
+}
+
+.ai-pf2e-assistant-container textarea[name="result"],
+.ai-pf2e-assistant textarea[name="result"] {
+  min-height: 150px;
+  background-color: #f9f9f9;
+}
+
+/* 按钮样式 */
+.ai-pf2e-assistant-container button,
+.ai-pf2e-assistant button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.ai-pf2e-assistant-container button.generate,
+.ai-pf2e-assistant button.generate {
+  background-color: #4a7c59;
+  color: white;
+}
+
+.ai-pf2e-assistant-container button.generate:hover,
+.ai-pf2e-assistant button.generate:hover {
+  background-color: #3a6349;
+}
+
+.ai-pf2e-assistant-container button.copy-result,
+.ai-pf2e-assistant-container button.apply-changes,
+.ai-pf2e-assistant button.copy-result,
+.ai-pf2e-assistant button.apply-changes {
+  background-color: #5c80bc;
+  color: white;
+  margin-right: 0.5rem;
+}
+
+.ai-pf2e-assistant-container button.copy-result:hover,
+.ai-pf2e-assistant-container button.apply-changes:hover,
+.ai-pf2e-assistant button.copy-result:hover,
+.ai-pf2e-assistant button.apply-changes:hover {
+  background-color: #4c70ac;
+}
+
+.ai-pf2e-assistant-container button.apply-changes,
+.ai-pf2e-assistant button.apply-changes {
+  background-color: #4a7c59;
+}
+
+.ai-pf2e-assistant-container button.apply-changes:hover,
+.ai-pf2e-assistant button.apply-changes:hover {
+  background-color: #3a6349;
+}
+
+.ai-pf2e-assistant-container button:disabled,
+.ai-pf2e-assistant button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.ai-pf2e-assistant-container .buttons,
+.ai-pf2e-assistant .buttons {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* 标题栏AI助手按钮样式 */
+.ai-pf2e-button {
+  color: #4a7c59 !important;
+  background-color: rgba(74, 124, 89, 0.2) !important;
+  border: 1px solid #4a7c59 !important;
+  border-radius: 3px !important;
+  margin-right: 5px !important;
+  padding: 0 5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 22px !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  text-shadow: none !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.ai-pf2e-button:hover {
+  color: #ffffff !important;
+  background-color: #4a7c59 !important;
+  box-shadow: 0 0 5px rgba(74, 124, 89, 0.5) !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+.ai-pf2e-button i.fas.fa-robot {
+  margin-right: 4px;
+  font-size: 14px !important;
+}
+
+/* 标题栏规则元素配置按钮样式 */
+.ai-pf2e-rule-button {
+  color: #5a4a7c !important;
+  background-color: rgba(90, 74, 124, 0.2) !important;
+  border: 1px solid #5a4a7c !important;
+  border-radius: 3px !important;
+  margin-right: 5px !important;
+  padding: 0 5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 22px !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  text-shadow: none !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.ai-pf2e-rule-button:hover {
+  color: #ffffff !important;
+  background-color: #5a4a7c !important;
+  box-shadow: 0 0 5px rgba(90, 74, 124, 0.5) !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+.ai-pf2e-rule-button i.fas.fa-wand-magic-sparkles {
+  margin-right: 4px;
+  font-size: 14px !important;
+}
+
+/* 标题栏AI图标生成按钮样式 */
+.ai-pf2e-icon-button {
+  color: #7c5a4a !important;
+  background-color: rgba(124, 90, 74, 0.2) !important;
+  border: 1px solid #7c5a4a !important;
+  border-radius: 3px !important;
+  margin-right: 5px !important;
+  padding: 0 5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 22px !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  text-shadow: none !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.ai-pf2e-icon-button:hover {
+  color: #ffffff !important;
+  background-color: #7c5a4a !important;
+  box-shadow: 0 0 5px rgba(124, 90, 74, 0.5) !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+.ai-pf2e-icon-button i.fas.fa-image {
+  margin-right: 4px;
+  font-size: 14px !important;
+}
+
+/* 确保按钮在各种颜色主题下可见 */
+.window-app .window-header .ai-pf2e-button,
+.window-app .window-header .ai-pf2e-rule-button,
+.window-app .window-header .ai-pf2e-icon-button {
+  display: inline-flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* 当前文档信息样式 */
+.current-document-info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.current-document-info h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.current-document-info h3 i {
+  font-size: 1.2rem;
+}
+
+.document-details {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+
+.document-details p {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.document-details strong {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+/* 无文档警告样式 */
+.no-document-warning {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #856404;
+}
+
+.no-document-warning i {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.no-document-warning p {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 错误提示样式 */
+.error-hint {
+  color: #d9534f !important;
+  font-weight: 600;
+  margin-top: 0.5rem !important;
+}
+
+/* 复选框样式 */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.checkbox-label:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.checkbox-text {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.knowledge-help-icon {
+  color: #5c80bc;
+  font-size: 1rem;
+  cursor: help;
+  transition: color 0.2s;
+}
+
+.knowledge-help-icon:hover {
+  color: #4c70ac;
+}
+
+.knowledge-hint {
+  color: #5c80bc !important;
+  font-size: 0.9rem !important;
+  margin: 0.5rem 0 0 2rem !important;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.checkbox-label input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.checkbox-label:has(input[type="checkbox"]:disabled) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.checkbox-label:has(input[type="checkbox"]:disabled):hover {
+  background-color: transparent;
+}
+
+/* 添加文档修改预览的样式 */
+.modification-preview {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}
+
+.modification-reason {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.modification-reason h3 {
+  margin-top: 0;
+  color: #444;
+  font-size: 16px;
+}
+
+.modification-changes h3 {
+  margin-top: 0;
+  color: #444;
+  font-size: 16px;
+}
+
+.modification-changes ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.change-item {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.change-operation {
+  flex: 0 0 60px;
+  font-weight: bold;
+  color: #fff;
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-right: 8px;
+  text-align: center;
+}
+
+.operation-set .change-operation {
+  background-color: #4a90e2;
+}
+
+.operation-add .change-operation {
+  background-color: #5cb85c;
+}
+
+.operation-remove .change-operation {
+  background-color: #d9534f;
+}
+
+.change-path {
+  flex: 0 0 180px;
+  font-family: monospace;
+  color: #666;
+  padding: 2px 0;
+  margin-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.change-value {
+  flex: 1;
+  font-family: monospace;
+  font-size: 0.9em;
+  padding: 2px 5px;
+  background-color: #f5f5f5;
+  border-radius: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  word-break: break-all;
+}
+
+.changes-applied-marker {
+  color: #4caf50;
+  font-weight: bold;
+  background-color: #e8f5e9;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* 特性生成器样式 */
+.ai-pf2e-assistant-container.feature-generator-app .feature-generator-form {
+  padding: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f9f9f9;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-section h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .description {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 0;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-group {
+  margin-bottom: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .half-width {
+  flex: 1;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: #2c3e50;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-group textarea,
+.ai-pf2e-assistant-container.feature-generator-app .form-group input,
+.ai-pf2e-assistant-container.feature-generator-app .form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-family: inherit;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-group label input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .hint {
+  color: #666;
+  font-size: 0.85em;
+  margin-top: 0.25rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .level-info {
+  background: #e8f4fd;
+  border: 1px solid #bee5eb;
+  border-radius: 3px;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .balance-info {
+  background: #e8f4fd;
+  border: 1px solid #bee5eb;
+  border-radius: 3px;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .balance-info h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #0c5460;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .balance-info p {
+  margin: 0.25rem 0;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .form-actions {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .primary-button,
+.ai-pf2e-assistant-container.feature-generator-app .success-button,
+.ai-pf2e-assistant-container.feature-generator-app .info-button,
+.ai-pf2e-assistant-container.feature-generator-app .warning-button,
+.ai-pf2e-assistant-container.feature-generator-app .secondary-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0 0.25rem;
+  transition: all 0.2s;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .primary-button {
+  background: #007bff;
+  color: white;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .primary-button:hover {
+  background: #0056b3;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .success-button {
+  background: #28a745;
+  color: white;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .success-button:hover {
+  background: #1e7e34;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .info-button {
+  background: #17a2b8;
+  color: white;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .info-button:hover {
+  background: #117a8b;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .warning-button {
+  background: #ffc107;
+  color: #212529;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .warning-button:hover {
+  background: #e0a800;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .secondary-button {
+  background: #6c757d;
+  color: white;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .secondary-button:hover {
+  background: #545b62;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .result-section {
+  background: #f8f9fa;
+  border-color: #28a745;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .feature-preview {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .feature-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .feature-name {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .feature-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .feature-level {
+  background: #007bff;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .feature-category {
+  background: #6c757d;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .feature-description {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 3px;
+  padding: 0.75rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .feature-rules {
+  margin-top: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .rules-title {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .rule-item {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 3px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .json-preview {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 3px;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .json-content {
+  font-family: monospace;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .help-section {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .help-section summary {
+  cursor: pointer;
+  font-weight: bold;
+  color: #856404;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .help-content {
+  margin-top: 1rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .help-content h4 {
+  color: #856404;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .help-content ul,
+.ai-pf2e-assistant-container.feature-generator-app .help-content ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.ai-pf2e-assistant-container.feature-generator-app .help-content li {
+  margin: 0.25rem 0;
+}
+
+@media (max-width: 768px) {
+  .ai-pf2e-assistant-container.feature-generator-app .form-row {
+    flex-direction: column;
+  }
+  
+  .ai-pf2e-assistant-container.feature-generator-app .result-actions {
+    flex-direction: column;
+  }
+  
+  .ai-pf2e-assistant-container.feature-generator-app .result-actions button {
+    margin: 0.25rem 0;
+  }
+}
+
+/* 法术合成按钮 - 小图标样式，使用紫色魔法主题 */
+.spell-synthesis-button {
+  display: inline-block !important;
+  color: #7b68ee !important;  /* 中紫罗兰色，代表魔法 */
+  cursor: pointer !important;
+  font-size: 0.75rem !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  margin: 0 2px !important;
+  background: none !important;
+  border: none !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+  opacity: 0.85 !important;
+}
+
+.spell-synthesis-button:hover {
+  color: #9370db !important;  /* 悬停时更亮的紫色 */
+  opacity: 1 !important;
+  transform: scale(1.1) !important;
+  text-shadow: 0 0 4px rgba(123, 104, 238, 0.5) !important;
+}
+
+.spell-synthesis-button:active {
+  color: #6a5acd !important;
+  transform: scale(0.95) !important;
+}
+
+.spell-synthesis-button i {
+  font-size: 0.875rem !important;
+  margin: 0 !important;
+}
+
+/* 导入神龛系统样式 */
+@import url("shrine-synthesis.css");
+@import url("circular-synthesis.css"); 

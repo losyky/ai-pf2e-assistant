@@ -1,0 +1,110 @@
+<div class="shrine-point-manager">
+  <div class="shrine-point-header">
+    <h2><i class="fas fa-coins"></i> 神龛点数管理</h2>
+    <p class="description">管理角色的神龛合成点数。只有GM可以发放和管理点数。</p>
+  </div>
+
+  <div class="shrine-point-content">
+    <!-- 当前用户信息 -->
+    <div class="current-user-info">
+      <h3>当前状态</h3>
+      <div class="user-status">
+        <span class="user-role">{{#if isGM}}GM用户{{else}}玩家用户{{/if}}</span>
+        {{#unless isGM}}
+          {{#if selectedActor}}
+            <span class="actor-points">
+              角色 "{{selectedActor.name}}" 的神龛点数: 
+              <strong class="points-value">{{currentPoints}}</strong>
+            </span>
+          {{else}}
+            <span class="no-actor">未选择角色</span>
+          {{/if}}
+        {{/unless}}
+      </div>
+    </div>
+
+    {{#if isGM}}
+    <!-- GM专用功能 -->
+    <div class="gm-controls">
+      <h3>GM管理功能</h3>
+      
+      <!-- 单个角色点数管理 -->
+      <div class="single-actor-management">
+        <h4>单个角色管理</h4>
+        <div class="form-group">
+          <label for="target-actor">选择角色:</label>
+          <select id="target-actor" class="target-actor-select">
+            <option value="">-- 选择角色 --</option>
+            {{#each actors}}
+            <option value="{{this.id}}">{{this.name}} (当前: {{this.points}} 点)</option>
+            {{/each}}
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="point-amount">点数:</label>
+          <input type="number" id="point-amount" class="point-input" min="0" value="1" />
+        </div>
+        
+        <div class="button-group">
+          <button type="button" class="set-points-btn" data-action="set">
+            <i class="fas fa-edit"></i> 设置点数
+          </button>
+          <button type="button" class="add-points-btn" data-action="add">
+            <i class="fas fa-plus"></i> 增加点数
+          </button>
+        </div>
+      </div>
+
+      <!-- 批量管理 -->
+      <div class="batch-management">
+        <h4>批量管理</h4>
+        <div class="form-group">
+          <label for="batch-points">发放点数:</label>
+          <input type="number" id="batch-points" class="point-input" min="0" value="5" />
+        </div>
+        
+        <div class="button-group">
+          <button type="button" class="distribute-points-btn" data-action="distribute">
+            <i class="fas fa-gift"></i> 给所有玩家角色发放点数
+          </button>
+          <button type="button" class="reset-points-btn" data-action="reset">
+            <i class="fas fa-undo"></i> 重置所有角色点数
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 角色列表 -->
+    <div class="actor-list">
+      <h3>角色点数列表</h3>
+      <div class="actor-list-simple">
+        {{#each actors}}
+        <div class="actor-row">
+          <span class="actor-name">{{this.name}}</span>
+          <span class="actor-points">{{this.points}} 点</span>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{else}}
+    <!-- 玩家视图 -->
+    <div class="player-view">
+      <h3>神龛点数说明</h3>
+      <div class="info-box">
+        <p><i class="fas fa-info-circle"></i> 神龛点数用于进行神龛合成。每次合成消耗 1 点。</p>
+        <p><i class="fas fa-user-shield"></i> 点数由GM发放，请联系GM获取更多点数。</p>
+        {{#if selectedActor}}
+        <p><i class="fas fa-coins"></i> 您当前的神龛点数: <strong>{{currentPoints}}</strong></p>
+        {{/if}}
+      </div>
+    </div>
+    {{/if}}
+  </div>
+
+  <div class="shrine-point-footer">
+    <button type="button" class="close-btn">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+  </div>
+</div>

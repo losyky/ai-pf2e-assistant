@@ -1,0 +1,174 @@
+<div class="translation-progress-dialog">
+  <div class="dialog-header">
+    <h2>翻译进度 - {{documentName}}</h2>
+  </div>
+  
+  <div class="dialog-content">
+    <div class="progress-summary">
+      <div class="progress-bar-container">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{progressPercentage}}%"></div>
+        </div>
+        <div class="progress-text">{{currentProgress}} / {{totalPages}} ({{progressPercentage}}%)</div>
+      </div>
+    </div>
+    
+    <div class="pages-list">
+      <div class="list-header">
+        <span class="page-name">页面名称</span>
+        <span class="page-status">状态</span>
+      </div>
+      
+      {{#each pages}}
+      <div class="page-item {{#if (eq status "翻译完成")}}completed{{else if (eq status "翻译失败")}}error{{else if (eq status "正在翻译...")}}processing{{/if}}">
+        <span class="page-name">{{name}}</span>
+        <span class="page-status">{{status}}</span>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  
+  <div class="dialog-buttons">
+    <button type="button" class="close-button">关闭</button>
+  </div>
+</div>
+
+<style>
+.translation-progress-dialog {
+  font-family: Arial, sans-serif;
+}
+
+.dialog-header h2 {
+  margin: 0 0 15px 0;
+  color: #333;
+  text-align: center;
+}
+
+.progress-summary {
+  margin-bottom: 20px;
+}
+
+.progress-bar-container {
+  position: relative;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #45a049);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+}
+
+.pages-list {
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.list-header {
+  display: flex;
+  background-color: #f5f5f5;
+  padding: 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+}
+
+.list-header .page-name {
+  flex: 1;
+}
+
+.list-header .page-status {
+  width: 120px;
+  text-align: right;
+}
+
+.page-item {
+  display: flex;
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.page-item:hover {
+  background-color: #f9f9f9;
+}
+
+.page-item.completed {
+  background-color: #e8f5e8;
+}
+
+.page-item.error {
+  background-color: #ffe8e8;
+}
+
+.page-item.processing {
+  background-color: #e8f4ff;
+}
+
+.page-item .page-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-item .page-status {
+  width: 120px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.page-item.completed .page-status {
+  color: #4CAF50;
+}
+
+.page-item.error .page-status {
+  color: #f44336;
+}
+
+.page-item.processing .page-status {
+  color: #2196F3;
+}
+
+.dialog-buttons {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.close-button {
+  padding: 8px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background-color: #5a6268;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #ffe8e8;
+  border-radius: 4px;
+}
+</style>
+

@@ -1,0 +1,488 @@
+/* 三环动态槽位合成界面样式 */
+
+/* SVG容器 - 简化背景 */
+.synthesis-circle-svg {
+  width: 100%;
+  height: 100%;
+  max-width: 500px;
+  max-height: 500px;
+  background: radial-gradient(circle, rgba(26, 15, 10, 0.9) 0%, rgba(45, 27, 15, 0.7) 50%, rgba(61, 40, 22, 0.5) 100%);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 30px rgba(212, 175, 55, 0.3),
+    inset 0 0 50px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* 确保SVG内容显示在背景之上 */
+.synthesis-circle-svg > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* SVG祭坛背景样式 */
+.altar-base {
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+}
+
+.outer-decoration {
+  animation: rotate-decoration 30s linear infinite;
+}
+
+.inner-decoration {
+  animation: rotate-decoration -25s linear infinite;
+}
+
+@keyframes rotate-decoration {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 材料环 */
+.divinities-ring {
+  stroke: #FFD700;
+  stroke-width: 2;
+  stroke-opacity: 0.4;
+  fill: none;
+  transition: all 0.3s ease;
+}
+
+.offerings-ring {
+  stroke: #FF6B35;
+  stroke-width: 2;
+  stroke-opacity: 0.4;
+  fill: none;
+  transition: all 0.3s ease;
+}
+
+.fragments-ring {
+  stroke: #4ECDC4;
+  stroke-width: 2;
+  stroke-opacity: 0.4;
+  fill: none;
+  transition: all 0.3s ease;
+}
+
+/* 环标签 */
+.divinities-label,
+.offerings-label,
+.fragments-label {
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 
+    -2px -2px 2px rgba(0, 0, 0, 0.9),
+    2px -2px 2px rgba(0, 0, 0, 0.9),
+    -2px 2px 2px rgba(0, 0, 0, 0.9),
+    2px 2px 2px rgba(0, 0, 0, 0.9),
+    0 0 8px currentColor;
+  opacity: 0.95;
+  transition: opacity 0.3s ease;
+  /* SVG专用描边属性 */
+  stroke: rgba(0, 0, 0, 0.9);
+  stroke-width: 1.5px;
+  paint-order: stroke fill;
+}
+
+.divinities-label {
+  fill: #FFD700;
+}
+
+.offerings-label {
+  fill: #FF6B35;
+}
+
+.fragments-label {
+  fill: #4ECDC4;
+}
+
+/* 神龛中央区域 */
+.shrine-area {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+}
+
+.shrine-area:hover {
+  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8));
+  transform: scale(1.05);
+}
+
+.shrine-area.shrine-drag-hover {
+  stroke: #FFD700;
+  stroke-width: 5;
+  filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1));
+  animation: shrine-pulse 1s ease-in-out infinite alternate;
+}
+
+.shrine-placeholder-text {
+  font-family: 'Cinzel', serif;
+  text-shadow: 
+    -2px -2px 2px rgba(0, 0, 0, 0.95),
+    2px -2px 2px rgba(0, 0, 0, 0.95),
+    -2px 2px 2px rgba(0, 0, 0, 0.95),
+    2px 2px 2px rgba(0, 0, 0, 0.95),
+    0 0 10px rgba(212, 175, 55, 0.8);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  /* SVG专用描边属性 */
+  stroke: rgba(0, 0, 0, 0.95);
+  stroke-width: 2px;
+  paint-order: stroke fill;
+}
+
+/* 材料槽位 */
+.material-slot {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.material-slot:hover {
+  transform: scale(1.1);
+}
+
+.material-slot.drag-over {
+  animation: slot-pulse 0.5s ease-in-out infinite alternate;
+}
+
+.slot-circle {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+.material-slot:hover .slot-circle {
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+/* 材料图标 */
+.material-icon {
+  pointer-events: none;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.5));
+}
+
+.material-slot:hover .material-icon {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+}
+
+/* 材料文字 */
+.material-text {
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  pointer-events: none;
+  text-shadow: 
+    -2px -2px 2px rgba(0, 0, 0, 0.95),
+    2px -2px 2px rgba(0, 0, 0, 0.95),
+    -2px 2px 2px rgba(0, 0, 0, 0.95),
+    2px 2px 2px rgba(0, 0, 0, 0.95),
+    0 0 5px rgba(0, 0, 0, 0.8);
+  transition: all 0.3s ease;
+  /* SVG专用描边属性 */
+  stroke: rgba(0, 0, 0, 0.9);
+  stroke-width: 1px;
+  paint-order: stroke fill;
+}
+
+.material-slot:hover .material-text {
+  text-shadow: 0 0 5px currentColor;
+}
+
+/* 连接线基础样式 */
+.connection-line {
+  pointer-events: none;
+  transition: all 0.3s ease;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 已删除单材料和中心连接的样式 */
+
+/* 环形串联连接 - 垂直+弧形路径 */
+.connection-line[class*="ring-series"] {
+  animation: ring-series-flow 4s linear infinite;
+}
+
+/* 特定材料类型的槽位样式 */
+.divinities-slot .slot-circle {
+  stroke: #FFD700;
+}
+
+.divinities-slot .material-text {
+  fill: #FFD700;
+}
+
+.offerings-slot .slot-circle {
+  stroke: #FF6B35;
+}
+
+.offerings-slot .material-text {
+  fill: #FF6B35;
+}
+
+.fragments-slot .slot-circle {
+  stroke: #4ECDC4;
+}
+
+.fragments-slot .material-text {
+  fill: #4ECDC4;
+}
+
+/* 动画效果 */
+@keyframes shrine-pulse {
+  0% {
+    stroke-opacity: 0.6;
+    stroke-width: 3;
+  }
+  100% {
+    stroke-opacity: 1;
+    stroke-width: 6;
+  }
+}
+
+@keyframes slot-pulse {
+  0% {
+    stroke-opacity: 0.5;
+    stroke-width: 2;
+  }
+  100% {
+    stroke-opacity: 1;
+    stroke-width: 4;
+  }
+}
+
+@keyframes energy-flow {
+  0% {
+    stroke-opacity: 0.3;
+  }
+  50% {
+    stroke-opacity: 0.8;
+  }
+  100% {
+    stroke-opacity: 0.3;
+  }
+}
+
+@keyframes dash-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 10;
+  }
+}
+
+/* 已删除单材料和中心连接的动画 */
+
+/* 环形串联流动动画 */
+@keyframes ring-series-flow {
+  0% { 
+    stroke-dashoffset: 0; 
+    stroke-opacity: 0.5;
+    filter: drop-shadow(0 0 3px currentColor);
+  }
+  50% { 
+    stroke-opacity: 0.8;
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+  100% { 
+    stroke-dashoffset: 6; 
+    stroke-opacity: 0.5;
+    filter: drop-shadow(0 0 3px currentColor);
+  }
+}
+
+/* 星座脉冲动画 */
+@keyframes constellation-pulse {
+  0% { 
+    stroke-opacity: 0.4;
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+  50% { 
+    stroke-opacity: 0.8;
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+  100% { 
+    stroke-opacity: 0.4;
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+}
+
+/* 三角形流动动画 */
+@keyframes triangle-flow {
+  0% { 
+    stroke-dashoffset: 0; 
+    stroke-opacity: 0.5;
+  }
+  50% { 
+    stroke-opacity: 0.8;
+  }
+  100% { 
+    stroke-dashoffset: 6; 
+    stroke-opacity: 0.5;
+  }
+}
+
+/* 四边形流动动画 */
+@keyframes quad-flow {
+  0% { 
+    stroke-dashoffset: 0; 
+    stroke-opacity: 0.5;
+  }
+  25%, 75% { 
+    stroke-opacity: 0.7;
+  }
+  100% { 
+    stroke-dashoffset: 6; 
+    stroke-opacity: 0.5;
+  }
+}
+
+/* 对角线闪烁动画 */
+@keyframes diagonal-twinkle {
+  0%, 70%, 100% { 
+    stroke-opacity: 0.1; 
+  }
+  15%, 35% { 
+    stroke-opacity: 0.5; 
+    filter: drop-shadow(0 0 4px currentColor);
+  }
+}
+
+/* 环形流动动画 */
+@keyframes ring-flow {
+  0% { 
+    stroke-dashoffset: 0; 
+    stroke-opacity: 0.4;
+  }
+  50% { 
+    stroke-opacity: 0.6;
+  }
+  100% { 
+    stroke-dashoffset: 5; 
+    stroke-opacity: 0.4;
+  }
+}
+
+/* 星形闪烁动画 */
+@keyframes star-twinkle {
+  0%, 60%, 100% { 
+    stroke-opacity: 0.05; 
+  }
+  10%, 30% { 
+    stroke-opacity: 0.4; 
+    filter: drop-shadow(0 0 3px currentColor);
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .synthesis-circle-svg {
+    max-width: 400px;
+    max-height: 400px;
+  }
+  
+  .divinities-label,
+  .offerings-label,
+  .fragments-label {
+    font-size: 10px;
+  }
+  
+  .material-text {
+    font-size: 8px;
+  }
+  
+  .shrine-placeholder-text {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .synthesis-circle-svg {
+    max-width: 350px;
+    max-height: 350px;
+  }
+  
+  .divinities-label,
+  .offerings-label,
+  .fragments-label {
+    font-size: 8px;
+  }
+  
+  .material-text {
+    font-size: 7px;
+  }
+  
+  .shrine-placeholder-text {
+    font-size: 10px;
+  }
+}
+
+/* 活跃状态 */
+.synthesis-circle-svg.active {
+  box-shadow: 
+    0 0 40px rgba(212, 175, 55, 0.5),
+    inset 0 0 60px rgba(0, 0, 0, 0.3);
+}
+
+.synthesis-circle-svg.active .divinities-ring,
+.synthesis-circle-svg.active .offerings-ring,
+.synthesis-circle-svg.active .fragments-ring {
+  stroke-opacity: 0.8;
+  animation: ring-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes ring-glow {
+  0% {
+    stroke-opacity: 0.5;
+    stroke-width: 2;
+  }
+  100% {
+    stroke-opacity: 1;
+    stroke-width: 3;
+  }
+}
+
+/* 材料计数显示 */
+.material-count {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.divinities-count {
+  fill: #FFD700;
+}
+
+.offerings-count {
+  fill: #FF6B35;
+}
+
+.fragments-count {
+  fill: #4ECDC4;
+}
+
+/* 需求指示器 */
+.requirement-indicator {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: bold;
+  text-anchor: middle;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.requirement-met {
+  fill: #00FF00;
+}
+
+.requirement-partial {
+  fill: #FFA500;
+}
+
+.requirement-unmet {
+  fill: #FF0000;
+}

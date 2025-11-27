@@ -1,0 +1,103 @@
+<div class="ai-pf2e-assistant-container feat-generator-app">
+  <form class="feat-generator-form">
+    
+    <!-- 专长基本信息 -->
+    <div class="tab-panel">
+      <h3><i class="fas fa-star"></i> {{i18n.featInfo}}</h3>
+      
+      <div class="form-group">
+        <label for="feat-prompt">{{i18n.prompt}}</label>
+        <textarea id="feat-prompt" name="prompt" placeholder="{{i18n.promptPlaceholder}}" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="feat-level">{{i18n.level}}</label>
+        <select id="feat-level" name="level">
+          <option value="1" selected>{{i18n.levelPrefix}}1{{i18n.levelSuffix}}</option>
+          <option value="2">{{i18n.levelPrefix}}2{{i18n.levelSuffix}}</option>
+          <option value="3">{{i18n.levelPrefix}}3{{i18n.levelSuffix}}</option>
+          <option value="4">{{i18n.levelPrefix}}4{{i18n.levelSuffix}}</option>
+          <option value="5">{{i18n.levelPrefix}}5{{i18n.levelSuffix}}</option>
+          <option value="6">{{i18n.levelPrefix}}6{{i18n.levelSuffix}}</option>
+          <option value="7">{{i18n.levelPrefix}}7{{i18n.levelSuffix}}</option>
+          <option value="8">{{i18n.levelPrefix}}8{{i18n.levelSuffix}}</option>
+          <option value="9">{{i18n.levelPrefix}}9{{i18n.levelSuffix}}</option>
+          <option value="10">{{i18n.levelPrefix}}10{{i18n.levelSuffix}}</option>
+          <option value="11">{{i18n.levelPrefix}}11{{i18n.levelSuffix}}</option>
+          <option value="12">{{i18n.levelPrefix}}12{{i18n.levelSuffix}}</option>
+          <option value="13">{{i18n.levelPrefix}}13{{i18n.levelSuffix}}</option>
+          <option value="14">{{i18n.levelPrefix}}14{{i18n.levelSuffix}}</option>
+          <option value="15">{{i18n.levelPrefix}}15{{i18n.levelSuffix}}</option>
+          <option value="16">{{i18n.levelPrefix}}16{{i18n.levelSuffix}}</option>
+          <option value="17">{{i18n.levelPrefix}}17{{i18n.levelSuffix}}</option>
+          <option value="18">{{i18n.levelPrefix}}18{{i18n.levelSuffix}}</option>
+          <option value="19">{{i18n.levelPrefix}}19{{i18n.levelSuffix}}</option>
+          <option value="20">{{i18n.levelPrefix}}20{{i18n.levelSuffix}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="feat-category">{{i18n.category}}</label>
+        <select id="feat-category" name="category">
+          {{#each categories}}
+          <option value="{{value}}">{{label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-group class-name-group" style="display: none;">
+        <label for="class-name">{{i18n.className}}</label>
+        <input type="text" id="class-name" name="class-name" placeholder="{{i18n.classNamePlaceholder}}">
+      </div>
+
+    </div>
+
+    <!-- 生成设置 -->
+    <div class="tab-panel">
+      <h3><i class="fas fa-cogs"></i> {{i18n.settings}}</h3>
+      
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="enable-compendium-search" name="enable-compendium-search" checked>
+          {{i18n.enableCompendium}}
+        </label>
+      </div>
+      
+      <h4><i class="fas fa-balance-scale"></i> {{i18n.balanceGuidance}}</h4>
+      <div id="level-info" class="balance-info">
+        <!-- 等级相关的平衡指导信息 -->
+      </div>
+      <div id="category-info" class="balance-info">
+        <!-- 类别相关的信息 -->
+      </div>
+      
+      <div class="form-group">
+        <button type="submit" id="generate-feat">
+          <i class="fas fa-magic"></i> {{i18n.generate}}
+        </button>
+      </div>
+    </div>
+
+    <!-- 生成结果 -->
+    <div class="tab-panel">
+      <h3><i class="fas fa-scroll"></i> {{i18n.result}}</h3>
+      <div id="feat-output" class="feat-output">
+        <p class="placeholder">{{i18n.resultPlaceholder}}</p>
+      </div>
+      
+      <!-- 操作按钮 -->
+      <div class="form-group buttons" style="display: none;">
+        <button type="button" id="import-feat">
+          <i class="fas fa-download"></i> {{i18n.import}}
+        </button>
+        <button type="button" id="export-json">
+          <i class="fas fa-file-export"></i> {{i18n.exportJson}}
+        </button>
+        <button type="button" id="regenerate-feat">
+          <i class="fas fa-redo"></i> {{i18n.regenerate}}
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

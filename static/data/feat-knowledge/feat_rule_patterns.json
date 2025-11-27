@@ -1,0 +1,1107 @@
+{
+  "version": "1.0",
+  "description": "PF2e专长规则元素模式库",
+  "common_rule_types": {
+    "GrantItem": {
+      "frequency": 495,
+      "common_parameters": {
+        "uuid": [
+          "Compendium.pf2e.feats-srd.Item.Additional Lore",
+          "Compendium.pf2e.feats-srd.Item.Alchemical Crafting",
+          "{item|flags.pf2e.rulesSelections.feat}"
+        ],
+        "inMemoryOnly": [
+          "True"
+        ],
+        "reevaluateOnUpdate": [
+          "True"
+        ],
+        "flag": [
+          "verdantCoreDeviantClassification",
+          "blightSoulDeviantClassification",
+          "intimidatingGlare"
+        ],
+        "allowDuplicate": [
+          "False"
+        ],
+        "priority": [
+          "99"
+        ]
+      },
+      "example_count": 5
+    },
+    "ActiveEffectLike": {
+      "frequency": 656,
+      "common_parameters": {
+        "mode": [
+          "upgrade",
+          "add",
+          "override"
+        ],
+        "path": [
+          "flags.pf2e.wildShapeForms",
+          "system.skills.crafting.rank",
+          "system.attributes.familiarAbilities.value"
+        ],
+        "value": [
+          "1",
+          "2",
+          "@actor.system.proficiencies.attacks.unarmed.rank"
+        ],
+        "priority": [
+          "9",
+          "51",
+          "19"
+        ],
+        "phase": [
+          "beforeDerived",
+          "afterDerived"
+        ]
+      },
+      "example_count": 5
+    },
+    "FlatModifier": {
+      "frequency": 520,
+      "common_parameters": {
+        "selector": [
+          "saving-throw",
+          "ac",
+          "diplomacy"
+        ],
+        "type": [
+          "circumstance",
+          "status",
+          "item"
+        ],
+        "value": [
+          "1",
+          "2",
+          "4"
+        ],
+        "label": [
+          "PF2E.SpecificRule.Feat.BurnIt.Label",
+          "Different Worlds (second identity)",
+          "Hireling Manager (from your hireling)"
+        ],
+        "slug": [
+          "burn-it-spell",
+          "burn-it-persistent",
+          "intimidating-prowess"
+        ],
+        "hideIfDisabled": [
+          "True"
+        ],
+        "critical": [
+          "True"
+        ],
+        "damageCategory": [
+          "persistent",
+          "precision",
+          "splash"
+        ],
+        "damageType": [
+          "fire",
+          "bleed",
+          "mental"
+        ],
+        "fromEquipment": [
+          "False"
+        ],
+        "ability": [
+          "int"
+        ]
+      },
+      "example_count": 5
+    },
+    "ChoiceSet": {
+      "frequency": 229,
+      "common_parameters": {
+        "flag": [
+          "ikon",
+          "skill",
+          "feat"
+        ],
+        "prompt": [
+          "PF2E.SpecificRule.Exemplar.Ikon.Prompt",
+          "PF2E.SpecificRule.Prompt.LevelOneOrTwoClassFeat",
+          "PF2E.SpecificRule.Prompt.Skill"
+        ],
+        "adjustName": [
+          "False",
+          "True"
+        ],
+        "rollOption": [
+          "enhancement",
+          "enhancement:automaton-lore",
+          "enhancement:magical-resistance"
+        ],
+        "choices": [
+          "flags.pf2e.exemplar.ikons",
+          "flags.pf2e.automaton.enhancements.lesser",
+          "system.details.deities.domains"
+        ],
+        "actorFlag": [
+          "True"
+        ],
+        "priority": [
+          "1"
+        ],
+        "slug": [
+          "sanctification"
+        ],
+        "label": [
+          "PF2E.SpecificRule.HouseOfPerfection.Label"
+        ]
+      },
+      "example_count": 5
+    },
+    "Sense": {
+      "frequency": 33,
+      "common_parameters": {
+        "range": [
+          "30",
+          "20",
+          "60"
+        ],
+        "selector": [
+          "scent",
+          "darkvision",
+          "tremorsense"
+        ],
+        "acuity": [
+          "imprecise",
+          "precise"
+        ]
+      },
+      "example_count": 5
+    },
+    "AdjustDegreeOfSuccess": {
+      "frequency": 124,
+      "common_parameters": {
+        "selector": [
+          "saving-throw",
+          "skill-check",
+          "athletics"
+        ],
+        "type": [
+          "save",
+          "skill",
+          "saves"
+        ]
+      },
+      "example_count": 5
+    },
+    "Note": {
+      "frequency": 218,
+      "common_parameters": {
+        "selector": [
+          "strike-attack-roll",
+          "saving-throw",
+          "skill-check"
+        ],
+        "text": [
+          "{item|system.description.value}",
+          "{item|description}",
+          "When you roll a critical failure on a check to Escape, you get a failure instead, and when you roll a success, you get a critical success instead."
+        ],
+        "title": [
+          "{item|name}",
+          "PF2E.Check.Result.Degree.Check.failure",
+          "PF2E.Actor.Creature.CriticalSpecialization"
+        ]
+      },
+      "example_count": 5
+    },
+    "AdjustModifier": {
+      "frequency": 69,
+      "common_parameters": {
+        "mode": [
+          "add",
+          "upgrade",
+          "multiply"
+        ],
+        "selector": [
+          "ac",
+          "strike-damage",
+          "skill-check"
+        ],
+        "slug": [
+          "range-penalty",
+          "lifebloods-call",
+          "explorers-clothing"
+        ],
+        "value": [
+          "2",
+          "1",
+          "4"
+        ],
+        "suppress": [
+          "True"
+        ],
+        "maxApplications": [
+          "1"
+        ],
+        "relabel": [
+          "{item|name}",
+          "PF2E.SpecificRule.ScalyHide.BracersOfArmor",
+          "PF2E.SpecificRule.ScalyHide.ExplorersClothing"
+        ],
+        "priority": [
+          "41",
+          "99"
+        ],
+        "damageType": [
+          "{item|flags.pf2e.rulesSelections.evolutionDamage}"
+        ],
+        "type": [
+          "circumstance"
+        ]
+      },
+      "example_count": 5
+    },
+    "Resistance": {
+      "frequency": 101,
+      "common_parameters": {
+        "type": [
+          "custom",
+          "all-damage",
+          "physical"
+        ],
+        "value": [
+          "floor(@actor.level/2)",
+          "5",
+          "max(1,floor(@actor.level/2))"
+        ],
+        "label": [
+          "{item|name}",
+          "PF2E.IWR.Custom.CrystalHazards",
+          "PF2E.IWR.Custom.AllMagicalDamage"
+        ]
+      },
+      "example_count": 5
+    },
+    "ItemAlteration": {
+      "frequency": 824,
+      "common_parameters": {
+        "itemType": [
+          "spell",
+          "weapon",
+          "feat"
+        ],
+        "mode": [
+          "add",
+          "override",
+          "downgrade"
+        ],
+        "property": [
+          "other-tags",
+          "description",
+          "traits"
+        ],
+        "value": [
+          "ancestral-spell",
+          "chosen-ikon:{item|flags.pf2e.rulesSelections.ikon}",
+          "ancestral-spell:nephilim"
+        ],
+        "itemId": [
+          "{item|id}",
+          "xxxxxxFISTxxxxxx",
+          "{item|flags.pf2e.itemGrants.reinforcedChassis.id}"
+        ],
+        "priority": [
+          "121",
+          "119",
+          "151"
+        ],
+        "label": [
+          "PF2E.SpecificRule.Sorcerer.Bloodline.BloodMagicDescription.Title",
+          "PF2E.TraitUnstable",
+          "{item|name}"
+        ],
+        "placement": [
+          "spellcasting"
+        ],
+        "phase": [
+          "afterDerived"
+        ],
+        "selector": [
+          "{item|_id}"
+        ]
+      },
+      "example_count": 5
+    },
+    "RollOption": {
+      "frequency": 460,
+      "common_parameters": {
+        "domain": [
+          "all",
+          "damage",
+          "attack-roll"
+        ],
+        "option": [
+          "spellshape",
+          "spell-trickster",
+          "finisher"
+        ],
+        "toggleable": [
+          "True",
+          "totm"
+        ],
+        "label": [
+          "PF2E.TraitSpellshape",
+          "PF2E.SpecificRule.SpellTrickster.Label",
+          "PF2E.SpecificRule.Swashbuckler.Finisher.Label"
+        ],
+        "alwaysActive": [
+          "True"
+        ],
+        "phase": [
+          "beforeDerived",
+          "beforeRoll"
+        ],
+        "value": [
+          "True"
+        ],
+        "priority": [
+          "51",
+          "49",
+          "99"
+        ],
+        "mergeable": [
+          "True"
+        ],
+        "disabledValue": [
+          "False"
+        ],
+        "count": [
+          "True"
+        ],
+        "placement": [
+          "spellcasting"
+        ],
+        "mergeble": [
+          "True"
+        ]
+      },
+      "example_count": 5
+    },
+    "Immunity": {
+      "frequency": 6,
+      "common_parameters": {
+        "type": [
+          "unconscious",
+          "{actor|flags.pf2e.realmDamage}",
+          "cold"
+        ]
+      },
+      "example_count": 5
+    },
+    "ActorTraits": {
+      "frequency": 30,
+      "common_parameters": {},
+      "example_count": 5
+    },
+    "SubstituteRoll": {
+      "frequency": 6,
+      "common_parameters": {
+        "label": [
+          "PF2E.SpecificRule.SubstituteRoll.Assurance",
+          "PF2E.SpecificRule.Chronoskimmer.StabilizeLabel",
+          "PF2E.SpecificRule.Chronoskimmer.DestabilizeSuccessLabel"
+        ],
+        "selector": [
+          "initiative",
+          "{item|flags.pf2e.rulesSelections.assurance}",
+          "saving-throw"
+        ],
+        "slug": [
+          "assurance",
+          "assured-knowledge"
+        ],
+        "value": [
+          "10",
+          "20",
+          "19"
+        ],
+        "effectType": [
+          "fortune"
+        ],
+        "required": [
+          "True"
+        ]
+      },
+      "example_count": 5
+    },
+    "BaseSpeed": {
+      "frequency": 107,
+      "common_parameters": {
+        "selector": [
+          "fly",
+          "swim",
+          "climb"
+        ],
+        "value": [
+          "15",
+          "@actor.attributes.speed.total",
+          "10"
+        ]
+      },
+      "example_count": 5
+    },
+    "MartialProficiency": {
+      "frequency": 69,
+      "common_parameters": {
+        "label": [
+          "PF2E.SpecificRule.MartialProficiency.AdvancedGroup.firearm",
+          "PF2E.SpecificRule.MartialProficiency.AdvancedOrcWeapons",
+          "PF2E.SpecificRule.MartialProficiency.MartialAthamaruWeapons"
+        ],
+        "sameAs": [
+          "simple",
+          "martial",
+          "unarmed"
+        ],
+        "slug": [
+          "martial-dwarf-weapons",
+          "advanced-firearms",
+          "advanced-orc-weapons"
+        ],
+        "maxRank": [
+          "master"
+        ]
+      },
+      "example_count": 5
+    },
+    "CriticalSpecialization": {
+      "frequency": 44,
+      "common_parameters": {
+        "alternate": [
+          "True"
+        ]
+      },
+      "example_count": 5
+    },
+    "Strike": {
+      "frequency": 114,
+      "common_parameters": {
+        "baseType": [
+          "claw",
+          "jaws",
+          "fist"
+        ],
+        "category": [
+          "unarmed"
+        ],
+        "group": [
+          "brawling",
+          "sling",
+          "knife"
+        ],
+        "img": [
+          "systems/pf2e/icons/unarmed-attacks/fist.webp",
+          "icons/commodities/claws/claw-bear-brown-grey.webp",
+          "systems/pf2e/icons/unarmed-attacks/jaws.webp"
+        ],
+        "label": [
+          "PF2E.BattleForm.Attack.Claw",
+          "PF2E.BattleForm.Attack.Jaws",
+          "PF2E.BattleForm.Attack.ElementalCurrent"
+        ],
+        "slug": [
+          "sprites-spark",
+          "jaws",
+          "claw"
+        ],
+        "fist": [
+          "True"
+        ]
+      },
+      "example_count": 5
+    },
+    "DamageDice": {
+      "frequency": 120,
+      "common_parameters": {
+        "selector": [
+          "strike-damage",
+          "spell-damage",
+          "melee-strike-damage"
+        ],
+        "damageType": [
+          "bleed",
+          "void",
+          "poison"
+        ],
+        "diceNumber": [
+          "1",
+          "2",
+          "3"
+        ],
+        "dieSize": [
+          "d6",
+          "d4",
+          "d8"
+        ],
+        "category": [
+          "persistent",
+          "precision",
+          "splash"
+        ],
+        "critical": [
+          "True",
+          "False"
+        ],
+        "hideIfDisabled": [
+          "True"
+        ],
+        "label": [
+          "PF2E.SpecificRule.Exemplar.EternityIncineratingBlaze.Label"
+        ],
+        "slug": [
+          "megaton-strike"
+        ]
+      },
+      "example_count": 5
+    },
+    "CreatureSize": {
+      "frequency": 9,
+      "common_parameters": {
+        "resizeEquipment": [
+          "True"
+        ],
+        "value": [
+          "large",
+          "small"
+        ]
+      },
+      "example_count": 5
+    },
+    "DamageAlteration": {
+      "frequency": 36,
+      "common_parameters": {
+        "mode": [
+          "override",
+          "upgrade",
+          "add"
+        ],
+        "property": [
+          "damage-type",
+          "dice-number",
+          "dice-faces"
+        ],
+        "value": [
+          "spirit",
+          "mental",
+          "1"
+        ],
+        "priority": [
+          "150"
+        ],
+        "slug": [
+          "base",
+          "strategic-strike",
+          "megaton-strike"
+        ]
+      },
+      "example_count": 5
+    },
+    "TokenLight": {
+      "frequency": 5,
+      "common_parameters": {},
+      "example_count": 5
+    },
+    "AdjustStrike": {
+      "frequency": 41,
+      "common_parameters": {
+        "mode": [
+          "add",
+          "upgrade",
+          "multiply"
+        ],
+        "property": [
+          "traits",
+          "materials",
+          "property-runes"
+        ],
+        "value": [
+          "ghost-touch",
+          "magical",
+          "10"
+        ],
+        "selector": [
+          "strike-damage"
+        ],
+        "priority": [
+          "150"
+        ]
+      },
+      "example_count": 5
+    },
+    "EphemeralEffect": {
+      "frequency": 11,
+      "common_parameters": {
+        "affects": [
+          "origin"
+        ],
+        "uuid": [
+          "Compendium.pf2e.conditionitems.Item.Off-Guard",
+          "Compendium.pf2e.feat-effects.Item.Effect: Cringe",
+          "Compendium.pf2e.feat-effects.Item.Effect: Uncanny Bombs"
+        ],
+        "selectors": [
+          "strike-attack-roll",
+          "alchemical-bomb-base-attack-roll"
+        ]
+      },
+      "example_count": 5
+    },
+    "CraftingAbility": {
+      "frequency": 18,
+      "common_parameters": {
+        "isPrepared": [
+          "True"
+        ],
+        "maxSlots": [
+          "4",
+          "max(4,2*@actor.system.skills.crafting.rank)",
+          "2"
+        ],
+        "slug": [
+          "advanced-alchemy",
+          "quick-alchemy",
+          "snare-genius"
+        ],
+        "isDailyPrep": [
+          "True"
+        ],
+        "label": [
+          "PF2E.SpecificRule.Alchemist.AdvancedAlchemy",
+          "PF2E.SpecificRule.DedicationCraftingEntry.Snarecrafter",
+          "PF2E.SpecificRule.DedicationCraftingEntry.TalismanDabbler"
+        ],
+        "maxItemLevel": [
+          "floor(@actor.level / 2)"
+        ]
+      },
+      "example_count": 5
+    },
+    "Aura": {
+      "frequency": 19,
+      "common_parameters": {
+        "radius": [
+          "@actor.flags.pf2e.champion.aura",
+          "30",
+          "15"
+        ],
+        "slug": [
+          "champions-aura",
+          "overwatch-field",
+          "ascended-celestial-nimbus"
+        ]
+      },
+      "example_count": 5
+    },
+    "Weakness": {
+      "frequency": 9,
+      "common_parameters": {
+        "type": [
+          "cold-iron",
+          "holy",
+          "fire"
+        ],
+        "value": [
+          "2",
+          "5",
+          "floor(@actor.level/2)"
+        ]
+      },
+      "example_count": 5
+    },
+    "DexterityModifierCap": {
+      "frequency": 5,
+      "common_parameters": {
+        "value": [
+          "3",
+          "2",
+          "1"
+        ]
+      },
+      "example_count": 5
+    },
+    "SpecialResource": {
+      "frequency": 4,
+      "common_parameters": {
+        "itemUUID": [
+          "Compendium.pf2e.equipment-srd.Item.Versatile Vial"
+        ],
+        "label": [
+          "PF2E.SpecificRule.Alchemist.VersatileVials"
+        ],
+        "level": [
+          "ternary(gte(@actor.level, 18), 18, ternary(gte(@actor.level, 12), 12, ternary(gte(@actor.level, 4), 4, 1)))"
+        ],
+        "max": [
+          "4"
+        ],
+        "slug": [
+          "versatile-vials"
+        ]
+      },
+      "example_count": 4
+    },
+    "RollTwice": {
+      "frequency": 5,
+      "common_parameters": {
+        "keep": [
+          "higher"
+        ],
+        "selector": [
+          "strike-attack-roll",
+          "will",
+          "perception"
+        ],
+        "removeAfterRoll": [
+          "False"
+        ]
+      },
+      "example_count": 5
+    },
+    "FastHealing": {
+      "frequency": 4,
+      "common_parameters": {
+        "type": [
+          "fast-healing"
+        ],
+        "value": [
+          "5",
+          "20"
+        ]
+      },
+      "example_count": 4
+    },
+    "MultipleAttackPenalty": {
+      "frequency": 3,
+      "common_parameters": {
+        "selector": [
+          "attack"
+        ],
+        "value": [
+          "-3",
+          "-4"
+        ]
+      },
+      "example_count": 3
+    }
+  },
+  "mechanic_combinations": [
+    {
+      "combination_id": "combo_033",
+      "rule_types": [
+        "ItemAlteration",
+        "ItemAlteration"
+      ],
+      "frequency": 178,
+      "level_range": [
+        1,
+        17
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_008",
+      "rule_types": [
+        "FlatModifier"
+      ],
+      "frequency": 158,
+      "level_range": [
+        1,
+        20
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_000",
+      "rule_types": [
+        "GrantItem"
+      ],
+      "frequency": 146,
+      "level_range": [
+        0,
+        20
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_111",
+      "rule_types": [
+        "ItemAlteration",
+        "RollOption"
+      ],
+      "frequency": 109,
+      "level_range": [
+        1,
+        20
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_007",
+      "rule_types": [
+        "ActiveEffectLike"
+      ],
+      "frequency": 108,
+      "level_range": [
+        1,
+        16
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_018",
+      "rule_types": [
+        "ItemAlteration"
+      ],
+      "frequency": 78,
+      "level_range": [
+        1,
+        20
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_012",
+      "rule_types": [
+        "FlatModifier",
+        "RollOption"
+      ],
+      "frequency": 63,
+      "level_range": [
+        1,
+        20
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_016",
+      "rule_types": [
+        "Note"
+      ],
+      "frequency": 61,
+      "level_range": [
+        1,
+        18
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_025",
+      "rule_types": [
+        "ActiveEffectLike",
+        "GrantItem"
+      ],
+      "frequency": 43,
+      "level_range": [
+        1,
+        10
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_053",
+      "rule_types": [
+        "BaseSpeed"
+      ],
+      "frequency": 43,
+      "level_range": [
+        1,
+        20
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_003",
+      "rule_types": [
+        "ChoiceSet",
+        "GrantItem"
+      ],
+      "frequency": 40,
+      "level_range": [
+        1,
+        18
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_021",
+      "rule_types": [
+        "ActiveEffectLike",
+        "ActiveEffectLike"
+      ],
+      "frequency": 35,
+      "level_range": [
+        1,
+        12
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_036",
+      "rule_types": [
+        "ActiveEffectLike",
+        "ActiveEffectLike",
+        "GrantItem"
+      ],
+      "frequency": 32,
+      "level_range": [
+        1,
+        8
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_087",
+      "rule_types": [
+        "DamageDice",
+        "RollOption"
+      ],
+      "frequency": 23,
+      "level_range": [
+        1,
+        16
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_022",
+      "rule_types": [
+        "AdjustDegreeOfSuccess"
+      ],
+      "frequency": 21,
+      "level_range": [
+        0,
+        18
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_001",
+      "rule_types": [
+        "ActiveEffectLike",
+        "FlatModifier"
+      ],
+      "frequency": 20,
+      "level_range": [
+        1,
+        12
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_099",
+      "rule_types": [
+        "GrantItem",
+        "GrantItem"
+      ],
+      "frequency": 20,
+      "level_range": [
+        1,
+        13
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_063",
+      "rule_types": [
+        "DamageDice"
+      ],
+      "frequency": 19,
+      "level_range": [
+        1,
+        16
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_083",
+      "rule_types": [
+        "FlatModifier",
+        "FlatModifier"
+      ],
+      "frequency": 18,
+      "level_range": [
+        1,
+        18
+      ],
+      "example_count": 3
+    },
+    {
+      "combination_id": "combo_117",
+      "rule_types": [
+        "ActiveEffectLike",
+        "ChoiceSet",
+        "GrantItem"
+      ],
+      "frequency": 18,
+      "level_range": [
+        1,
+        12
+      ],
+      "example_count": 3
+    }
+  ],
+  "usage_guidelines": {
+    "FlatModifier": {
+      "description": "添加固定数值修正（加值或减值）",
+      "common_selectors": [
+        "hp",
+        "ac",
+        "attack",
+        "damage",
+        "perception",
+        "skill"
+      ],
+      "example": {
+        "key": "FlatModifier",
+        "selector": "ac",
+        "value": 2,
+        "type": "circumstance"
+      }
+    },
+    "DamageDice": {
+      "description": "添加额外伤害骰",
+      "common_selectors": [
+        "strike-damage",
+        "spell-damage"
+      ],
+      "example": {
+        "key": "DamageDice",
+        "selector": "strike-damage",
+        "diceNumber": 1,
+        "dieSize": "d6",
+        "damageType": "fire"
+      }
+    },
+    "RollOption": {
+      "description": "添加可选的规则选项或标记",
+      "example": {
+        "key": "RollOption",
+        "domain": "all",
+        "option": "special-ability-active"
+      }
+    },
+    "Note": {
+      "description": "添加提示文本，不影响机制",
+      "example": {
+        "key": "Note",
+        "selector": "attack",
+        "text": "You gain special benefit when conditions are met"
+      }
+    }
+  },
+  "best_practices": [
+    "优先使用PF2e系统的标准规则元素",
+    "复杂效果应拆分为多个简单规则",
+    "使用predicate字段添加条件判断",
+    "避免过度依赖Note，尽量用机制化规则",
+    "测试规则元素的组合兼容性"
+  ]
+}

@@ -1,0 +1,4702 @@
+{
+  "alchemist": {
+    "class_name": "alchemist",
+    "basic_info": {
+      "name": "Alchemist",
+      "description": "There's no sight more beautiful to you than a strange brew bubbling in a beaker, and you consume your ingenious elixirs with abandon. You're fascinated by uncovering the secrets of science and the natural world, and you're constantly experimenting in your lab or on the go with inventive concoctions for every eventuality. You are fearless in the face of risk, hurling explosive or toxic creations at your foes. Your unique path toward greatness is lined with alchemical brews that push your mind and body to their limits. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.Om4e4tsgNWrComie]{Alchemist}",
+      "key_ability": [
+        "int"
+      ],
+      "hp": 8,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 1
+      }
+    },
+    "key_mechanics": [
+      "Abundant Vials: You're permanently @UUID[Compendium.pf2e.conditionitems.Item.Quickened], and can use the extra action only to use @UUID[Compendium.pf2e.actionspf2e.Item.Quick Alchemy] to create a quick vial. You can ...",
+      "Advanced Alchemy: During your daily preparations, you spend some time to create alchemical items that can be used over the course of the day. You don't need to attempt a Crafting check to do this, you can use an alchem...",
+      "Advanced Vials (Bomber): You can mix special ingredients into your vials, such as magical dust or flakes of precious minerals. When you create a versatile vial, you can choose to have it treated as one special material of you...",
+      "Advanced Vials (Chirurgeon): When you use a field vial to heal a creature that has half its maximum Hit Points or fewer, the coagulant trait doesn't apply to that healing....",
+      "Advanced Vials (Mutagenist): When you drink one of your field vials, you also gain resistance to physical damage for the same duration. The resistance is equal to half your level....",
+      "Advanced Vials: Your experience helps you improve your field vials with a benefit particular to your research field....",
+      "Alchemical Alacrity: Your comfort in concocting items is such that you can create three at a time. When using the @UUID[Compendium.pf2e.actionspf2e.Item.Quick Alchemy] action, you can spend up to three batches of infused ...",
+      "Alchemical Expertise: Constant practice has increased the effectiveness of your concoctions. Your proficiency rank for your alchemist class DC increases to expert. In addition, when you gather reagents during exploration m...",
+      "Alchemical Mastery: Your concoctions are incredibly effective. Your proficiency rank for your alchemist class DC increases to master....",
+      "Alchemical Weapon Expertise: You've trained to more effectively wield the weapons you find in your lab. Your proficiency ranks for simple weapons, alchemical bombs, and unarmed attacks increase to expert...."
+    ],
+    "common_traits": [
+      {
+        "trait": "additive",
+        "count": 13
+      },
+      {
+        "trait": "additive2",
+        "count": 4
+      },
+      {
+        "trait": "manipulate",
+        "count": 4
+      },
+      {
+        "trait": "healing",
+        "count": 2
+      },
+      {
+        "trait": "concentrate",
+        "count": 2
+      },
+      {
+        "trait": "exploration",
+        "count": 1
+      },
+      {
+        "trait": "olfactory",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 53,
+      "free": 5,
+      "action": 6,
+      "reaction": 1
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "Note",
+        "count": 13
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 7
+      },
+      {
+        "rule_type": "AdjustModifier",
+        "count": 6
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 4
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 4
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 3
+      },
+      {
+        "rule_type": "AdjustStrike",
+        "count": 2
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 1
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 1
+      },
+      {
+        "rule_type": "Resistance",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "damage",
+        "count": 20
+      },
+      {
+        "keyword": "stance",
+        "count": 20
+      },
+      {
+        "keyword": "action",
+        "count": 14
+      },
+      {
+        "keyword": "poison",
+        "count": 12
+      },
+      {
+        "keyword": "heal",
+        "count": 11
+      },
+      {
+        "keyword": "critical",
+        "count": 9
+      },
+      {
+        "keyword": "ki",
+        "count": 8
+      },
+      {
+        "keyword": "bonus",
+        "count": 8
+      },
+      {
+        "keyword": "strike",
+        "count": 7
+      },
+      {
+        "keyword": "fire",
+        "count": 5
+      },
+      {
+        "keyword": "resistance",
+        "count": 5
+      },
+      {
+        "keyword": "attack",
+        "count": 4
+      },
+      {
+        "keyword": "penalty",
+        "count": 4
+      },
+      {
+        "keyword": "weapon",
+        "count": 4
+      },
+      {
+        "keyword": "move",
+        "count": 3
+      },
+      {
+        "keyword": "reaction",
+        "count": 2
+      },
+      {
+        "keyword": "stunned",
+        "count": 2
+      },
+      {
+        "keyword": "fly",
+        "count": 2
+      },
+      {
+        "keyword": "acid",
+        "count": 2
+      },
+      {
+        "keyword": "concealed",
+        "count": 2
+      }
+    ]
+  },
+  "animist": {
+    "class_name": "animist",
+    "basic_info": {
+      "name": "Animist",
+      "description": "You are the interlocutor between the seen and unseen, the voice that connects the mortal and the spiritual. You bond with spirits, manifesting their distinct magic and allowing their knowledge to flow through you. You may favor apparitions that grant you healing magic, others that grant you spells of destructive power, or pick and choose between different apparitions as your environment and circumstances demand. You may consider your powers part of a sacred trust or see your unique abilities as a sign that you've been chosen as a champion of two worlds. Whether you advocate for mortals in the planes beyond or whether you represent the spirits' interests, you provide the bridge between realms. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.ThFPVuxGiZ2Asgyr]{Animist}",
+      "key_ability": [
+        "wis"
+      ],
+      "hp": 8,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Animist & Apparition Spellcasting: Your role as a spiritual medium connecting the mortal Universe to the realms beyond lets you cast your magic in two distinct ways: you both learn and prepare spells from the divine tradition yourself,...",
+      "Animistic Practice: At 1st level, you choose an animistic practice that influences the way your power grows and develops, and you gain its first invocation. At 9th level, you gain its second invocation, and at 17th, you ...",
+      "Apparition Attunement: Animists have a gift for divine magic that allows them to serve as conduits or bridges for otherworldly spiritual entities known collectively as apparitions; through them, these entities can commune a...",
+      "Crafter in the Vault: Crafters in the vault are found in dungeons, forges, or other places where creation and injury occur concurrently. They enjoy partnering with animists who compliment them on their creations, but often...",
+      "Custodian of Groves and Gardens: Custodians of groves and gardens frequent tended greenery and farmlands cared for by loving stewards, and other places of reflection and restoration where green things grow. Some of these apparitions ...",
+      "Echo of Lost Moments: Echoes of lost moments are apparitions born from memories that everyone has forgotten, often arising from fragmented pieces of magic and memory left behind by time-altering magic. They may even occur ...",
+      "Expert Protections: The spiritual entities that protect you warn you of harm before it would occur, giving you more time to react, and help bear the burden of your armor when it is necessary. Your proficiency rank for li...",
+      "Expert Spellcaster: Animist The magic of the spirits flows freely through you. Your proficiency ranks for spell attack modifier and spell DC increase to expert. Bard Your magical techniques grow stronger. Your proficienc...",
+      "Fortitude Expertise: Animist Spiritual energy reinforces your body, making you more resilient. Your proficiency rank for Fortitude saves increases to expert. Bard, Investigator, Swashbuckler Your physique has grown hardy ...",
+      "Fourth Apparition: You're truly loved by the spirits, with apparitions flocking to you from far and wide. When you attune to apparitions during your daily preparations, you choose four apparitions to attune to, with one..."
+    ],
+    "common_traits": [
+      {
+        "trait": "apparition",
+        "count": 25
+      },
+      {
+        "trait": "wandering",
+        "count": 12
+      },
+      {
+        "trait": "divine",
+        "count": 12
+      },
+      {
+        "trait": "concentrate",
+        "count": 5
+      },
+      {
+        "trait": "spellshape",
+        "count": 4
+      },
+      {
+        "trait": "stance",
+        "count": 4
+      },
+      {
+        "trait": "misfortune",
+        "count": 3
+      },
+      {
+        "trait": "aura",
+        "count": 2
+      },
+      {
+        "trait": "spirit",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "reaction": 4,
+      "passive": 14,
+      "free": 5,
+      "action": 13
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 3
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 3
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 2
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 1
+      },
+      {
+        "rule_type": "DamageAlteration",
+        "count": 1
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 19
+      },
+      {
+        "keyword": "cast",
+        "count": 15
+      },
+      {
+        "keyword": "action",
+        "count": 13
+      },
+      {
+        "keyword": "stance",
+        "count": 13
+      },
+      {
+        "keyword": "ki",
+        "count": 11
+      },
+      {
+        "keyword": "damage",
+        "count": 10
+      },
+      {
+        "keyword": "bonus",
+        "count": 10
+      },
+      {
+        "keyword": "attack",
+        "count": 8
+      },
+      {
+        "keyword": "heal",
+        "count": 5
+      },
+      {
+        "keyword": "move",
+        "count": 4
+      },
+      {
+        "keyword": "resistance",
+        "count": 4
+      },
+      {
+        "keyword": "focus",
+        "count": 4
+      },
+      {
+        "keyword": "divine",
+        "count": 3
+      },
+      {
+        "keyword": "concealed",
+        "count": 2
+      },
+      {
+        "keyword": "reaction",
+        "count": 2
+      },
+      {
+        "keyword": "unarmed",
+        "count": 2
+      },
+      {
+        "keyword": "critical",
+        "count": 2
+      },
+      {
+        "keyword": "fly",
+        "count": 2
+      },
+      {
+        "keyword": "strike",
+        "count": 2
+      },
+      {
+        "keyword": "weapon",
+        "count": 1
+      }
+    ]
+  },
+  "barbarian": {
+    "class_name": "barbarian",
+    "basic_info": {
+      "name": "Barbarian",
+      "description": "Rage consumes you in battle. You delight in wreaking havoc and using powerful weapons to carve through your enemies, relying on astonishing durability without needing complicated techniques or rigid training. Your rages draw upon a vicious instinct, which you might associate with an animal, a spirit, or some part of yourself. To many barbarians, brute force is a hammer and every problem looks like a nail, whereas others try to hold back the storm of emotions inside them and release their rage only when it matters most. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.lvuutBI9BSCU6cWe]{Barbarian}",
+      "key_ability": [
+        "str"
+      ],
+      "hp": 12,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Animal Instinct: The fury of a wild predator fills you when you Rage, granting you ferocious unarmed attacks. Cultures that revere vicious animals (such as apes or bears) give rise to barbarians with this instinct. Yo...",
+      "Armor Mastery: Barbarian Your training and rage deepen your connection to your armor. Your proficiency ranks for light armor, medium armor, and unarmored defense increase to master. Champion Your skill with armor im...",
+      "Armor of Fury: Your training and rage deepen your connection to your armor. Your proficiency ranks for light armor, medium armor, and unarmored defense increase to master....",
+      "Bloodrager: You use the power of ingested blood to generate magical power and fuel you in combat, transforming you into a horrifyingly fearsome opponent. You must select Bloodrager Dedication as your 2nd-level cl...",
+      "Brutality: Your fury makes your weapons lethal. Your proficiency ranks for simple weapons, martial weapons, and unarmed attacks increase to expert. While raging, you have the critical specialization benefits for...",
+      "Decay Instinct: Your rage is intrinsically tied to the decomposition of organic beings, and the new growth that decay allows. You may have meddled with ancient relics created by Ghorus, been infected by exposure to A...",
+      "Devastator: Your Strikes are so devastating that you hardly care about resistance, and your barbarian abilities are unparalleled. Your proficiency rank for your barbarian class DC increases to master. Your melee ...",
+      "Dragon Instinct: You summon the fury of a mighty dragon and manifest incredible abilities. Perhaps your culture reveres draconic majesty, or you gained insights by drinking or bathing in dragon's blood or watching a m...",
+      "Elemental Instinct: This instinct option for barbarians allows you to channel elemental forces, bonding with a single element and its associated plane. Perhaps your ancestors were elemental conjurers or blessed by an ele...",
+      "Furious Footfalls: The urge to fight drives you ever forward. You gain a +5-foot status bonus to your Speed. This bonus increases to +10 feet while you're raging...."
+    ],
+    "common_traits": [
+      {
+        "trait": "rage",
+        "count": 57
+      },
+      {
+        "trait": "concentrate",
+        "count": 17
+      },
+      {
+        "trait": "primal",
+        "count": 6
+      },
+      {
+        "trait": "flourish",
+        "count": 5
+      },
+      {
+        "trait": "polymorph",
+        "count": 3
+      },
+      {
+        "trait": "morph",
+        "count": 3
+      },
+      {
+        "trait": "auditory",
+        "count": 3
+      },
+      {
+        "trait": "visual",
+        "count": 2
+      },
+      {
+        "trait": "manipulate",
+        "count": 2
+      }
+    ],
+    "action_patterns": {
+      "passive": 25,
+      "action": 42,
+      "reaction": 11,
+      "free": 2
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "FlatModifier",
+        "count": 6
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 5
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 5
+      },
+      {
+        "rule_type": "Sense",
+        "count": 4
+      },
+      {
+        "rule_type": "AdjustModifier",
+        "count": 4
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 4
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 2
+      },
+      {
+        "rule_type": "BaseSpeed",
+        "count": 2
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 2
+      },
+      {
+        "rule_type": "Resistance",
+        "count": 2
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "action",
+        "count": 32
+      },
+      {
+        "keyword": "rage",
+        "count": 29
+      },
+      {
+        "keyword": "damage",
+        "count": 29
+      },
+      {
+        "keyword": "strike",
+        "count": 26
+      },
+      {
+        "keyword": "attack",
+        "count": 25
+      },
+      {
+        "keyword": "critical",
+        "count": 18
+      },
+      {
+        "keyword": "weapon",
+        "count": 17
+      },
+      {
+        "keyword": "stance",
+        "count": 16
+      },
+      {
+        "keyword": "bonus",
+        "count": 12
+      },
+      {
+        "keyword": "spell",
+        "count": 8
+      },
+      {
+        "keyword": "ki",
+        "count": 7
+      },
+      {
+        "keyword": "unarmed",
+        "count": 6
+      },
+      {
+        "keyword": "move",
+        "count": 6
+      },
+      {
+        "keyword": "penalty",
+        "count": 6
+      },
+      {
+        "keyword": "stride",
+        "count": 5
+      },
+      {
+        "keyword": "grabbed",
+        "count": 5
+      },
+      {
+        "keyword": "armor",
+        "count": 3
+      },
+      {
+        "keyword": "resistance",
+        "count": 3
+      },
+      {
+        "keyword": "fly",
+        "count": 3
+      },
+      {
+        "keyword": "reaction",
+        "count": 3
+      }
+    ]
+  },
+  "bard": {
+    "class_name": "bard",
+    "basic_info": {
+      "name": "Bard",
+      "description": "You are a master of artistry, a scholar of hidden secrets, and a captivating persuader. Using powerful performances, you influence minds and elevate souls to new levels of heroics. You might use your powers to become a charismatic leader, or perhaps you might instead be a counselor, manipulator, scholar, scoundrel, or virtuoso. While your versatility leads some to consider you a beguiling ne'er-do-well and a jack-of-all-trades, it's dangerous to dismiss you as a master of none. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.Tz0NWVqhZyt8EyUV]{Bard}",
+      "key_ability": [
+        "cha"
+      ],
+      "hp": 8,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Bard Weapon Expertise: You have become thoroughly adept with bardic weapons. Your proficiency rank for martial weapons, simple weapons, and unarmed attacks increases to expert. When you critically succeed at an attack roll ...",
+      "Composition Spells: You can infuse your performances with magic to create unique effects called compositions. Compositions are a special type of spell that often require you to use the Performance skill when casting them...",
+      "Enigma: Your muse is a mystery, driving you to uncover the hidden secrets of life and the multiverse. These muses can be people you cannot fully grasp, texts layered deeply with symbolism, or emotional parado...",
+      "Greater Performer's Heart: Your performances warp the mind and cause emotions to flower, and understanding how to do this also forges an incomparable understanding of your own mind. Your proficiency rank for Will saves increase...",
+      "Light Armor Expertise: You've learned how to dodge while wearing light or no armor. Your proficiency ranks for light armor and unarmored defense increase to expert....",
+      "Maestro: Your muse constantly inspires you to greater heights of artistic prowess. For many bards, a teacher or rival fills this role, although some set their sights higher and attempt to surpass great compose...",
+      "Magnum Opus: You have tuned your spellcasting to the highest caliber. Add two common 10th-rank occult spells to your repertoire. You gain a single 10th-rank spell slot you can use to cast these spells using bard s...",
+      "Muses: As a bard, you select one muse at 1st level. This muse leads you to great things and might be someone you know, a supernatural creature, location, deity, philosophy, or captivating mystery. Depending ...",
+      "Occult Spellcasting: You draw upon magic from esoteric knowledge. You are a spellcaster and can cast spells of the occult tradition using the Cast a Spell activity. As a bard, when you cast spells, your incantations might...",
+      "Polymath: Your muse is a jack of all trades, flitting between skills and pursuits. Some bards are constantly moved by new muses or draw their inspiration from an idealized being, whether it's based on a real pe..."
+    ],
+    "common_traits": [
+      {
+        "trait": "concentrate",
+        "count": 15
+      },
+      {
+        "trait": "spellshape",
+        "count": 10
+      },
+      {
+        "trait": "auditory",
+        "count": 9
+      },
+      {
+        "trait": "manipulate",
+        "count": 4
+      },
+      {
+        "trait": "mental",
+        "count": 2
+      },
+      {
+        "trait": "exploration",
+        "count": 2
+      },
+      {
+        "trait": "illusion",
+        "count": 1
+      },
+      {
+        "trait": "linguistic",
+        "count": 1
+      },
+      {
+        "trait": "emotion",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "reaction": 9,
+      "passive": 50,
+      "action": 14,
+      "free": 2
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 12
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 11
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 3
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 2
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 2
+      },
+      {
+        "rule_type": "SubstituteRoll",
+        "count": 1
+      },
+      {
+        "rule_type": "AdjustModifier",
+        "count": 1
+      },
+      {
+        "rule_type": "Note",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 55
+      },
+      {
+        "keyword": "action",
+        "count": 29
+      },
+      {
+        "keyword": "cast",
+        "count": 26
+      },
+      {
+        "keyword": "ki",
+        "count": 15
+      },
+      {
+        "keyword": "strike",
+        "count": 11
+      },
+      {
+        "keyword": "bonus",
+        "count": 9
+      },
+      {
+        "keyword": "occult",
+        "count": 8
+      },
+      {
+        "keyword": "rage",
+        "count": 8
+      },
+      {
+        "keyword": "stance",
+        "count": 7
+      },
+      {
+        "keyword": "attack",
+        "count": 7
+      },
+      {
+        "keyword": "focus",
+        "count": 6
+      },
+      {
+        "keyword": "reaction",
+        "count": 6
+      },
+      {
+        "keyword": "damage",
+        "count": 5
+      },
+      {
+        "keyword": "critical",
+        "count": 5
+      },
+      {
+        "keyword": "stride",
+        "count": 4
+      },
+      {
+        "keyword": "weapon",
+        "count": 3
+      },
+      {
+        "keyword": "resistance",
+        "count": 2
+      },
+      {
+        "keyword": "unarmed",
+        "count": 2
+      },
+      {
+        "keyword": "free action",
+        "count": 2
+      },
+      {
+        "keyword": "frightened",
+        "count": 1
+      }
+    ]
+  },
+  "champion": {
+    "class_name": "champion",
+    "basic_info": {
+      "name": "Champion",
+      "description": "You are an emissary of a deity, a devoted servant who has taken up a weighty mantle, and you adhere to a code that holds you apart from those around you. While champions exist for every alignment, as a champion of good, you provide certainty and hope to the innocent. You have powerful defenses that you share freely with your allies and innocent bystanders, as well as holy power you use to end the threat of evil. Your devotion even attracts the attention of holy spirits who aid you on your journey. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.rebppVgBVi8J6TT2]{Champion}",
+      "key_ability": [
+        "dex",
+        "str"
+      ],
+      "hp": 10,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Armor Expertise: You have spent so much time in armor that you know how to make the most of its protection. Your proficiency ranks for light, medium, and heavy armor, as well as for unarmored defense, increase to expe...",
+      "Blessed Armament: Select one weapon or handwraps of mighty blows. You gain that armament's critical specialization effect, and you grant the armament a property rune of your choice from the following list: @UUID[Compen...",
+      "Blessed Shield: In your hands, a shield gains the minor @UUID[Compendium.pf2e.equipment-srd.Item.Reinforcing Rune (Minor)]{Reinforcing} rune. As you go up in level, the shield gains the reinforcing rune of your level...",
+      "Blessed Swiftness: You gain a +5-foot status bonus to Speed. If you're mounted, your mount gains the bonus instead. In addition, when the movement of one of your allies triggers an enemy's reaction while the ally is in ...",
+      "Blessing of the Devoted: Your deity blesses your service with a boon. This might come in the form of a spirit that visits you and inhabits your items or body, a mysterious divine tattoo upon your body, or the like. Choose one...",
+      "Cause: You devote yourself to a specific cause in your deity's name. Some are limited to sanctification, as noted in parentheses. Your cause adds to your edicts and anathema and grants you a special reaction...",
+      "Champion Expertise: Prayers strengthen your divine power. Your proficiency ranks for your champion class DC and divine spell attack rolls and DCs increase to expert....",
+      "Champion Mastery: You've mastered your arsenal of champion techniques and divine spells. Your proficiency ranks for your champion class DC and for divine spell attack rolls and spell DCs increase to master....",
+      "Champion's Aura: You're surrounded by an aura in a 15-foot emanation. It has the aura and divine traits. Any follower of your deity within the aura immediately knows you're a champion of your deity. This aura is used ...",
+      "Champion's Reaction: Your cause gives you a special reaction. See specific causes for more information...."
+    ],
+    "common_traits": [
+      {
+        "trait": "oath",
+        "count": 4
+      },
+      {
+        "trait": "concentrate",
+        "count": 3
+      },
+      {
+        "trait": "flourish",
+        "count": 2
+      },
+      {
+        "trait": "divine",
+        "count": 2
+      },
+      {
+        "trait": "teleportation",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 66,
+      "action": 6,
+      "free": 2,
+      "reaction": 4
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 11
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 11
+      },
+      {
+        "rule_type": "Aura",
+        "count": 7
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 5
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 3
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 3
+      },
+      {
+        "rule_type": "Note",
+        "count": 3
+      },
+      {
+        "rule_type": "Resistance",
+        "count": 3
+      },
+      {
+        "rule_type": "ActorTraits",
+        "count": 2
+      },
+      {
+        "rule_type": "BaseSpeed",
+        "count": 2
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "action",
+        "count": 33
+      },
+      {
+        "keyword": "damage",
+        "count": 23
+      },
+      {
+        "keyword": "spell",
+        "count": 22
+      },
+      {
+        "keyword": "reaction",
+        "count": 19
+      },
+      {
+        "keyword": "strike",
+        "count": 17
+      },
+      {
+        "keyword": "attack",
+        "count": 14
+      },
+      {
+        "keyword": "divine",
+        "count": 13
+      },
+      {
+        "keyword": "bonus",
+        "count": 12
+      },
+      {
+        "keyword": "stance",
+        "count": 12
+      },
+      {
+        "keyword": "cast",
+        "count": 10
+      },
+      {
+        "keyword": "ki",
+        "count": 9
+      },
+      {
+        "keyword": "shield",
+        "count": 8
+      },
+      {
+        "keyword": "heal",
+        "count": 7
+      },
+      {
+        "keyword": "resistance",
+        "count": 7
+      },
+      {
+        "keyword": "weapon",
+        "count": 7
+      },
+      {
+        "keyword": "move",
+        "count": 7
+      },
+      {
+        "keyword": "focus",
+        "count": 7
+      },
+      {
+        "keyword": "critical",
+        "count": 6
+      },
+      {
+        "keyword": "penalty",
+        "count": 5
+      },
+      {
+        "keyword": "fly",
+        "count": 5
+      }
+    ]
+  },
+  "cleric": {
+    "class_name": "cleric",
+    "basic_info": {
+      "name": "Cleric",
+      "description": "Deities work their will upon the world in infinite ways, and you serve as one of their most stalwart mortal servants. Blessed with divine magic, you live the ideals of your faith, adorn yourself with the symbols of your church, and train diligently to wield your deity's favored weapon. Your spells might protect and heal your allies, or they might punish foes and enemies of your faith, as your deity wills. Yours is a life of devotion, spreading the teachings of your faith through both word and deed. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.N4ABcd6CcCbqmw3x]{Cleric}",
+      "key_ability": [
+        "wis"
+      ],
+      "hp": 8,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Anathema (Cleric): Acts fundamentally opposed to your deity's alignment or ideals are anathema to your faith. Learning or casting spells, committing acts, and using items that are anathema to your deity remove you from ...",
+      "Battle Creed: You've undergone a special training to focus your body toward combat. While you still adhere to the teachings of your faith, you also know that you serve as an instrument of your church. More so than ...",
+      "Cleric Spellcasting: Your deity bestows on you the power to cast divine spells. You are a spellcaster, and you can cast spells of the divine tradition using the Cast a Spell activity. As a cleric, your chants generally in...",
+      "Cloistered Cleric: You are a cleric of the cloth, focusing on divine magic and your connection to your deity's domains. First Doctrine (1st): You gain the @UUID[Compendium.pf2e.feats-srd.Item.Domain Initiate] cleric fea...",
+      "Deity (Cleric): As a cleric, you are a mortal servitor of a deity you revere above all others. Your deity grants you the trained proficiency rank in one skill and with the deity's favored weapon. If the favored weapo...",
+      "Divine Defense: Your training and your deity protect you from harm. Your proficiency rank in unarmored defense increases to expert....",
+      "Divine Font: Through your deity's blessing, you gain additional spells that channel either the life force called vitality or its counterforce, the void. When you prepare your spells each day, you can prepare addit...",
+      "Doctrine: Even among followers of the same deity, approaches vary. At 1st level, you select cloistered cleric or warpriest and gain the benefits of its first doctrine. At 3rd level and every four levels thereaf...",
+      "Fifth Doctrine (Cloistered Cleric): Your proficiency ranks for the spell attack modifier and spell DC statistics increase to master....",
+      "Fifth Doctrine (Warpriest): Your proficiency rank for Fortitude saves increases to master. When you roll a success at a Fortitude save, you get a critical success instead...."
+    ],
+    "common_traits": [
+      {
+        "trait": "concentrate",
+        "count": 9
+      },
+      {
+        "trait": "spellshape",
+        "count": 9
+      },
+      {
+        "trait": "divine",
+        "count": 5
+      },
+      {
+        "trait": "healing",
+        "count": 2
+      },
+      {
+        "trait": "exploration",
+        "count": 2
+      },
+      {
+        "trait": "fortune",
+        "count": 2
+      },
+      {
+        "trait": "vitality",
+        "count": 1
+      },
+      {
+        "trait": "emotion",
+        "count": 1
+      },
+      {
+        "trait": "fear",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 47,
+      "reaction": 10,
+      "action": 13,
+      "free": 4
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 18
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 15
+      },
+      {
+        "rule_type": "Note",
+        "count": 9
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 4
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 3
+      },
+      {
+        "rule_type": "AdjustDegreeOfSuccess",
+        "count": 2
+      },
+      {
+        "rule_type": "AdjustStrike",
+        "count": 2
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 2
+      },
+      {
+        "rule_type": "DamageAlteration",
+        "count": 1
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 48
+      },
+      {
+        "keyword": "cast",
+        "count": 36
+      },
+      {
+        "keyword": "heal",
+        "count": 29
+      },
+      {
+        "keyword": "action",
+        "count": 23
+      },
+      {
+        "keyword": "damage",
+        "count": 22
+      },
+      {
+        "keyword": "divine",
+        "count": 16
+      },
+      {
+        "keyword": "critical",
+        "count": 15
+      },
+      {
+        "keyword": "bonus",
+        "count": 15
+      },
+      {
+        "keyword": "weapon",
+        "count": 14
+      },
+      {
+        "keyword": "stance",
+        "count": 13
+      },
+      {
+        "keyword": "attack",
+        "count": 11
+      },
+      {
+        "keyword": "strike",
+        "count": 8
+      },
+      {
+        "keyword": "move",
+        "count": 7
+      },
+      {
+        "keyword": "shield",
+        "count": 6
+      },
+      {
+        "keyword": "focus",
+        "count": 5
+      },
+      {
+        "keyword": "unarmed",
+        "count": 3
+      },
+      {
+        "keyword": "stride",
+        "count": 3
+      },
+      {
+        "keyword": "reaction",
+        "count": 3
+      },
+      {
+        "keyword": "ki",
+        "count": 3
+      },
+      {
+        "keyword": "penalty",
+        "count": 2
+      }
+    ]
+  },
+  "druid": {
+    "class_name": "druid",
+    "basic_info": {
+      "name": "Druid",
+      "description": "The power of nature is impossible to resist. It can bring ruin to the stoutest fortress in minutes, reducing even the mightiest works to rubble, burning them to ash, burying them beneath an avalanche of snow, or drowning them beneath the waves. It can provide endless bounty and breathtaking splendor to those who respect it—and an agonizing death to those who take it too lightly. You are one of those who hear nature's call. You stand in awe of the majesty of its power and give yourself over to its service. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.8ElntNAGahQka70r]{Druid}",
+      "key_ability": [
+        "wis"
+      ],
+      "hp": 8,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Anathema (Druid): As stewards of the natural order, druids find affronts to nature anathema. If you repeatedly perform these acts, you lose your magical abilities from the druid class, including your druid spellcasting...",
+      "Animal Order: You have a strong connection to beasts, always feeling like you understood them (and they you) better than your own people. You stand for the animals of nature, a powerful animal companion at your sid...",
+      "Cultivation Order: You believe that nature is best tended, pruned, and maintained. Nature is inherently random and chaotic out of necessity of survival—the flower spreads its seeds far and wide, hoping that some might s...",
+      "Druid Spellcasting: The power of the wild world flows through you. You are a spellcaster and can cast spells of the primal tradition using the @UUID[Compendium.pf2e.actionspf2e.Item.Cast a Spell] activity. As a druid, yo...",
+      "Druid Weapon Expertise: You have become thoroughly familiar with the weapons of your trade. Your proficiency ranks for all simple weapons and unarmed attacks increase to expert....",
+      "Druidic Order: Upon becoming a druid, you align yourself with a druidic order, which grants you a class feat, an order spell (see below), and an additional trained skill tied to your order While you'll always be a m...",
+      "Flame Order: You feel a kinship with flames and can use them for succor and destruction. Order Skill Acrobatics Druid Feat @UUID[Compendium.pf2e.feats-srd.Item.Fire Lung] Order Spell @UUID[Compendium.pf2e.spells-s...",
+      "Leaf Order: You revere the bounty of nature, acting as both a gardener and warden for the wilderness. With your leshy familiar at your side, you help areas regrow after disasters or negligent expansion and turn f...",
+      "Primal Hierophant: You command the most potent forces of primal magic and can cast a spell of truly incredible power. You gain a single 10th-rank spell slot and can prepare a spell in that slot using druid spellcasting....",
+      "Spore Order: You're fascinated by molds and fungi, and you understand the important role they play in the continued health of ecosystems. This interest often puts you at odds with local communities, who view molds..."
+    ],
+    "common_traits": [
+      {
+        "trait": "spellshape",
+        "count": 12
+      },
+      {
+        "trait": "manipulate",
+        "count": 6
+      },
+      {
+        "trait": "concentrate",
+        "count": 6
+      },
+      {
+        "trait": "focus",
+        "count": 2
+      },
+      {
+        "trait": "earth",
+        "count": 2
+      },
+      {
+        "trait": "primal",
+        "count": 2
+      },
+      {
+        "trait": "exploration",
+        "count": 2
+      },
+      {
+        "trait": "fire",
+        "count": 1
+      },
+      {
+        "trait": "healing",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 56,
+      "action": 18,
+      "reaction": 8,
+      "free": 1
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 36
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 14
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 11
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 5
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 4
+      },
+      {
+        "rule_type": "Resistance",
+        "count": 3
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 2
+      },
+      {
+        "rule_type": "BaseSpeed",
+        "count": 1
+      },
+      {
+        "rule_type": "Aura",
+        "count": 1
+      },
+      {
+        "rule_type": "ActorTraits",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 53
+      },
+      {
+        "keyword": "action",
+        "count": 25
+      },
+      {
+        "keyword": "cast",
+        "count": 24
+      },
+      {
+        "keyword": "stance",
+        "count": 22
+      },
+      {
+        "keyword": "primal",
+        "count": 15
+      },
+      {
+        "keyword": "damage",
+        "count": 14
+      },
+      {
+        "keyword": "ki",
+        "count": 11
+      },
+      {
+        "keyword": "fire",
+        "count": 11
+      },
+      {
+        "keyword": "bonus",
+        "count": 11
+      },
+      {
+        "keyword": "resistance",
+        "count": 9
+      },
+      {
+        "keyword": "poison",
+        "count": 8
+      },
+      {
+        "keyword": "cold",
+        "count": 7
+      },
+      {
+        "keyword": "critical",
+        "count": 7
+      },
+      {
+        "keyword": "focus",
+        "count": 6
+      },
+      {
+        "keyword": "elemental",
+        "count": 6
+      },
+      {
+        "keyword": "attack",
+        "count": 6
+      },
+      {
+        "keyword": "electricity",
+        "count": 6
+      },
+      {
+        "keyword": "heal",
+        "count": 6
+      },
+      {
+        "keyword": "weapon",
+        "count": 6
+      },
+      {
+        "keyword": "unarmed",
+        "count": 4
+      }
+    ]
+  },
+  "exemplar": {
+    "class_name": "exemplar",
+    "basic_info": {
+      "name": "Exemplar",
+      "description": "As the war god died, his power rained through the many planes of creation, sparking conflict and instilling divine energy in those previously without it. Whether you were directly touched by this power, claimed it from an ancient being or artifact, or whether it awoke something long dormant in your lineage, a spark of the divine now blazes within your soul, granting you abilities, sacred weapons, and divine signifiers that reach into the realm previously reserved for gods and legends. How you wield these tools and grow your power is for you to decide—you may become a hero or you may turn to selfish ends, but one thing is certain: you intend to carve your epithet in history, immortalized in the memory of gods and mortals alike. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.CIQggvnSfmuLa7eH]{Exemplar}",
+      "key_ability": [
+        "dex",
+        "str"
+      ],
+      "hp": 10,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Born of the Bones of the Earth: Your dominion is over stone and soil, the pillars holding up the stage of history's great legends. You gain the @UUID[Compendium.pf2e.feats-srd.Item.Energized Spark] feat for your choice of earth or f...",
+      "Burnished Armor Expertise: Exposure to your divine spark has reinforced your armor. Your proficiency ranks for light armor, medium armor, and unarmored defense increase to expert....",
+      "Burnished Armor Mastery: Your armor shines with divine light, flawless and unyielding. Your proficiency ranks for light armor, medium armor, and unarmored defense increase to master....",
+      "Dancer in the Seasons: You flourish in spring and idle in summer, give in fall and take in winter. You gain the @UUID[Compendium.pf2e.feats-srd.Item.Energized Spark] feat for your choice of cold, fire, void, or wood. When y...",
+      "Deific Mastery: You have achieved full mastery over your divine spark as its power flows through your body and ikons. Your proficiency rank for your exemplar class DC increases to master....",
+      "Divine Premonition: A sense of the flow of fate allows you to respond to danger with uncanny alacrity. Your proficiency rank for Reflex saves increases to expert....",
+      "Divine Spark and Ikons: Within your soul is a tiny spark of divine power that belongs not to a deity, but is something you've claimed all your own. You can focus this divine power through special items known as ikons. Ikons ...",
+      "Divine Weapon Mastery: Your skill with weapons is divinely inspired. Your proficiency ranks for simple weapons, martial weapons, and unarmed attacks increase to master....",
+      "Dominion Epithet: Your divinity has grown in power along with your deeds, allowing you to begin claiming dominion over aspects of creation. Choose one of the following epithets. Each one grants a critical specializatio...",
+      "Exemplary Finisher: You execute your finishing moves with spectacular flair, adding special effects to your finishers. If a Strike you make as part of a finisher hits a foe, you add one of the following effects to the St..."
+    ],
+    "common_traits": [
+      {
+        "trait": "ikon",
+        "count": 24
+      },
+      {
+        "trait": "concentrate",
+        "count": 6
+      },
+      {
+        "trait": "divine",
+        "count": 6
+      },
+      {
+        "trait": "healing",
+        "count": 3
+      },
+      {
+        "trait": "void",
+        "count": 2
+      },
+      {
+        "trait": "auditory",
+        "count": 2
+      },
+      {
+        "trait": "light",
+        "count": 2
+      },
+      {
+        "trait": "vitality",
+        "count": 2
+      },
+      {
+        "trait": "transcendence",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 31,
+      "action": 7,
+      "reaction": 1,
+      "free": 2
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "ChoiceSet",
+        "count": 28
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 26
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 21
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 10
+      },
+      {
+        "rule_type": "Note",
+        "count": 4
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 4
+      },
+      {
+        "rule_type": "DamageAlteration",
+        "count": 2
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 2
+      },
+      {
+        "rule_type": "AdjustStrike",
+        "count": 2
+      },
+      {
+        "rule_type": "AdjustDegreeOfSuccess",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "action",
+        "count": 27
+      },
+      {
+        "keyword": "weapon",
+        "count": 16
+      },
+      {
+        "keyword": "divine",
+        "count": 15
+      },
+      {
+        "keyword": "damage",
+        "count": 13
+      },
+      {
+        "keyword": "strike",
+        "count": 10
+      },
+      {
+        "keyword": "ki",
+        "count": 10
+      },
+      {
+        "keyword": "critical",
+        "count": 7
+      },
+      {
+        "keyword": "heal",
+        "count": 6
+      },
+      {
+        "keyword": "stance",
+        "count": 6
+      },
+      {
+        "keyword": "spell",
+        "count": 5
+      },
+      {
+        "keyword": "attack",
+        "count": 4
+      },
+      {
+        "keyword": "cast",
+        "count": 4
+      },
+      {
+        "keyword": "cold",
+        "count": 4
+      },
+      {
+        "keyword": "move",
+        "count": 3
+      },
+      {
+        "keyword": "free action",
+        "count": 3
+      },
+      {
+        "keyword": "fire",
+        "count": 3
+      },
+      {
+        "keyword": "bonus",
+        "count": 2
+      },
+      {
+        "keyword": "electricity",
+        "count": 2
+      },
+      {
+        "keyword": "fly",
+        "count": 2
+      },
+      {
+        "keyword": "poison",
+        "count": 1
+      }
+    ]
+  },
+  "fighter": {
+    "class_name": "fighter",
+    "basic_info": {
+      "name": "Fighter",
+      "description": "Fighting for honor, greed, loyalty, or simply the thrill of battle, you are an undisputed master of weaponry and combat techniques. You combine your actions through clever combinations of opening moves, finishing strikes, and counterattacks whenever your foes are unwise enough to drop their guard. Whether you are a knight, mercenary, sharpshooter, or blade master, you have honed your martial skills into an art form and perform devastating critical attacks on your enemies. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.HZbrRRVzW7w17L2W]{Fighter}",
+      "key_ability": [
+        "dex",
+        "str"
+      ],
+      "hp": 10,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 1
+      }
+    },
+    "key_mechanics": [
+      "Battle Hardened: Your experience in battle helps protect you against magic and toxins alike. Your proficiency rank for Fortitude saves increases to master. When you roll a success on a Fortitude save, you get a critic...",
+      "Battlefield Surveyor: Whether taking stock of an enemy army or simply standing guard, you excel at observing your foes. Your proficiency rank for Perception increases to master. In addition, you gain a +2 circumstance bonu...",
+      "Bravery: Having faced countless foes and the chaos of battle, you have learned how to stand strong in the face of fear. Your proficiency rank for Will saves increases to expert. When you roll a success at a Wi...",
+      "Combat Flexibility: You can prepare your tactics to suit different situations. When you make your daily preparations, you gain one fighter feat of 8th level or lower that you meet the prerequisites for and don't already ...",
+      "Fighter Expertise: Your practiced techniques have made you even more formidable. Your proficiency rank for your fighter class DC increases to expert....",
+      "Fighter Weapon Mastery: Hours spent training with your preferred weapons, learning and developing new combat techniques, have made you particularly effective with your weapons of choice. Choose one weapon group. Your profici...",
+      "Improved Flexibility: Your extensive experience gives you even greater ability to adapt to each day's challenges. When you use combat flexibility, you can gain two fighter feats instead of one. While the first feat must st...",
+      "Reactive Strike: Ever watchful for weaknesses, you can quickly attack foes that leave an opening in their defenses. You gain the @UUID[Compendium.pf2e.actionspf2e.Item.Reactive Strike] reaction....",
+      "Tempered Reflexes: Practiced reflexes let you find safety even in the face of cataclysmic explosions. Your proficiency rank for Reflex saves increases to master. When you roll a success on a Reflex save, you get a criti...",
+      "Versatile Legend: You are nigh-unmatched with any weapon. Your proficiency ranks for simple weapons, martial weapons, and unarmed attacks increase to legendary, and your proficiency rank for advanced weapons increases ..."
+    ],
+    "common_traits": [
+      {
+        "trait": "press",
+        "count": 18
+      },
+      {
+        "trait": "flourish",
+        "count": 11
+      },
+      {
+        "trait": "stance",
+        "count": 11
+      },
+      {
+        "trait": "concentrate",
+        "count": 3
+      },
+      {
+        "trait": "manipulate",
+        "count": 1
+      },
+      {
+        "trait": "teleportation",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 22,
+      "action": 48,
+      "free": 2,
+      "reaction": 8
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 13
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 9
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 8
+      },
+      {
+        "rule_type": "Note",
+        "count": 4
+      },
+      {
+        "rule_type": "AdjustModifier",
+        "count": 3
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 1
+      },
+      {
+        "rule_type": "MartialProficiency",
+        "count": 1
+      },
+      {
+        "rule_type": "MultipleAttackPenalty",
+        "count": 1
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 1
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "weapon",
+        "count": 53
+      },
+      {
+        "keyword": "strike",
+        "count": 53
+      },
+      {
+        "keyword": "attack",
+        "count": 47
+      },
+      {
+        "keyword": "action",
+        "count": 35
+      },
+      {
+        "keyword": "stance",
+        "count": 28
+      },
+      {
+        "keyword": "damage",
+        "count": 21
+      },
+      {
+        "keyword": "critical",
+        "count": 18
+      },
+      {
+        "keyword": "move",
+        "count": 17
+      },
+      {
+        "keyword": "bonus",
+        "count": 15
+      },
+      {
+        "keyword": "penalty",
+        "count": 15
+      },
+      {
+        "keyword": "reaction",
+        "count": 11
+      },
+      {
+        "keyword": "shield",
+        "count": 10
+      },
+      {
+        "keyword": "ki",
+        "count": 6
+      },
+      {
+        "keyword": "unarmed",
+        "count": 5
+      },
+      {
+        "keyword": "spell",
+        "count": 5
+      },
+      {
+        "keyword": "fly",
+        "count": 4
+      },
+      {
+        "keyword": "grabbed",
+        "count": 3
+      },
+      {
+        "keyword": "deadly",
+        "count": 3
+      },
+      {
+        "keyword": "agile",
+        "count": 3
+      },
+      {
+        "keyword": "fire",
+        "count": 3
+      }
+    ]
+  },
+  "gunslinger": {
+    "class_name": "gunslinger",
+    "basic_info": {
+      "name": "Gunslinger",
+      "description": "While some fear projectile weapons, you savor the searing flash, wild kick, and cloying smoke that accompanies a gunshot, or snap of the cable and telltale thunk of your crossbow just before your bolt finds purchase. Ready to draw a bead on an enemy at every turn, you rely on your reflexes, steady hand, and knowledge of your weapons to riddle your foes with holes. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.88K0xjShkhkckbhv]{Gunslinger}",
+      "key_ability": [
+        "dex"
+      ],
+      "hp": 8,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 1
+      }
+    },
+    "key_mechanics": [
+      "Advanced Deed: You've learned a powerful new technique of your chosen way. You gain the advanced deed ability of the way you chose at 1st level....",
+      "Blast Dodger: Your reflexes have a hair trigger. Your proficiency rank for Reflex saves increases to master. When you roll a success on a Reflex save, you get a critical success instead....",
+      "Evasion: You've learned to move quickly to avoid explosions, dragon's breath, and worse. Your proficiency rank for Reflex saves increases to master. When you roll a success on a Reflex save, you get a critical...",
+      "Greater Deed: You've mastered the pinnacle technique of your chosen way. You gain the greater deed ability of the way you chose at 1st level....",
+      "Gunslinger Expertise: Your special shots become harder for opponents to predict or resist. Your proficiency rank for your gunslinger class DC increases to expert....",
+      "Gunslinger Weapon Mastery: You fully understand the best way to utilize your unique weapons. Your proficiency rank increases to master with simple and martial firearms and crossbows. Your proficiency rank for advanced firearms ...",
+      "Gunslinger's Way: All gunslingers have a particular way they follow, a combination of philosophy and combat style that defines both how they fight and the weapons they excel with. At 1st level, your way grants you an i...",
+      "Gunslinging Legend: You've learned unique techniques for wielding firearms and crossbows that give you unmatched skill in their use. Your proficiency rank increases to legendary with simple and martial firearms and cross...",
+      "Lead Constitution: You have gunpowder in your veins. Your proficiency rank for Fortitude saves increases to master. When you roll a success on a Fortitude save, you get a critical success instead....",
+      "Perception Legend: You notice the almost imperceptible. Your proficiency rank for Perception increases to legendary...."
+    ],
+    "common_traits": [
+      {
+        "trait": "flourish",
+        "count": 9
+      },
+      {
+        "trait": "concentrate",
+        "count": 6
+      },
+      {
+        "trait": "fortune",
+        "count": 2
+      },
+      {
+        "trait": "attack",
+        "count": 1
+      },
+      {
+        "trait": "visual",
+        "count": 1
+      },
+      {
+        "trait": "auditory",
+        "count": 1
+      },
+      {
+        "trait": "linguistic",
+        "count": 1
+      },
+      {
+        "trait": "mental",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 23,
+      "action": 36,
+      "reaction": 7
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 9
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 7
+      },
+      {
+        "rule_type": "AdjustDegreeOfSuccess",
+        "count": 4
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 3
+      },
+      {
+        "rule_type": "Note",
+        "count": 3
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 2
+      },
+      {
+        "rule_type": "AdjustModifier",
+        "count": 2
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 2
+      },
+      {
+        "rule_type": "CraftingAbility",
+        "count": 2
+      },
+      {
+        "rule_type": "AdjustStrike",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "weapon",
+        "count": 43
+      },
+      {
+        "keyword": "fire",
+        "count": 43
+      },
+      {
+        "keyword": "strike",
+        "count": 36
+      },
+      {
+        "keyword": "attack",
+        "count": 32
+      },
+      {
+        "keyword": "stance",
+        "count": 26
+      },
+      {
+        "keyword": "action",
+        "count": 22
+      },
+      {
+        "keyword": "damage",
+        "count": 19
+      },
+      {
+        "keyword": "ki",
+        "count": 17
+      },
+      {
+        "keyword": "bonus",
+        "count": 14
+      },
+      {
+        "keyword": "critical",
+        "count": 14
+      },
+      {
+        "keyword": "penalty",
+        "count": 13
+      },
+      {
+        "keyword": "move",
+        "count": 6
+      },
+      {
+        "keyword": "reaction",
+        "count": 6
+      },
+      {
+        "keyword": "concealed",
+        "count": 5
+      },
+      {
+        "keyword": "stunned",
+        "count": 2
+      },
+      {
+        "keyword": "stride",
+        "count": 2
+      },
+      {
+        "keyword": "grabbed",
+        "count": 1
+      },
+      {
+        "keyword": "restrained",
+        "count": 1
+      },
+      {
+        "keyword": "fly",
+        "count": 1
+      },
+      {
+        "keyword": "shield",
+        "count": 1
+      }
+    ]
+  },
+  "inventor": {
+    "class_name": "inventor",
+    "basic_info": {
+      "name": "Inventor",
+      "description": "Any tinkerer can follow a diagram to make a device, but you invent the impossible! Every strange contraption you dream up is a unique experiment pushing the edge of possibility, a mysterious machine that seems to work for only you. You're always on the verge of the next great breakthrough, and every trial and tribulation is another opportunity to test and tune. If you can dream it, you can build it. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.gcRmL4Id1ggKDhvg]{Inventor}",
+      "key_ability": [
+        "int"
+      ],
+      "hp": 8,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Advanced Rangefinder: Ranged Only A carefully tuned scope or targeting device makes your weapon especially good at hitting weak points. Your innovation gains the backstabber trait and increases its range increment by 20 fe...",
+      "Aerodynamic Construction: Melee Only You carefully engineer the shape of your weapon to maintain its momentum in attacks against successive targets. Your innovation gains the sweep trait and the versatile S trait....",
+      "Antimagic Plating: Whether you used some clever adaptation of the magic-negating skymetal known as noqual or created magical protections of your own design, you've strengthened your armor against magic. While wearing th...",
+      "Anvil's Hardness: Your body is as durable as iron. Your proficiency rank for Fortitude saves increases to master. When you roll a success on a Fortitude save, you get a critical success instead....",
+      "Armor Innovation: Your innovation is a cutting-edge suit of medium armor with a variety of attached gizmos and devices. Choose one of the sets of statistics on Innovation Armor Statistics table for your innovation armo...",
+      "Attack Refiner: Your weapon makes minute recalibrations after every missed attack to ensure the next lands with vicious efficacy. Your innovation gains the backswing and forceful traits....",
+      "Automated Impediments: Your armor uses electromagnetic fields, subharmonic distortions, or other techniques to make it difficult for those close to you to move unless you allow it. While wearing your armor, all spaces adjac...",
+      "Blunt Shot: Ranged Only Your weapon innovation can file the edges off your ammunition and adjust the blunt force of the shot to deliver an attack that can batter as much as pierce, or even knock an opponent right...",
+      "Breakthrough Innovation: You've made a breakthrough in your field of study and discovered a powerful new way to enhance your innovation. Choose a breakthrough modification of your innovation's type to apply to your innovation...",
+      "Camouflage Pigmentation: You've modified your armor's exterior to let you blend into your surroundings with ease, as long as you stay still. While wearing your armor, you can Hide even without cover or concealment, as the pig..."
+    ],
+    "common_traits": [
+      {
+        "trait": "manipulate",
+        "count": 16
+      },
+      {
+        "trait": "modification",
+        "count": 9
+      },
+      {
+        "trait": "unstable",
+        "count": 7
+      },
+      {
+        "trait": "fire",
+        "count": 5
+      },
+      {
+        "trait": "sonic",
+        "count": 2
+      },
+      {
+        "trait": "auditory",
+        "count": 2
+      },
+      {
+        "trait": "visual",
+        "count": 1
+      },
+      {
+        "trait": "cold",
+        "count": 1
+      },
+      {
+        "trait": "move",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 24,
+      "action": 23,
+      "free": 2,
+      "reaction": 5
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 12
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 11
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 5
+      },
+      {
+        "rule_type": "DamageAlteration",
+        "count": 5
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 4
+      },
+      {
+        "rule_type": "BaseSpeed",
+        "count": 2
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 2
+      },
+      {
+        "rule_type": "CraftingAbility",
+        "count": 1
+      },
+      {
+        "rule_type": "Note",
+        "count": 1
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "action",
+        "count": 27
+      },
+      {
+        "keyword": "damage",
+        "count": 21
+      },
+      {
+        "keyword": "strike",
+        "count": 15
+      },
+      {
+        "keyword": "stance",
+        "count": 15
+      },
+      {
+        "keyword": "attack",
+        "count": 14
+      },
+      {
+        "keyword": "ki",
+        "count": 13
+      },
+      {
+        "keyword": "weapon",
+        "count": 13
+      },
+      {
+        "keyword": "armor",
+        "count": 11
+      },
+      {
+        "keyword": "critical",
+        "count": 10
+      },
+      {
+        "keyword": "move",
+        "count": 8
+      },
+      {
+        "keyword": "penalty",
+        "count": 8
+      },
+      {
+        "keyword": "fire",
+        "count": 7
+      },
+      {
+        "keyword": "stride",
+        "count": 4
+      },
+      {
+        "keyword": "fly",
+        "count": 4
+      },
+      {
+        "keyword": "unarmed",
+        "count": 4
+      },
+      {
+        "keyword": "electricity",
+        "count": 4
+      },
+      {
+        "keyword": "swim",
+        "count": 3
+      },
+      {
+        "keyword": "bonus",
+        "count": 3
+      },
+      {
+        "keyword": "heal",
+        "count": 2
+      },
+      {
+        "keyword": "cold",
+        "count": 2
+      }
+    ]
+  },
+  "investigator": {
+    "class_name": "investigator",
+    "basic_info": {
+      "name": "Investigator",
+      "description": "You seek to uncover the truth, doggedly pursuing leads to reveal the plots of devious villains, discover ancient secrets, or unravel other mysteries. Your analytical mind quickly formulates solutions to complicated problems and your honed senses identify even the most obscure clues. Wielding knowledge as a weapon, you study the creatures and dangers you encounter to exploit their weaknesses. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.omDi7otL3UWLVgct]{Investigator}",
+      "key_ability": [
+        "int"
+      ],
+      "hp": 8,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 2,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Alchemical Sciences Methodology: Your methodology emphasizes chemical and alchemical analysis, collecting information from unusual particles and fluids found on the scene. You possess enough alchemical know-how to whip up a few tinct...",
+      "Deductive Improvisation: You use your skills at deduction to perform whatever task is necessary to solve the case. You can attempt any check that requires you to be trained in a skill, even if you're untrained in it; you can ...",
+      "Devise a Stratagem: You can play out a battle in your head, using brains rather than brawn to execute an attack. You gain the @UUID[Compendium.pf2e.actionspf2e.Item.Devise a Stratagem] action....",
+      "Dogged Will: In your pursuit of truth and knowledge, you won't be dissuaded. Your proficiency rank for Will saves increases to master. When you roll a success on a Will save, you get a critical success instead....",
+      "Empiricism Methodology: Everything comes down to data. Calculating statistics, running numbers, and using inductive reasoning allows you to determine the most likely outcome of any scenario, and anything out of place draws y...",
+      "Forensic Medicine Methodology: You've learned that in most cases, especially murders, criminals tend to leave more evidence of the crime on the body than they'd like to believe. Information from bruising, bone fractures, blood spat...",
+      "Greater Dogged Will: Your willpower becomes truly unbreakable. Your proficiency rank for Will saves increases to legendary. When you roll a success at a Will save, you get a critical success. When you roll a critical fail...",
+      "Greater Resolve: Your unbelievable training grants you mental resiliency. Your proficiency rank for Will saves increases to legendary. When you roll a success at a Will save, you get a critical success. When you roll ...",
+      "Interrogation Methodology: People can't help but trust you, whether through your inherent likableness or your firm insistence on sticking to the truth. You have a way about you that gets others talking, and you've developed int...",
+      "Investigator Expertise: You've refined your investigative techniques to an exceptional degree. Your circumstance bonus from @UUID[Compendium.pf2e.actionspf2e.Item.Pursue a Lead] increases to +2. Your proficiency rank for you..."
+    ],
+    "common_traits": [
+      {
+        "trait": "concentrate",
+        "count": 3
+      },
+      {
+        "trait": "fortune",
+        "count": 2
+      },
+      {
+        "trait": "auditory",
+        "count": 1
+      },
+      {
+        "trait": "linguistic",
+        "count": 1
+      },
+      {
+        "trait": "exploration",
+        "count": 1
+      },
+      {
+        "trait": "prediction",
+        "count": 1
+      },
+      {
+        "trait": "vitality",
+        "count": 1
+      },
+      {
+        "trait": "attack",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 33,
+      "action": 7,
+      "reaction": 4,
+      "free": 1
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "FlatModifier",
+        "count": 8
+      },
+      {
+        "rule_type": "Note",
+        "count": 6
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 4
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 3
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 2
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 2
+      },
+      {
+        "rule_type": "AdjustModifier",
+        "count": 1
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 1
+      },
+      {
+        "rule_type": "DamageAlteration",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "action",
+        "count": 26
+      },
+      {
+        "keyword": "attack",
+        "count": 14
+      },
+      {
+        "keyword": "stance",
+        "count": 12
+      },
+      {
+        "keyword": "strike",
+        "count": 11
+      },
+      {
+        "keyword": "bonus",
+        "count": 11
+      },
+      {
+        "keyword": "move",
+        "count": 10
+      },
+      {
+        "keyword": "ki",
+        "count": 9
+      },
+      {
+        "keyword": "critical",
+        "count": 9
+      },
+      {
+        "keyword": "weapon",
+        "count": 6
+      },
+      {
+        "keyword": "damage",
+        "count": 6
+      },
+      {
+        "keyword": "unarmed",
+        "count": 2
+      },
+      {
+        "keyword": "reaction",
+        "count": 2
+      },
+      {
+        "keyword": "penalty",
+        "count": 2
+      },
+      {
+        "keyword": "free action",
+        "count": 2
+      },
+      {
+        "keyword": "resistance",
+        "count": 2
+      },
+      {
+        "keyword": "fly",
+        "count": 1
+      },
+      {
+        "keyword": "frightened",
+        "count": 1
+      },
+      {
+        "keyword": "armor",
+        "count": 1
+      },
+      {
+        "keyword": "immunity",
+        "count": 1
+      }
+    ]
+  },
+  "kineticist": {
+    "class_name": "kineticist",
+    "basic_info": {
+      "name": "Kineticist",
+      "description": "The power of the elements flows from within you. Roaring fire pure water, fleeting air, steadfast earth, twisting wood, slicing metal. A kinetic gate inextricably tied to your body channels power directly from the elemental planes, causing elements to leap to your hand, whirl around your body, and blast foes at your whim. As your connection to the planes grows, you attain true mastery over your chosen elements. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.lNWQPwgT4vhYCOT7]{Kineticist}",
+      "key_ability": [
+        "con"
+      ],
+      "hp": 8,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 1
+      }
+    },
+    "key_mechanics": [
+      "Double Reflow: Your kinetic gate becomes even more adaptable. When you use reflow elements, you can replace two impulse feats instead of one....",
+      "Extract Element: Creatures with a strong tie to your element might be troublesome for you to deal with, at least until you've learned to turn their elemental nature to your advantage. You gain the @UUID[Compendium.pf2...",
+      "Final Gate: Your kinetic gate reaches a perfect form, its power constantly fighting to be released. If your kinetic aura is inactive, you automatically use the first action of your turn to @UUID[Compendium.pf2e.a...",
+      "Fourth Gate's Threshold: You reach a new milestone in your odyssey to become in tune with your kinetic gate and must decide how to expand the gate's power. At 5th level and every 4 levels thereafter, you choose to either expa...",
+      "Gate Junction: Gate Junctions When you gain a gate junction, you develop a specialized kinetic technique. Choose one benefit from the gate junction table for one of your kinetic elements. A critical blast junction h...",
+      "Gate's Threshold: You reach a new milestone in your odyssey to become in tune with your kinetic gate and must decide how to expand the gate's power. At 5th level and every 4 levels thereafter, you choose to either expa...",
+      "Greater Kinetic Durability: Your gate protects you even more. Your proficiency rank for Fortitude saves increases to legendary. When you roll a critical failure on a Fortitude save, you get a failure instead. When you fail a For...",
+      "Impulses: An impulse is a special type of magical action available to kineticists, allowing them to wield or shape their element into diverse and powerful forms. To wield an element, you must have your kinetic ...",
+      "Kinetic Aura: Through your kinetic gate, elements flow from an elemental plane to orbit your person. The form and appearance of this kinetic aura are unique to you. Examples include a chaotic wind orbiting the body...",
+      "Kinetic Durability: The sustenance of your inner gate counters harm that would come to your body. Your proficiency rank for Fortitude saves increases to master. When you roll a success on a Fortitude save, you get a crit..."
+    ],
+    "common_traits": [
+      {
+        "trait": "impulse",
+        "count": 112
+      },
+      {
+        "trait": "primal",
+        "count": 112
+      },
+      {
+        "trait": "overflow",
+        "count": 44
+      },
+      {
+        "trait": "wood",
+        "count": 22
+      },
+      {
+        "trait": "air",
+        "count": 20
+      },
+      {
+        "trait": "fire",
+        "count": 20
+      },
+      {
+        "trait": "metal",
+        "count": 20
+      },
+      {
+        "trait": "water",
+        "count": 20
+      },
+      {
+        "trait": "earth",
+        "count": 20
+      }
+    ],
+    "action_patterns": {
+      "action": 107,
+      "reaction": 7,
+      "passive": 12,
+      "free": 4
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 13
+      },
+      {
+        "rule_type": "BaseSpeed",
+        "count": 8
+      },
+      {
+        "rule_type": "ActorTraits",
+        "count": 6
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 3
+      },
+      {
+        "rule_type": "Resistance",
+        "count": 2
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 2
+      },
+      {
+        "rule_type": "SpecialStatistic",
+        "count": 1
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "ki",
+        "count": 90
+      },
+      {
+        "keyword": "damage",
+        "count": 79
+      },
+      {
+        "keyword": "stance",
+        "count": 68
+      },
+      {
+        "keyword": "action",
+        "count": 39
+      },
+      {
+        "keyword": "critical",
+        "count": 34
+      },
+      {
+        "keyword": "fire",
+        "count": 28
+      },
+      {
+        "keyword": "move",
+        "count": 26
+      },
+      {
+        "keyword": "elemental",
+        "count": 25
+      },
+      {
+        "keyword": "attack",
+        "count": 21
+      },
+      {
+        "keyword": "bonus",
+        "count": 18
+      },
+      {
+        "keyword": "fly",
+        "count": 17
+      },
+      {
+        "keyword": "spell",
+        "count": 17
+      },
+      {
+        "keyword": "penalty",
+        "count": 12
+      },
+      {
+        "keyword": "resistance",
+        "count": 12
+      },
+      {
+        "keyword": "armor",
+        "count": 10
+      },
+      {
+        "keyword": "heal",
+        "count": 9
+      },
+      {
+        "keyword": "weapon",
+        "count": 8
+      },
+      {
+        "keyword": "electricity",
+        "count": 8
+      },
+      {
+        "keyword": "reaction",
+        "count": 7
+      },
+      {
+        "keyword": "concealed",
+        "count": 7
+      }
+    ]
+  },
+  "magus": {
+    "class_name": "magus",
+    "basic_info": {
+      "name": "Magus",
+      "description": "Combining the physicality and technique of a warrior with the ability to cast arcane magic, you seek to perfect the art of fusing spell and strike. While the hefty tome you carry reflects hours conducting arcane research, your enemies need no reminder of your training. They recognize it as you take them down. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.YVoyzV9v4QyP2UIC]{Magus}",
+      "key_ability": [
+        "dex",
+        "str"
+      ],
+      "hp": 8,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Alertness: Experience has made you increasingly aware of threats around you, and you react more quickly to danger. Your proficiency rank for Perception increases to expert....",
+      "Aloof Firmament: You're a philosopher of the sword who codifies your study of qinggong along principles arcane and martial. Your blade teaches morality and immortality, and you illustrate its lessons with an academici...",
+      "Arcane Cascade: After you wield magic, you can enter a special stance to make your attacks more effective. @UUID[Compendium.pf2e.actionspf2e.Item.Arcane Cascade]...",
+      "Arcane Spellcasting (Magus): You study spells so you can combine them with your attacks or solve problems that strength of arms alone can't handle. You can cast arcane spells using the @UUID[Compendium.pf2e.actionspf2e.Item.Cast ...",
+      "Conflux Spells: You learn a conflux spell from your hybrid study, and you can cast additional conflux spells by selecting certain feats. Conflux spells are magus-specific spells created for combat and are a type of f...",
+      "Double Spellstrike: You can extend the magic of spells you store with Spellstrike. After you make a Spellstrike with a spell cast from a spell slot, you retain an echo of the spell, stored in your body. The next time you...",
+      "Hybrid Study: Your extensive physical training and carefully chosen magic combine to form a unique and dangerous fighting style that's more than the sum of its parts. You choose one field of hybrid study to represe...",
+      "Inexorable Iron: Once you begin along a path, nothing can stop you from reaching its end. You transform the mass of an enormous weapon into an unstoppable force to augment your own striking power or keep you standing ...",
+      "Laughing Shadow: Magic is freeing, a means to your ends, and you can use it to go where you want, do as you please, and avoid the consequences. You are a laughing shadow of spell and blade, always one step ahead of yo...",
+      "Resolve: You've steeled your mind with resolve. Your proficiency rank for Will saves increases to master. When you roll a success on a Will save, you get a critical success instead...."
+    ],
+    "common_traits": [
+      {
+        "trait": "arcane",
+        "count": 11
+      },
+      {
+        "trait": "water",
+        "count": 3
+      },
+      {
+        "trait": "concentrate",
+        "count": 2
+      },
+      {
+        "trait": "light",
+        "count": 2
+      },
+      {
+        "trait": "extradimensional",
+        "count": 2
+      },
+      {
+        "trait": "attack",
+        "count": 1
+      },
+      {
+        "trait": "visual",
+        "count": 1
+      },
+      {
+        "trait": "detection",
+        "count": 1
+      },
+      {
+        "trait": "force",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 24,
+      "action": 18,
+      "reaction": 6,
+      "free": 3
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "DamageDice",
+        "count": 3
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 2
+      },
+      {
+        "rule_type": "CriticalSpecialization",
+        "count": 2
+      },
+      {
+        "rule_type": "Strike",
+        "count": 1
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 1
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 1
+      },
+      {
+        "rule_type": "Note",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 41
+      },
+      {
+        "keyword": "strike",
+        "count": 27
+      },
+      {
+        "keyword": "stance",
+        "count": 22
+      },
+      {
+        "keyword": "attack",
+        "count": 21
+      },
+      {
+        "keyword": "action",
+        "count": 19
+      },
+      {
+        "keyword": "weapon",
+        "count": 18
+      },
+      {
+        "keyword": "cast",
+        "count": 17
+      },
+      {
+        "keyword": "arcane",
+        "count": 16
+      },
+      {
+        "keyword": "damage",
+        "count": 13
+      },
+      {
+        "keyword": "bonus",
+        "count": 12
+      },
+      {
+        "keyword": "focus",
+        "count": 10
+      },
+      {
+        "keyword": "ki",
+        "count": 9
+      },
+      {
+        "keyword": "critical",
+        "count": 8
+      },
+      {
+        "keyword": "shield",
+        "count": 5
+      },
+      {
+        "keyword": "move",
+        "count": 5
+      },
+      {
+        "keyword": "penalty",
+        "count": 4
+      },
+      {
+        "keyword": "unarmed",
+        "count": 3
+      },
+      {
+        "keyword": "fly",
+        "count": 3
+      },
+      {
+        "keyword": "fire",
+        "count": 3
+      },
+      {
+        "keyword": "cold",
+        "count": 3
+      }
+    ]
+  },
+  "monk": {
+    "class_name": "monk",
+    "basic_info": {
+      "name": "Monk",
+      "description": "The strength of your fist flows from your mind and spirit. You seek perfection-honing your body into a flawless instrument and your mind into an orderly bastion of wisdom. You're a fierce combatant renowned for martial arts skills and combat stances that grant you unique fighting moves. While the challenge of mastering many fighting styles drives you to great heights, you also enjoy meditating on philosophical questions and discovering new ways to obtain peace and enlightenment. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.hGKd722Kn4ZxIOJs]{Monk}",
+      "key_ability": [
+        "dex",
+        "str"
+      ],
+      "hp": 10,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Adamantine Strikes: When you focus your will into your limbs, your blows are as unyielding as the hardest of metals. Your unarmed attacks are treated as adamantine....",
+      "Expert Strikes: You've practiced martial arts and have now surpassed your former skill. Your proficiency ranks for unarmed attacks and simple weapons increase to expert. When you get a critical hit with an unarmed at...",
+      "Flurry of Blows: Make two unarmed Strikes. If both hit the same creature, combine their damage for the purpose of resistances and weaknesses. Apply your multiple attack penalty to the Strikes normally. As a flourish a...",
+      "Graceful Legend: Your sublime movement grants you unparalleled protection and offense. Your proficiency rank for unarmored defense increases to legendary, and your proficiency rank for your monk class DC increases to ...",
+      "Graceful Mastery: You move with perpetual grace, turning aside blows. Your proficiency rank for unarmored defense increases to master....",
+      "Incredible Movement: You move like the wind. You gain a +10-foot status bonus to your Speed whenever you're not wearing armor. The bonus increases by 5 feet for every 4 levels you have beyond 3rd....",
+      "Master Strikes: You've honed your body into an even deadlier weapon. Your proficiency ranks for unarmed attacks and simple weapons increase to master....",
+      "Metal Strikes: You can adjust your body to make unarmed attacks infused with the mystic energy of rare metals. Your unarmed attacks are treated as cold iron and silver. This allows you to deal more damage to a varie...",
+      "Monk Expertise: Your proficiency rank for your monk class DC increases to expert. If you have qi spells, your proficiency rank for spell attacks and spell DCs increases to expert....",
+      "Mystic Strikes: Focusing your will into your physical attacks imbues them with mystical energy. Your unarmed attacks become magical, allowing them to get past resistances to non-magical attacks. However, you still ne..."
+    ],
+    "common_traits": [
+      {
+        "trait": "stance",
+        "count": 24
+      },
+      {
+        "trait": "water",
+        "count": 11
+      },
+      {
+        "trait": "flourish",
+        "count": 7
+      },
+      {
+        "trait": "concentrate",
+        "count": 6
+      },
+      {
+        "trait": "occult",
+        "count": 5
+      },
+      {
+        "trait": "fire",
+        "count": 4
+      },
+      {
+        "trait": "emotion",
+        "count": 3
+      },
+      {
+        "trait": "mental",
+        "count": 3
+      },
+      {
+        "trait": "fortune",
+        "count": 3
+      }
+    ],
+    "action_patterns": {
+      "passive": 46,
+      "reaction": 13,
+      "action": 63,
+      "free": 4
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 15
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 12
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 7
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 5
+      },
+      {
+        "rule_type": "Note",
+        "count": 5
+      },
+      {
+        "rule_type": "MartialProficiency",
+        "count": 3
+      },
+      {
+        "rule_type": "Resistance",
+        "count": 3
+      },
+      {
+        "rule_type": "CriticalSpecialization",
+        "count": 2
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 2
+      },
+      {
+        "rule_type": "DexterityModifierCap",
+        "count": 2
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "stance",
+        "count": 74
+      },
+      {
+        "keyword": "attack",
+        "count": 61
+      },
+      {
+        "keyword": "action",
+        "count": 57
+      },
+      {
+        "keyword": "damage",
+        "count": 55
+      },
+      {
+        "keyword": "strike",
+        "count": 52
+      },
+      {
+        "keyword": "unarmed",
+        "count": 36
+      },
+      {
+        "keyword": "bonus",
+        "count": 28
+      },
+      {
+        "keyword": "move",
+        "count": 25
+      },
+      {
+        "keyword": "spell",
+        "count": 23
+      },
+      {
+        "keyword": "ki",
+        "count": 23
+      },
+      {
+        "keyword": "critical",
+        "count": 23
+      },
+      {
+        "keyword": "weapon",
+        "count": 19
+      },
+      {
+        "keyword": "armor",
+        "count": 16
+      },
+      {
+        "keyword": "penalty",
+        "count": 15
+      },
+      {
+        "keyword": "finesse",
+        "count": 13
+      },
+      {
+        "keyword": "focus",
+        "count": 13
+      },
+      {
+        "keyword": "agile",
+        "count": 11
+      },
+      {
+        "keyword": "resistance",
+        "count": 11
+      },
+      {
+        "keyword": "cast",
+        "count": 10
+      },
+      {
+        "keyword": "fire",
+        "count": 10
+      }
+    ]
+  },
+  "oracle": {
+    "class_name": "oracle",
+    "basic_info": {
+      "name": "Oracle",
+      "description": "Your conduit to divine power eschews the traditional channels of prayer and servitude—you instead glean sacred truths and great mysteries embodied in overarching concepts, whether because you perceive the common ground across multiple deities or circumvent their power entirely. You explore one of these mysteries and draw upon its power to cast miraculous spells, but that power comes with a terrible price: a curse that grows stronger the more you draw upon it, which you might uphold as an instrument of the divine or view as punishment from the gods. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.bqaqOx3naiwTozBX]{Oracle}",
+      "key_ability": [
+        "cha"
+      ],
+      "hp": 8,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Ancestors: The voices of generations past speak to you, and you hear their words. You might resent the constant interruption, or you might revere the spirits of those who came before. Perhaps you hail from a cul...",
+      "Ashes: You see all things in the world as fleeting and temporary, waiting to be purified into their base essence: the ash left behind after a burning fire. While you understand fire as a necessary part of th...",
+      "Battle: Warlike forces fill you with physical might and tactical knowledge, aiming to have you uphold the glory of combat, fight to improve the world, prepare against the necessity of conflict, or endure the ...",
+      "Blight: A spring bud will wither, a mighty oak will crash to the forest floor, and a callow youth will grow into maturity, then decline into old age. You know none of these things are cause for alarm or sadne...",
+      "Bones: Your mystery imparts an understanding of death and undeath in all their macabre complexity. You might have had a brush with death yourself—maybe even dying and returning to life—or carry the touch of ...",
+      "Cosmos: Celestial bodies great and small exert influence on you, giving you sublime cosmic power. Perhaps you see the glittering stars as a divine blessing, or perhaps you feel drawn to the infinitely dark sp...",
+      "Curse of Ancestral Meddling: The ancestral spirits you commune with haunt you and meddle with your belongings and actions, either out of a wellintentioned (but ultimately detrimental) attempt to assist you, as punishment for your...",
+      "Curse of Creeping Ashes: Your body is slowly being consumed by the fires of your internal power, purifying you with each passing day. You are occasionally wracked with dry, wheezing coughs, and wherever you go you leave behin...",
+      "Curse of Engulfing Flames: Fires flare noticeably (though not dangerously) in your presence, you occasionally smoke slightly, and your body is almost painfully hot to the touch. When you have the @UUID[Compendium.pf2e.condition...",
+      "Curse of Inclement Headwinds: The weather seems to always oppose you in ways large and small. Even when you are calm and at rest, your hair and clothing are inconveniently blown about by gentle winds, you are slightly damp from th..."
+    ],
+    "common_traits": [
+      {
+        "trait": "divine",
+        "count": 17
+      },
+      {
+        "trait": "cursebound",
+        "count": 14
+      },
+      {
+        "trait": "spellshape",
+        "count": 4
+      },
+      {
+        "trait": "mental",
+        "count": 3
+      },
+      {
+        "trait": "prediction",
+        "count": 3
+      },
+      {
+        "trait": "concentrate",
+        "count": 2
+      },
+      {
+        "trait": "healing",
+        "count": 2
+      },
+      {
+        "trait": "manipulate",
+        "count": 2
+      },
+      {
+        "trait": "secret",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 15,
+      "free": 8,
+      "action": 12,
+      "reaction": 2
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "ItemAlteration",
+        "count": 9
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 7
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 4
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 3
+      },
+      {
+        "rule_type": "Weakness",
+        "count": 3
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 1
+      },
+      {
+        "rule_type": "BaseSpeed",
+        "count": 1
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 25
+      },
+      {
+        "keyword": "divine",
+        "count": 14
+      },
+      {
+        "keyword": "cast",
+        "count": 13
+      },
+      {
+        "keyword": "action",
+        "count": 12
+      },
+      {
+        "keyword": "damage",
+        "count": 10
+      },
+      {
+        "keyword": "stance",
+        "count": 7
+      },
+      {
+        "keyword": "ki",
+        "count": 6
+      },
+      {
+        "keyword": "heal",
+        "count": 5
+      },
+      {
+        "keyword": "bonus",
+        "count": 5
+      },
+      {
+        "keyword": "attack",
+        "count": 5
+      },
+      {
+        "keyword": "move",
+        "count": 4
+      },
+      {
+        "keyword": "focus",
+        "count": 3
+      },
+      {
+        "keyword": "critical",
+        "count": 3
+      },
+      {
+        "keyword": "penalty",
+        "count": 2
+      },
+      {
+        "keyword": "fire",
+        "count": 2
+      },
+      {
+        "keyword": "fly",
+        "count": 2
+      },
+      {
+        "keyword": "strike",
+        "count": 2
+      },
+      {
+        "keyword": "stride",
+        "count": 2
+      },
+      {
+        "keyword": "stunned",
+        "count": 1
+      },
+      {
+        "keyword": "free action",
+        "count": 1
+      }
+    ]
+  },
+  "psychic": {
+    "class_name": "psychic",
+    "basic_info": {
+      "name": "Psychic",
+      "description": "The mind can perceive truths hidden to fine-tuned instruments, house more secrets than any tome, and move objects and hearts more deftly than any lever. By delving into both the conscious and subconscious aspects of your inner self, you have awoken to the might of psychic magic, allowing you to cast spells not through incantations or gestures but by the power of your will alone. While the thin line between your mind and reality means that a single errant thought could have unintended consequences for yourself and your companions, you know that anything is possible, if you can imagine it. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.KVoEUJBAbAFUJTqw]{Psychic}",
+      "key_ability": [],
+      "hp": 6,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Clarity of Focus: Your deepening connection to your mind grants you more power to fuel your psi amps. Increase the number of Focus Points in your focus pool by 1. This ability doesn't change the number of Focus Points ...",
+      "Conscious Mind: Whatever the subconscious source of a psychic's power, all find that a specific external manifestation of their magic comes most easily to them. This conscious outward expression adds several addition...",
+      "Emotional Acceptance: The mind's truths come not in learned words or mathematical formulas but in deeper feelings and sensations. Emotions unlock the door to your power-you might consider your heart the source of your stre...",
+      "Extrasensory Perception: Minor applications of clairvoyance let you know when danger is near. Your proficiency rank for Perception increases to expert....",
+      "Fortress of Will: Your trained mind is as a fortress that none can breach. Your proficiency rank for Will saves increases to legendary. When you critically fail a Will save, you get a failure instead. When you fail a W...",
+      "Gathered Lore: Many psychics are self-taught, frantically improvising how to best control their abilities before their power overwhelms them. Not you. Tutored by a mentor or classically trained at a facility for psy...",
+      "Great Fortitude (Psychic): Your mind holds your body to a subconscious mental image of yourself. Your proficiency rank for Fortitude saves increases to expert....",
+      "Infinite Mind: Anything you can imagine is now within the realm of possibility. Add two common 10th-rank occult spells to your repertoire; you gain a single 10th-rank spell slot you can use to cast one of those two ...",
+      "Personal Barrier: Subtle telekinetic fields dampen and deflect incoming blows. Your proficiency rank in unarmored defense increases to expert....",
+      "Precise Discipline: Determine intended outcome. Align thoughts. Identify and resolve distractions. Manifest. Intentional focus is the key to unleashing your abilities, whether that's because your power naturally tends to..."
+    ],
+    "common_traits": [
+      {
+        "trait": "occult",
+        "count": 16
+      },
+      {
+        "trait": "psyche",
+        "count": 10
+      },
+      {
+        "trait": "amp",
+        "count": 8
+      },
+      {
+        "trait": "mental",
+        "count": 7
+      },
+      {
+        "trait": "mindshift",
+        "count": 5
+      },
+      {
+        "trait": "concentrate",
+        "count": 5
+      },
+      {
+        "trait": "emotion",
+        "count": 3
+      },
+      {
+        "trait": "illusion",
+        "count": 2
+      },
+      {
+        "trait": "fortune",
+        "count": 2
+      }
+    ],
+    "action_patterns": {
+      "reaction": 4,
+      "passive": 23,
+      "action": 9,
+      "free": 7
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "ItemAlteration",
+        "count": 16
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 11
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 10
+      },
+      {
+        "rule_type": "Resistance",
+        "count": 3
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 2
+      },
+      {
+        "rule_type": "Weakness",
+        "count": 1
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 1
+      },
+      {
+        "rule_type": "Sense",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 31
+      },
+      {
+        "keyword": "cast",
+        "count": 17
+      },
+      {
+        "keyword": "action",
+        "count": 17
+      },
+      {
+        "keyword": "damage",
+        "count": 15
+      },
+      {
+        "keyword": "stance",
+        "count": 11
+      },
+      {
+        "keyword": "attack",
+        "count": 9
+      },
+      {
+        "keyword": "critical",
+        "count": 7
+      },
+      {
+        "keyword": "ki",
+        "count": 7
+      },
+      {
+        "keyword": "bonus",
+        "count": 5
+      },
+      {
+        "keyword": "resistance",
+        "count": 4
+      },
+      {
+        "keyword": "move",
+        "count": 4
+      },
+      {
+        "keyword": "focus",
+        "count": 3
+      },
+      {
+        "keyword": "rage",
+        "count": 3
+      },
+      {
+        "keyword": "frightened",
+        "count": 2
+      },
+      {
+        "keyword": "strike",
+        "count": 2
+      },
+      {
+        "keyword": "occult",
+        "count": 1
+      },
+      {
+        "keyword": "fly",
+        "count": 1
+      },
+      {
+        "keyword": "penalty",
+        "count": 1
+      },
+      {
+        "keyword": "stride",
+        "count": 1
+      },
+      {
+        "keyword": "concealed",
+        "count": 1
+      }
+    ]
+  },
+  "ranger": {
+    "class_name": "ranger",
+    "basic_info": {
+      "name": "Ranger",
+      "description": "Some rangers believe civilization wears down the soul, but still needs to be protected from wild creatures. Others say nature needs to be protected from the greedy, who wish to tame its beauty and plunder its treasures. You could champion either goal, or both. You might be a scout, tracker, or hunter of fugitives or beasts, haunting the edge of civilization or exploring the wilds. You know how to live off the land and are skilled at spotting and taking down both opportune prey and hated enemies. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.gdEmPPRYhRai7I1N]{Ranger}",
+      "key_ability": [
+        "dex",
+        "str"
+      ],
+      "hp": 10,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 2,
+        "will": 1
+      }
+    },
+    "key_mechanics": [
+      "Flurry: You have trained to unleash a devastating flurry of attacks upon your prey. Your multiple attack penalty for attacks against your hunted prey is –3 (–2 with an agile attack) on your second attack of t...",
+      "Greater Natural Reflexes: You avoid explosions with reflexes a cat would envy. Your proficiency rank for Reflex saves increases to legendary. When you roll a critical failure on a Reflex save, you get a failure instead. When y...",
+      "Hunt Prey: When you focus your attention on a single foe, you become unstoppable in your pursuit. You gain the @UUID[Compendium.pf2e.actionspf2e.Item.Hunt Prey] action....",
+      "Hunter's Edge: You have trained to become a skilled hunter and tracker, gaining an extra benefit when you Hunt Prey depending on the focus of your training. Choose a hunter's edge. @UUID[Compendium.pf2e.classfeature...",
+      "Masterful Hunter (Flurry): Masterful Hunter Upgrade Level 17 You can blend your weapon mastery with skillful targeting to make a series of precise attacks. If you have master proficiency with your weapon, your multiple attack p...",
+      "Masterful Hunter (Outwit): Masterful Hunter Upgrade Level 17 Your mastery of skills allows you to overwhelm your prey. If you have master proficiency in Deception, Intimidation, Stealth, or the skill you use to Recall Knowledge...",
+      "Masterful Hunter (Precision): Masterful Hunter Upgrade Level 17 Your weapon mastery allows you to hit your prey's vital areas multiple times. The second time in a round you hit your hunted prey, you also deal 1d8 precision damage....",
+      "Masterful Hunter: You have honed your abilities as a hunter to incredible levels. Your proficiency rank for your ranger class DC increases to master. If you have warden spells, your proficiency rank for spell attacks a...",
+      "Natural Reflexes: You've honed your reflexes dodging falling trees and pounding hail. Your proficiency rank for Reflex saves increases to master. When you roll a success on a Reflex save, you get a critical success ins...",
+      "Nature's Edge: You always find the weak points in your foes' defenses when they're on unfavorable terrain. Enemies are @UUID[Compendium.pf2e.conditionitems.Item.Off-Guard] to you if they're in difficult terrain...."
+    ],
+    "common_traits": [
+      {
+        "trait": "flourish",
+        "count": 6
+      },
+      {
+        "trait": "concentrate",
+        "count": 3
+      },
+      {
+        "trait": "press",
+        "count": 2
+      },
+      {
+        "trait": "spellshape",
+        "count": 1
+      },
+      {
+        "trait": "move",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 60,
+      "free": 1,
+      "action": 14,
+      "reaction": 3
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "FlatModifier",
+        "count": 8
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 4
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 4
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 2
+      },
+      {
+        "rule_type": "Note",
+        "count": 2
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 2
+      },
+      {
+        "rule_type": "AdjustStrike",
+        "count": 1
+      },
+      {
+        "rule_type": "CraftingAbility",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "action",
+        "count": 39
+      },
+      {
+        "keyword": "hunt",
+        "count": 38
+      },
+      {
+        "keyword": "attack",
+        "count": 17
+      },
+      {
+        "keyword": "weapon",
+        "count": 17
+      },
+      {
+        "keyword": "strike",
+        "count": 14
+      },
+      {
+        "keyword": "critical",
+        "count": 12
+      },
+      {
+        "keyword": "spell",
+        "count": 12
+      },
+      {
+        "keyword": "damage",
+        "count": 12
+      },
+      {
+        "keyword": "stance",
+        "count": 12
+      },
+      {
+        "keyword": "move",
+        "count": 11
+      },
+      {
+        "keyword": "focus",
+        "count": 11
+      },
+      {
+        "keyword": "ki",
+        "count": 10
+      },
+      {
+        "keyword": "penalty",
+        "count": 9
+      },
+      {
+        "keyword": "bonus",
+        "count": 9
+      },
+      {
+        "keyword": "primal",
+        "count": 6
+      },
+      {
+        "keyword": "concealed",
+        "count": 6
+      },
+      {
+        "keyword": "resistance",
+        "count": 5
+      },
+      {
+        "keyword": "stride",
+        "count": 4
+      },
+      {
+        "keyword": "free action",
+        "count": 3
+      },
+      {
+        "keyword": "reaction",
+        "count": 3
+      }
+    ]
+  },
+  "rogue": {
+    "class_name": "rogue",
+    "basic_info": {
+      "name": "Rogue",
+      "description": "You are skilled and opportunistic. Using your sharp wits and quick reactions, you take advantage of your opponents' missteps and strike where it hurts most. You play a dangerous game, seeking thrills and testing your skills, and likely don't care much for any laws that happen to get in your way. While the path of every rogue is unique and riddled with danger, the one thing you all share in common is the breadth and depth of your skills. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.u4qPrDRBagxG9wj8]{Rogue}",
+      "key_ability": [
+        "dex"
+      ],
+      "hp": 8,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 2,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Agile Mind: You play mental games and employ cognitive tricks to throw off mind-altering effects. Your proficiency rank for Will saves increases to master. When you roll a success at a Will save, you get a critic...",
+      "Avenger: Trained far from watching eyes, you use stealth, intimidation, and deadly bladework to root out threats to your church. You must select @UUID[Compendium.pf2e.feats-srd.Item.Avenger Dedication] as your...",
+      "Debilitating Strike: When taking advantage of an opening, you both hinder and harm your foe. You gain the @UUID[Compendium.pf2e.actionspf2e.Item.Debilitating Strike] free action....",
+      "Deny Advantage: As someone who takes advantage of openings, you are careful not to leave such gaps yourself. You aren't @UUID[Compendium.pf2e.conditionitems.Item.Off-Guard] to @UUID[Compendium.pf2e.conditionitems.Ite...",
+      "Double Debilitation: Your opportunistic attacks are particularly detrimental. When you use @UUID[Compendium.pf2e.actionspf2e.Item.Debilitating Strike], you can apply two debilitations simultaneously; removing one removes ...",
+      "Eldritch Trickster: When it comes to a big heist, every rogue worth their salt knows that magic can throw meticulous plans into chaos, whether in the form of arcane wards or pesky divinations. You dabble in magic just en...",
+      "Evasive Reflexes: You've learned to move quickly to avoid explosions, dragons' breath, and worse. Your proficiency rank for Reflex saves increases to master. When you roll a success on a Reflex save, you get a critical...",
+      "Greater Rogue Reflexes: You elude danger to a degree that few can match. Your proficiency rank for Reflex saves increases to legendary. When you roll a critical failure on a Reflex save, you get a failure instead. When you r...",
+      "Master Strike: You can incapacitate an unwary foe with a single strike. Your proficiency rank for your rogue class DC increases to master. You gain the @UUID[Compendium.pf2e.actionspf2e.Item.Master Strike] free acti...",
+      "Master Tricks: You've mastered a rogue's fighting moves. Your proficiency ranks increase to master for all simple weapons, martial weapons, and unarmed attacks...."
+    ],
+    "common_traits": [
+      {
+        "trait": "flourish",
+        "count": 4
+      },
+      {
+        "trait": "concentrate",
+        "count": 3
+      },
+      {
+        "trait": "manipulate",
+        "count": 3
+      },
+      {
+        "trait": "incapacitation",
+        "count": 2
+      },
+      {
+        "trait": "magical",
+        "count": 2
+      },
+      {
+        "trait": "exploration",
+        "count": 1
+      },
+      {
+        "trait": "secret",
+        "count": 1
+      },
+      {
+        "trait": "extradimensional",
+        "count": 1
+      },
+      {
+        "trait": "move",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 45,
+      "action": 27,
+      "reaction": 12,
+      "free": 4
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "Note",
+        "count": 5
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 4
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 3
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 3
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 3
+      },
+      {
+        "rule_type": "EphemeralEffect",
+        "count": 2
+      },
+      {
+        "rule_type": "AdjustModifier",
+        "count": 1
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 1
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 1
+      },
+      {
+        "rule_type": "AdjustDegreeOfSuccess",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "action",
+        "count": 48
+      },
+      {
+        "keyword": "attack",
+        "count": 37
+      },
+      {
+        "keyword": "strike",
+        "count": 36
+      },
+      {
+        "keyword": "damage",
+        "count": 27
+      },
+      {
+        "keyword": "critical",
+        "count": 20
+      },
+      {
+        "keyword": "move",
+        "count": 18
+      },
+      {
+        "keyword": "weapon",
+        "count": 16
+      },
+      {
+        "keyword": "stance",
+        "count": 14
+      },
+      {
+        "keyword": "ki",
+        "count": 13
+      },
+      {
+        "keyword": "reaction",
+        "count": 12
+      },
+      {
+        "keyword": "stride",
+        "count": 10
+      },
+      {
+        "keyword": "penalty",
+        "count": 10
+      },
+      {
+        "keyword": "spell",
+        "count": 9
+      },
+      {
+        "keyword": "bonus",
+        "count": 7
+      },
+      {
+        "keyword": "cast",
+        "count": 5
+      },
+      {
+        "keyword": "fly",
+        "count": 5
+      },
+      {
+        "keyword": "concealed",
+        "count": 4
+      },
+      {
+        "keyword": "climb",
+        "count": 4
+      },
+      {
+        "keyword": "swim",
+        "count": 4
+      },
+      {
+        "keyword": "poison",
+        "count": 3
+      }
+    ]
+  },
+  "sorcerer": {
+    "class_name": "sorcerer",
+    "basic_info": {
+      "name": "Sorcerer",
+      "description": "You didn't choose to become a spellcaster-you were born one. There's magic in your blood, whether a divinity touched one of your ancestors, a forebear communed with a primal creature, or a powerful occult ritual influenced your line. Self-reflection and study allow you to refine your inherent magical skills and unlock new, more powerful abilities. The power in your blood carries a risk, however, and you constantly face the choice of whether you'll rise to become a master spellcaster or fall into destruction. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.ixBx2wZpnf4qUoEv]{Sorcerer}",
+      "key_ability": [
+        "cha"
+      ],
+      "hp": 6,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Bloodline: Aberrant: Something ancient and unknowable speaks to you from beyond the stars or below the earth. Tradition occult Bloodline Skills Intimidation, Occultism Sorcerous Gifts cantrip: @UUID[Compendium.pf2e.spells...",
+      "Bloodline: Angelic: One of your forebears hailed from a celestial realm, or your ancestors' devotion led to their lineage being blessed. Spell List divine Bloodline Skills Diplomacy, Religion Granted Spells cantrip @UUID...",
+      "Bloodline: Demonic: Demons debase all they touch. One of your ancestors fell victim to their corruption, and you're burdened by that sin. Tradition divine Bloodline Skills Intimidation, Religion Sorcerous Gifts cantrip: ...",
+      "Bloodline: Diabolic: Devils are evil with a silver tongue, and one of your ancestors dallied in darkness or made an infernal pact. Spell List divine Bloodline Skills Deception, Religion Sorcerous Gifts cantrip @UUID[Compe...",
+      "Bloodline: Draconic: The blood of dragons flows through your veins. These beasts are both fearsome in combat and skilled at magic. Tradition variable (see Draconic Exemplars below) Bloodline Skills Intimidation and one ot...",
+      "Bloodline: Elemental: An elemental influence has imbued your blood with primal fury. You are granted different sorcerous gift spells and damage type from blood magic depending on which element affected your bloodline (see ...",
+      "Bloodline: Fey: Fey whimsy or a tryst in a moonlit grove put the bewitching magic of the First World into your family's bloodline. Tradition primal Bloodline Skills Deception, Nature Sorcerous Gifts cantrip @UUID[Com...",
+      "Bloodline: Genie: Through lineage, magic, or wishes made real, the blood of a noble genie flows through your veins. Spell List arcane Bloodline Skills Arcana, Deception Granted Spells cantrip: @UUID[Compendium.pf2e.spe...",
+      "Bloodline: Hag: A hag long ago cursed your family, or you are a descendant of a hag or changeling, and their magic infests your blood and soul. Tradition occult Bloodline Skills Deception, Occultism Sorcerous Gifts c...",
+      "Bloodline: Harrow: Spell List occult Bloodline Skills Occultism, Performance Granted Spells cantrip: @UUID[Compendium.pf2e.spells-srd.Item.Detect Magic]; 1st: @UUID[Compendium.pf2e.spells-srd.Item.Ill Omen], 2nd: @UUID[..."
+    ],
+    "common_traits": [
+      {
+        "trait": "concentrate",
+        "count": 9
+      },
+      {
+        "trait": "spellshape",
+        "count": 8
+      },
+      {
+        "trait": "manipulate",
+        "count": 2
+      },
+      {
+        "trait": "arcane",
+        "count": 1
+      },
+      {
+        "trait": "attack",
+        "count": 1
+      },
+      {
+        "trait": "divine",
+        "count": 1
+      },
+      {
+        "trait": "occult",
+        "count": 1
+      },
+      {
+        "trait": "primal",
+        "count": 1
+      },
+      {
+        "trait": "healing",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 32,
+      "action": 12,
+      "reaction": 5,
+      "free": 1
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "ItemAlteration",
+        "count": 21
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 15
+      },
+      {
+        "rule_type": "DamageAlteration",
+        "count": 4
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 2
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 1
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 40
+      },
+      {
+        "keyword": "cast",
+        "count": 26
+      },
+      {
+        "keyword": "action",
+        "count": 19
+      },
+      {
+        "keyword": "stance",
+        "count": 9
+      },
+      {
+        "keyword": "damage",
+        "count": 7
+      },
+      {
+        "keyword": "ki",
+        "count": 6
+      },
+      {
+        "keyword": "arcane",
+        "count": 5
+      },
+      {
+        "keyword": "attack",
+        "count": 5
+      },
+      {
+        "keyword": "divine",
+        "count": 5
+      },
+      {
+        "keyword": "fire",
+        "count": 5
+      },
+      {
+        "keyword": "bonus",
+        "count": 4
+      },
+      {
+        "keyword": "occult",
+        "count": 4
+      },
+      {
+        "keyword": "resistance",
+        "count": 3
+      },
+      {
+        "keyword": "cold",
+        "count": 3
+      },
+      {
+        "keyword": "electricity",
+        "count": 3
+      },
+      {
+        "keyword": "acid",
+        "count": 3
+      },
+      {
+        "keyword": "primal",
+        "count": 3
+      },
+      {
+        "keyword": "move",
+        "count": 3
+      },
+      {
+        "keyword": "focus",
+        "count": 2
+      },
+      {
+        "keyword": "heal",
+        "count": 2
+      }
+    ]
+  },
+  "summoner": {
+    "class_name": "summoner",
+    "basic_info": {
+      "name": "Summoner",
+      "description": "You can magically beckon a powerful being called an eidolon to your side, serving as the mortal conduit that anchors it to the world. Whether your eidolon is a friend, a servant, or even a personal god, your connection to it marks you as extraordinary, shaping the course of your life dramatically. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.gA4Ud8oSUGkkLwAi]{Summoner}",
+      "key_ability": [
+        "cha"
+      ],
+      "hp": 10,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Ability Boosts: At 5th level and every 5 levels thereafter, boost four different ability scores. You can use these boosts to increase ability scores above 18. Boosting an ability score increases it by 1 if it's alrea...",
+      "Eidolon Defensive Expertise: Your eidolon increases its ability to avoid attacks. Its proficiency rank for unarmored defense increases to expert....",
+      "Eidolon Defensive Mastery: Your eidolon's form becomes particularly difficult to assail. Its proficiency rank for unarmored defense increases to master....",
+      "Eidolon Symbiosis: Your connection with your eidolon strengthens, granting your eidolon access to a new ability depending on its type, as described in Eidolon Abilities in each eidolon's entry....",
+      "Eidolon Transcendence: Your connection with your eidolon approaches its peak, granting your eidolon access to a powerful new ability depending on its type, as described in Eidolon Abilities in each eidolon's entry. This abi...",
+      "Eidolon Unarmed Expertise: Your eidolon becomes more capable of using its unarmed attacks. Its proficiency rank for unarmed attacks increases to expert....",
+      "Eidolon Unarmed Mastery: Your eidolon truly masters its unarmed attacks, reaching greater heights. Its proficiency rank for unarmed attacks increases to master....",
+      "Eidolon Weapon Specialization: Your eidolon has learned how to inflict greater injuries with its unarmed attacks. It deals 2 additional damage with unarmed attacks in which it's an expert. This damage increases to 3 if it's a maste...",
+      "Eidolon: You have a connection with a powerful and usually otherworldly entity called an eidolon, and you can use your life force as a conduit to manifest this ephemeral entity into the mortal world. Magic als...",
+      "Evolution Feat: Evolution feats are a special type of summoner class feat that allow you to customize your eidolon through your shared link. You gain an evolution feat for your eidolon at 1st level, representing the ..."
+    ],
+    "common_traits": [
+      {
+        "trait": "evolution",
+        "count": 35
+      },
+      {
+        "trait": "eidolon",
+        "count": 8
+      },
+      {
+        "trait": "concentrate",
+        "count": 5
+      },
+      {
+        "trait": "manipulate",
+        "count": 3
+      },
+      {
+        "trait": "teleportation",
+        "count": 2
+      },
+      {
+        "trait": "tandem",
+        "count": 2
+      },
+      {
+        "trait": "move",
+        "count": 1
+      },
+      {
+        "trait": "spellshape",
+        "count": 1
+      },
+      {
+        "trait": "polymorph",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 43,
+      "action": 11,
+      "reaction": 4,
+      "free": 1
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "ItemAlteration",
+        "count": 2
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 2
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 1
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 1
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 19
+      },
+      {
+        "keyword": "action",
+        "count": 17
+      },
+      {
+        "keyword": "damage",
+        "count": 16
+      },
+      {
+        "keyword": "attack",
+        "count": 15
+      },
+      {
+        "keyword": "cast",
+        "count": 12
+      },
+      {
+        "keyword": "stance",
+        "count": 11
+      },
+      {
+        "keyword": "unarmed",
+        "count": 9
+      },
+      {
+        "keyword": "move",
+        "count": 7
+      },
+      {
+        "keyword": "strike",
+        "count": 7
+      },
+      {
+        "keyword": "bonus",
+        "count": 6
+      },
+      {
+        "keyword": "resistance",
+        "count": 6
+      },
+      {
+        "keyword": "focus",
+        "count": 5
+      },
+      {
+        "keyword": "penalty",
+        "count": 4
+      },
+      {
+        "keyword": "ki",
+        "count": 4
+      },
+      {
+        "keyword": "fire",
+        "count": 4
+      },
+      {
+        "keyword": "cold",
+        "count": 4
+      },
+      {
+        "keyword": "electricity",
+        "count": 4
+      },
+      {
+        "keyword": "acid",
+        "count": 4
+      },
+      {
+        "keyword": "divine",
+        "count": 4
+      },
+      {
+        "keyword": "arcane",
+        "count": 4
+      }
+    ]
+  },
+  "swashbuckler": {
+    "class_name": "swashbuckler",
+    "basic_info": {
+      "name": "Swashbuckler",
+      "description": "Many warriors rely on brute force, weighty armor, or cumbersome weapons. For you, battle is a dance where you move among foes with style and grace. You dart among combatants with flair and land powerful finishing moves with a flick of the wrist and a flash of the blade, all while countering attacks with elegant ripostes that keep enemies off balance. Harassing and thwarting your foes lets you charm fate and cheat death time and again with aplomb and plenty of flair. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.rsDTKu4HUuKft7fk]{Swashbuckler}",
+      "key_ability": [
+        "dex"
+      ],
+      "hp": 10,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 2,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Assured Evasion: Your ability to elude danger is matchless. Your proficiency rank for Reflex saves increases to legendary. When you roll a critical failure on a Reflex save, you get a failure instead. When you roll a ...",
+      "Battledancer: To you, a fight is a kind of performance art, and you command your foes' attention with mesmerizing motions. You are trained in Performance and gain the @UUID[Compendium.pf2e.feats-srd.Item.Fascinatin...",
+      "Braggart: You boast, taunt, and psychologically needle your foes. You are trained in Intimidation. When you @UUID[Compendium.pf2e.actionspf2e.Item.Demoralize], the action gains the bravado trait....",
+      "Confident Evasion: You've learned to move quickly to avoid explosions, a dragon's breath, and worse. Your proficiency rank for Reflex saves increases to master. When you roll a success on a Reflex save, you get a critic...",
+      "Confident Finisher: You gain an elegant finishing attack you can make when you have panache. The finisher trait is described below. You gain the @UUID[Compendium.pf2e.actionspf2e.Item.Confident Finisher] action. Finisher...",
+      "Continuous Flair: While not equal to your panache in combat, you have a dramatic flair about you in any situation. The circumstance bonus from Stylish Combatant applies in exploration mode....",
+      "Eternal Confidence: As a swashbuckler at the peak of your skill, you swell with confidence and bravado in every attack. Your proficiency rank for your swashbuckler class DC increases to master. When you Strike as part of...",
+      "Fencer: You move carefully, feinting and creating false openings to lead your foes into inopportune attacks. You are trained in Deception. When you @UUID[Compendium.pf2e.actionspf2e.Item.Create a Diversion] o...",
+      "Gymnast: You reposition, maneuver, and bewilder your foes with daring feats of physical prowess. You are trained in Athletics. When you @UUID[Compendium.pf2e.actionspf2e.Item.Grapple], @UUID[Compendium.pf2e.ac...",
+      "Keen Flair: You inflict particularly devastating attacks on even well-defended foes. When you Strike with a weapon or unarmed attack with which you have master proficiency, if you roll a 19 on the die and the rol..."
+    ],
+    "common_traits": [
+      {
+        "trait": "finisher",
+        "count": 14
+      },
+      {
+        "trait": "bravado",
+        "count": 5
+      },
+      {
+        "trait": "fortune",
+        "count": 4
+      },
+      {
+        "trait": "stance",
+        "count": 3
+      },
+      {
+        "trait": "flourish",
+        "count": 3
+      },
+      {
+        "trait": "move",
+        "count": 1
+      },
+      {
+        "trait": "death",
+        "count": 1
+      },
+      {
+        "trait": "auditory",
+        "count": 1
+      },
+      {
+        "trait": "concentrate",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "free": 4,
+      "passive": 27,
+      "action": 26,
+      "reaction": 5
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 24
+      },
+      {
+        "rule_type": "Note",
+        "count": 15
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 4
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 3
+      },
+      {
+        "rule_type": "RollTwice",
+        "count": 3
+      },
+      {
+        "rule_type": "MultipleAttackPenalty",
+        "count": 2
+      },
+      {
+        "rule_type": "DamageAlteration",
+        "count": 2
+      },
+      {
+        "rule_type": "BaseSpeed",
+        "count": 2
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 2
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "action",
+        "count": 33
+      },
+      {
+        "keyword": "attack",
+        "count": 29
+      },
+      {
+        "keyword": "strike",
+        "count": 26
+      },
+      {
+        "keyword": "panache",
+        "count": 19
+      },
+      {
+        "keyword": "critical",
+        "count": 19
+      },
+      {
+        "keyword": "stance",
+        "count": 18
+      },
+      {
+        "keyword": "weapon",
+        "count": 16
+      },
+      {
+        "keyword": "damage",
+        "count": 13
+      },
+      {
+        "keyword": "bonus",
+        "count": 12
+      },
+      {
+        "keyword": "move",
+        "count": 11
+      },
+      {
+        "keyword": "reaction",
+        "count": 9
+      },
+      {
+        "keyword": "penalty",
+        "count": 8
+      },
+      {
+        "keyword": "ki",
+        "count": 8
+      },
+      {
+        "keyword": "agile",
+        "count": 5
+      },
+      {
+        "keyword": "stride",
+        "count": 5
+      },
+      {
+        "keyword": "style",
+        "count": 3
+      },
+      {
+        "keyword": "swim",
+        "count": 3
+      },
+      {
+        "keyword": "frightened",
+        "count": 2
+      },
+      {
+        "keyword": "shield",
+        "count": 2
+      },
+      {
+        "keyword": "finesse",
+        "count": 2
+      }
+    ]
+  },
+  "thaumaturge": {
+    "class_name": "thaumaturge",
+    "basic_info": {
+      "name": "Thaumaturge",
+      "description": "The world is full of the unexplainable: ancient magic, dead gods, and even stranger things. In response, you've scavenged the best parts of every magical tradition and built up a collection of esoterica—a broken holy relic here, a sprig of mistletoe there—that you can use to best any creature by exploiting their weaknesses and vulnerabilities. The mystic implement you carry is both badge and weapon, its symbolic weight helping you bargain with and subdue the supernatural. Every path to power has its restrictions and costs, but you turn them all to your advantage. You're a thaumaturge, and you work wonders. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.qigU4oNH2KDVvhjX]{Thaumaturge}",
+      "key_ability": [
+        "cha"
+      ],
+      "hp": 8,
+      "perception": 2,
+      "saving_throws": {
+        "fortitude": 2,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Adept Benefit (Amulet): Your amulet offers continued protection. When you use @UUID[Compendium.pf2e.actionspf2e.Item.Amulet's Abeyance], you or your ally chooses one type of damage dealt by the triggering attack and gains re...",
+      "Adept Benefit (Bell): Your bell resonates powerfully, causing the effect to last longer. The conditions from @UUID[Compendium.pf2e.actionspf2e.Item.Ring Bell] last 3 rounds instead of 1 round....",
+      "Adept Benefit (Chalice): The life essence shed from blood empowers your chalice. If you or an ally within 30 feet takes piercing or slashing damage from a foe's critical hit or takes persistent bleed damage, @UUID[Compendium....",
+      "Adept Benefit (Lantern): In addition to the initiate benefits, when you hold your lantern, its light reveals the @UUID[Compendium.pf2e.conditionitems.Item.Invisible] and the ethereal. The bright light increases to 30 feet, wi...",
+      "Adept Benefit (Mirror): Your mirror self shatters into punishing shards when damaged. While Mirror's Reflection is in effect, when an enemy adjacent to one of your spaces damages you, that version of you explodes into mirror...",
+      "Adept Benefit (Regalia): Your regalia's power increases, and so do the abilities it grants. The circumstance bonus you gain to Deception, Diplomacy, and Intimidation increases to +2, as long as you have master proficiency in ...",
+      "Adept Benefit (Tome): In addition to the initiate benefits, your tome inscribes insights into creatures that you can use to strike them down. While holding your tome, at the start of your turn each round, attempt a check t...",
+      "Adept Benefit (Wand): You gain versatility and additional benefits when you fire your wand. The range of Fling Magic increases to 120 feet. Choose a second damage type from the list; whenever you Fling Magic, you can selec...",
+      "Adept Benefit (Weapon): When your implement lashes out at your foe, even a close miss brings the weapon close enough to do harm. When you use @UUID[Compendium.pf2e.actionspf2e.Item.Implement's Interruption] and fail (but don...",
+      "Amulet: Amulets are items carried for good luck and protection. Your amulet might be a magical diagram, a religious symbol, a preserved body part such as a rabbit's foot, or a lucky coin. Amulet implements ar..."
+    ],
+    "common_traits": [
+      {
+        "trait": "esoterica",
+        "count": 9
+      },
+      {
+        "trait": "manipulate",
+        "count": 6
+      },
+      {
+        "trait": "arcane",
+        "count": 4
+      },
+      {
+        "trait": "occult",
+        "count": 3
+      },
+      {
+        "trait": "teleportation",
+        "count": 2
+      },
+      {
+        "trait": "divine",
+        "count": 2
+      },
+      {
+        "trait": "primal",
+        "count": 2
+      },
+      {
+        "trait": "fortune",
+        "count": 2
+      },
+      {
+        "trait": "curse",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 26,
+      "action": 9,
+      "free": 1,
+      "reaction": 2
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "FlatModifier",
+        "count": 2
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 2
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 2
+      },
+      {
+        "rule_type": "BaseSpeed",
+        "count": 1
+      },
+      {
+        "rule_type": "ChoiceSet",
+        "count": 1
+      },
+      {
+        "rule_type": "SpecialStatistic",
+        "count": 1
+      },
+      {
+        "rule_type": "CraftingAbility",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 11
+      },
+      {
+        "keyword": "action",
+        "count": 10
+      },
+      {
+        "keyword": "strike",
+        "count": 9
+      },
+      {
+        "keyword": "stance",
+        "count": 9
+      },
+      {
+        "keyword": "attack",
+        "count": 9
+      },
+      {
+        "keyword": "ki",
+        "count": 9
+      },
+      {
+        "keyword": "weapon",
+        "count": 5
+      },
+      {
+        "keyword": "damage",
+        "count": 5
+      },
+      {
+        "keyword": "critical",
+        "count": 5
+      },
+      {
+        "keyword": "bonus",
+        "count": 5
+      },
+      {
+        "keyword": "cast",
+        "count": 5
+      },
+      {
+        "keyword": "penalty",
+        "count": 4
+      },
+      {
+        "keyword": "divine",
+        "count": 2
+      },
+      {
+        "keyword": "reaction",
+        "count": 2
+      },
+      {
+        "keyword": "move",
+        "count": 2
+      },
+      {
+        "keyword": "primal",
+        "count": 2
+      },
+      {
+        "keyword": "elemental",
+        "count": 2
+      },
+      {
+        "keyword": "arcane",
+        "count": 2
+      },
+      {
+        "keyword": "resistance",
+        "count": 1
+      },
+      {
+        "keyword": "armor",
+        "count": 1
+      }
+    ]
+  },
+  "witch": {
+    "class_name": "witch",
+    "basic_info": {
+      "name": "Witch",
+      "description": "You command powerful magic, not through study or devotion, but as an agent for an otherworldly patron that even you don't entirely understand. This entity might be a covert divinity, a powerful fey, an ancient spirit, or any other mighty supernatural being—but its nature is likely as much a mystery to you as it is to others. Through a special familiar, your patron grants you versatile spells and powerful hexes to use as you see fit, though you're never certain if you're merely serving your patron's larger plan. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.fYJruhQfzs4dj0mp]{Witch}",
+      "key_ability": [
+        "int"
+      ],
+      "hp": 6,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Baba Yaga: Your patron is Baba Yaga, the Queen of Witches. You are most likely a young woman who has been thrown into events far above your head, though you might also be a young man or a brave knight who has sw...",
+      "Choir Politic: When your patron speaks, it is a chorus of voices sounding as one. They first appeared to you in the faces of your neighbors in the middle of a town festival or council meeting, when the success of an...",
+      "Cobyslarni: Though Cobyslarni doesn't often interact directly with mortals these days, your quest for wisdom has drawn his attention. You studied at his academy, encountered him on his travels throughout the plan...",
+      "Devourer of Decay: Your patron appeared at the end or near the end of a life, flickering in feverish visions or glinting mysteriously in the eyes of waiting scavengers. Although horrifying to many, decay creates the res...",
+      "Faith's Flamekeeper: Your patron contacted you in a moment your willpower was close to sputtering out. Their reassuring presence was like breath and kindling bringing an ember back aflame, their magic giving you the stren...",
+      "Familiar (Witch): Your patron has sent you a familiar, a mystical creature that teaches you magic and facilitates your spells. This familiar follows the rules for familiars, though as it's a direct conduit between you ...",
+      "Hex Spells: As a favored agent of your patron, you can invoke their power for a more direct magical intervention. A hex is a spell shaped by your patron and sent to you through your familiar, rather than an abili...",
+      "Lesson of Bargains: You gain the @UUID[Compendium.pf2e.spells-srd.Item.Over the Coals] hex, and your familiar learns @UUID[Compendium.pf2e.spells-srd.Item.Subconscious Suggestion]....",
+      "Lesson of Calamity: You gain the @UUID[Compendium.pf2e.spells-srd.Item.Stumbling Curse] hex, and your familiar learns @UUID[Compendium.pf2e.spells-srd.Item.Ill Omen]....",
+      "Lesson of Death: You gain the @UUID[Compendium.pf2e.spells-srd.Item.Curse of Death] hex, and your familiar learns @UUID[Compendium.pf2e.spells-srd.Item.Raise Dead]...."
+    ],
+    "common_traits": [
+      {
+        "trait": "concentrate",
+        "count": 3
+      },
+      {
+        "trait": "spellshape",
+        "count": 2
+      },
+      {
+        "trait": "prediction",
+        "count": 1
+      },
+      {
+        "trait": "magical",
+        "count": 1
+      },
+      {
+        "trait": "detection",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 32,
+      "reaction": 2,
+      "action": 3,
+      "free": 1
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "ChoiceSet",
+        "count": 4
+      },
+      {
+        "rule_type": "Strike",
+        "count": 4
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 3
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 2
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 2
+      },
+      {
+        "rule_type": "RollOption",
+        "count": 2
+      },
+      {
+        "rule_type": "CraftingAbility",
+        "count": 1
+      },
+      {
+        "rule_type": "DamageDice",
+        "count": 1
+      },
+      {
+        "rule_type": "FlatModifier",
+        "count": 1
+      },
+      {
+        "rule_type": "Note",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 23
+      },
+      {
+        "keyword": "cast",
+        "count": 13
+      },
+      {
+        "keyword": "action",
+        "count": 12
+      },
+      {
+        "keyword": "attack",
+        "count": 9
+      },
+      {
+        "keyword": "damage",
+        "count": 8
+      },
+      {
+        "keyword": "ki",
+        "count": 7
+      },
+      {
+        "keyword": "unarmed",
+        "count": 6
+      },
+      {
+        "keyword": "stance",
+        "count": 5
+      },
+      {
+        "keyword": "strike",
+        "count": 5
+      },
+      {
+        "keyword": "divine",
+        "count": 4
+      },
+      {
+        "keyword": "arcane",
+        "count": 4
+      },
+      {
+        "keyword": "occult",
+        "count": 4
+      },
+      {
+        "keyword": "primal",
+        "count": 4
+      },
+      {
+        "keyword": "weapon",
+        "count": 3
+      },
+      {
+        "keyword": "move",
+        "count": 3
+      },
+      {
+        "keyword": "focus",
+        "count": 3
+      },
+      {
+        "keyword": "critical",
+        "count": 3
+      },
+      {
+        "keyword": "bonus",
+        "count": 2
+      },
+      {
+        "keyword": "concealed",
+        "count": 2
+      },
+      {
+        "keyword": "fire",
+        "count": 2
+      }
+    ]
+  },
+  "wizard": {
+    "class_name": "wizard",
+    "basic_info": {
+      "name": "Wizard",
+      "description": "You are an eternal student of the secrets of the universe, using your mastery of magic to cast powerful spells. You treat magic like a science, cross-referencing the latest texts on practical spellcraft with ancient tomes to discover and understand arcane magic. Yet magical theory is vast, and there's no way you can study it all. Most wizards learn through formal schooling, with their curriculum informing a specific rubric, although particularly driven researchers sometimes piece together their own theories. @UUID[Compendium.pf2e.journals.JournalEntry.kzxu2dI7tFxv6Ix6.JournalEntryPage.wDukeO3euLEGn6FA]{Wizard}",
+      "key_ability": [
+        "int"
+      ],
+      "hp": 6,
+      "perception": 1,
+      "saving_throws": {
+        "fortitude": 1,
+        "reflex": 1,
+        "will": 2
+      }
+    },
+    "key_mechanics": [
+      "Arcane Bond: You place some of your magical power in a bonded item. Each day when you prepare your spells, you can designate a single item you own as your bonded item. This is typically an item associated with spe...",
+      "Arcane School: Most wizards acquire their knowledge of spells from a formal educational institution, such as the Arcanamirium or the Magaambya. At 1st level, you choose your @UUID[Compendium.pf2e.journals.JournalEnt...",
+      "Arcane Thesis: During your studies to become a full-fledged wizard, you produced a thesis of unique magical research. You gain a special benefit depending on the topic of your thesis research. The arcane thesis topi...",
+      "Archwizard's Spellcraft: You command the most potent arcane magic and can cast a spell of truly incredible power. You gain a single 10th-rank spell slot and can prepare a spell in that slot using wizard spellcasting. Unlike w...",
+      "Cascade Bearers: Cascade Bearers spend considerable time studying the qualities of magic itself as they seek to advance magical theory. They prize imagination and often bring a sense of playful curiosity to what would...",
+      "Emerald Boughs: Emerald Boughs value the societies and natural communities of the present day, seeking to understand the world as it is and how magic operates therein. Emphasizing camaraderie and sociality, these stu...",
+      "Envy: The Cutting Eye reveals weaknesses in yourself and others, creating those weaknesses when you need to humble those who dare surpass you. Anathema Use your magic to cause harm with the elements or void...",
+      "Experimental Spellshaping: Your thesis posits that the magical practice of spellshaping can be realized more efficiently by altering variables and parameters as you cast, imitating the wizards of long ago who had to work out th...",
+      "Gluttony: The All-Encompassing invokes a deep emptiness in its users, encouraging them to consume and consume, with nothing ever feeling like enough. Anathema Use your magic to protect others or manipulate mind...",
+      "Greed: The Precious Gleam carries knowledge that the world's problems are far beyond one's current form and resources. But forms can change and resources can be hoarded with the help of this rune's magic. An..."
+    ],
+    "common_traits": [
+      {
+        "trait": "spellshape",
+        "count": 7
+      },
+      {
+        "trait": "manipulate",
+        "count": 6
+      },
+      {
+        "trait": "concentrate",
+        "count": 4
+      },
+      {
+        "trait": "teleportation",
+        "count": 1
+      },
+      {
+        "trait": "fortune",
+        "count": 1
+      },
+      {
+        "trait": "mental",
+        "count": 1
+      },
+      {
+        "trait": "arcane",
+        "count": 1
+      }
+    ],
+    "action_patterns": {
+      "passive": 18,
+      "action": 10,
+      "reaction": 2,
+      "free": 1
+    },
+    "rule_patterns": [
+      {
+        "rule_type": "RollOption",
+        "count": 8
+      },
+      {
+        "rule_type": "ItemAlteration",
+        "count": 6
+      },
+      {
+        "rule_type": "ActiveEffectLike",
+        "count": 2
+      },
+      {
+        "rule_type": "GrantItem",
+        "count": 1
+      },
+      {
+        "rule_type": "AdjustDegreeOfSuccess",
+        "count": 1
+      }
+    ],
+    "thematic_keywords": [
+      {
+        "keyword": "spell",
+        "count": 30
+      },
+      {
+        "keyword": "cast",
+        "count": 22
+      },
+      {
+        "keyword": "action",
+        "count": 12
+      },
+      {
+        "keyword": "arcane",
+        "count": 8
+      },
+      {
+        "keyword": "stance",
+        "count": 8
+      },
+      {
+        "keyword": "damage",
+        "count": 7
+      },
+      {
+        "keyword": "critical",
+        "count": 5
+      },
+      {
+        "keyword": "fire",
+        "count": 4
+      },
+      {
+        "keyword": "cold",
+        "count": 4
+      },
+      {
+        "keyword": "ki",
+        "count": 3
+      },
+      {
+        "keyword": "electricity",
+        "count": 3
+      },
+      {
+        "keyword": "acid",
+        "count": 3
+      },
+      {
+        "keyword": "bonus",
+        "count": 3
+      },
+      {
+        "keyword": "attack",
+        "count": 3
+      },
+      {
+        "keyword": "focus",
+        "count": 2
+      },
+      {
+        "keyword": "resistance",
+        "count": 2
+      },
+      {
+        "keyword": "shield",
+        "count": 1
+      },
+      {
+        "keyword": "immunity",
+        "count": 1
+      },
+      {
+        "keyword": "penalty",
+        "count": 1
+      },
+      {
+        "keyword": "deadly",
+        "count": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,226 @@
+{
+  "_comment": "PF2e专长JSON模板填写指南",
+  "name": {
+    "type": "string",
+    "required": true,
+    "description": "专长名称，使用标题大小写（Title Case）",
+    "examples": [
+      "Power Attack",
+      "Battle Medicine",
+      "Cat Fall"
+    ]
+  },
+  "type": {
+    "type": "string",
+    "required": true,
+    "fixed_value": "feat",
+    "description": "类型字段，专长固定为'feat'"
+  },
+  "system": {
+    "type": "object",
+    "required": true,
+    "description": "专长的核心数据",
+    "fields": {
+      "level": {
+        "type": "object",
+        "required": true,
+        "fields": {
+          "value": {
+            "type": "number",
+            "description": "专长等级（1-20）",
+            "valid_values": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ]
+          }
+        }
+      },
+      "category": {
+        "type": "string",
+        "required": true,
+        "description": "专长类别",
+        "valid_values": [
+          "class",
+          "skill",
+          "general",
+          "ancestry",
+          "bonus",
+          "classfeature"
+        ]
+      },
+      "traits": {
+        "type": "object",
+        "fields": {
+          "value": {
+            "type": "array",
+            "description": "特征标签数组",
+            "examples": [
+              [
+                "general"
+              ],
+              [
+                "archetype"
+              ],
+              [
+                "dwarf",
+                "ancestry"
+              ]
+            ]
+          },
+          "rarity": {
+            "type": "string",
+            "description": "稀有度",
+            "valid_values": [
+              "common",
+              "uncommon",
+              "rare",
+              "unique"
+            ],
+            "default": "common"
+          }
+        }
+      },
+      "actionType": {
+        "type": "object",
+        "fields": {
+          "value": {
+            "type": "string",
+            "description": "动作类型",
+            "valid_values": [
+              "passive",
+              "action",
+              "reaction",
+              "free"
+            ]
+          }
+        }
+      },
+      "actions": {
+        "type": "object",
+        "fields": {
+          "value": {
+            "type": "number | null",
+            "description": "动作数量。passive通常为null，action为1/2/3",
+            "valid_values": [
+              null,
+              1,
+              2,
+              3
+            ]
+          }
+        }
+      },
+      "frequency": {
+        "type": "object",
+        "optional": true,
+        "description": "使用频率限制",
+        "fields": {
+          "max": {
+            "type": "number",
+            "description": "最大使用次数"
+          },
+          "per": {
+            "type": "string",
+            "description": "时间单位",
+            "valid_values": [
+              "turn",
+              "round",
+              "PT1M",
+              "PT10M",
+              "PT1H",
+              "day",
+              "P1W",
+              "P1M"
+            ],
+            "notes": {
+              "turn": "每回合",
+              "round": "每轮",
+              "PT1M": "每分钟",
+              "PT10M": "每10分钟",
+              "PT1H": "每小时",
+              "day": "每天",
+              "P1W": "每周",
+              "P1M": "每月"
+            }
+          }
+        }
+      },
+      "prerequisites": {
+        "type": "object",
+        "fields": {
+          "value": {
+            "type": "array",
+            "description": "先决条件数组",
+            "item_format": {
+              "value": "先决条件文本描述"
+            },
+            "examples": [
+              [
+                {
+                  "value": "expert in Medicine"
+                }
+              ],
+              [
+                {
+                  "value": "Strength 14"
+                }
+              ],
+              [
+                {
+                  "value": "barbarian"
+                }
+              ]
+            ]
+          }
+        }
+      },
+      "description": {
+        "type": "object",
+        "required": true,
+        "fields": {
+          "value": {
+            "type": "string (HTML)",
+            "description": "专长描述，使用HTML格式",
+            "format_guidelines": {
+              "basic_structure": "<p>段落文本</p>",
+              "requirements": "<p><strong>Requirements</strong> 要求内容</p>",
+              "trigger": "<p><strong>Trigger</strong> 触发条件</p>",
+              "frequency": "<p><strong>Frequency</strong> 频率限制</p>",
+              "separator": "<hr />",
+              "emphasis": "<strong>强调</strong> 或 <em>斜体</em>",
+              "lists": "<ul><li>项目1</li><li>项目2</li></ul>",
+              "headings": "<h5>小标题</h5>",
+              "damage_ref": "@Damage[2d6[fire]]",
+              "check_ref": "@Check[type:fortitude|dc:20]",
+              "template_ref": "@Template[type:burst|distance:10]",
+              "uuid_ref": "@UUID[Compendium.pf2e.conditionitems.Item.Frightened]"
+            }
+          }
+        }
+      },
+      "rules": {
+        "type": "array",
+        "description": "规则元素数组，定义专长的机制效果",
+        "notes": "这是最复杂的部分，包含GrantItem, FlatModifier, RollOption等多种规则类型"
+      }
+    }
+  }
+}

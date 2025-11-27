@@ -1,0 +1,631 @@
+﻿/* 物品储存箱样式 - 使用PF2e原生样式 */
+/* 完全参考PF2e原版导航设计 */
+/* 版本: 2024-11-25-v4 - 全宽布局修复 + 诊断 */
+
+/* CSS版本: 2024-11-25-v6 - 使用更宽泛的选择器 */
+
+/* 确保窗口内容全宽 */
+.application.application.feat-storage .window-content {
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+
+.application.application.feat-storage section.window-content {
+  padding: 0 !important;
+}
+
+/* 顶部Header - 使用更简单的选择器 */
+.feat-storage header.storage-char-header,
+.application.feat-storage header.storage-char-header,
+header.storage-char-header {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: #5e0000 !important;
+  padding: 1rem 1.5rem !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3) !important;
+  min-height: 3.5rem !important;
+  box-sizing: border-box !important;
+}
+
+.feat-storage header.storage-char-header h1,
+.application.feat-storage header.storage-char-header h1,
+header.storage-char-header h1 {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  font-family: Eczar, Georgia, serif !important;
+  font-weight: 600 !important;
+  font-size: 1.5rem !important;
+  color: #ffffff !important;
+  line-height: 1.4 !important;
+  text-align: center !important;
+  letter-spacing: 1px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 最高优先级：覆盖PF2e默认的grid布局 */
+/* PF2e角色表单默认使用 grid 布局，包含 sidebar header nav content 等区域 */
+/* 我们需要完全移除这个grid布局，改用简单的块级布局 */
+
+/* 只对form本身应用block布局，移除grid */
+.pf2e.sheet.actor.character.feat-storage form.crb-style,
+.actor.sheet.character.feat-storage form.crb-style,
+.actor.sheet.application.feat-storage form.crb-style,
+.application.application.feat-storage form.crb-style,
+.application.feat-storage.sheet form.crb-style,
+.application.feat-storage form.crb-style,
+.application.feat-storage form {
+  display: block !important;
+  /* 移除所有grid相关属性 */
+  grid: initial !important;
+  grid-area: initial !important;
+  grid-template: initial !important;
+  grid-template-areas: initial !important;
+  grid-template-columns: initial !important;
+  grid-template-rows: initial !important;
+  grid-column: initial !important;
+  grid-row: initial !important;
+  grid-auto-columns: initial !important;
+  grid-auto-flow: initial !important;
+  grid-auto-rows: initial !important;
+  
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 只移除直接子元素的grid定位，但保持它们原有的display属性 */
+.pf2e.sheet.actor.character.feat-storage form.crb-style > *,
+.actor.sheet.application.feat-storage form.crb-style > *,
+.application.application.feat-storage form.crb-style > *,
+.application.feat-storage form > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  /* 只移除grid定位 */
+  grid-area: initial !important;
+  grid-column: initial !important;
+  grid-row: initial !important;
+  position: relative !important;
+  /* 不强制设置display，让元素保持原有的display属性 */
+}
+
+/* 区域底部按钮区 - 放在普通存储区底部 */
+.application.feat-storage .section-footer {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.04) 100%);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 一键清除按钮 - 在普通存储区底部 */
+.application.feat-storage .section-footer .clear-unconfirmed-button {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--font-size-12, 0.75rem);
+  font-weight: 500;
+  font-family: var(--sans-serif, Roboto, sans-serif);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease-out;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.application.feat-storage .section-footer .clear-unconfirmed-button:hover {
+  background: linear-gradient(135deg, #ff5252 0%, #dd4a5d 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.application.feat-storage .section-footer .clear-unconfirmed-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.application.feat-storage .section-footer .clear-unconfirmed-button i {
+  font-size: var(--font-size-12, 0.75rem);
+}
+
+/* 存储统计信息 - 放在sheet-body底部 */
+.application.feat-storage .storage-summary {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg, #f5f5f5);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-pf-primary, #5e0000);
+  font-family: var(--sans-serif, Roboto, sans-serif);
+  font-size: var(--font-size-13, 0.8125rem);
+  font-weight: 500;
+}
+
+.application.feat-storage .storage-summary i {
+  color: var(--color-pf-alternate, #7a5295);
+  font-size: var(--font-size-15, 0.9375rem);
+}
+
+.application.feat-storage .storage-summary strong {
+  font-weight: 600;
+  color: var(--color-pf-primary, #5e0000);
+}
+
+/* PF2e风格的导航栏 - 使用更简单的选择器，保留装饰性边框 */
+.feat-storage nav.sheet-navigation,
+.application.feat-storage nav.sheet-navigation,
+nav.sheet-navigation[data-group="storage"] {
+  align-items: center !important;
+  background:
+    url("systems/pf2e/assets/sheet/border-pattern.webp") repeat-x top,
+    url("systems/pf2e/assets/sheet/border-pattern.webp") repeat-x bottom,
+    var(--color-pf-secondary, #5e0000) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25) !important;
+  display: flex !important;
+  gap: 0.6875rem !important;
+  min-height: 2rem !important;
+  padding: 0.75rem 1.5rem !important;
+  position: relative !important;
+  transition: all 0.1s ease-out !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  /* 圆形图标靠右对齐 */
+  justify-content: flex-end !important;
+}
+
+.application.feat-storage nav.sheet-navigation .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-pf-tertiary, #5e0000);
+  background-size: contain;
+  border-radius: 50%;
+  color: var(--color-pf-tertiary, #5e0000);
+  fill: var(--color-pf-tertiary, #5e0000);
+  height: 1.5rem;
+  transition: all 0.1s ease-out;
+  width: 1.5rem;
+  z-index: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow:
+    0 0 0 1px var(--color-pf-tertiary, #5e0000),
+    0 0 0 2px #9f725b,
+    inset 0 0 4px rgba(0, 0, 0, 0.25);
+}
+
+.application.feat-storage nav.sheet-navigation .item i.fa-solid {
+  padding-bottom: 0;
+  font-size: var(--font-size-12, 0.75rem);
+}
+
+.application.feat-storage nav.sheet-navigation .item:hover,
+.application.feat-storage nav.sheet-navigation .item.active {
+  z-index: 2;
+  transform: scale(1.2);
+  color: var(--text-light, rgba(255, 255, 255, 0.95));
+  fill: var(--text-light, rgba(255, 255, 255, 0.95));
+}
+
+.application.feat-storage nav.sheet-navigation .item.active {
+  box-shadow:
+    0 0 0 1px var(--color-pf-tertiary, #5e0000),
+    0 0 0 2px #9f725b,
+    inset 0 0 4px rgba(0, 0, 0, 0.25),
+    0 0 8px var(--color-pf-tertiary, #5e0000);
+}
+
+/* 移除导航栏内的存储信息和清除按钮相关样式（已移到顶部信息栏） */
+.application.feat-storage nav.sheet-navigation .storage-count,
+.application.feat-storage nav.sheet-navigation .clear-unconfirmed-button {
+  display: none;
+}
+
+/* 主体区域 - 使用PF2e的directory-list样式 */
+.application.feat-storage .sheet-body {
+  padding: 1rem;
+  min-height: 400px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 拖放悬停效果 */
+.application.feat-storage .sheet-body.drag-hover {
+  background: #f0f8ff;
+  outline: 2px dashed #7a5295;
+  outline-offset: -8px;
+}
+
+/* 通用物品储存区域样式（专长和法术共用） */
+.application.feat-storage .item-storage-section {
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+/* 保留旧的类名以兼容 */
+.application.feat-storage .feat-storage-section {
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.application.feat-storage .item-storage-section:last-child,
+.application.feat-storage .feat-storage-section:last-child {
+  margin-bottom: 0;
+}
+
+/* 普通存储区样式 */
+.application.feat-storage .storage-unconfirmed {
+  border-left: 4px solid #667eea;
+}
+
+.application.feat-storage .storage-unconfirmed header {
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, #f5f5f5 100%);
+}
+
+/* 确认存储区样式 */
+.application.feat-storage .storage-confirmed {
+  border-left: 4px solid #48bb78;
+}
+
+.application.feat-storage .storage-confirmed header {
+  background: linear-gradient(90deg, rgba(72, 187, 120, 0.1) 0%, #f5f5f5 100%);
+}
+
+/* 拖放目标高亮效果 */
+.application.feat-storage .item-storage-section.drop-target-hover,
+.application.feat-storage .feat-storage-section.drop-target-hover {
+  border-color: #7a5295;
+  box-shadow: 0 0 0 3px rgba(122, 82, 149, 0.2);
+  transform: scale(1.01);
+}
+
+.application.feat-storage .item-storage-section.storage-unconfirmed.drop-target-hover,
+.application.feat-storage .storage-unconfirmed.drop-target-hover {
+  border-left-color: #4c51bf;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.application.feat-storage .item-storage-section.storage-confirmed.drop-target-hover,
+.application.feat-storage .storage-confirmed.drop-target-hover {
+  border-left-color: #38a169;
+  background: rgba(72, 187, 120, 0.05);
+}
+
+.application.feat-storage .item-storage-section header,
+.application.feat-storage .feat-storage-section header {
+  padding: 0.5rem 1rem;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.application.feat-storage .item-storage-section header h3,
+.application.feat-storage .feat-storage-section header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #5e0000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.application.feat-storage .item-storage-section header h3 .section-hint,
+.application.feat-storage .feat-storage-section header h3 .section-hint {
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: #666;
+  font-style: italic;
+  flex-shrink: 1;
+}
+
+/* 确保区域标题不会出现在header外 */
+.application.feat-storage .item-storage-section > header,
+.application.feat-storage .feat-storage-section > header,
+.application.feat-storage .spell-section > header,
+.application.feat-storage .feat-section > header {
+  display: block;
+  width: 100%;
+}
+
+/* 专长列表 - 使用PF2e Grid布局 */
+.application.feat-storage ol.feats-list,
+.application.feat-storage ol.spells-list {
+  list-style: none;
+  list-style-type: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.application.feat-storage ol.feats-list li.slot,
+.application.feat-storage ol.spells-list li.slot {
+  align-items: center;
+  display: grid;
+  grid:
+    "name ctrl" min-content
+    "content content" min-content
+    / 1fr min-content;
+  padding: 0.3rem 0 0.25rem;
+  position: relative;
+  row-gap: 0.125rem;
+  cursor: grab;
+  list-style: none;
+  list-style-type: none;
+}
+
+.application.feat-storage .feats-list li.slot:nth-child(odd),
+.application.feat-storage .spells-list li.slot:nth-child(odd) {
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+.application.feat-storage .feats-list li.slot:hover,
+.application.feat-storage .spells-list li.slot:hover {
+  background-color: rgba(102, 126, 234, 0.1);
+}
+
+.application.feat-storage .feats-list li.slot:active,
+.application.feat-storage .spells-list li.slot:active {
+  cursor: grabbing;
+}
+
+.application.feat-storage ol.feats-list li.slot .item-name,
+.application.feat-storage ol.spells-list li.slot .item-name {
+  align-items: center !important;
+  display: flex !important;
+  flex: 1 !important;
+  gap: 0.5rem !important;
+  grid-area: name;
+  height: 1.5625rem;
+  margin: 0;
+  min-width: 0 !important;
+  overflow: hidden;
+}
+
+.application.feat-storage .item-image {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  font-size: 1rem;
+  height: 1.5rem !important;
+  width: 1.5rem !important;
+  min-width: 1.5rem !important;
+  max-width: 1.5rem !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.application.feat-storage .item-image.framed {
+  background-color: var(--tertiary, #5e0000);
+  border: none;
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px var(--tertiary, #5e0000),
+    0 0 0 2px #9f725b,
+    inset 0 0 0.25rem rgba(0, 0, 0, 0.5);
+}
+
+.application.feat-storage .item-image.framed img {
+  border-radius: 2px;
+}
+
+.application.feat-storage .item-image img {
+  border: none;
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.application.feat-storage .item-image i {
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
+  color: var(--text-dark, #1a1a1a);
+  display: none;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.application.feat-storage .item-image:hover {
+  text-shadow: none;
+}
+
+.application.feat-storage .item-image:hover i {
+  align-items: center;
+  background: #f1eee9;
+  display: flex;
+  justify-content: center;
+}
+
+.application.feat-storage .item-name h4 {
+  display: inline-flex;
+  max-width: 20rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.application.feat-storage .item-name h4 a {
+  color: #5e0000;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.application.feat-storage .item-name h4:hover {
+  color: var(--color-pf-primary, #7a5295);
+}
+
+.application.feat-storage .item-name h4 a:hover {
+  color: var(--color-pf-primary, #7a5295);
+}
+
+.application.feat-storage ol.feats-list li.slot .item-controls,
+.application.feat-storage ol.spells-list li.slot .item-controls {
+  align-items: center;
+  display: flex;
+  font-size: 0.75rem;
+  grid-area: ctrl;
+  height: 100%;
+  white-space: nowrap;
+  margin: 0;
+  width: 100%;
+}
+
+.application.feat-storage .item-controls a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  text-decoration: none;
+  transition: color 0.1s;
+  padding: 0 0.25rem;
+}
+
+.application.feat-storage .item-controls a:last-child {
+  margin-right: 0.375rem;
+}
+
+.application.feat-storage .item-controls a:hover {
+  color: #5e0000;
+}
+
+.application.feat-storage .item-controls a[data-action="delete-item"]:hover {
+  color: #dc3545;
+}
+
+.application.feat-storage .item-summary {
+  grid-area: content;
+  margin: 0.25rem 0;
+  margin-left: 1.75rem;
+  padding: 0 0.25rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.application.feat-storage .item-summary[hidden] {
+  display: none;
+}
+
+.application.feat-storage .no-description {
+  color: #999;
+  font-style: italic;
+  margin: 0;
+}
+
+/* 空状态 */
+.application.feat-storage .storage-empty {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.application.feat-storage .storage-empty .empty-icon {
+  font-size: 4rem;
+  color: #ddd;
+  margin-bottom: 1rem;
+}
+
+.application.feat-storage .storage-empty h3 {
+  margin: 0 0 0.5rem 0;
+  color: #5e0000;
+  font-size: 1.3rem;
+}
+
+.application.feat-storage .storage-empty p {
+  margin: 0.5rem 0;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.application.feat-storage .storage-empty .empty-hint {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f0f0f0;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  color: #5e0000;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.application.feat-storage .storage-empty .empty-hint i {
+  color: #7a5295;
+}
+
+/* 区域为空时的提示 */
+.application.feat-storage .area-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #999;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.application.feat-storage .area-empty i {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  opacity: 0.5;
+}
+
+.application.feat-storage .area-empty p {
+  margin: 0.5rem 0 0 0;
+  line-height: 1.5;
+}
+
+/* 专长项根据确认状态的差异化显示 */
+.application.feat-storage .feats-list li.slot[data-confirmed="true"],
+.application.feat-storage .spells-list li.slot[data-confirmed="true"] {
+  position: relative;
+}
+
+.application.feat-storage .feats-list li.slot[data-confirmed="true"]::before,
+.application.feat-storage .spells-list li.slot[data-confirmed="true"]::before {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  left: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #48bb78;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}

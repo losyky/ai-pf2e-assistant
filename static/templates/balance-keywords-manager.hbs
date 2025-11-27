@@ -1,0 +1,90 @@
+<div class="ai-pf2e-assistant-container balance-keywords-manager">
+  <div class="manager-header">
+    <h2><i class="fas fa-balance-scale"></i> PF2e 平衡关键词管理</h2>
+    <p>自定义不同等级和类别的平衡关键词，为AI生成提供更精准的指导。</p>
+  </div>
+
+  <!-- 工具栏 -->
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <button type="button" id="add-keyword-config" class="primary">
+        <i class="fas fa-plus"></i> 添加配置
+      </button>
+      <button type="button" id="import-keywords" class="info">
+        <i class="fas fa-upload"></i> 导入
+      </button>
+      <button type="button" id="export-keywords" class="info">
+        <i class="fas fa-download"></i> 导出
+      </button>
+      <button type="button" id="reset-keywords" class="warning">
+        <i class="fas fa-undo"></i> 重置默认
+      </button>
+    </div>
+    
+    <div class="toolbar-group">
+      <input type="text" id="search-keywords" placeholder="搜索关键词..." class="search-input">
+    </div>
+  </div>
+
+  <!-- 统计信息 -->
+  <div class="stats-info">
+    <span class="stat-item">
+      <i class="fas fa-list"></i>
+      共 <span class="keyword-count">{{keywordCount}}</span> 个配置
+    </span>
+  </div>
+
+  <!-- 关键词列表 -->
+  <div class="keywords-section">
+    <div class="keywords-list-wrapper">
+      {{#if keywords}}
+        <table class="keywords-table">
+          <thead>
+            <tr>
+              <th>等级</th>
+              <th>类别</th>
+              <th>关键词预览</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody class="keywords-list">
+            {{#each keywords}}
+            <tr class="keyword-config" data-level="{{level}}" data-category="{{category}}">
+              <td>{{#if (eq level 0)}}通用{{else}}{{level}}级{{/if}}</td>
+              <td>{{#if (eq category "feat")}}专长{{else if (eq category "feature")}}特性{{else if (eq category "general")}}通用{{else}}{{category}}{{/if}}</td>
+              <td class="keywords-preview">
+                {{#each this.keywords}}
+                  {{#if @first}}{{this}}{{/if}}
+                  {{#if @index}}, {{this}}{{/if}}
+                {{/each}}
+                {{#if this.keywords.length}}...{{/if}}
+              </td>
+              <td class="actions">
+                <button type="button" class="edit-keywords" title="编辑">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="delete-keywords" title="删除">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{else}}
+        <p class="no-keywords">暂无关键词配置，点击"添加配置"开始设置。</p>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- 说明 -->
+  <div class="help-section">
+    <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+    <ul>
+      <li><strong>等级配置</strong>：为不同等级设置专门的平衡关键词，0级表示通用原则</li>
+      <li><strong>类别区分</strong>：专长、特性和通用有不同的平衡要求</li>
+      <li><strong>关键词</strong>：使用简洁的关键词描述平衡要点，AI会参考这些内容</li>
+      <li><strong>优先级</strong>：精确匹配 > 同类别最近等级 > 通用原则</li>
+    </ul>
+  </div>
+</div>

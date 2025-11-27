@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- 神龛祭坛图标 -->
+  <defs>
+    <linearGradient id="stoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D2B48C"/>
+      <stop offset="50%" style="stop-color:#BC9A6A"/>
+      <stop offset="100%" style="stop-color:#8B7355"/>
+    </linearGradient>
+    <radialGradient id="fireGradient" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#FF8C00"/>
+      <stop offset="100%" style="stop-color:#FF4500"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- 祭坛基座 -->
+  <rect x="8" y="45" width="48" height="12" rx="2" fill="url(#stoneGradient)" stroke="#654321" stroke-width="2"/>
+  
+  <!-- 祭坛台阶 -->
+  <rect x="12" y="40" width="40" height="8" rx="1" fill="url(#stoneGradient)" stroke="#654321" stroke-width="1"/>
+  <rect x="16" y="35" width="32" height="8" rx="1" fill="url(#stoneGradient)" stroke="#654321" stroke-width="1"/>
+  
+  <!-- 主祭坛 -->
+  <rect x="20" y="25" width="24" height="15" rx="2" fill="url(#stoneGradient)" stroke="#654321" stroke-width="2"/>
+  
+  <!-- 神火 -->
+  <ellipse cx="32" cy="18" rx="8" ry="12" fill="url(#fireGradient)" opacity="0.8"/>
+  <ellipse cx="32" cy="20" rx="6" ry="8" fill="#FFD700" opacity="0.6"/>
+  <ellipse cx="32" cy="22" rx="4" ry="5" fill="#FFA500" opacity="0.8"/>
+  
+  <!-- 火焰 -->
+  <g fill="#FF4500" opacity="0.7">
+    <path d="M 28 22 Q 30 15 32 20 Q 34 12 36 22 Q 32 18 28 22"/>
+    <path d="M 30 24 Q 31 18 32 22 Q 33 16 34 24 Q 32 20 30 24"/>
+  </g>
+  
+  <!-- 阿兹特克装饰 -->
+  <g fill="#FFD700" stroke="#B8860B" stroke-width="1">
+    <!-- 侧面装饰 -->
+    <rect x="22" y="28" width="2" height="8"/>
+    <rect x="26" y="28" width="2" height="8"/>
+    <rect x="30" y="28" width="2" height="8"/>
+    <rect x="34" y="28" width="2" height="8"/>
+    <rect x="38" y="28" width="2" height="8"/>
+    <rect x="40" y="28" width="2" height="8"/>
+    
+    <!-- 顶部符号 -->
+    <polygon points="32,8 34,4 36,8 34,12"/>
+    <circle cx="26" cy="10" r="2"/>
+    <circle cx="38" cy="10" r="2"/>
+  </g>
+  
+  <!-- 石雕符文 -->
+  <g fill="#8B4513" opacity="0.8">
+    <rect x="22" y="30" width="1" height="6"/>
+    <rect x="24" y="32" width="1" height="4"/>
+    <rect x="38" y="30" width="1" height="6"/>
+    <rect x="40" y="32" width="1" height="4"/>
+    
+    <!-- 基座符文 -->
+    <polygon points="16,50 18,48 20,50 18,52"/>
+    <polygon points="32,50 34,48 36,50 34,52"/>
+    <polygon points="48,50 50,48 52,50 50,52"/>
+  </g>
+  
+  <!-- 神圣光环 -->
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#FFD700" stroke-width="1" opacity="0.3" stroke-dasharray="4,4"/>
+</svg>
+

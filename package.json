@@ -1,0 +1,39 @@
+{
+  "name": "ai-pf2e-assistant",
+  "title": "AI PF2e Assistant",
+  "description": "An AI-powered assistant for creating PF2e content in Foundry VTT",
+  "version": "0.2.0",
+  "minimumCoreVersion": "10",
+  "compatibleCoreVersion": "10",
+  "author": "Your Name",
+  "esmodules": [
+    "src/module/ai-pf2e-assistant.js"
+  ],
+  "styles": [
+    "src/styles/ai-pf2e-assistant.css"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "postbuild": "node scripts/build.js",
+    "sync": "node scripts/build.js",
+    "test-api": "node scripts/simple-test.js"
+  },
+  "dependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.4.7",
+    "eslint": "^8.0.0",
+    "fs-extra": "^11.3.0",
+    "node-fetch": "^2.7.0",
+    "prettier": "^2.0.0",
+    "vite": "^6.2.5"
+  }
+}

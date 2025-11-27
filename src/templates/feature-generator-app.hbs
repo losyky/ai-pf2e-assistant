@@ -1,0 +1,129 @@
+<div class="ai-pf2e-assistant-container feature-generator-app">
+<form class="feature-generator-form">
+  <div class="form-section">
+    <h2>{{i18n.title}}</h2>
+    <p class="description">{{i18n.description}}</p>
+  </div>
+
+  <div class="form-section input-section">
+    <div class="form-group">
+      <label for="feature-prompt">{{i18n.prompt}}</label>
+      <textarea id="feature-prompt" name="feature-prompt" rows="4" 
+                placeholder="{{i18n.promptPlaceholder}}"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group half-width">
+        <label for="feature-level">{{i18n.level}}</label>
+        <select id="feature-level" name="feature-level">
+          {{#each levels}}
+          <option value="{{this}}">{{this}}{{../i18n.levelSuffix}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-group half-width">
+        <label for="class-name">{{i18n.className}}</label>
+        <input type="text" id="class-name" name="class-name" 
+               placeholder="{{i18n.classNamePlaceholder}}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div id="level-info" class="level-info">
+        <!-- Level info will be dynamically filled by JavaScript -->
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="enable-compendium-search" name="enable-compendium-search" checked>
+        {{i18n.enableCompendium}}
+      </label>
+      <div class="hint">
+        {{i18n.compendiumSearchHint}}
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" id="generate-feature" class="primary-button">
+        <i class="fas fa-magic"></i> {{i18n.generate}}
+      </button>
+    </div>
+  </div>
+
+  {{#if hasFeature}}
+  <div class="form-section result-section">
+    <h3>{{i18n.generatedFeature}}</h3>
+    
+    <div class="feature-preview">
+      <div class="feature-header">
+        <h4 class="feature-name">{{generatedFeature.name}}</h4>
+        <div class="feature-meta">
+          <span class="feature-level">{{generatedFeature.system.level.value}}{{i18n.levelSuffix}}</span>
+          <span class="feature-category">{{generatedFeature.system.category}}</span>
+          <span class="feature-action">{{generatedFeature.system.actionType.value}}</span>
+          {{#if generatedFeature.system.actions.value}}
+          <span class="feature-actions">{{generatedFeature.system.actions.value}}{{i18n.actions}}</span>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="feature-traits">
+        {{#each generatedFeature.system.traits.value}}
+        <span class="trait-tag">{{this}}</span>
+        {{/each}}
+      </div>
+
+      <div class="feature-description">
+        {{{generatedFeature.system.description.value}}}
+      </div>
+
+      {{#if generatedFeature.system.prerequisites.value.length}}
+      <div class="feature-prerequisites">
+        <strong>{{i18n.prerequisites}}</strong>
+        <ul>
+          {{#each generatedFeature.system.prerequisites.value}}
+          <li>{{this.value}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/if}}
+
+      {{#if generatedFeature.system.rules.length}}
+      <div class="feature-rules">
+        <strong>{{i18n.ruleElements}}</strong>
+        <details>
+          <summary>{{i18n.viewRuleDetails}} ({{generatedFeature.system.rules.length}})</summary>
+          <pre><code>{{json generatedFeature.system.rules}}</code></pre>
+        </details>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="result-actions">
+      <button type="button" id="import-feature" class="success-button">
+        <i class="fas fa-download"></i> {{i18n.import}}
+      </button>
+      
+      <button type="button" id="export-json" class="info-button">
+        <i class="fas fa-file-export"></i> {{i18n.exportJson}}
+      </button>
+      
+      <button type="button" id="regenerate-feature" class="secondary-button">
+        <i class="fas fa-redo"></i> {{i18n.regenerate}}
+      </button>
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="form-section help-section">
+    <details>
+      <summary><strong>{{i18n.helpTitle}}</strong></summary>
+      <div class="help-content">
+        <p>{{i18n.levelInfo}}</p>
+      </div>
+    </details>
+  </div>
+</form>
+</div>

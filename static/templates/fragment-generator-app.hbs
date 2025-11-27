@@ -1,0 +1,92 @@
+{{!-- Fragment Generator Template --}}
+<div class="ai-pf2e-assistant-container fragment-generator-app">
+  {{#unless isGM}}
+    <div class="gm-only-warning">
+      <p><i class="fas fa-exclamation-triangle"></i> {{i18n.gmOnly}}</p>
+    </div>
+  {{else}}
+    <form class="fragment-generator-form">
+      <div class="form-tabs">
+        <nav class="tabs" data-group="fragment-tabs">
+          <a class="item active" data-tab="single-fragment">
+            <i class="fas fa-puzzle-piece"></i> {{i18n.singleFragment}}
+          </a>
+          <a class="item" data-tab="fragment-set">
+            <i class="fas fa-cubes"></i> {{i18n.fragmentSet}}
+          </a>
+        </nav>
+        
+        {{!-- Single Fragment Generation --}}
+        <div class="tab active" data-tab="single-fragment">
+          <div class="tab-panel">
+            <h3><i class="fas fa-puzzle-piece"></i> {{i18n.createSingle}}</h3>
+            <p class="hint">{{i18n.createSingleDescription}}</p>
+            
+            <div class="form-group">
+              <label for="fragment-requirement">{{i18n.requirement}}</label>
+              <textarea id="fragment-requirement" name="fragment-requirement" rows="4"
+                        placeholder="{{i18n.requirementPlaceholder}}"></textarea>
+              <p class="hint">{{i18n.requirementHint}}</p>
+            </div>
+            
+            <div class="form-group">
+              <label for="fragment-rarity">{{i18n.rarity}}</label>
+              <select id="fragment-rarity" name="fragment-rarity">
+                {{#each rarityOptions}}
+                  <option value="{{value}}">{{label}}</option>
+                {{/each}}
+              </select>
+              <p class="hint">{{../i18n.rarityHint}}</p>
+            </div>
+            
+            <div class="form-group">
+              <button type="button" id="generate-single-fragment">
+                <i class="fas fa-magic"></i> {{i18n.generateSingle}}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {{!-- Fragment Set Generation --}}
+        <div class="tab" data-tab="fragment-set">
+          <div class="tab-panel">
+            <h3><i class="fas fa-cubes"></i> {{i18n.generateSet}}</h3>
+            <p class="hint">{{i18n.generateSetDescription}}</p>
+            
+            <div class="form-group">
+              <label for="fragment-theme">{{i18n.theme}}</label>
+              <input type="text" id="fragment-theme" name="fragment-theme" 
+                     placeholder="{{i18n.themePlaceholder}}" />
+            </div>
+            
+            <div class="form-group">
+              <label for="fragment-count">{{i18n.fragmentCount}}</label>
+              <div class="count-selector">
+                <input type="number" id="fragment-count" name="fragment-count" 
+                       min="2" max="10" value="5" />
+                <span id="fragment-count-display">5</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <button type="button" id="generate-fragment-set">
+                <i class="fas fa-magic"></i> {{i18n.generateSet}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {{!-- Usage Instructions --}}
+      <div class="tab-panel usage-info">
+        <h4><i class="fas fa-info-circle"></i> {{i18n.usageInstructions}}</h4>
+        <p>{{i18n.roleDescription}}</p>
+        <ul>
+          <li>{{i18n.rolePoint1}}</li>
+          <li>{{i18n.rolePoint2}}</li>
+          <li>{{i18n.rolePoint3}}</li>
+        </ul>
+      </div>
+    </form>
+  {{/unless}}
+</div>

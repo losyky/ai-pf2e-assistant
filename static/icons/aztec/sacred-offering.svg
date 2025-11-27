@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- 神圣贡品图标 -->
+  <defs>
+    <linearGradient id="bowlGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#CD853F"/>
+      <stop offset="50%" style="stop-color:#A0522D"/>
+      <stop offset="100%" style="stop-color:#8B4513"/>
+    </linearGradient>
+    <radialGradient id="incenseGradient" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" style="stop-color:#E6E6FA"/>
+      <stop offset="100%" style="stop-color:#9370DB"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- 祭品台 -->
+  <ellipse cx="32" cy="50" rx="20" ry="8" fill="url(#bowlGradient)" stroke="#654321" stroke-width="2"/>
+  
+  <!-- 祭品碗 -->
+  <ellipse cx="32" cy="45" rx="16" ry="6" fill="url(#bowlGradient)" stroke="#654321" stroke-width="1"/>
+  <ellipse cx="32" cy="43" rx="14" ry="5" fill="#DEB887"/>
+  
+  <!-- 祭品内容 -->
+  <ellipse cx="32" cy="42" rx="12" ry="4" fill="#FFD700" opacity="0.8"/>
+  <circle cx="28" cy="42" r="2" fill="#FF8C00"/>
+  <circle cx="36" cy="42" r="2" fill="#FF4500"/>
+  <circle cx="32" cy="41" r="1.5" fill="#DC143C"/>
+  
+  <!-- 香烟 -->
+  <g fill="url(#incenseGradient)" opacity="0.7">
+    <ellipse cx="25" cy="35" rx="2" ry="8"/>
+    <ellipse cx="32" cy="30" rx="2" ry="12"/>
+    <ellipse cx="39" cy="33" rx="2" ry="10"/>
+  </g>
+  
+  <!-- 烟雾 -->
+  <g fill="none" stroke="#D3D3D3" stroke-width="1.5" opacity="0.6">
+    <path d="M 25 27 Q 23 22 25 18 Q 27 14 25 10"/>
+    <path d="M 32 18 Q 30 14 32 10 Q 34 6 32 2"/>
+    <path d="M 39 23 Q 41 18 39 14 Q 37 10 39 6"/>
+  </g>
+  
+  <!-- 阿兹特克装饰 -->
+  <g fill="#FFD700" stroke="#B8860B" stroke-width="1">
+    <!-- 碗边装饰 -->
+    <circle cx="20" cy="45" r="2"/>
+    <circle cx="44" cy="45" r="2"/>
+    <circle cx="16" cy="48" r="1.5"/>
+    <circle cx="48" cy="48" r="1.5"/>
+    
+    <!-- 神圣符号 -->
+    <polygon points="32,58 34,62 36,58 34,54"/>
+    <polygon points="8,32 4,30 8,28 12,30"/>
+    <polygon points="56,32 60,30 56,28 52,30"/>
+  </g>
+  
+  <!-- 祭品装饰品 -->
+  <g fill="#8B0000" stroke="#DC143C" stroke-width="0.5">
+    <polygon points="24,40 26,38 28,40 26,42"/>
+    <polygon points="36,40 38,38 40,40 38,42"/>
+  </g>
+  
+  <!-- 神圣羽毛 -->
+  <g fill="#32CD32" stroke="#228B22" stroke-width="0.5">
+    <ellipse cx="20" cy="38" rx="2" ry="6" transform="rotate(-30 20 38)"/>
+    <ellipse cx="44" cy="38" rx="2" ry="6" transform="rotate(30 44 38)"/>
+  </g>
+  
+  <!-- 魔法光点 -->
+  <g fill="#FFD700" opacity="0.8">
+    <circle cx="16" cy="32" r="1"/>
+    <circle cx="48" cy="32" r="1"/>
+    <circle cx="24" cy="20" r="1"/>
+    <circle cx="40" cy="20" r="1"/>
+    <circle cx="32" cy="8" r="1"/>
+  </g>
+  
+  <!-- 神圣光环 -->
+  <circle cx="32" cy="32" r="26" fill="none" stroke="#FFD700" stroke-width="1" opacity="0.4" stroke-dasharray="2,4"/>
+</svg>
+

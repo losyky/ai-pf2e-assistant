@@ -1,0 +1,247 @@
+/* 神龛点数管理器样式 */
+.shrine-point-manager-app .shrine-point-manager,
+.shrine-point-manager {
+  max-width: 600px !important;
+  width: 600px !important;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 确保ApplicationV2窗口本身也有正确的宽度 */
+.shrine-point-manager-app {
+  max-width: 600px !important;
+  width: 600px !important;
+}
+
+.shrine-point-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.shrine-point-header h2 {
+  color: #495057;
+  margin: 0 0 10px 0;
+}
+
+.shrine-point-header .description {
+  color: #6c757d;
+  margin: 0;
+  font-style: italic;
+}
+
+.current-user-info {
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #007bff;
+}
+
+.user-status {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.user-role {
+  background: #007bff;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.points-value {
+  color: #28a745;
+  font-size: 1.2em;
+}
+
+.gm-controls {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #28a745;
+}
+
+.single-actor-management,
+.batch-management {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.single-actor-management:last-child,
+.batch-management:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #495057;
+}
+
+.target-actor-select,
+.point-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button-group button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.set-points-btn,
+.add-points-btn {
+  background: #007bff;
+  color: white;
+}
+
+.set-points-btn:hover,
+.add-points-btn:hover {
+  background: #0056b3;
+}
+
+.distribute-points-btn {
+  background: #28a745;
+  color: white;
+}
+
+.distribute-points-btn:hover {
+  background: #1e7e34;
+}
+
+.reset-points-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.reset-points-btn:hover {
+  background: #c82333;
+}
+
+.actor-list {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.actor-list-simple {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actor-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.actor-row:hover {
+  background: #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.actor-name {
+  font-weight: bold;
+  color: #495057;
+}
+
+.actor-points {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.player-view {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.info-box {
+  background: #e7f3ff;
+  border: 1px solid #b8daff;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.info-box p {
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-box p:last-child {
+  margin-bottom: 0;
+}
+
+.shrine-point-footer {
+  text-align: center;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+}
+
+.close-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto;
+}
+
+.close-btn:hover {
+  background: #545b62;
+}
+
+.no-actor {
+  color: #dc3545;
+  font-style: italic;
+}

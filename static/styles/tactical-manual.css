@@ -1,0 +1,292 @@
+/**
+ * 战术手册样式 v0.2.1
+ * Tactical Manual Styles
+ * 完全使用 PF2e 原生样式，零自定义覆盖
+ */
+
+/* 战术手册标题区域 - 极简样式，仅用于布局 */
+.tactical-manual-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-8);
+    margin-top: var(--space-12);
+    font-size: var(--font-size-14);
+    font-weight: 700;
+    color: var(--color-text-dark-primary);
+    background: rgba(96, 88, 86, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.tactical-manual-header h3 {
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+}
+
+.tactical-manual-header .controls {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.tactical-manual-header .controls button {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--font-size-12);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tactical-manual-header .controls button:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 战术动作列表 - 完全使用PF2e的ol.actions-list样式，无任何覆盖 */
+/* 所有样式都由PF2e的CSS自动应用 */
+
+/* 准备界面样式 - 仿照PF2e法术准备界面 */
+.tactical-preparation-dialog {
+    min-width: 700px;
+    min-height: 600px;
+}
+
+.tactical-preparation-dialog .window-content {
+    background: var(--bg);
+}
+
+.tactical-preparation-sheet {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--space-8, 8px);
+}
+
+.tactical-preparation-sheet header {
+    display: block;
+    flex: 0;
+    margin-bottom: var(--space-8, 8px);
+    padding-bottom: var(--space-8, 8px);
+    border-bottom: 1px solid var(--color-border-dark);
+}
+
+.tactical-preparation-sheet header h1 {
+    display: flex;
+    flex: 1;
+    font-family: var(--serif-condensed);
+    font-weight: 700;
+    font-size: var(--font-size-18, 18px);
+    justify-content: space-between;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--color-text-light-primary);
+    margin: 0;
+}
+
+.tactical-preparation-sheet header p.hint {
+    margin: var(--space-4, 4px) 0 0 0;
+    color: var(--color-text-light-secondary);
+    font-size: var(--font-size-12, 12px);
+}
+
+/* 整个窗口的拖放状态 */
+.tactical-preparation-sheet.drag-over {
+    position: relative;
+}
+
+.tactical-preparation-sheet.drag-over::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(93, 176, 117, 0.1);
+    border: 2px dashed #5db075;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.tactical-preparation-sheet .sheet-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12, 12px);
+    overflow: hidden auto;
+    flex: 1;
+}
+
+.tactical-preparation-sheet .prepared-section,
+.tactical-preparation-sheet .available-section {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tactical-preparation-sheet .prepared-section h3,
+.tactical-preparation-sheet .available-section h3 {
+    margin: 0 0 var(--space-4, 8px) 0;
+    padding: var(--space-6, 6px) var(--space-8, 8px);
+    background: var(--alt-dark);
+    border: 1px solid var(--color-border-dark);
+    border-radius: 2px;
+    font-size: var(--font-size-14, 14px);
+    font-weight: 700;
+    color: var(--color-text-light-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* 完全模仿 PF2e 原版 ol.actions-list 样式 - 强制重置所有list样式 */
+.tactical-preparation-sheet ol.action-list,
+.tactical-preparation-sheet .action-list {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    list-style-type: none !important;
+    list-style-position: outside !important;
+    list-style-image: none !important;
+    list-style: none !important;
+    padding: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+    counter-reset: none !important;
+}
+
+/* 完全模仿 PF2e 原版 li.action 样式 */
+.tactical-preparation-sheet li.action-item {
+    border: solid transparent !important;
+    border-image: linear-gradient(90deg, #f1edea, rgba(162, 144, 142, 1)) 1 repeat !important;
+    border-width: 0 0 1px !important;
+    padding: var(--space-4, 8px) !important;
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 2rem 1fr auto !important;
+    align-items: center !important;
+    gap: var(--space-8, 8px) !important;
+    list-style-type: none !important;
+    list-style: none !important;
+    transition: background 0.2s !important;
+}
+
+.tactical-preparation-sheet li.action-item::marker {
+    display: none !important;
+    content: "" !important;
+}
+
+.tactical-preparation-sheet li.action-item:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.tactical-preparation-sheet li.action-item.prepared {
+    background: rgba(93, 176, 117, 0.1) !important;
+}
+
+.tactical-preparation-sheet .action-image {
+    position: relative !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    min-width: 2rem !important;
+    max-width: 2rem !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.tactical-preparation-sheet .action-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 2px !important;
+}
+
+.tactical-preparation-sheet .action-glyph {
+    position: absolute !important;
+    bottom: -2px !important;
+    right: -2px !important;
+    font-size: 0.75em !important;
+    line-height: 1 !important;
+    color: var(--color-text-dark-primary, #1a1a1a) !important;
+}
+
+.tactical-preparation-sheet .action-info {
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+.tactical-preparation-sheet .action-name {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: var(--font-size-14, 14px) !important;
+    font-weight: 500 !important;
+    color: var(--color-text-dark-primary, #1a1a1a) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1.2 !important;
+}
+
+.tactical-preparation-sheet .action-traits {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: var(--space-2, 4px) !important;
+    margin-top: var(--space-2, 4px) !important;
+}
+
+.tactical-preparation-sheet .action-traits .tag {
+    display: inline-block !important;
+    padding: 1px 4px !important;
+    font-size: var(--font-size-10, 10px) !important;
+    background: rgba(90, 90, 90, 0.1) !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 2px !important;
+    color: var(--color-text-dark-secondary, #666) !important;
+    text-transform: lowercase !important;
+}
+
+.tactical-preparation-sheet .action-controls {
+    display: flex !important;
+    gap: var(--space-2, 4px) !important;
+}
+
+.tactical-preparation-sheet .action-controls button {
+    padding: var(--space-4, 8px) !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    color: var(--color-text-dark-primary, #1a1a1a) !important;
+    font-size: var(--font-size-16, 16px) !important;
+    transition: all 0.2s !important;
+    line-height: 1 !important;
+}
+
+.tactical-preparation-sheet .action-controls button:hover {
+    transform: scale(1.1) !important;
+}
+
+.tactical-preparation-sheet .action-controls .prepare-action:hover {
+    color: #5db075 !important;
+}
+
+.tactical-preparation-sheet .action-controls .unprepare-action:hover {
+    color: #d32f2f !important;
+}
+
+.tactical-preparation-sheet .empty-message {
+    display: block !important;
+    text-align: center !important;
+    padding: 2em !important;
+    color: var(--color-text-dark-secondary, #999) !important;
+    font-style: italic !important;
+    list-style: none !important;
+}
+

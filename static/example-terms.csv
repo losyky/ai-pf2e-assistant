@@ -1,0 +1,154 @@
+# PF2e术语表示例文件
+# 格式: 英文术语,中文术语
+# 基础游戏术语
+action,动作
+strike,打击
+ability,能力
+skill,技能
+feat,专长
+ancestry,先祖
+background,背景
+class,职业
+level,等级
+hit points,生命值
+armor class,护甲等级
+saving throw,豁免检定
+perception,感知
+initiative,先攻
+proficiency,熟练度
+trained,受训
+expert,专家
+master,大师
+legendary,传奇
+untrained,未受训
+check,检定
+critical success,大成功
+success,成功
+failure,失败
+critical failure,大失败
+experience points,经验值
+modifier,调整值
+bonus,加值
+penalty,减值
+ability score,属性值
+ability modifier,属性调整值
+strength,力量
+dexterity,敏捷
+constitution,体质
+intelligence,智力
+wisdom,感知
+charisma,魅力
+alignment,阵营
+condition,状态
+trait,特性
+damage,伤害
+resistance,抗性
+weakness,弱点
+immunity,免疫
+persistent damage,持续伤害
+spell,法术
+spell slot,法术位
+spell level,法术环级
+cantrip,戏法
+focus spell,专注法术
+ritual,仪式
+encounter,遭遇
+exploration,探索
+downtime,闲置时间
+area,区域
+range,射程
+reach,触及范围
+target,目标
+duration,持续时间
+saving throw,豁免检定
+spellcaster,施法者
+tradition,法术传承
+arcane,奥术
+divine,神术
+occult,秘术
+primal,原能
+
+# 装备类术语
+weapon,武器
+armor,护甲
+shield,盾牌
+item,物品
+bulk,负载
+light,轻量
+negligible,微量
+material,材料
+hardness,硬度
+hit points,生命值
+broken threshold,损坏阈值
+broken,损坏
+destroyed,摧毁
+consumable,消耗品
+potion,药水
+scroll,卷轴
+wand,魔杖
+staff,法杖
+talisman,护符
+rune,符文
+fundamental rune,基础符文
+property rune,属性符文
+potency rune,潜能符文
+striking rune,强击符文
+resilient rune,韧性符文
+ammunition,弹药
+alchemical,炼金
+magical,魔法
+mundane,凡俗
+invested,附身
+activate,激活
+worn,穿戴
+held,持用
+stowed,收起
+
+# 战斗类术语
+initiative,先攻
+turn,回合
+round,轮
+stride,大步移动
+step,小步移动
+leap,跳跃
+drop prone,倒地
+stand,起立
+take cover,寻求掩护
+raise a shield,举盾
+interact,交互
+release,松开
+sustain,持续
+dismiss,解除
+escape,逃脱
+grapple,擒抱
+shove,推撞
+trip,绊摔
+disarm,缴械
+feint,虚招
+demoralize,威吓
+bon mot,妙语
+recall knowledge,回忆知识
+seek,寻找
+sense motive,察言观色
+hide,躲藏
+sneak,潜行
+create a diversion,制造扰乱
+point out,指出
+ready,准备
+delay,延迟
+aura,光环
+emanation,发散
+cone,锥形
+line,直线
+burst,爆发
+wall,墙
+flanking,夹击
+flat-footed,措手不及
+concealed,隐蔽
+hidden,隐藏
+invisible,隐形
+undetected,未被发觉
+observed,被观察到
+precise sense,精确感官
+imprecise sense,不精确感官
+vague sense,模糊感官 
