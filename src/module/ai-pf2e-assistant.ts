@@ -2564,9 +2564,10 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
   /**
    * 递归提取嵌套数据结构
    * @param data 嵌套数据对象
+   * @param visited 已访问对象的WeakSet，用于检测循环引用
    * @returns 提取的数据
    */
-  private extractNestedData(data: any): any {
+  private extractNestedData(data: any, visited?: WeakSet<any>): any {
     if (data === null || data === undefined) {
       return data;
     }
@@ -2576,18 +2577,36 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
       return data;
     }
     
+    // 初始化visited集合（仅在第一次调用时）
+    if (!visited) {
+      visited = new WeakSet();
+    }
+    
+    // 检测循环引用
+    if (visited.has(data)) {
+      console.debug(`${MODULE_ID} | 检测到循环引用，跳过`);
+      return '[Circular Reference]';
+    }
+    
+    // 标记当前对象为已访问
+    visited.add(data);
+    
     // 检查是否为数组
     if (Array.isArray(data)) {
-      return data.map(item => this.extractNestedData(item));
+      return data.map(item => this.extractNestedData(item, visited));
     }
     
     // 处理对象
     const result: any = {};
     for (const key in data) {
-      // 排除方法和以下划线开头的属性
-      if (typeof data[key] !== 'function' && !key.startsWith('_')) {
+      // 排除方法、以下划线开头的属性，以及可能引起循环的常见属性
+      if (typeof data[key] !== 'function' && 
+          !key.startsWith('_') && 
+          key !== 'parent' && 
+          key !== 'actor' && 
+          key !== 'apps') {
         try {
-          result[key] = this.extractNestedData(data[key]);
+          result[key] = this.extractNestedData(data[key], visited);
         } catch (e) {
           // 如果无法序列化某个属性，忽略它
           console.debug(`${MODULE_ID} | 跳过无法提取的属性: ${key}`);
@@ -2784,14 +2803,17 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
     if (!item) return null;
     
     try {
+      // 创建一个新的visited集合用于此物品
+      const visited = new WeakSet();
       return {
         name: item.name,
         type: item.type,
         uuid: item.uuid,
         img: item.img,
-        system: this.extractNestedData(item.system || {})
+        system: this.extractNestedData(item.system || {}, visited)
       };
     } catch (e) {
+      console.warn(`${MODULE_ID} | 提取物品数据失败 (${item.name}):`, e);
       return { name: item.name, type: item.type, error: "无法序列化" };
     }
   }
@@ -2805,15 +2827,18 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
     if (!effect) return null;
     
     try {
+      // 创建一个新的visited集合用于此效果
+      const visited = new WeakSet();
       return {
         name: effect.name,
         type: effect.type,
         uuid: effect.uuid,
         img: effect.img,
         duration: effect.duration,
-        flags: this.extractNestedData(effect.flags || {})
+        flags: this.extractNestedData(effect.flags || {}, visited)
       };
     } catch (e) {
+      console.warn(`${MODULE_ID} | 提取效果数据失败 (${effect.name}):`, e);
       return { name: effect.name, error: "无法序列化" };
     }
   }
