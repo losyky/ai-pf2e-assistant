@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**为 Foundry VTT 的 Pathfinder 2e 系统提供 AI 驱动的内容生成与管理工具（以及我团内所需的一些私活）**
+**为 Foundry VTT 的 Pathfinder 2e 系统提供 AI 驱动的内容生成与管理工具（以及我团内所需的一些私货）**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v13-orange)](https://foundryvtt.com/)
