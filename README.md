@@ -1,21 +1,27 @@
-# AI PF2e Assistant
+# Losy的AI PF2e 助手
 
 <div align="center">
 
-**为 Foundry VTT 的 Pathfinder 2e 系统提供 AI 驱动的内容生成与管理工具**
+**为 Foundry VTT 的 Pathfinder 2e 系统提供 AI 驱动的内容生成与管理工具（以及我团内所需的一些私活）**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v13-orange)](https://foundryvtt.com/)
 [![PF2e System](https://img.shields.io/badge/PF2e%20System-v7.0%2B-blue)](https://github.com/foundryvtt/pf2e)
 
 
-</div>
+
 
 ---
 
 **目前模组仍处于测试阶段，暂无任何发行版。**
 
+**以分享为主要目的，功能较为杂糅，之后可能会考虑进行拆分**
+
+**代码大多为ai辅助创作**
+
 ---
+
+</div>
 ## 📖 简介
 
 **AI PF2e Assistant** 是一个为 Foundry VTT 的 Pathfinder 2e 系统设计的辅助模块，通过 AI 技术帮助 GM 和玩家生成游戏内容。本模块的核心是 **AI 文档修改助手**，可以直接在角色卡或物品表单中调用 AI 进行智能修改。此外还提供了神龛合成系统等多种扩展功能。
