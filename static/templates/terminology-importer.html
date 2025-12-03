@@ -5,6 +5,16 @@
     <p class="notes">查看和管理PF2e系统术语的中英文对照表。</p>
   </div>
   
+  <div class="form-group">
+    <label style="display: flex; align-items: center; cursor: pointer;">
+      <input type="checkbox" id="autoCollectTerminology" style="margin-right: 8px; width: 18px; height: 18px;">
+      <span>自动收集新术语</span>
+    </label>
+    <p class="notes" style="margin-top: 5px; margin-left: 26px; font-size: 0.9em; color: #666;">
+      启用后，AI在翻译时识别出的新专有名词会自动添加到术语表中
+    </p>
+  </div>
+  
   <div class="form-group terminology-stats">
     <p>总术语数: <span class="term-count">0</span></p>
   </div>
@@ -93,30 +103,30 @@
       padding: 10px;
     }
     
-    .title {
+    .ai-pf2e-terminology-importer .title {
       margin-bottom: 15px;
       border-bottom: 1px solid #ddd;
       padding-bottom: 10px;
     }
     
-    .form-group {
+    .ai-pf2e-terminology-importer .form-group {
       margin-bottom: 15px;
     }
     
-    .form-group label {
+    .ai-pf2e-terminology-importer .form-group label {
       display: block;
       margin-bottom: 5px;
       font-weight: bold;
     }
     
-    .terminology-search {
+    .ai-pf2e-terminology-importer .terminology-search {
       display: flex;
       gap: 8px;
       align-items: stretch;
       margin-bottom: 15px;
     }
     
-    .search-input {
+    .ai-pf2e-terminology-importer .search-input {
       flex: 1;
       padding: 8px;
       border-radius: 4px;
@@ -124,7 +134,7 @@
       min-width: 0;
     }
     
-    .toggle-sort {
+    .ai-pf2e-terminology-importer .toggle-sort {
       background: #4361ee;
       color: white;
       padding: 0;
@@ -140,32 +150,32 @@
       justify-content: center;
     }
     
-    .toggle-sort:hover {
+    .ai-pf2e-terminology-importer .toggle-sort:hover {
       background: #3651de;
     }
     
-    .toggle-sort i {
+    .ai-pf2e-terminology-importer .toggle-sort i {
       margin: 0;
       line-height: 1;
     }
     
-    .terminology-table {
+    .ai-pf2e-terminology-importer .terminology-table {
       width: 100%;
       border-collapse: collapse;
     }
     
-    .terminology-table th, 
-    .terminology-table td {
+    .ai-pf2e-terminology-importer .terminology-table th, 
+    .ai-pf2e-terminology-importer .terminology-table td {
       padding: 8px;
       border: 1px solid #ddd;
       text-align: left;
     }
     
-    .terminology-table th {
+    .ai-pf2e-terminology-importer .terminology-table th {
       background-color: #f5f5f5;
     }
     
-    .terminology-display {
+    .ai-pf2e-terminology-importer .terminology-display {
       max-height: 300px;
       overflow-y: auto;
       border: 1px solid #ddd;
@@ -173,21 +183,21 @@
       margin-bottom: 20px;
     }
     
-    .file-input-wrapper {
+    .ai-pf2e-terminology-importer .file-input-wrapper {
       display: flex;
       margin-bottom: 10px;
     }
     
-    .csv-file-input {
+    .ai-pf2e-terminology-importer .csv-file-input {
       flex: 1;
     }
     
-    .file-name {
+    .ai-pf2e-terminology-importer .file-name {
       margin-left: 10px;
       color: #666;
     }
     
-    .csv-options {
+    .ai-pf2e-terminology-importer .csv-options {
       margin: 12px 0;
       display: flex;
       flex-wrap: wrap;
@@ -196,16 +206,16 @@
       align-items: center;
     }
     
-    .checkbox {
+    .ai-pf2e-terminology-importer .checkbox {
       display: flex;
       align-items: center;
     }
     
-    .checkbox input {
+    .ai-pf2e-terminology-importer .checkbox input {
       margin-right: 5px;
     }
     
-    .action-buttons {
+    .ai-pf2e-terminology-importer .action-buttons {
       display: flex;
       justify-content: space-between;
       margin-top: 20px;
@@ -213,7 +223,8 @@
       padding-top: 15px;
     }
     
-    .import-csv-file, .export-csv {
+    .ai-pf2e-terminology-importer .import-csv-file,
+    .ai-pf2e-terminology-importer .export-csv {
       background: #4361ee;
       color: white;
       padding: 8px 12px;
@@ -223,7 +234,7 @@
       margin-right: 10px;
     }
     
-    .import-csv {
+    .ai-pf2e-terminology-importer .import-csv {
       background: #4361ee;
       color: white;
       padding: 8px 12px;
@@ -233,7 +244,7 @@
       margin-right: 10px;
     }
     
-    .danger-button {
+    .ai-pf2e-terminology-importer .danger-button {
       background: #e63946;
       color: white;
       padding: 8px 12px;
@@ -242,7 +253,7 @@
       cursor: pointer;
     }
     
-    .close-button {
+    .ai-pf2e-terminology-importer .close-button {
       background: #adb5bd;
       color: white;
       padding: 8px 12px;
@@ -251,17 +262,18 @@
       cursor: pointer;
     }
     
-    .primary-button:disabled {
+    .ai-pf2e-terminology-importer .primary-button:disabled {
       background: #a0aec0;
       cursor: not-allowed;
     }
     
-    .import-csv-file:disabled, .export-csv:disabled {
+    .ai-pf2e-terminology-importer .import-csv-file:disabled,
+    .ai-pf2e-terminology-importer .export-csv:disabled {
       background: #a0aec0;
       cursor: not-allowed;
     }
     
-    .empty-message {
+    .ai-pf2e-terminology-importer .empty-message {
       text-align: left;
       padding: 20px !important;
       color: #444;
@@ -272,29 +284,29 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     
-    .empty-message p {
+    .ai-pf2e-terminology-importer .empty-message p {
       margin: 12px 0;
       line-height: 1.5;
     }
     
-    .empty-message ol {
+    .ai-pf2e-terminology-importer .empty-message ol {
       text-align: left;
       padding-left: 30px;
       margin: 12px 0;
     }
     
-    .empty-message li {
+    .ai-pf2e-terminology-importer .empty-message li {
       margin: 8px 0;
       line-height: 1.4;
     }
     
-    .empty-message i.fas {
+    .ai-pf2e-terminology-importer .empty-message i.fas {
       color: #4361ee;
       margin-right: 8px;
       font-size: 1.1em;
     }
     
-    .empty-message code {
+    .ai-pf2e-terminology-importer .empty-message code {
       background: #f0f0f0;
       padding: 3px 6px;
       border-radius: 3px;
@@ -304,35 +316,35 @@
       font-weight: bold;
     }
     
-    .encoding-options {
+    .ai-pf2e-terminology-importer .encoding-options {
       display: flex;
       align-items: center;
       gap: 5px;
     }
     
-    .encoding-options select {
+    .ai-pf2e-terminology-importer .encoding-options select {
       padding: 3px 5px;
       border-radius: 3px;
       border: 1px solid #ddd;
     }
     
-    .tooltip {
+    .ai-pf2e-terminology-importer .tooltip {
       cursor: help;
       color: #4361ee;
     }
     
-    .example-tip {
+    .ai-pf2e-terminology-importer .example-tip {
       margin-top: 10px;
       font-size: 0.9em;
       color: #666;
     }
     
-    .example-tip a {
+    .ai-pf2e-terminology-importer .example-tip a {
       color: #4361ee;
       text-decoration: none;
     }
     
-    .example-tip a:hover {
+    .ai-pf2e-terminology-importer .example-tip a:hover {
       text-decoration: underline;
     }
   </style>

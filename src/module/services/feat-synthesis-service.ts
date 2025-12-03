@@ -20,7 +20,7 @@ export interface SynthesisMaterial {
  */
 export interface SynthesisConfig {
   level: number;
-  category: 'general' | 'skill' | 'ancestry' | 'class' | 'archetype';
+  category: 'general' | 'skill' | 'ancestry' | 'class' | 'bonus';
   className?: string;
   actorData?: any;
 }
@@ -166,7 +166,7 @@ export class FeatSynthesisService {
         prompt += `职业: ${config.actorData.class}\n`;
       }
       if (config.actorData.ancestry) {
-        prompt += `血统: ${config.actorData.ancestry}\n`;
+        prompt += `族裔: ${config.actorData.ancestry}\n`;
       }
       prompt += '\n';
     }
@@ -263,9 +263,9 @@ ${materials.map(m => `- ${m.name} (${m.rarity})`).join('\n')}
     const categoryMap: Record<string, string> = {
       'general': '通用',
       'skill': '技能',
-      'ancestry': '血统',
+      'ancestry': '族裔',
       'class': '职业',
-      'archetype': '原型'
+      'bonus': '额外'
     };
     return categoryMap[category] || category;
   }

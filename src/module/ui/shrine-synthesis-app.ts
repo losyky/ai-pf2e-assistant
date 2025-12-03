@@ -611,7 +611,7 @@ export class ShrineSynthesisApp extends Application {
     }
     
     // 解析专长类别（默认为general）
-    const categoryMatch = fallbackText.match(/类别[：:]?\s*(general|skill|ancestry|class|bonus|通用|技能|血统|职业|奖励)/);
+    const categoryMatch = fallbackText.match(/类别[：:]?\s*(general|skill|ancestry|class|bonus|通用|技能|族裔|职业|额外)/);
     if (categoryMatch) {
       let category = categoryMatch[1];
       
@@ -619,10 +619,10 @@ export class ShrineSynthesisApp extends Application {
       const categoryMap: { [key: string]: string } = {
         '通用': 'general',
         '技能': 'skill', 
-        '血统': 'ancestry',
+        '族裔': 'ancestry',
         '职业': 'class',
-        '奖励': 'bonus'
-      };
+        '额外': 'bonus'
+      }
       
       if (categoryMap[category]) {
         category = categoryMap[category];

@@ -403,10 +403,9 @@
       "categories": {
         "general": "通用专长",
         "skill": "技能专长",
-        "combat": "战斗专长",
+        "ancestry": "族裔专长",
         "class": "职业专长",
-        "ancestry": "血统专长",
-        "archetype": "原型专长"
+        "bonus": "额外专长"
       },
       "className": "职业名称（职业专长）",
       "classNamePlaceholder": "例如：战士、法师、牧师",

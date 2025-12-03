@@ -46,7 +46,7 @@ export interface ShrineSynthesisMaterial {
  */
 export interface ShrineSynthesisConfig {
   level: number;
-  category: 'general' | 'skill' | 'ancestry' | 'class' | 'archetype';
+  category: 'general' | 'skill' | 'ancestry' | 'class' | 'bonus';
   className?: string;
   actorData?: any;
   shrineItem: ShrineSynthesisMaterial; // 必需的神龛物品
@@ -2218,9 +2218,9 @@ ${TECHNICAL_REQUIREMENTS}
     const categoryMap: Record<string, string> = {
       'general': '通用',
       'skill': '技能',
-      'ancestry': '血统',
+      'ancestry': '族裔',
       'class': '职业',
-      'archetype': '变体'
+      'bonus': '额外'
     };
     return categoryMap[category] || category;
   }

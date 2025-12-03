@@ -321,10 +321,9 @@
       "categories": {
         "general": "General Feat",
         "skill": "Skill Feat",
-        "combat": "Combat Feat",
-        "class": "Class Feat",
         "ancestry": "Ancestry Feat",
-        "archetype": "Archetype Feat"
+        "class": "Class Feat",
+        "bonus": "Bonus Feat"
       },
       "className": "Class Name (for Class Feats)",
       "classNamePlaceholder": "e.g., Fighter, Wizard, Cleric",

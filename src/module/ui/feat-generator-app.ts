@@ -33,10 +33,9 @@ export class FeatGeneratorApp extends Application {
       categories: [
         { value: 'general', label: g.localize('AIPF2E.FeatGenerator.categories.general') },
         { value: 'skill', label: g.localize('AIPF2E.FeatGenerator.categories.skill') },
-        { value: 'combat', label: g.localize('AIPF2E.FeatGenerator.categories.combat') },
-        { value: 'class', label: g.localize('AIPF2E.FeatGenerator.categories.class') },
         { value: 'ancestry', label: g.localize('AIPF2E.FeatGenerator.categories.ancestry') },
-        { value: 'archetype', label: g.localize('AIPF2E.FeatGenerator.categories.archetype') }
+        { value: 'class', label: g.localize('AIPF2E.FeatGenerator.categories.class') },
+        { value: 'bonus', label: g.localize('AIPF2E.FeatGenerator.categories.bonus') }
       ],
       generatedFeat: this.generatedFeat,
       i18n: {
@@ -502,19 +501,19 @@ export class FeatGeneratorApp extends Application {
     
     switch (category) {
       case 'general':
-        categoryInfo += `<p>通用专长对所有角色都有价值，避免过于专业化，通常提供生活质量改善。</p>`;
+        categoryInfo += `<p>通用专长对所有角色都有价值，提供广泛的能力提升或特殊选项。</p>`;
         break;
       case 'skill':
         categoryInfo += `<p>技能专长增强特定技能使用，需要技能等级先决条件，解锁新用法。</p>`;
         break;
-      case 'class':
-        categoryInfo += `<p>职业专长体现职业特色，有较强的战斗或职业相关效果。</p>`;
-        break;
       case 'ancestry':
-        categoryInfo += `<p>血统专长体现种族特性，通常与血统能力或文化背景相关。</p>`;
+        categoryInfo += `<p>族裔专长体现种族特性，通常与族裔能力或文化背景相关。</p>`;
+        break;
+      case 'class':
+        categoryInfo += `<p>职业专长体现职业特色，增强职业核心能力或解锁新战术选项。</p>`;
         break;
       case 'bonus':
-        categoryInfo += `<p>奖励专长通常在特定情况下获得，不占用常规专长位。</p>`;
+        categoryInfo += `<p>额外专长通常作为其他能力的额外奖励获得，不占用常规专长位。</p>`;
         break;
     }
 
@@ -537,8 +536,8 @@ export class FeatGeneratorApp extends Application {
       'general': '通用',
       'skill': '技能',
       'class': '职业',
-      'ancestry': '血统',
-      'bonus': '奖励'
+      'ancestry': '族裔',
+      'bonus': '额外'
     };
     return categoryMap[category] || category;
   }

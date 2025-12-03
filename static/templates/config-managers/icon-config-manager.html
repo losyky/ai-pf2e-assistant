@@ -1,0 +1,68 @@
+<form class="icon-config-manager">
+  <h2><i class="fas fa-image"></i> 图标生成配置</h2>
+  
+  <div class="info-box">
+    <p><i class="fas fa-info-circle"></i> 配置AI自动生成图标的功能。需要在API配置中设置图像生成API才能使用此功能。</p>
+  </div>
+
+  <!-- 生成开关 -->
+  <h3>生成开关</h3>
+  
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="enabled" {{#if enabled}}checked{{/if}}>
+      启用图标生成
+    </label>
+    <span class="hint">启用后将为生成的物品和怪物自动生成图标</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 生成参数 -->
+  <h3>生成参数</h3>
+
+  <div class="form-group">
+    <label for="model">图像生成模型</label>
+    <input type="text" name="model" id="model" value="{{model}}" 
+           placeholder="flux-pro">
+    <span class="hint">输入用于生成图标的AI模型名称。不同模型的风格、速度和成本各不相同</span>
+  </div>
+
+  <div class="form-group">
+    <label for="size">图标尺寸</label>
+    <input type="text" name="size" id="size" value="{{size}}" 
+           placeholder="1024x1024">
+    <span class="hint">生成图标的尺寸（如：1024x1024, 512x512等）。注意：不同模型支持的尺寸选项可能不同</span>
+  </div>
+
+  <div class="form-group">
+    <label for="style">图标风格</label>
+    <input type="text" name="style" id="style" value="{{style}}" 
+           placeholder="fantasy art">
+    <span class="hint">生成图标的艺术风格（如：fantasy art, pixel art, realistic等）</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 使用说明 -->
+  <div class="info-box warning">
+    <h4><i class="fas fa-exclamation-triangle"></i> 使用说明</h4>
+    <ul style="margin: 10px 0; padding-left: 25px;">
+      <li>图标生成需要配置图像API（在"API配置管理"中设置）</li>
+      <li>不同模型支持不同的尺寸选项，请根据实际API选择</li>
+      <li>图标生成会消耗额外的API调用次数</li>
+      <li>生成的图标会自动应用到新创建的物品上</li>
+    </ul>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="button-group">
+    <button type="button" name="close" class="secondary">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+    <button type="submit" class="primary">
+      <i class="fas fa-save"></i> 保存配置
+    </button>
+  </div>
+</form>
+

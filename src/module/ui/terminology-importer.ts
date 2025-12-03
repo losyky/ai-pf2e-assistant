@@ -143,10 +143,14 @@ export class TerminologyImporter extends FormApplication {
     // 获取当前术语数据
     this.loadTerminology();
     
+    const game = window.game;
+    const autoCollect = game?.settings?.get('ai-pf2e-assistant', 'autoCollectTerminology') ?? true;
+    
     return {
       terminology: this.terminology,
       termCount: this.terminology.length,
-      sortMode: this.sortMode
+      sortMode: this.sortMode,
+      autoCollect: autoCollect
     };
   }
   
@@ -363,6 +367,24 @@ export class TerminologyImporter extends FormApplication {
    */
   activateListeners(html: JQuery): void {
     super.activateListeners(html);
+    
+    // 自动收集术语复选框
+    const game = window.game;
+    const autoCollect = game?.settings?.get('ai-pf2e-assistant', 'autoCollectTerminology') ?? true;
+    const checkbox = html.find('#autoCollectTerminology');
+    checkbox.prop('checked', autoCollect);
+    
+    checkbox.on('change', async (event) => {
+      const checked = (event.target as HTMLInputElement).checked;
+      try {
+        await game?.settings?.set('ai-pf2e-assistant', 'autoCollectTerminology', checked);
+        if (ui && ui.notifications) {
+          ui.notifications.info(`自动收集新术语已${checked ? '启用' : '关闭'}`);
+        }
+      } catch (error) {
+        console.error('Failed to save autoCollectTerminology setting:', error);
+      }
+    });
     
     // 搜索框
     html.find('input[name="search-term"]').on('input', (event) => {

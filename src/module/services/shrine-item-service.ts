@@ -389,7 +389,7 @@ export class ShrineItemService {
       const levelMatch = cleanText.match(levelPattern);
       
       // 解析类别
-      const categoryPattern = /(?:FEAT_)?CATEGORY:\s*(general|skill|ancestry|class|archetype)/i;
+      const categoryPattern = /(?:FEAT_)?CATEGORY:\s*(general|skill|ancestry|class|bonus)/i;
       const categoryMatch = cleanText.match(categoryPattern);
       
       // 解析职业名称（如果是class类别）

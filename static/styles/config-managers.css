@@ -1,0 +1,364 @@
+/**
+ * 配置管理器统一样式
+ */
+
+.config-manager {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.config-manager .window-content {
+  padding: 10px 15px;
+  background: #f8f9fa;
+}
+
+.config-manager h2 {
+  margin: 0 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4361ee;
+  color: #2b2d42;
+  font-size: 1.4em;
+}
+
+.config-manager h3 {
+  margin: 15px 0 10px 0;
+  color: #495057;
+  font-size: 1.1em;
+}
+
+/* 表单组 */
+.config-manager .form-group {
+  margin-bottom: 15px;
+}
+
+.config-manager .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.config-manager .form-group .hint {
+  display: block;
+  font-size: 0.9em;
+  color: #6c757d;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.config-manager .form-group input[type="text"],
+.config-manager .form-group input[type="password"],
+.config-manager .form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: white;
+  font-size: 14px;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.config-manager .form-group select {
+  height: auto;
+  min-height: 38px;
+  line-height: 1.5;
+}
+
+.config-manager .form-group select option {
+  padding: 8px;
+  line-height: 1.5;
+}
+
+.config-manager .form-group input:focus,
+.config-manager .form-group select:focus {
+  outline: none;
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.config-manager .form-group input[type="checkbox"] {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.config-manager .form-group .checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+/* 标签页样式 */
+.config-manager .tabs {
+  border-bottom: 2px solid #dee2e6;
+  margin-bottom: 15px;
+  display: flex;
+  gap: 5px;
+}
+
+.config-manager .tabs .item {
+  padding: 8px 16px;
+  background: #e9ecef;
+  border: 1px solid #dee2e6;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #495057;
+  font-weight: 500;
+}
+
+.config-manager .tabs .item:hover {
+  background: #dee2e6;
+}
+
+.config-manager .tabs .item.active {
+  background: white;
+  color: #4361ee;
+  border-bottom: 2px solid white;
+  margin-bottom: -2px;
+}
+
+.config-manager .tab {
+  display: none;
+}
+
+.config-manager .tab.active {
+  display: block;
+}
+
+/* 按钮样式 */
+.config-manager button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.config-manager button i {
+  font-size: 0.9em;
+}
+
+.config-manager button.primary {
+  background: #4361ee;
+  color: white;
+}
+
+.config-manager button.primary:hover {
+  background: #3651de;
+}
+
+.config-manager button.secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.config-manager button.secondary:hover {
+  background: #5a6268;
+}
+
+.config-manager button.success {
+  background: #06d6a0;
+  color: white;
+}
+
+.config-manager button.success:hover {
+  background: #05c794;
+}
+
+.config-manager button.danger {
+  background: #e63946;
+  color: white;
+}
+
+.config-manager button.danger:hover {
+  background: #d62936;
+}
+
+.config-manager button:disabled {
+  background: #adb5bd;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 按钮组 */
+.config-manager .button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+  justify-content: flex-end;
+}
+
+/* 工具栏 */
+.config-manager .toolbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: white;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+/* 信息框 */
+.config-manager .info-box {
+  padding: 12px;
+  background: #e7f3ff;
+  border-left: 4px solid #4361ee;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.config-manager .info-box.warning {
+  background: #fff3cd;
+  border-left-color: #ffc107;
+}
+
+.config-manager .info-box.error {
+  background: #f8d7da;
+  border-left-color: #e63946;
+}
+
+.config-manager .info-box.success {
+  background: #d4edda;
+  border-left-color: #06d6a0;
+}
+
+/* 状态显示 */
+.config-manager .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.config-manager .status.success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.config-manager .status.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.config-manager .status.warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* 统计信息 */
+.config-manager .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.config-manager .stat-card {
+  background: white;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.config-manager .stat-card .label {
+  font-size: 0.85em;
+  color: #6c757d;
+  margin-bottom: 5px;
+}
+
+.config-manager .stat-card .value {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #2b2d42;
+}
+
+/* 分隔线 */
+.config-manager .divider {
+  height: 1px;
+  background: #dee2e6;
+  margin: 20px 0;
+}
+
+/* 测试结果 */
+.config-manager .test-result {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  background: white;
+}
+
+.config-manager .test-result.success {
+  border-color: #06d6a0;
+  background: #d4edda;
+}
+
+.config-manager .test-result.error {
+  border-color: #e63946;
+  background: #f8d7da;
+}
+
+.config-manager .test-result h4 {
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.config-manager .test-result p {
+  margin: 5px 0;
+}
+
+/* 密码输入框样式 */
+.config-manager .password-field {
+  position: relative;
+}
+
+.config-manager .password-field input {
+  padding-right: 40px;
+}
+
+.config-manager .password-field .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.config-manager .password-field .toggle-password:hover {
+  color: #495057;
+}
+
+/* 响应式布局 */
+@media (max-width: 600px) {
+  .config-manager {
+    width: 100% !important;
+  }
+  
+  .config-manager .button-group {
+    flex-direction: column;
+  }
+  
+  .config-manager button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

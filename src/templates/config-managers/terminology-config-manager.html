@@ -1,0 +1,81 @@
+<form class="terminology-config-manager">
+  <h2><i class="fas fa-language"></i> 术语系统管理</h2>
+  
+  <div class="info-box">
+    <p><i class="fas fa-info-circle"></i> 管理PF2e术语对照表，帮助AI更好地理解和翻译专业术语。</p>
+  </div>
+
+  <!-- 术语统计 -->
+  <h3>术语统计</h3>
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">总术语数</div>
+      <div class="value">{{stats.total}}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">最后更新</div>
+      <div class="value" style="font-size: 1em;">{{stats.lastUpdate}}</div>
+    </div>
+  </div>
+
+  {{#if stats.byCategory}}
+  <div class="form-group">
+    <label>按类别统计</label>
+    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #dee2e6;">
+      {{#each stats.byCategory}}
+        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f0f0;">
+          <span>{{@key}}</span>
+          <span style="font-weight: 600; color: #4361ee;">{{this}} 个</span>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="divider"></div>
+
+  <!-- 自动收集设置 -->
+  <h3>自动收集设置</h3>
+  
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="autoCollect" {{#if autoCollect}}checked{{/if}}>
+      自动收集新术语
+    </label>
+    <span class="hint">启用后，AI在翻译时识别出的新专有名词会自动添加到术语表中</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 管理工具 -->
+  <h3>管理工具</h3>
+  
+  <div class="toolbar">
+    <button type="button" class="open-terminology-importer primary">
+      <i class="fas fa-folder-open"></i> 打开术语导入器
+    </button>
+  </div>
+
+  <div class="info-box">
+    <p><strong>术语导入器功能：</strong></p>
+    <ul style="margin: 10px 0; padding-left: 25px;">
+      <li>查看和搜索所有术语</li>
+      <li>导入CSV格式的术语表</li>
+      <li>导出术语表为CSV文件</li>
+      <li>手动添加和删除术语</li>
+      <li>管理术语分类</li>
+    </ul>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="button-group">
+    <button type="button" name="close" class="secondary">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+    <button type="submit" class="primary">
+      <i class="fas fa-save"></i> 保存配置
+    </button>
+  </div>
+</form>
+

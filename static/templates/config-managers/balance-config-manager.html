@@ -1,0 +1,68 @@
+<form class="balance-config-manager">
+  <h2><i class="fas fa-balance-scale"></i> 平衡系统管理</h2>
+  
+  <div class="info-box">
+    <p><i class="fas fa-info-circle"></i> 管理专长和特性生成时使用的数值平衡关键词配置。这些关键词帮助AI理解不同等级的能力强度。</p>
+  </div>
+
+  <!-- 关键词统计 -->
+  <h3>关键词统计</h3>
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">总关键词数</div>
+      <div class="value">{{stats.total}}</div>
+    </div>
+  </div>
+
+  {{#if stats.byCategory}}
+  <div class="form-group">
+    <label>按类别统计</label>
+    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #dee2e6;">
+      {{#each stats.byCategory}}
+        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f0f0;">
+          <span style="text-transform: capitalize;">{{@key}}</span>
+          <span style="font-weight: 600; color: #4361ee;">{{this}} 个</span>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="divider"></div>
+
+  <!-- 管理工具 -->
+  <h3>管理工具</h3>
+  
+  <div class="toolbar">
+    <button type="button" class="open-balance-manager primary">
+      <i class="fas fa-folder-open"></i> 打开关键词管理器
+    </button>
+    <button type="button" class="reset-keywords danger">
+      <i class="fas fa-undo"></i> 重置为默认
+    </button>
+  </div>
+
+  <div class="info-box">
+    <p><strong>关键词管理器功能：</strong></p>
+    <ul style="margin: 10px 0; padding-left: 25px;">
+      <li>查看和编辑所有等级的关键词配置</li>
+      <li>添加自定义关键词</li>
+      <li>删除不需要的关键词</li>
+      <li>导入/导出关键词配置</li>
+      <li>按类别（通用/技能/族裔/职业/额外）管理</li>
+    </ul>
+  </div>
+
+  <div class="info-box warning">
+    <p><i class="fas fa-lightbulb"></i> <strong>提示：</strong>关键词配置会影响AI生成专长和特性时的数值平衡判断。修改前建议备份当前配置。</p>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="button-group">
+    <button type="button" name="close" class="secondary">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+  </div>
+</form>
+

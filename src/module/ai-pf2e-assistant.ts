@@ -13,6 +13,11 @@ import { balanceKeywordsManager } from './ui/balance-keywords-manager';
 import { terminologyImporter } from './ui/terminology-importer';
 import { IconGenerationService } from './services/icon-generation-service';
 import { PF2eMechanicsKnowledgeService } from './services/pf2e-mechanics-knowledge';
+import { APIConfigManager } from './ui/config-managers/api-config-manager';
+import { ShrineConfigManager } from './ui/config-managers/shrine-config-manager';
+import { IconConfigManager } from './ui/config-managers/icon-config-manager';
+import { TerminologyConfigManager } from './ui/config-managers/terminology-config-manager';
+import { BalanceConfigManager } from './ui/config-managers/balance-config-manager';
 // 不直接导入game对象，而是在需要时使用全局访问
 // import { Hooks, ui, game } from '../foundry-imports';
 import { Hooks, ui } from '../foundry-imports';
@@ -668,6 +673,15 @@ export class AIPF2eAssistant {
     try {
       Logger.debug('为角色表单添加专长合成按钮', app.actor?.name);
       
+      // 检查神龛系统是否启用
+      const game = getGame();
+      const shrineEnabled = game?.settings?.get(MODULE_ID, 'useShrineSystem') ?? false;
+      
+      if (!shrineEnabled) {
+        Logger.debug('神龛系统未启用，跳过添加合成按钮');
+        return;
+      }
+      
       // 查找专长分页的控制区域
       const featSections = html.find('.feats-pane .feat-section .controls');
       
@@ -807,6 +821,16 @@ export class AIPF2eAssistant {
   private addSpellSynthesisButton(app: any, html: any): void {
     try {
       Logger.debug('为角色表单添加法术合成按钮', app.actor?.name);
+      
+      // 检查神龛系统是否启用
+      const game = getGame();
+      const shrineEnabled = game?.settings?.get(MODULE_ID, 'useShrineSystem') ?? false;
+      
+      if (!shrineEnabled) {
+        Logger.debug('神龛系统未启用，跳过添加法术合成按钮');
+        return;
+      }
+      
       const $ = (window as any).$;
       
       // 查找所有施法传统条目（spellcasting-entry）
@@ -4443,8 +4467,11 @@ ${JSON.stringify(structureData, null, 2)}
   private convertJSONPathToFoundryPath(path: string): string {
     console.log(`${MODULE_ID} | convertJSONPathToFoundryPath - 处理路径: "${path}"`);
     
-    // 如果路径包含数组索引模式 [x]，需要处理特殊情况
-    if (path.includes('[')) {
+    // 检查路径是否需要处理数组索引
+    // 支持两种格式: items[67].name 和 items.67.name
+    const needsConversion = path.includes('[') || /\.\d+\.|\.\d+$/.test(path);
+    
+    if (needsConversion) {
       console.log(`${MODULE_ID} | convertJSONPathToFoundryPath - 检测到数组路径`);
       
       // 分解路径为各个部分
@@ -7506,12 +7533,70 @@ function registerSettings() {
   }
   
   try {
+    // ========================================
+    // 配置管理器菜单（主配置界面显示的按钮）
+    // ========================================
+    
+    // API配置管理器
+    game.settings.registerMenu(MODULE_ID, 'apiConfigManager', {
+      name: 'API 配置管理',
+      label: '打开 API 配置',
+      hint: '集中管理所有 API 相关配置（GM API、玩家API、图像API）',
+      icon: 'fas fa-server',
+      type: APIConfigManager,
+      restricted: true
+    });
+    
+    // 神龛配置管理器
+    game.settings.registerMenu(MODULE_ID, 'shrineConfigManager', {
+      name: '神龛系统配置',
+      label: '打开神龛配置',
+      hint: '管理神龛系统的模型和流程设置',
+      icon: 'fas fa-torii-gate',
+      type: ShrineConfigManager,
+      restricted: true
+    });
+    
+    // 图标配置管理器
+    game.settings.registerMenu(MODULE_ID, 'iconConfigManager', {
+      name: '图标生成配置',
+      label: '打开图标配置',
+      hint: '管理AI图标生成的相关设置',
+      icon: 'fas fa-image',
+      type: IconConfigManager,
+      restricted: true
+    });
+    
+    // 术语管理器
+    game.settings.registerMenu(MODULE_ID, 'terminologyConfigManager', {
+      name: '术语系统管理',
+      label: '打开术语管理',
+      hint: '管理PF2e术语对照表和自动收集设置',
+      icon: 'fas fa-language',
+      type: TerminologyConfigManager,
+      restricted: true
+    });
+    
+    // 平衡系统管理器
+    game.settings.registerMenu(MODULE_ID, 'balanceConfigManager', {
+      name: '平衡系统管理',
+      label: '打开平衡管理',
+      hint: '管理平衡关键词配置',
+      icon: 'fas fa-balance-scale',
+      type: BalanceConfigManager,
+      restricted: true
+    });
+    
+    // ========================================
+    // API设置（隐藏，通过API配置管理器访问）
+    // ========================================
+    
     // API设置 - GM专用
     game.settings.register(MODULE_ID, 'apiUrl', {
       name: game.i18n.localize("ai-pf2e-assistant.settings.apiUrl.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.apiUrl.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: 'https://api.openai.com/v1/chat/completions'
     });
@@ -7520,7 +7605,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.apiKey.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.apiKey.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: '',
       onChange: () => {
@@ -7535,7 +7620,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.playerApiUrl.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.playerApiUrl.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: ''
     });
@@ -7544,7 +7629,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.playerApiKey.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.playerApiKey.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: '',
       onChange: () => {
@@ -7559,7 +7644,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.aiModel.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.aiModel.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: 'gpt-3.5-turbo'
     });
@@ -7569,7 +7654,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.imageApiUrl.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.imageApiUrl.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: ''
     });
@@ -7578,7 +7663,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.imageApiKey.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.imageApiKey.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: '',
       onChange: () => {
@@ -7593,7 +7678,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.playerImageApiUrl.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.playerImageApiUrl.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: ''
     });
@@ -7602,7 +7687,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.playerImageApiKey.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.playerImageApiKey.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过API配置管理器访问
       type: String,
       default: '',
       onChange: () => {
@@ -7612,25 +7697,9 @@ function registerSettings() {
       }
     });
     
-    // 连接测试按钮设置
-    game.settings.registerMenu(MODULE_ID, 'testConnection', {
-      name: game.i18n.localize('ai-pf2e-assistant.settings.testConnection.name'),
-      label: game.i18n.localize('ai-pf2e-assistant.settings.testConnection.label'),
-      hint: game.i18n.localize('ai-pf2e-assistant.settings.testConnection.hint'),
-      icon: "fas fa-plug",
-      type: TestConnectionDialog,
-      restricted: true
-    });
-    
-    // 术语导入器按钮设置
-    game.settings.registerMenu(MODULE_ID, 'terminologyImporter', {
-      name: game.i18n.localize('ai-pf2e-assistant.settings.terminologyImporter.name'),
-      label: game.i18n.localize('ai-pf2e-assistant.settings.terminologyImporter.label'),
-      hint: game.i18n.localize('ai-pf2e-assistant.settings.terminologyImporter.hint'),
-      icon: "fas fa-language",
-      type: TerminologyImporterDialog,
-      restricted: true
-    });
+    // ========================================
+    // 术语系统设置（部分隐藏，通过术语管理器访问）
+    // ========================================
     
     // 术语时间戳存储设置
     game.settings.register(MODULE_ID, 'termTimestamps', {
@@ -7641,56 +7710,15 @@ function registerSettings() {
       default: {}
     });
     
-    // 平衡关键词管理器按钮设置
-    game.settings.registerMenu(MODULE_ID, 'balanceKeywordsManager', {
-      name: game.i18n.localize('ai-pf2e-assistant.settings.balanceKeywordsManager.name'),
-      label: game.i18n.localize('ai-pf2e-assistant.settings.balanceKeywordsManager.label'),
-      hint: game.i18n.localize('ai-pf2e-assistant.settings.balanceKeywordsManager.hint'),
-      icon: "fas fa-balance-scale",
-      type: BalanceKeywordsManagerDialog,
-      restricted: true
-    });
+    // ========================================
+    // 图标生成设置（隐藏，通过图标配置管理器访问）
+    // ========================================
     
-    // 主题设置
-    game.settings.register(MODULE_ID, 'activeTheme', {
-      name: game.i18n.localize('ai-pf2e-assistant.settings.activeTheme.name'),
-      hint: game.i18n.localize('ai-pf2e-assistant.settings.activeTheme.hint'),
-      scope: 'world',
-      config: true,
-      type: String,
-      default: 'shrine',
-      choices: {
-        'shrine': game.i18n.localize('ai-pf2e-assistant.settings.activeTheme.shrine'),
-        'pokemon': game.i18n.localize('ai-pf2e-assistant.settings.activeTheme.pokemon')
-      },
-      onChange: (value: string) => {
-        if (ui && ui.notifications) {
-          ui.notifications.info("主题已切换，请刷新页面以生效");
-        }
-      }
-    });
-    
-    // 调试模式设置
-    game.settings.register(MODULE_ID, 'debugMode', {
-      name: game.i18n.localize("ai-pf2e-assistant.settings.debugMode.name"),
-      hint: game.i18n.localize("ai-pf2e-assistant.settings.debugMode.hint"),
-      scope: 'world',
-      config: true,
-      type: Boolean,
-      default: false,
-      onChange: (value: boolean) => {
-        if (ui && ui.notifications) {
-          ui.notifications.info(`调试模式已${value ? '启用' : '关闭'}，部分日志变化需刷新页面生效`);
-        }
-      }
-    });
-    
-    // 图标生成设置
     game.settings.register(MODULE_ID, 'enableIconGeneration', {
       name: game.i18n.localize("ai-pf2e-assistant.settings.enableIconGeneration.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.enableIconGeneration.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过图标配置管理器访问
       type: Boolean,
       default: false
     });
@@ -7699,7 +7727,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.imageModel.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.imageModel.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过图标配置管理器访问
       type: String,
       default: 'flux-pro',
       choices: {
@@ -7723,7 +7751,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.iconSize.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.iconSize.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过图标配置管理器访问
       type: String,
       default: '1024x1024',
       choices: {
@@ -7740,7 +7768,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.iconStyle.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.iconStyle.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过图标配置管理器访问
       type: String,
       default: 'fantasy art',
       choices: {
@@ -7767,17 +7795,21 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.autoCollectTerminology.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.autoCollectTerminology.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过术语管理器访问
       type: Boolean,
       default: true
     });
     
-    // 神龛系统设置
+    // ========================================
+    // 神龛系统设置（主开关保留，详细配置隐藏）
+    // ========================================
+    
+    // 神龛系统总开关（保留在主配置界面）
     game.settings.register(MODULE_ID, 'useShrineSystem', {
       name: game.i18n.localize("ai-pf2e-assistant.settings.useShrineSystem.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.useShrineSystem.hint"),
       scope: 'world',
-      config: true,
+      config: true, // 保留在主配置界面
       type: Boolean,
       default: false,
       onChange: () => {
@@ -7792,7 +7824,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.shrineDesignModel.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.shrineDesignModel.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过神龛配置管理器访问
       type: String,
       default: 'gpt-4o'
     });
@@ -7802,7 +7834,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.shrineFormatModel.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.shrineFormatModel.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过神龛配置管理器访问
       type: String,
       default: 'gpt-4o'
     });
@@ -7812,7 +7844,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.shrineDirectModel.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.shrineDirectModel.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过神龛配置管理器访问
       type: String,
       default: 'gpt-4o'
     });
@@ -7822,7 +7854,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.shrineIconPromptModel.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.shrineIconPromptModel.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过神龛配置管理器访问
       type: String,
       default: 'gpt-4o-mini'
     });
@@ -7832,7 +7864,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.shrineEnableDesignPhase.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.shrineEnableDesignPhase.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过神龛配置管理器访问
       type: Boolean,
       default: true
     });
@@ -7842,7 +7874,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.shrineEnableFormatPhase.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.shrineEnableFormatPhase.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过神龛配置管理器访问
       type: Boolean,
       default: true
     });
@@ -7852,7 +7884,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.shrineSpellEnableDesignPhase.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.shrineSpellEnableDesignPhase.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过神龛配置管理器访问
       type: Boolean,
       default: true
     });
@@ -7862,7 +7894,7 @@ function registerSettings() {
       name: game.i18n.localize("ai-pf2e-assistant.settings.shrineSpellEnableFormatPhase.name"),
       hint: game.i18n.localize("ai-pf2e-assistant.settings.shrineSpellEnableFormatPhase.hint"),
       scope: 'world',
-      config: true,
+      config: false, // 隐藏，通过神龛配置管理器访问
       type: Boolean,
       default: true
     });

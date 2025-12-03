@@ -1,0 +1,97 @@
+<form class="shrine-config-manager">
+  <h2><i class="fas fa-torii-gate"></i> 神龛系统配置</h2>
+  
+  <div class="info-box">
+    <p><i class="fas fa-info-circle"></i> 配置神龛合成系统使用的AI模型和生成流程。专长和法术使用相同的模型配置，但可以分别控制流程开关。</p>
+  </div>
+
+  <!-- 模型配置 -->
+  <h3>AI 模型配置</h3>
+  <div class="info-box warning">
+    <p><i class="fas fa-lightbulb"></i> <strong>模型推荐：</strong>设计模型推荐使用创造力强的模型（如 grok-beta），格式化模型推荐使用 Function Calling 支持好的模型（如 gpt-4o）</p>
+  </div>
+
+  <div class="form-group">
+    <label for="designModel">设计阶段模型</label>
+    <input type="text" name="designModel" id="designModel" value="{{models.design}}" 
+           placeholder="gpt-4o">
+    <span class="hint">用于创造性设计专长/法术核心概念的AI模型（推荐: grok-beta 创造力强，gpt-4o 平衡性好）</span>
+  </div>
+
+  <div class="form-group">
+    <label for="formatModel">格式化阶段模型</label>
+    <input type="text" name="formatModel" id="formatModel" value="{{models.format}}" 
+           placeholder="gpt-4o">
+    <span class="hint">用于将设计转换为PF2e格式的AI模型（推荐: gpt-4o Function Calling支持好）</span>
+  </div>
+
+  <div class="form-group">
+    <label for="directModel">直接生成模型</label>
+    <input type="text" name="directModel" id="directModel" value="{{models.direct}}" 
+           placeholder="gpt-4o">
+    <span class="hint">用于直接生成完整专长/法术的AI模型（推荐: gpt-4o 平衡性好）</span>
+  </div>
+
+  <div class="form-group">
+    <label for="iconPromptModel">图标提示词模型</label>
+    <input type="text" name="iconPromptModel" id="iconPromptModel" value="{{models.iconPrompt}}" 
+           placeholder="gpt-4o-mini">
+    <span class="hint">用于生成图标提示词的AI模型（推荐: gpt-4o-mini 足够）</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 专长生成流程 -->
+  <h3>专长生成流程</h3>
+  
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="featEnableDesign" {{#if feat.enableDesign}}checked{{/if}}>
+      启用设计阶段
+    </label>
+    <span class="hint">启用后，会先调用设计智能体整合神龛材料信息并制定方案，然后传递给生成智能体</span>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="featEnableFormat" {{#if feat.enableFormat}}checked{{/if}}>
+      启用格式化阶段
+    </label>
+    <span class="hint">启用后，会在生成后使用格式化智能体严格转换为PF2e格式（推荐开启以确保格式正确）</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 法术生成流程 -->
+  <h3>法术生成流程</h3>
+  <div class="info-box">
+    <p><i class="fas fa-info-circle"></i> 法术使用与专长相同的模型配置，但可以单独控制流程开关。</p>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="spellEnableDesign" {{#if spell.enableDesign}}checked{{/if}}>
+      启用法术设计阶段
+    </label>
+    <span class="hint">启用后，会先调用设计智能体整合神龛材料信息并制定方案，然后传递给生成智能体</span>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="spellEnableFormat" {{#if spell.enableFormat}}checked{{/if}}>
+      启用法术格式化阶段
+    </label>
+    <span class="hint">启用后，会在生成后使用格式化智能体严格转换为PF2e格式（推荐开启以确保格式正确）</span>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="button-group">
+    <button type="button" name="close" class="secondary">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+    <button type="submit" class="primary">
+      <i class="fas fa-save"></i> 保存配置
+    </button>
+  </div>
+</form>
+

@@ -62,9 +62,9 @@ export class FeatSynthesisApp extends Application {
       categoryOptions: [
         { value: 'general', label: '通用专长' },
         { value: 'skill', label: '技能专长' },
-        { value: 'ancestry', label: '血统专长' },
+        { value: 'ancestry', label: '族裔专长' },
         { value: 'class', label: '职业专长' },
-        { value: 'bonus', label: '奖励专长' }
+        { value: 'bonus', label: '额外专长' }
       ],
       lastSynthesisResult: this.lastSynthesisResult
     };
@@ -499,9 +499,9 @@ export class FeatSynthesisApp extends Application {
     const categoryMap: Record<string, string> = {
       'general': '通用',
       'skill': '技能',
-      'ancestry': '血统',
+      'ancestry': '族裔',
       'class': '职业',
-      'bonus': '奖励'
+      'bonus': '额外'
     };
     return categoryMap[category] || category;
   }

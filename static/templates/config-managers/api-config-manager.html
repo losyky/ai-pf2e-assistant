@@ -1,0 +1,184 @@
+<form class="api-config-manager">
+  <h2><i class="fas fa-server"></i> API 配置管理</h2>
+  
+  <div class="info-box">
+    <p><i class="fas fa-info-circle"></i> 管理所有AI服务的API配置。GM和玩家可以使用不同的API，图像生成也可以使用单独的API。</p>
+  </div>
+
+  <!-- 标签页导航 -->
+  <nav class="tabs" data-group="api-tabs">
+    <a class="item" data-tab="gm-api">
+      <i class="fas fa-user-shield"></i> GM API
+    </a>
+    <a class="item" data-tab="player-api">
+      <i class="fas fa-users"></i> 玩家 API
+    </a>
+    <a class="item" data-tab="image-api">
+      <i class="fas fa-image"></i> 图像 API (GM)
+    </a>
+    <a class="item" data-tab="player-image-api">
+      <i class="fas fa-palette"></i> 图像 API (玩家)
+    </a>
+  </nav>
+
+  <!-- 标签页内容 -->
+  <div class="content">
+    <!-- GM API 标签页 -->
+    <div class="tab" data-tab="gm-api">
+      <h3>GM 使用的主 API 配置</h3>
+      
+      <div class="form-group">
+        <label for="gmApiUrl">API 地址</label>
+        <input type="text" name="gmApiUrl" id="gmApiUrl" value="{{gmApi.url}}" 
+               placeholder="https://api.openai.com/v1/chat/completions">
+        <span class="hint">GM使用的AI服务API地址，如OpenAI、302.AI等兼容的API端点</span>
+      </div>
+
+      <div class="form-group">
+        <label for="gmApiKey">API 密钥</label>
+        <div class="password-field">
+          <input type="password" name="gmApiKey" id="gmApiKey" value="{{gmApi.key}}" 
+                 placeholder="sk-...">
+          <button type="button" class="toggle-password" title="显示/隐藏密钥">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <span class="hint">GM使用的API密钥，用于无限制的AI功能访问</span>
+      </div>
+
+      <div class="form-group">
+        <label for="aiModel">AI 模型</label>
+        <input type="text" name="aiModel" id="aiModel" value="{{gmApi.model}}" 
+               placeholder="gpt-3.5-turbo">
+        <span class="hint">使用的AI模型名称，请根据您的API服务填写正确的模型名称</span>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" class="test-gm-connection primary">
+          <i class="fas fa-plug"></i> 测试连接
+        </button>
+      </div>
+
+      <div class="test-result-gm"></div>
+    </div>
+
+    <!-- 玩家 API 标签页 -->
+    <div class="tab" data-tab="player-api">
+      <h3>玩家使用的 API 配置</h3>
+      
+      <div class="info-box warning">
+        <p><i class="fas fa-exclamation-triangle"></i> 留空则使用GM的API配置。设置单独的玩家API可以限制玩家的功能访问或使用不同的计费账户。</p>
+      </div>
+
+      <div class="form-group">
+        <label for="playerApiUrl">玩家 API 地址</label>
+        <input type="text" name="playerApiUrl" id="playerApiUrl" value="{{playerApi.url}}" 
+               placeholder="留空使用 GM API 地址">
+        <span class="hint">玩家使用的AI服务API地址。留空则使用GM的API地址</span>
+      </div>
+
+      <div class="form-group">
+        <label for="playerApiKey">玩家 API 密钥</label>
+        <div class="password-field">
+          <input type="password" name="playerApiKey" id="playerApiKey" value="{{playerApi.key}}" 
+                 placeholder="留空则玩家无法使用AI功能">
+          <button type="button" class="toggle-password" title="显示/隐藏密钥">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <span class="hint">玩家使用的API密钥，用于有限的AI功能访问（神龛系统、AI图标生成）</span>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" class="test-player-connection primary">
+          <i class="fas fa-plug"></i> 测试连接
+        </button>
+      </div>
+
+      <div class="test-result-player"></div>
+    </div>
+
+    <!-- GM 图像 API 标签页 -->
+    <div class="tab" data-tab="image-api">
+      <h3>GM 使用的图像生成 API</h3>
+      
+      <div class="info-box warning">
+        <p><i class="fas fa-exclamation-triangle"></i> 大多数第三方API不支持图像生成。如需使用AI图标生成功能，建议单独配置图像生成API。</p>
+      </div>
+
+      <div class="form-group">
+        <label for="imageApiUrl">图像 API 地址</label>
+        <input type="text" name="imageApiUrl" id="imageApiUrl" value="{{imageApi.url}}" 
+               placeholder="留空使用主 API 地址">
+        <span class="hint">GM使用的图像生成API地址。留空则使用主API地址</span>
+      </div>
+
+      <div class="form-group">
+        <label for="imageApiKey">图像 API 密钥</label>
+        <div class="password-field">
+          <input type="password" name="imageApiKey" id="imageApiKey" value="{{imageApi.key}}" 
+                 placeholder="留空使用主 API 密钥">
+          <button type="button" class="toggle-password" title="显示/隐藏密钥">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <span class="hint">GM使用的图像生成API密钥。留空则使用主API密钥</span>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" class="test-gm-image-api primary">
+          <i class="fas fa-plug"></i> 测试配置
+        </button>
+      </div>
+
+      <div class="test-result-gm-image"></div>
+    </div>
+
+    <!-- 玩家图像 API 标签页 -->
+    <div class="tab" data-tab="player-image-api">
+      <h3>玩家使用的图像生成 API</h3>
+      
+      <div class="info-box warning">
+        <p><i class="fas fa-exclamation-triangle"></i> 留空则依次回退到：GM图像API → 玩家主API → GM主API</p>
+      </div>
+
+      <div class="form-group">
+        <label for="playerImageApiUrl">玩家图像 API 地址</label>
+        <input type="text" name="playerImageApiUrl" id="playerImageApiUrl" value="{{playerImageApi.url}}" 
+               placeholder="留空使用回退逻辑">
+        <span class="hint">玩家使用的图像生成API地址</span>
+      </div>
+
+      <div class="form-group">
+        <label for="playerImageApiKey">玩家图像 API 密钥</label>
+        <div class="password-field">
+          <input type="password" name="playerImageApiKey" id="playerImageApiKey" value="{{playerImageApi.key}}" 
+                 placeholder="留空使用回退逻辑">
+          <button type="button" class="toggle-password" title="显示/隐藏密钥">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <span class="hint">玩家使用的图像生成API密钥</span>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" class="test-player-image-api primary">
+          <i class="fas fa-plug"></i> 测试配置
+        </button>
+      </div>
+
+      <div class="test-result-player-image"></div>
+    </div>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="button-group">
+    <button type="button" name="close" class="secondary">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+    <button type="submit" class="primary">
+      <i class="fas fa-save"></i> 保存配置
+    </button>
+  </div>
+</form>
+
