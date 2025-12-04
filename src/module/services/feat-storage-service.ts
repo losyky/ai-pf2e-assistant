@@ -19,13 +19,13 @@ export class FeatStorageService {
         const gameActor = (window as any).game?.actors?.get(actor.id);
         if (gameActor?.getFlag) {
           const feats = gameActor.getFlag('ai-pf2e-assistant', 'featStorage');
-          return Array.isArray(feats) ? feats : [];
+          return Array.isArray(feats) ? this._migrateFeatsData(feats) : [];
         }
       }
       
       if (realActor?.getFlag) {
         const feats = realActor.getFlag('ai-pf2e-assistant', 'featStorage');
-        return Array.isArray(feats) ? feats : [];
+        return Array.isArray(feats) ? this._migrateFeatsData(feats) : [];
       }
       
       console.warn('无法获取Actor对象或Actor对象缺少getFlag方法');
@@ -34,6 +34,17 @@ export class FeatStorageService {
       console.warn('获取储存箱专长失败:', error);
       return [];
     }
+  }
+
+  /**
+   * 迁移专长数据，确保所有专长都有confirmed字段
+   * @private
+   */
+  private static _migrateFeatsData(feats: any[]): any[] {
+    return feats.map(feat => ({
+      ...feat,
+      confirmed: feat.confirmed === true ? true : false // 将undefined转为false
+    }));
   }
 
   /**
@@ -59,12 +70,15 @@ export class FeatStorageService {
 
       const currentFeats = this.getStoredFeats(targetActor);
       
-      // 生成唯一ID（如果没有的话）
+      // 创建新专长数据,确保confirmed状态正确设置
+      const cleanFeatData = { ...featData };
+      delete cleanFeatData.confirmed; // 删除可能存在的confirmed属性
+      
       const newFeat = {
-        ...featData,
+        ...cleanFeatData,
         _id: featData._id || foundry.utils.randomID(),
         storageTimestamp: Date.now(), // 添加时间戳
-        confirmed: confirmed // 添加确认标记
+        confirmed: confirmed // 明确设置确认标记
       };
       
       const updatedFeats = [...currentFeats, newFeat];
@@ -235,7 +249,8 @@ export class FeatStorageService {
    */
   static getUnconfirmedFeats(actor: any): any[] {
     const allFeats = this.getStoredFeats(actor);
-    return allFeats.filter(feat => !feat.confirmed);
+    // 将 undefined 和 false 都视为未确认
+    return allFeats.filter(feat => feat.confirmed !== true);
   }
 
   /**

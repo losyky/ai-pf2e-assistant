@@ -1,14 +1,15 @@
 import { FeatStorageService } from '../services/feat-storage-service';
 import { SpellStorageService } from '../services/spell-storage-service';
+import { FragmentStorageService } from '../services/fragment-storage-service';
 
 /**
- * 物品储存箱界面（支持专长和法术）
+ * 物品储存箱界面（支持专长、法术和碎片物品）
  * 使用PF2e原生Item对象和方法
  * 物品存储在flags中，不会激活规则元素
  */
 export class FeatStorageSheet extends ActorSheet {
   private actor: any;
-  private currentTab: 'feats' | 'spells' = 'feats'; // 当前分页
+  private currentTab: 'feats' | 'spells' | 'fragments' = 'feats'; // 当前分页
 
   constructor(actor: any, options: Partial<ActorSheetOptions> = {}) {
     super(actor, options);
@@ -81,6 +82,13 @@ export class FeatStorageSheet extends ActorSheet {
     const confirmedSpells = await createItemsFromData(confirmedSpellsData);
     const allSpells = [...unconfirmedSpells, ...confirmedSpells];
 
+    // 获取碎片物品数据
+    const unconfirmedFragmentsData = FragmentStorageService.getUnconfirmedFragments(this.actor);
+    const confirmedFragmentsData = FragmentStorageService.getConfirmedFragments(this.actor);
+    const unconfirmedFragments = await createItemsFromData(unconfirmedFragmentsData);
+    const confirmedFragments = await createItemsFromData(confirmedFragmentsData);
+    const allFragments = [...unconfirmedFragments, ...confirmedFragments];
+
     return {
       ...baseData,
       actor: this.actor,
@@ -103,11 +111,20 @@ export class FeatStorageSheet extends ActorSheet {
       spellConfirmedCount: confirmedSpells.length,
       hasUnconfirmedSpells: unconfirmedSpells.length > 0,
       hasAnySpells: allSpells.length > 0,
+      // 碎片物品数据
+      fragments: allFragments,
+      unconfirmedFragments: unconfirmedFragments,
+      confirmedFragments: confirmedFragments,
+      fragmentTotalCount: allFragments.length,
+      fragmentUnconfirmedCount: unconfirmedFragments.length,
+      fragmentConfirmedCount: confirmedFragments.length,
+      hasUnconfirmedFragments: unconfirmedFragments.length > 0,
+      hasAnyFragments: allFragments.length > 0,
       // 通用数据（为了向后兼容，使用当前tab的数据）
-      totalCount: this.currentTab === 'feats' ? allFeats.length : allSpells.length,
-      unconfirmedCount: this.currentTab === 'feats' ? unconfirmedFeats.length : unconfirmedSpells.length,
-      confirmedCount: this.currentTab === 'feats' ? confirmedFeats.length : confirmedSpells.length,
-      hasUnconfirmed: this.currentTab === 'feats' ? unconfirmedFeats.length > 0 : unconfirmedSpells.length > 0,
+      totalCount: this.currentTab === 'feats' ? allFeats.length : (this.currentTab === 'spells' ? allSpells.length : allFragments.length),
+      unconfirmedCount: this.currentTab === 'feats' ? unconfirmedFeats.length : (this.currentTab === 'spells' ? unconfirmedSpells.length : unconfirmedFragments.length),
+      confirmedCount: this.currentTab === 'feats' ? confirmedFeats.length : (this.currentTab === 'spells' ? confirmedSpells.length : confirmedFragments.length),
+      hasUnconfirmed: this.currentTab === 'feats' ? unconfirmedFeats.length > 0 : (this.currentTab === 'spells' ? unconfirmedSpells.length > 0 : unconfirmedFragments.length > 0),
       editable: this.isEditable,
       owner: this.actor.isOwner
     };
@@ -204,8 +221,8 @@ export class FeatStorageSheet extends ActorSheet {
    * 动态注入关键样式以确保布局正确
    */
   private _injectCriticalStyles(html: HTMLElement): void {
-    // 获取所有专长和法术列表项
-    const items = html.querySelectorAll('.feats-list li.slot, .spells-list li.slot');
+    // 获取所有专长、法术和碎片物品列表项
+    const items = html.querySelectorAll('.feats-list li.slot, .spells-list li.slot, .fragments-list li.slot');
     
     items.forEach((item) => {
       const li = item as HTMLElement;
@@ -305,6 +322,8 @@ export class FeatStorageSheet extends ActorSheet {
       item = FeatStorageService.getStoredFeat(this.actor, itemId);
     } else if (itemType === 'spell') {
       item = SpellStorageService.getStoredSpell(this.actor, itemId);
+    } else if (itemType === 'equipment') {
+      item = FragmentStorageService.getStoredFragment(this.actor, itemId);
     }
     
     if (!item) return;
@@ -377,6 +396,29 @@ export class FeatStorageSheet extends ActorSheet {
       } catch (error: any) {
         ui.notifications?.error(`删除法术失败: ${error.message}`);
       }
+    } else if (itemType === 'equipment') {
+      // 碎片物品以equipment类型存储
+      const fragment = FragmentStorageService.getStoredFragment(this.actor, itemId);
+      if (!fragment) return;
+
+      // 确认对话框
+      const confirmed = await Dialog.confirm({
+        title: (game as any).i18n.localize('AIPF2E.FeatStorage.deleteFragment'),
+        content: `<p>${(game as any).i18n.format('AIPF2E.FeatStorage.confirmDeleteFragment', { name: fragment.name })}</p>`,
+        yes: () => true,
+        no: () => false,
+        defaultYes: false
+      });
+
+      if (!confirmed) return;
+
+      try {
+        await FragmentStorageService.removeFragment(this.actor, itemId);
+        ui.notifications?.info(`碎片物品 "${fragment.name}" 已从储存箱移除`);
+        this.render(false);
+      } catch (error: any) {
+        ui.notifications?.error(`删除碎片物品失败: ${error.message}`);
+      }
     }
   }
 
@@ -438,6 +480,32 @@ export class FeatStorageSheet extends ActorSheet {
       } catch (error: any) {
         ui.notifications?.error(`清除失败: ${error.message}`);
       }
+    } else if (this.currentTab === 'fragments') {
+      const unconfirmedFragments = FragmentStorageService.getUnconfirmedFragments(this.actor);
+      
+      if (unconfirmedFragments.length === 0) {
+        ui.notifications?.info('普通存储区已经是空的');
+        return;
+      }
+
+      // 确认对话框
+      const confirmed = await Dialog.confirm({
+        title: (game as any).i18n.localize('AIPF2E.FeatStorage.clearNormalStorage'),
+        content: `<p>${(game as any).i18n.format('AIPF2E.FeatStorage.confirmClearFragments', { count: unconfirmedFragments.length })}</p>`,
+        yes: () => true,
+        no: () => false,
+        defaultYes: false
+      });
+
+      if (!confirmed) return;
+
+      try {
+        await FragmentStorageService.clearUnconfirmed(this.actor);
+        ui.notifications?.info(`已清除 ${unconfirmedFragments.length} 个未确认的碎片物品`);
+        this.render(false);
+      } catch (error: any) {
+        ui.notifications?.error(`清除失败: ${error.message}`);
+      }
     }
   }
 
@@ -447,7 +515,7 @@ export class FeatStorageSheet extends ActorSheet {
   private _onSwitchTab(event: Event): void {
     const target = event.target as HTMLElement;
     const button = target.closest('[data-tab]') as HTMLElement;
-    const tab = button?.dataset.tab as 'feats' | 'spells';
+    const tab = button?.dataset.tab as 'feats' | 'spells' | 'fragments';
     
     if (tab && tab !== this.currentTab) {
       this.currentTab = tab;
@@ -542,6 +610,8 @@ export class FeatStorageSheet extends ActorSheet {
           itemData = FeatStorageService.getStoredFeat(this.actor, itemId);
         } else if (itemType === 'spell') {
           itemData = SpellStorageService.getStoredSpell(this.actor, itemId);
+        } else if (itemType === 'equipment') {
+          itemData = FragmentStorageService.getStoredFragment(this.actor, itemId);
         }
         
         if (itemData) {
@@ -602,6 +672,7 @@ export class FeatStorageSheet extends ActorSheet {
         const itemId = data.uuid.split('.').pop();
         const storedFeat = FeatStorageService.getStoredFeat(this.actor, itemId);
         const storedSpell = SpellStorageService.getStoredSpell(this.actor, itemId);
+        const storedFragment = FragmentStorageService.getStoredFragment(this.actor, itemId);
         
         if (storedFeat) {
           // 确实是内部移动（专长）
@@ -626,6 +697,19 @@ export class FeatStorageSheet extends ActorSheet {
             const newConfirmedState = targetArea === 'confirmed';
             await SpellStorageService.setConfirmed(this.actor, itemId, newConfirmedState);
             ui.notifications?.info(`法术 "${storedSpell.name}" 已移动到${newConfirmedState ? '确认' : '普通'}存储区`);
+            this.render(false);
+            return true;
+          }
+        } else if (storedFragment) {
+          // 确实是内部移动（碎片物品）
+          isInternalMove = true;
+          itemData = storedFragment;
+          
+          // 如果有明确的目标区域，更新confirmed状态
+          if (targetArea) {
+            const newConfirmedState = targetArea === 'confirmed';
+            await FragmentStorageService.setConfirmed(this.actor, itemId, newConfirmedState);
+            ui.notifications?.info(`碎片物品 "${storedFragment.name}" 已移动到${newConfirmedState ? '确认' : '普通'}存储区`);
             this.render(false);
             return true;
           }
@@ -659,6 +743,10 @@ export class FeatStorageSheet extends ActorSheet {
           ui.notifications?.warn('当前在法术分页，只能添加法术');
           return false;
         }
+        if (this.currentTab === 'fragments' && itemType !== 'equipment') {
+          ui.notifications?.warn('当前在碎片物品分页，只能添加装备/物品');
+          return false;
+        }
 
         // 获取完整的物品数据
         if (item) {
@@ -673,10 +761,12 @@ export class FeatStorageSheet extends ActorSheet {
           await FeatStorageService.addFeat(this.actor, itemData, confirmed);
         } else if (itemType === 'spell') {
           await SpellStorageService.addSpell(this.actor, itemData, confirmed);
+        } else if (itemType === 'equipment') {
+          await FragmentStorageService.addFragment(this.actor, itemData, confirmed);
         }
         
         const targetAreaName = confirmed ? '确认存储区' : '普通存储区';
-        const itemTypeName = itemType === 'feat' ? '专长' : '法术';
+        const itemTypeName = itemType === 'feat' ? '专长' : (itemType === 'spell' ? '法术' : '碎片物品');
         ui.notifications?.info(`${itemTypeName} "${itemData.name}" 已添加到${targetAreaName}`);
         
         // 刷新界面

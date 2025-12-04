@@ -334,13 +334,15 @@ export class IconGenerationService {
     const isStableDiffusionModel = imageModel.startsWith('stable-diffusion');
     const isDoubaoModel = imageModel.startsWith('doubao');
     const isRecraftModel = imageModel.startsWith('recraft');
+    const isGeminiModel = imageModel.startsWith('gemini');
     
     // 构建正确的图片生成API URL
     let imageApiUrl = customApiUrl;
     
     if (isSSOpenAPI) {
       // SSOPEN API 根据模型类型使用不同端点
-      const baseUrl = customApiUrl.replace(/\/+$/, '').replace('/chat/completions', '');
+      // 移除尾部斜杠和 /chat/completions，同时移除 /v1 以便统一处理
+      const baseUrl = customApiUrl.replace(/\/+$/, '').replace('/chat/completions', '').replace(/\/v1$/, '');
       
       if (isMidjourneyModel) {
         // Midjourney 使用专门的端点
@@ -357,6 +359,10 @@ export class IconGenerationService {
       } else if (isRecraftModel) {
         // Recraft 使用 Replicate 端点
         imageApiUrl = `${baseUrl}/replicate/predictions`;
+      } else if (isGeminiModel) {
+        // Gemini 图像生成使用原生 Gemini 端点
+        // 格式: /v1beta/models/{model-name}:generateContent
+        imageApiUrl = `${baseUrl}/v1beta/models/${imageModel}:generateContent`;
       } else {
         // DALL-E, GPT-Image, Flux 使用标准端点
         imageApiUrl = `${baseUrl}/images/generations`;
@@ -401,6 +407,13 @@ export class IconGenerationService {
       if (!standardSizes.includes(iconSize)) {
         adjustedSize = '1024x1024';
         console.log(`${imageModel} 不支持尺寸 ${iconSize}，自动调整为 ${adjustedSize}`);
+      }
+    } else if (isGeminiModel) {
+      // Gemini 图像生成模型支持标准尺寸
+      const geminiSizes = ['256x256', '512x512', '768x768', '1024x1024', '1024x768', '768x1024'];
+      if (!geminiSizes.includes(iconSize)) {
+        adjustedSize = '1024x1024';
+        console.log(`Gemini 模型不支持尺寸 ${iconSize}，自动调整为 ${adjustedSize}`);
       }
     } else if (isMidjourneyModel) {
       // Midjourney 有自己的尺寸系统，使用aspect_ratio
@@ -447,6 +460,24 @@ export class IconGenerationService {
         prompt: prompt,
         size: adjustedSize,
         n: 1
+      };
+    } else if (isGeminiModel && isSSOpenAPI) {
+      // Gemini 原生格式（ssopen.top API）
+      // 参考: https://5lcqqpm068.apifox.cn/
+      const [width, height] = adjustedSize.split('x').map(n => parseInt(n));
+      const resolution = width >= 2048 ? '2K' : (width >= 1024 ? '1K' : '1K');
+      
+      requestBody = {
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          responseModalities: ["image"],
+          imageResolution: resolution,  // "1K", "2K", "4K"
+          imageCount: 1
+        }
       };
     } else {
       // 标准 OpenAI 格式 (DALL-E, GPT-Image, Flux)
@@ -519,7 +550,16 @@ export class IconGenerationService {
           errorData = { message: errorText };
         }
         
-        throw new Error(`第三方API调用失败: ${response.status} - ${errorData.error?.message || errorData.message || 'Unknown error'}`);
+        // 特殊处理常见错误，提供更友好的提示
+        const errorMessage = errorData.error?.message || errorData.message || 'Unknown error';
+        
+        // 检查是否是模型不可用的错误
+        if (response.status === 503 && errorMessage.includes('No available channels')) {
+          const modelSuggestions = this.getSuggestedModels(imageModel);
+          throw new Error(`模型 "${imageModel}" 在当前API分组中不可用。${modelSuggestions}\n\n原始错误: ${errorMessage}`);
+        }
+        
+        throw new Error(`第三方API调用失败: ${response.status} - ${errorMessage}`);
       }
 
       const data = await response.json();
@@ -558,6 +598,20 @@ export class IconGenerationService {
             return result.url;
           } else if (result.b64_json) {
             return `data:image/png;base64,${result.b64_json}`;
+          }
+        }
+      } else if (isGeminiModel && isSSOpenAPI) {
+        // Gemini 原生格式响应
+        // 响应格式: { candidates: [{ content: { parts: [{ inlineData: { mimeType, data } }] } }] }
+        if (data.candidates && Array.isArray(data.candidates) && data.candidates.length > 0) {
+          const candidate = data.candidates[0];
+          if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+            const part = candidate.content.parts[0];
+            if (part.inlineData && part.inlineData.data) {
+              // 返回 base64 格式的图片
+              const mimeType = part.inlineData.mimeType || 'image/png';
+              return `data:${mimeType};base64,${part.inlineData.data}`;
+            }
           }
         }
       }
@@ -951,6 +1005,22 @@ export class IconGenerationService {
   /**
    * 轮询 Replicate 任务结果
    */
+  /**
+   * 根据当前模型获取推荐的替代模型
+   */
+  private getSuggestedModels(currentModel: string): string {
+    const suggestions: { [key: string]: string } = {
+      'gemini-3-pro-image-preview': '建议尝试: flux-pro, gpt-image-1, dall-e-3。如使用 ssopen.top API，Gemini 模型需要 auto 或 mj 分组的令牌',
+      'gemini-2.5-flash-image-preview': '建议尝试: flux-pro, gpt-image-1, dall-e-3',
+      'midjourney': '建议尝试: flux-pro, ideogram-v3, dall-e-3',
+      'stable-diffusion-xl': '建议尝试: flux-pro, dall-e-3, stable-diffusion-3',
+      'doubao-seedream-4': '建议尝试: flux-pro, dall-e-3',
+      'recraft-v3': '建议尝试: flux-pro, ideogram-v3'
+    };
+    
+    return suggestions[currentModel] || '建议尝试其他可用模型: flux-pro (推荐), gpt-image-1, dall-e-3';
+  }
+
   private async pollReplicateTask(taskId: string, baseUrl: string, maxAttempts: number = 30): Promise<string> {
     const apiConfig = this.getAPIConfig();
     const apiKey = apiConfig.apiKey;

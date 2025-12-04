@@ -352,7 +352,8 @@ nav.sheet-navigation[data-group="storage"] {
 
 /* 专长列表 - 使用PF2e Grid布局 */
 .application.feat-storage ol.feats-list,
-.application.feat-storage ol.spells-list {
+.application.feat-storage ol.spells-list,
+.application.feat-storage ol.fragments-list {
   list-style: none;
   list-style-type: none;
   margin: 0;
@@ -360,7 +361,8 @@ nav.sheet-navigation[data-group="storage"] {
 }
 
 .application.feat-storage ol.feats-list li.slot,
-.application.feat-storage ol.spells-list li.slot {
+.application.feat-storage ol.spells-list li.slot,
+.application.feat-storage ol.fragments-list li.slot {
   align-items: center;
   display: grid;
   grid:
@@ -376,22 +378,26 @@ nav.sheet-navigation[data-group="storage"] {
 }
 
 .application.feat-storage .feats-list li.slot:nth-child(odd),
-.application.feat-storage .spells-list li.slot:nth-child(odd) {
+.application.feat-storage .spells-list li.slot:nth-child(odd),
+.application.feat-storage .fragments-list li.slot:nth-child(odd) {
   background-color: rgba(102, 126, 234, 0.05);
 }
 
 .application.feat-storage .feats-list li.slot:hover,
-.application.feat-storage .spells-list li.slot:hover {
+.application.feat-storage .spells-list li.slot:hover,
+.application.feat-storage .fragments-list li.slot:hover {
   background-color: rgba(102, 126, 234, 0.1);
 }
 
 .application.feat-storage .feats-list li.slot:active,
-.application.feat-storage .spells-list li.slot:active {
+.application.feat-storage .spells-list li.slot:active,
+.application.feat-storage .fragments-list li.slot:active {
   cursor: grabbing;
 }
 
 .application.feat-storage ol.feats-list li.slot .item-name,
-.application.feat-storage ol.spells-list li.slot .item-name {
+.application.feat-storage ol.spells-list li.slot .item-name,
+.application.feat-storage ol.fragments-list li.slot .item-name {
   align-items: center !important;
   display: flex !important;
   flex: 1 !important;
@@ -418,22 +424,19 @@ nav.sheet-navigation[data-group="storage"] {
 }
 
 .application.feat-storage .item-image.framed {
-  background-color: var(--tertiary, #5e0000);
-  border: none;
-  border-radius: 2px;
-  box-shadow:
-    0 0 0 1px var(--tertiary, #5e0000),
-    0 0 0 2px #9f725b,
-    inset 0 0 0.25rem rgba(0, 0, 0, 0.5);
+  background-color: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
 .application.feat-storage .item-image.framed img {
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 .application.feat-storage .item-image img {
   border: none;
-  border-radius: 0;
+  border-radius: 3px;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -489,7 +492,8 @@ nav.sheet-navigation[data-group="storage"] {
 }
 
 .application.feat-storage ol.feats-list li.slot .item-controls,
-.application.feat-storage ol.spells-list li.slot .item-controls {
+.application.feat-storage ol.spells-list li.slot .item-controls,
+.application.feat-storage ol.fragments-list li.slot .item-controls {
   align-items: center;
   display: flex;
   font-size: 0.75rem;
@@ -612,12 +616,14 @@ nav.sheet-navigation[data-group="storage"] {
 
 /* 专长项根据确认状态的差异化显示 */
 .application.feat-storage .feats-list li.slot[data-confirmed="true"],
-.application.feat-storage .spells-list li.slot[data-confirmed="true"] {
+.application.feat-storage .spells-list li.slot[data-confirmed="true"],
+.application.feat-storage .fragments-list li.slot[data-confirmed="true"] {
   position: relative;
 }
 
 .application.feat-storage .feats-list li.slot[data-confirmed="true"]::before,
-.application.feat-storage .spells-list li.slot[data-confirmed="true"]::before {
+.application.feat-storage .spells-list li.slot[data-confirmed="true"]::before,
+.application.feat-storage .fragments-list li.slot[data-confirmed="true"]::before {
   content: '\f00c';
   font-family: 'Font Awesome 6 Free';
   font-weight: 900;

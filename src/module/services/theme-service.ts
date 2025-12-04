@@ -31,9 +31,7 @@ export class ThemeService {
    */
   setTheme(themeId: string): void {
     this.currentTheme = getThemeById(themeId);
-    if (game.settings) {
-      game.settings.set('ai-pf2e-assistant', 'activeTheme', themeId);
-    }
+    // 不再保存到配置，直接使用神龛主题
   }
   
   /**

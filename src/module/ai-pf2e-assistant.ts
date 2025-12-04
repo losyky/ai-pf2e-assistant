@@ -1005,9 +1005,25 @@ export class AIPF2eAssistant {
         this.openEquipmentSynthesis(app.actor);
       });
       
+      // 创建碎片物品存储箱按钮（小型图标按钮）
+      const fragmentStorageButton = $(`
+        <a class="fragment-storage-button item-control" data-tooltip="碎片物品储存箱" style="margin-left: 0.25rem;">
+          <i class="fa-solid fa-gem"></i>
+        </a>
+      `);
+      
+      // 添加点击事件
+      fragmentStorageButton.on('click', (event: Event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        Logger.debug('碎片物品储存箱按钮被点击');
+        // 打开碎片物品储存箱，切换到fragments分页
+        this.openItemStorage(app.actor, 'fragments');
+      });
+      
       // 将按钮添加到找到的元素
-      wealthRow.first().append(synthesisButton);
-      Logger.debug('已添加物品合成按钮到全部财产行');
+      wealthRow.first().append(synthesisButton).append(fragmentStorageButton);
+      Logger.debug('已添加物品合成按钮和碎片物品存储箱按钮到全部财产行');
 
     } catch (error) {
       Logger.error('添加物品合成按钮失败:', error);
@@ -2441,11 +2457,11 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
   }
 
   /**
-   * 打开物品储存箱（专长或法术）
+   * 打开物品储存箱（专长、法术或碎片物品）
    * @param actor 角色文档
-   * @param initialTab 初始打开的分页（'feats' 或 'spells'）
+   * @param initialTab 初始打开的分页（'feats'、'spells' 或 'fragments'）
    */
-  openItemStorage(actor?: any, initialTab: 'feats' | 'spells' = 'feats'): void {
+  openItemStorage(actor?: any, initialTab: 'feats' | 'spells' | 'fragments' = 'feats'): void {
     try {
       if (!actor) {
         ui.notifications.warn('请先选择一个角色');
@@ -7737,6 +7753,8 @@ function registerSettings() {
         'flux-dev': 'Flux Dev',
         'flux-schnell': 'Flux Schnell',
         'gpt-image-1': 'GPT Image-1',
+        'gemini-3-pro-image-preview': 'Gemini 3 Pro Image (Nano Banana 2)',
+        'gemini-2.5-flash-image-preview': 'Gemini 2.5 Flash Image',
         'midjourney': 'Midjourney',
         'ideogram-v2': 'Ideogram V2',
         'ideogram-v3': 'Ideogram V3',

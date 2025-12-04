@@ -277,6 +277,6 @@ export function getThemeById(id: string): ThemeMapping {
 
 // 获取当前激活的主题
 export function getCurrentTheme(): ThemeMapping {
-  const themeId = game.settings?.get('ai-pf2e-assistant', 'activeTheme') || 'shrine';
-  return getThemeById(themeId);
+  // 直接返回神龛主题，不再依赖配置
+  return SHRINE_THEME;
 }

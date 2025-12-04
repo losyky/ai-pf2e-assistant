@@ -19,13 +19,13 @@ export class SpellStorageService {
         const gameActor = (window as any).game?.actors?.get(actor.id);
         if (gameActor?.getFlag) {
           const spells = gameActor.getFlag('ai-pf2e-assistant', 'spellStorage');
-          return Array.isArray(spells) ? spells : [];
+          return Array.isArray(spells) ? this._migrateSpellsData(spells) : [];
         }
       }
       
       if (realActor?.getFlag) {
         const spells = realActor.getFlag('ai-pf2e-assistant', 'spellStorage');
-        return Array.isArray(spells) ? spells : [];
+        return Array.isArray(spells) ? this._migrateSpellsData(spells) : [];
       }
       
       console.warn('无法获取Actor对象或Actor对象缺少getFlag方法');
@@ -34,6 +34,17 @@ export class SpellStorageService {
       console.warn('获取储存箱法术失败:', error);
       return [];
     }
+  }
+
+  /**
+   * 迁移法术数据，确保所有法术都有confirmed字段
+   * @private
+   */
+  private static _migrateSpellsData(spells: any[]): any[] {
+    return spells.map(spell => ({
+      ...spell,
+      confirmed: spell.confirmed === true ? true : false // 将undefined转为false
+    }));
   }
 
   /**
@@ -59,12 +70,15 @@ export class SpellStorageService {
 
       const currentSpells = this.getStoredSpells(targetActor);
       
-      // 生成唯一ID（如果没有的话）
+      // 创建新法术数据,确保confirmed状态正确设置
+      const cleanSpellData = { ...spellData };
+      delete cleanSpellData.confirmed; // 删除可能存在的confirmed属性
+      
       const newSpell = {
-        ...spellData,
+        ...cleanSpellData,
         _id: spellData._id || foundry.utils.randomID(),
         storageTimestamp: Date.now(), // 添加时间戳
-        confirmed: confirmed // 添加确认标记
+        confirmed: confirmed // 明确设置确认标记
       };
       
       const updatedSpells = [...currentSpells, newSpell];
@@ -235,7 +249,8 @@ export class SpellStorageService {
    */
   static getUnconfirmedSpells(actor: any): any[] {
     const allSpells = this.getStoredSpells(actor);
-    return allSpells.filter(spell => !spell.confirmed);
+    // 将 undefined 和 false 都视为未确认
+    return allSpells.filter(spell => spell.confirmed !== true);
   }
 
   /**
