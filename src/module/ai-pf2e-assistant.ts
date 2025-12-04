@@ -7552,7 +7552,7 @@ function registerSettings() {
       name: '神龛系统配置',
       label: '打开神龛配置',
       hint: '管理神龛系统的模型和流程设置',
-      icon: 'fas fa-torii-gate',
+      icon: 'fa fa-bullseye',
       type: ShrineConfigManager,
       restricted: true
     });
