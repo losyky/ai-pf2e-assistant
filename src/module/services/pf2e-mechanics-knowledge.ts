@@ -741,7 +741,7 @@ PF2e的法术分为0环（戏法）到10环，环级直接决定法术的强度�
 #### 检定DC公式
 
 **职业DC**：
-- 【@actor.classDC.value】 - 自动使用角色的职业DC
+- 【@actor.attributes.classDC.value】 - 自动使用角色的职业DC
 
 **自定义DC**：
 - 【15 + @actor.level】 - 基础DC15，每级+1（1级=16，10级=25）
@@ -770,7 +770,7 @@ PF2e 支持以下数学函数：
 - 【@actor.abilities.int.mod】 - 智力修正
 - 【@actor.abilities.wis.mod】 - 感知修正
 - 【@actor.abilities.cha.mod】 - 魅力修正
-- 【@actor.classDC.value】 - 职业DC
+- 【@actor.abilities.classDC.value】 - 职业DC
 - 【@item.level】 - 物品等级
 
 #### 使用示例

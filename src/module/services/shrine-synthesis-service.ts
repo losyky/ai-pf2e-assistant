@@ -50,7 +50,7 @@ export interface ShrineSynthesisConfig {
   className?: string;
   actorData?: any;
   shrineItem: ShrineSynthesisMaterial; // 必需的神龛物品
-  mechanismComplexity?: 'simple' | 'moderate' | 'complex'; // 机制复杂度，默认为moderate
+  mechanismComplexity?: 'none' | 'simple' | 'moderate' | 'complex'; // 机制复杂度，默认为moderate
 }
 
 /**
@@ -427,7 +427,10 @@ export class ShrineSynthesisService {
    * @param complexity 机制复杂度
    * @returns 机制描述指南文本
    */
-  private getMechanismDescriptionGuide(complexity: 'simple' | 'moderate' | 'complex'): string {
+  private getMechanismDescriptionGuide(complexity: 'none' | 'simple' | 'moderate' | 'complex'): string {
+    if (complexity === 'none') {
+      return ''; // 'none'模式不提供机制描述指南
+    }
     return '\n' + MECHANISM_DESCRIPTION_GUIDE.getGuide(complexity);
   }
 
@@ -911,28 +914,38 @@ export class ShrineSynthesisService {
     let divinityGuidance = '';
     if (!hasDivinities) {
       // 没有调整指导方向：需要设计师自行设计机制
-      divinityGuidance = `\n\n---\n\n## 机制设计职责（重要！）\n\n当前合成**没有提供调整指导方向**，因此你需要承担机制设计的职责。\n\n`;
-      
-      // 提供开放性的机制设计指导，不限制具体复杂度
-      if (mechanismComplexity === 'simple') {
-        divinityGuidance += `**设计倾向：简约直接**\n`;
-        divinityGuidance += `专长机制可以倾向于简单直接的设计，但最终由你根据材料主题自由发挥。\n\n`;
-      } else if (mechanismComplexity === 'complex') {
-        divinityGuidance += `**设计倾向：创新互动**\n`;
-        divinityGuidance += `专长机制可以尝试更有创意的设计，如多层互动、资源管理、状态变化等，但不强制要求。根据材料主题选择合适的机制深度。\n\n`;
+      if (mechanismComplexity === 'none') {
+        // 'none'模式：不进行机制设计
+        divinityGuidance = `\n\n---\n\n## 设计说明\n\n当前合成**不需要进行机制设计**，请直接基于材料主题和描述生成专长效果即可。\n\n`;
+        divinityGuidance += `**设计要点**：\n`;
+        divinityGuidance += `1. 直接理解材料的描述和主题\n`;
+        divinityGuidance += `2. 将材料内容转化为专长效果\n`;
+        divinityGuidance += `3. 保持简洁明了，不需要复杂的机制框架\n`;
+        divinityGuidance += `4. 确保效果与专长等级和类别相匹配\n\n`;
       } else {
-        divinityGuidance += `**设计倾向：平衡适中**\n`;
-        divinityGuidance += `专长机制保持适度复杂度，可以有一些有趣的互动，但不过于繁琐。根据材料主题自由选择。\n\n`;
+        divinityGuidance = `\n\n---\n\n## 机制设计职责（重要！）\n\n当前合成**没有提供调整指导方向**，因此你需要承担机制设计的职责。\n\n`;
+        
+        // 提供开放性的机制设计指导，不限制具体复杂度
+        if (mechanismComplexity === 'simple') {
+          divinityGuidance += `**设计倾向：简约直接**\n`;
+          divinityGuidance += `专长机制可以倾向于简单直接的设计，但最终由你根据材料主题自由发挥。\n\n`;
+        } else if (mechanismComplexity === 'complex') {
+          divinityGuidance += `**设计倾向：创新互动**\n`;
+          divinityGuidance += `专长机制可以尝试更有创意的设计，如多层互动、资源管理、状态变化等，但不强制要求。根据材料主题选择合适的机制深度。\n\n`;
+        } else {
+          divinityGuidance += `**设计倾向：平衡适中**\n`;
+          divinityGuidance += `专长机制保持适度复杂度，可以有一些有趣的互动，但不过于繁琐。根据材料主题自由选择。\n\n`;
+        }
+        
+        // 添加机制描述框架指南（仅在无神性时提供）
+        divinityGuidance += this.getMechanismDescriptionGuide(mechanismComplexity);
+        
+        divinityGuidance += `\n**设计要点**：\n`;
+        divinityGuidance += `1. 基于合成主题和补充设计要素构思机制\n`;
+        divinityGuidance += `2. 机制应该有趣、创新、符合主题\n`;
+        divinityGuidance += `3. 确保机制与专长等级和类别相匹配\n`;
+        divinityGuidance += `4. 不要过度拘泥于复杂度指导，创造力优先\n\n`;
       }
-      
-      // 添加机制描述框架指南（仅在无神性时提供）
-      divinityGuidance += this.getMechanismDescriptionGuide(mechanismComplexity);
-      
-      divinityGuidance += `\n**设计要点**：\n`;
-      divinityGuidance += `1. 基于合成主题和补充设计要素构思机制\n`;
-      divinityGuidance += `2. 机制应该有趣、创新、符合主题\n`;
-      divinityGuidance += `3. 确保机制与专长等级和类别相匹配\n`;
-      divinityGuidance += `4. 不要过度拘泥于复杂度指导，创造力优先\n\n`;
     } else {
       // 有调整指导方向：已提供机制设计
       divinityGuidance = `\n\n---\n\n## 调整指导方向理解（重要！）\n\n当前合成提供了${divinities.length}个调整指导方向，它们定义了专长的核心机制。\n\n`;

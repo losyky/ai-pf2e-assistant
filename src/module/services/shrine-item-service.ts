@@ -370,7 +370,7 @@ export class ShrineItemService {
     className?: string; 
     rank?: number; 
     traditions?: string[]; 
-    mechanismComplexity?: 'simple' | 'moderate' | 'complex';
+    mechanismComplexity?: 'none' | 'simple' | 'moderate' | 'complex';
     equipmentType?: 'weapon' | 'equipment' | 'consumable' | 'armor' | 'treasure';
     equipmentCategory?: string;
   } | null {
@@ -397,9 +397,9 @@ export class ShrineItemService {
       const classMatch = cleanText.match(classPattern);
       
       // 解析机制复杂度
-      const complexityPattern = /MECHANISM_COMPLEXITY:\s*(simple|moderate|complex)/i;
+      const complexityPattern = /MECHANISM_COMPLEXITY:\s*(none|simple|moderate|complex)/i;
       const complexityMatch = cleanText.match(complexityPattern);
-      const mechanismComplexity = complexityMatch ? complexityMatch[1].toLowerCase() as 'simple' | 'moderate' | 'complex' : 'moderate'; // 默认值为中等
+      const mechanismComplexity = complexityMatch ? complexityMatch[1].toLowerCase() as 'none' | 'simple' | 'moderate' | 'complex' : 'moderate'; // 默认值为中等
       
       // 解析物品类型
       const equipmentTypePattern = /EQUIPMENT_TYPE:\s*(weapon|equipment|consumable|armor|treasure)/i;

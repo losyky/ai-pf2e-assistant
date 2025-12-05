@@ -221,8 +221,8 @@ ${prompt}
 - 伤害计算：@Damage[(1+@actor.level)d6[piercing]] 或 @Damage[1d8[fire]]
   （注意：piercing=穿刺, fire=火焰, cold=寒冷, electricity=闪电, acid=强酸等）
 - 检定引用：@Check[type:reflex|dc:20|basic:true]
-- 职业DC引用：@Check[type:will|dc:resolve(@actor.classDC.value)]
-  （使用 @actor.classDC.value 引用职业DC，不要使用特定职业名称）
+- 职业DC引用：@Check[type:will|dc:resolve(@actor.attributes.classDC.value)]
+  （使用 @actor.attributes.classDC.value 引用职业DC，不要使用特定职业名称）
 - 动作引用：@UUID[Compendium.pf2e.actionspf2e.Item.Strike]
 - 法术引用：@UUID[Compendium.pf2e.spells-srd.Item.Fireball]
 - **关键规则**：所有方括号[]内的内容（如伤害类型、检定类型等）都必须使用英文，不能使用中文

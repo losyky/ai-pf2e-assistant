@@ -505,7 +505,7 @@ Note: Fragments only provide flavor elements and effect content, not mechanism d
 
     // 获取规则机制知识库（完整版）
     const mechanicsKnowledge = this.mechanicsKnowledge.getFullKnowledge();
-    const knowledgeSection = `\n\n---\n\n## PF2e 规则机制参考\n\n${mechanicsKnowledge}\n\n**碎片效果指导**：\n- 碎片的【效果内容】部分应该参考这些规则机制\n- 提供具体的效果类型（伤害、增益、控制等）和大致强度\n- 避免完整的机制描述（不包含动作类型、频次、持续时间等框架），但必须包含具体数值\n- 伤害效果示例："额外造成1d6火焰伤害"、"2d4电击伤害"\n- 增益效果示例："提供+1状态加值于攻击检定"、"+2环境加值于AC"\n- 控制效果示例："目标战栗1"、"减速5尺"\n- 参考"机制强度参考"章节确保数值合理`;
+    const knowledgeSection = `\n\n---\n\n## PF2e 规则机制参考\n\n${mechanicsKnowledge}\n\n**碎片效果指导**：\n- 碎片的【效果内容】部分应该提供效果的**方向和类型**，而非具体数值\n- 只需说明效果类型（伤害、增益、控制等）和大致方向\n- 避免具体数值和完整的机制描述\n- 伤害效果示例："额外造成火焰伤害"、"钝击伤害效果"、"与水特征相关的伤害"\n- 增益效果示例："提升攻击能力"、"增强防御"、"强化特定豁免"\n- 控制效果示例："施加战栗状态"、"减速效果"、"阻碍行动"\n- 特征方向示例："和水相关的效果"、"火焰特征互动"、"光明与黑暗对立"\n- **重点**：提供灵感和方向，具体数值和机制由神龛合成时决定`;
 
     const messages = [
       {
@@ -534,7 +534,6 @@ Note: Fragments only provide flavor elements and effect content, not mechanism d
 **碎片的角色定位**：
 - 碎片只提供【风味元素】和【效果内容】
 - 不负责核心机制设计（机制由神性提供或AI自行设计）
-- 效果内容必须包含具体的数值和规则（如"1d6火焰伤害"、"+1状态加值"）
 
 **创作要求**：
 你将根据预先规划好的设计方向来创作碎片，确保碎片符合规划的要求。
@@ -553,14 +552,16 @@ Note: Fragments only provide flavor elements and effect content, not mechanism d
    - 描述核心主题、感觉、氛围
    - 简洁但富有表现力
 
-【效果内容】描述这个碎片可以提供的效果方向或具体内容
-   - **必须包含具体的规则效力**（数值、伤害类型、加值类型等）
-   - 伤害类效果：指定伤害骰子（如"额外造成1d6火焰伤害"、"2d4电击伤害"）
-   - 增益类效果：指定加值类型和数值（如"+1状态加值于攻击检定"、"+2环境加值于AC"）
-   - 控制类效果：说明具体状态和持续（如"战栗1轮"、"移动速度减少5尺"）
-   - 治疗类效果：指定治疗量（如"恢复1d8生命值"、"获得等级×2的临时HP"）
-   - 避免完整的机制描述（不说明动作类型、频次、持续时间等框架性内容）
-   - 参考PF2e规则确保数值合理（参见下方规则参考）
+【效果内容】描述这个碎片可以提供的效果方向
+   - **提供效果的类型和方向，而非具体数值**
+   - 伤害类效果：说明伤害类型方向（如"额外造成火焰伤害"、"钝击伤害"、"能量伤害"）
+   - 增益类效果：说明加值方向（如"提升攻击检定"、"增强防御"、"强化豁免"）
+   - 控制类效果：说明控制类型（如"施加战栗状态"、"减速效果"、"阻碍移动"）
+   - 治疗类效果：说明治疗方向（如"恢复生命值"、"获得临时HP"、"移除负面状态"）
+   - 特征关联效果：说明特征方向（如"和水特征相关的效果"、"火焰特征互动"）
+   - 条件触发方向：说明触发条件类型（如"在特定地形时"、"对特定类型敌人"）
+   - **避免具体数值**（不说1d6、+2等）和完整机制框架（不说动作类型、频次等）
+   - 重点在于提供**效果的可能性和方向**，让神龛系统去决定具体实现
 
 ${knowledgeSection}
 
@@ -602,14 +603,16 @@ Please create a fragment containing:
    - Describe core theme, feeling, atmosphere
    - Concise yet expressive
 
-[Effect Content] Describe the effect direction or specific content this fragment can provide
-   - **Must include concrete mechanical power** (values, damage types, bonus types, etc.)
-   - Damage effects: Specify damage dice (e.g., "deals additional 1d6 fire damage", "2d4 electricity damage")
-   - Buff effects: Specify bonus type and value (e.g., "+1 status bonus to attack rolls", "+2 circumstance bonus to AC")
-   - Control effects: State specific conditions and duration (e.g., "frightened 1 for 1 round", "reduce Speed by 5 feet")
-   - Healing effects: Specify healing amount (e.g., "restore 1d8 HP", "gain temporary HP equal to level×2")
-   - Avoid complete mechanism descriptions (don't specify action types, frequency, duration framework)
-   - Reference PF2e rules to ensure reasonable values (see rules reference below)
+[Effect Content] Describe the effect direction this fragment can provide
+   - **Provide effect type and direction, not specific values**
+   - Damage effects: Indicate damage type direction (e.g., "deals additional fire damage", "bludgeoning damage", "energy damage")
+   - Buff effects: Indicate bonus direction (e.g., "enhance attack rolls", "improve defense", "strengthen saves")
+   - Control effects: Indicate control type (e.g., "apply frightened condition", "slowing effect", "hinder movement")
+   - Healing effects: Indicate healing direction (e.g., "restore Hit Points", "gain temporary HP", "remove negative conditions")
+   - Trait-related effects: Indicate trait direction (e.g., "water trait related effects", "fire trait interaction")
+   - Conditional triggers: Indicate trigger type (e.g., "in specific terrain", "against specific enemy types")
+   - **Avoid specific values** (no 1d6, +2, etc.) and complete mechanism frameworks (no action types, frequency, etc.)
+   - Focus on providing **possibilities and directions**, let the shrine system determine specific implementation
 
 ${knowledgeSection}
 
@@ -640,7 +643,7 @@ To provide multiple possibilities during synthesis, use HTML random options:
 1. 碎片名称应该唤起意象和情感，而非描述具体事物
 2. 可见描述应该让玩家产生共鸣，回忆起那段经历的感受
 3. 【风味元素】提取核心的情感、氛围和主题关键词
-4. 【效果内容】必须包含具体的规则数值（参考PF2e规则知识库）
+4. 【效果内容】提供效果的方向和类型，避免具体数值（参考PF2e规则知识库的效果类型）
 
 请严格按照上述设计方向创作这个碎片，确保它符合规划的子主题和设计要求。记住：所有内容必须使用中文。`
           : `Overall Theme/Experience: ${overallTheme}
@@ -655,7 +658,7 @@ Suggested Rarity: ${fragmentPlan.suggestedRarity}
 1. Fragment name should evoke imagery and emotions, not describe concrete things
 2. Visible description should resonate with players, evoking the feelings of that experience
 3. [Flavor Elements] extract core emotions, atmosphere, and thematic keywords
-4. [Effect Content] must include specific mechanical values (refer to PF2e rules knowledge)
+4. [Effect Content] provide effect direction and type, avoid specific values (refer to PF2e rules knowledge for effect types)
 
 Please create this fragment strictly according to the above design direction, ensuring it meets the planned sub-theme and design requirements. Remember: All content must be in English.`
       }
@@ -733,7 +736,7 @@ Please create this fragment strictly according to the above design direction, en
 **碎片的角色定位**：
 - 碎片只提供【风味元素】和【效果内容】
 - 不负责核心机制设计（机制由神性提供或AI自行设计）
-- 效果内容必须包含具体的数值和规则（如"1d6火焰伤害"、"+1状态加值"）
+- 效果内容提供效果的方向和类型，而非具体数值（如"造成火焰伤害"、"提升攻击能力"）
 
 请根据GM的需求描述设计一个碎片，包含：
 1. 碎片名称（简短、神秘、富有想象力，体现其作为意象/记忆的本质）
@@ -748,15 +751,16 @@ Please create this fragment strictly according to the above design direction, en
    - 描述核心主题、感觉、氛围
    - 简洁但富有表现力
 
-【效果内容】描述这个碎片可以提供的效果方向或具体内容
-   - **必须包含具体的规则效力**（数值、伤害类型、加值类型等）
-   - 伤害类效果：指定伤害骰子（如"额外造成1d6火焰伤害"）
-   - 增益类效果：指定加值类型和数值（如"+1状态加值于攻击检定"）
-   - 控制类效果：说明具体状态和持续（如"战栗1轮"）
-   - 治疗类效果：指定治疗量（如"恢复1d8生命值"）
-   - 参考PF2e规则确保数值合理
-   - 避免完整的机制描述（不说明动作类型、频次等）
-   - 聚焦在效果本身（伤害、增益、控制等）
+【效果内容】描述这个碎片可以提供的效果方向
+   - **提供效果的类型和方向，而非具体数值**
+   - 伤害类效果：说明伤害类型方向（如"额外造成火焰伤害"、"钝击伤害"）
+   - 增益类效果：说明加值方向（如"提升攻击检定"、"增强防御"）
+   - 控制类效果：说明控制类型（如"施加战栗状态"、"减速效果"）
+   - 治疗类效果：说明治疗方向（如"恢复生命值"、"获得临时HP"）
+   - 特征关联效果：说明特征方向（如"和水特征相关的效果"）
+   - 条件触发方向：说明触发条件类型（如"在特定地形时"）
+   - **避免具体数值**（不说1d6、+1等）和完整机制框架（不说动作类型、频次等）
+   - 重点在于提供**效果的可能性和方向**，让神龛系统去决定具体实现
 
 **随机选项格式（可选）**：
 如需在合成时提供多种可能性，可使用HTML随机选项：
@@ -777,11 +781,14 @@ Please create this fragment strictly according to the above design direction, en
 ${mechanicsKnowledge}
 
 **碎片效果指导**：
-- 碎片的【效果内容】部分应该参考这些规则机制
-- 提供具体的效果类型（伤害、增益、控制等）和大致强度
-- 避免完整的机制描述，但可以暗示合理的数值范围
-- 确保数值范围符合PF2e的平衡性，特别是动作经济效果和加值类型
-- 戏法效果应遵循戏法设计原则（无限施放、自动升环、效果较弱）
+- 碎片的【效果内容】部分应该提供效果的**方向和类型**，而非具体数值
+- 只需说明效果类型（伤害、增益、控制等）和大致方向
+- 避免具体数值和完整的机制描述
+- 伤害效果示例："额外造成火焰伤害"、"钝击伤害效果"、"与水特征相关的伤害"
+- 增益效果示例："提升攻击能力"、"增强防御"、"强化特定豁免"
+- 控制效果示例："施加战栗状态"、"减速效果"、"阻碍行动"
+- 特征方向示例："和水相关的效果"、"火焰特征互动"、"光明与黑暗对立"
+- **重点**：提供灵感和方向，具体数值和机制由神龛合成时决定
 `
           : `You are a professional TTRPG content designer responsible for creating entry fragments for PF2e. Entry fragments are auxiliary materials used in shrine synthesis, providing flavor elements and effect content.
 
@@ -806,7 +813,7 @@ ${mechanicsKnowledge}
 **Fragment Role Definition**：
 - Fragments only provide [Flavor Elements] and [Effect Content]
 - Not responsible for core mechanism design (mechanisms are provided by divinities or designed by AI)
-- Effect content must include specific values and rules (e.g., "1d6 fire damage", "+1 status bonus")
+- Effect content provides effect direction and type, not specific values (e.g., "deals fire damage", "enhance attack capability")
 
 Please design a fragment based on the GM's requirement description, containing:
 1. Fragment name (short, mysterious, imaginative, embodying its nature as imagery/memory)
@@ -821,15 +828,16 @@ The hidden prompt should be divided into two parts in the following format:
    - Describe core theme, feeling, atmosphere
    - Concise yet expressive
 
-[Effect Content] Describe the effect direction or specific content this fragment can provide
-   - **Must include specific rule efficacy** (values, damage types, bonus types, etc.)
-   - Damage effects: specify damage dice (e.g., "deals an additional 1d6 fire damage")
-   - Buff effects: specify bonus type and value (e.g., "+1 status bonus to attack rolls")
-   - Control effects: describe specific condition and duration (e.g., "frightened 1 for 1 round")
-   - Healing effects: specify healing amount (e.g., "restores 1d8 Hit Points")
-   - Refer to PF2e rules to ensure reasonable values
-   - Avoid complete mechanism descriptions (don't specify action types, frequency, etc.)
-   - Focus on the effects themselves (damage, buffs, control, etc.)
+[Effect Content] Describe the effect direction this fragment can provide
+   - **Provide effect type and direction, not specific values**
+   - Damage effects: Indicate damage type direction (e.g., "deals additional fire damage", "bludgeoning damage")
+   - Buff effects: Indicate bonus direction (e.g., "enhance attack rolls", "improve defense")
+   - Control effects: Indicate control type (e.g., "apply frightened condition", "slowing effect")
+   - Healing effects: Indicate healing direction (e.g., "restore Hit Points", "gain temporary HP")
+   - Trait-related effects: Indicate trait direction (e.g., "water trait related effects")
+   - Conditional triggers: Indicate trigger type (e.g., "in specific terrain")
+   - **Avoid specific values** (no 1d6, +1, etc.) and complete mechanism descriptions
+   - Focus on providing **possibilities and directions**, let the shrine system determine implementation
 
 **Random Options Format (Optional)**：
 To provide multiple possibilities during synthesis, use HTML random options:
@@ -850,11 +858,14 @@ To provide multiple possibilities during synthesis, use HTML random options:
 ${mechanicsKnowledge}
 
 **Fragment Effect Guidance**：
-- The [Effect Content] section of fragments should refer to these rule mechanics
-- Provide specific effect types (damage, buffs, control, etc.) and approximate strength
-- Avoid complete mechanism descriptions, but can hint at reasonable value ranges
-- Ensure value ranges conform to PF2e balance, especially action economy effects and bonus types
-- Cantrip effects should follow cantrip design principles (infinite casting, auto-heightening, weaker effects)
+- The [Effect Content] section should provide effect **direction and type**, not specific values
+- Only indicate effect types (damage, buffs, control, etc.) and general direction
+- Avoid specific values and complete mechanism descriptions
+- Damage effect examples: "deals additional fire damage", "bludgeoning damage effect", "water trait related damage"
+- Buff effect examples: "enhance attack capability", "improve defense", "strengthen specific saves"
+- Control effect examples: "apply frightened condition", "slowing effect", "hinder actions"
+- Trait direction examples: "water-related effects", "fire trait interaction", "light vs darkness opposition"
+- **Key point**: Provide inspiration and direction, specific values and mechanisms determined during shrine synthesis
 `
       },
       {
@@ -868,7 +879,7 @@ ${rarity ? `稀有度要求: ${rarity}` : ''}
 2. 碎片名称应该唤起意象和情感，而非描述具体事物
 3. 可见描述应该让玩家产生共鸣，回忆起那段经历的感受
 4. 【风味元素】提取核心的情感、氛围和主题关键词
-5. 【效果内容】必须包含具体的规则数值（参考PF2e规则知识库）
+5. 【效果内容】提供效果的方向和类型，避免具体数值（参考PF2e规则知识库的效果类型）
 
 请根据这个需求设计一个相应的词条碎片。确保碎片的设计符合需求，同时保持神秘感。记住：所有内容必须使用中文。`
           : `GM Requirement/Experience: ${requirement}
@@ -879,7 +890,7 @@ ${rarity ? `Rarity Requirement: ${rarity}` : ''}
 2. Fragment name should evoke imagery and emotions, not describe concrete things
 3. Visible description should resonate with players, evoking the feelings of that experience
 4. [Flavor Elements] extract core emotions, atmosphere, and thematic keywords
-5. [Effect Content] must include specific mechanical values (refer to PF2e rules knowledge)
+5. [Effect Content] provide effect direction and type, avoid specific values (refer to PF2e rules knowledge for effect types)
 
 Please design an appropriate entry fragment based on this requirement. Ensure the fragment design meets the requirement while maintaining mystery. Remember: All content must be in English.`
       }

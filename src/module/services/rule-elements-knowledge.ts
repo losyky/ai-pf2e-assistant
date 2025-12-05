@@ -1078,7 +1078,7 @@ rank值：0=未受训，1=受训，2=专家，3=大师，4=传奇
 - @actor.level - 角色等级
 - @actor.abilities.str.mod - 力量修正
 - @actor.abilities.dex.mod - 敏捷修正
-- @actor.classDC.value - 职业DC
+- @actor.abilities.classDC.value - 职业DC
 
 **物品数据引用**:
 - @item.level - 物品等级

@@ -165,8 +165,8 @@ export const TECHNICAL_REQUIREMENTS = `
   - 示例：@Damage[(2d8+@actor.level)[healing]] - 2d8加等级的治疗
   - 示例：@Damage[(@actor.level)d6[healing]] - 等级个d6的治疗
 - 检定：@Check[type:fortitude|dc:20|basic:true]
-- 职业DC检定：@Check[type:fortitude|dc:resolve(@actor.classDC.value)|basic:true]
-  （使用 @actor.classDC.value 引用角色的职业DC，不要使用具体职业名称）
+- 职业DC检定：@Check[type:fortitude|dc:resolve(@actor.abilities.classDC.value)|basic:true]
+  （使用 @actor.abilities.classDC.value 引用角色的职业DC，不要使用具体职业名称）
 - **内联骰子**（反制检定等）：[[/r 1d20+6 #Counteract]]{+6} - 注意括号必须正确配对
   - [[/r 骰子公式 #标签]]后接{显示文本}
   - 示例：[[/r 1d20+9 #Counteract]]{+9} 表示+9的反制检定
@@ -424,8 +424,8 @@ export const FEAT_KNOWLEDGE_UNIFIED_GUIDE = `
   - type: 检定类型（fortitude/reflex/will/perception等）
   - dc: 难度等级，可以是数字或使用 resolve() 引用
   - basic: 是否为基础豁免（true/false）
-- **职业DC引用**: @Check[type:will|dc:resolve(@actor.classDC.value)]
-  - 使用 @actor.classDC.value 引用角色的职业DC
+- **职业DC引用**: @Check[type:will|dc:resolve(@actor.abilities.classDC.value)]
+  - 使用 @actor.abilities.classDC.value 引用角色的职业DC
   - 不要使用特定职业名称（如 eldamon.dc）
 
 ### 模板引用
@@ -447,10 +447,10 @@ export const FEAT_KNOWLEDGE_UNIFIED_GUIDE = `
 - ❌ 错误：@Template[type:爆发|distance:20]
 
 **职业DC的正确引用方式**：
-- ✅ 正确：@Check[type:will|dc:resolve(@actor.classDC.value)]
+- ✅ 正确：@Check[type:will|dc:resolve(@actor.abilities.classDC.value)]
 - ❌ 错误：@Check[type:will|dc:resolve(@actor.system.proficiencies.classDCs.wizard.dc)]
 - ❌ 错误：使用特定职业名称的路径
-- 说明：@actor.classDC.value 会自动获取角色的职业DC，无需指定具体职业
+- 说明：@actor.abilities.classDC.value 会自动获取角色的职业DC，无需指定具体职业
 
 常见伤害类型英文：
 - 火焰=fire, 寒冷=cold, 闪电=electricity, 强酸=acid

@@ -204,7 +204,7 @@ export class FeatKnowledgeService {
     guidance += '- Trigger: <p><strong>Trigger</strong> ...</p>\n';
     guidance += '- 伤害引用: @Damage[2d6[fire]]\n';
     guidance += '- 检定引用: @Check[type:fortitude|dc:20]\n';
-    guidance += '- 职业DC引用: @Check[type:will|dc:resolve(@actor.classDC.value)]\n';
+    guidance += '- 职业DC引用: @Check[type:will|dc:resolve(@actor.attributes.classDC.value)]\n';
     guidance += '- UUID引用: @UUID[Compendium.pf2e.conditionitems.Item.Name]\n\n';
     
     return guidance;
