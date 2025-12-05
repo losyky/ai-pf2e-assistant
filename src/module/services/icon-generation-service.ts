@@ -285,17 +285,46 @@ export class IconGenerationService {
       const response = await fetch(apiUrl, requestOptions);
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        // 先尝试读取响应文本
+        const responseText = await response.text().catch(() => '');
         
         // 如果是CORS错误，提供更具体的错误信息
         if (response.status === 0 || response.type === 'opaque') {
           throw new Error('CORS错误：请配置支持CORS的第三方API代理服务，如 302.AI');
         }
         
-        throw new Error(`DALL-E API调用失败: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+        // 检查响应是否是HTML（通常是错误页面）
+        if (responseText.trim().startsWith('<') || responseText.includes('<!DOCTYPE')) {
+          throw new Error(`API返回了网页而不是JSON数据（状态码: ${response.status}）。请检查图像API URL配置是否正确，应该指向API端点而不是网页地址。当前URL: ${apiUrl}`);
+        }
+        
+        // 尝试解析JSON错误
+        let errorData: any = {};
+        try {
+          errorData = JSON.parse(responseText);
+        } catch {
+          errorData = { message: responseText.substring(0, 200) };
+        }
+        
+        throw new Error(`DALL-E API调用失败: ${response.status} - ${errorData.error?.message || errorData.message || 'Unknown error'}`);
       }
 
-      const data = await response.json();
+      // 先获取响应文本以便调试
+      const responseText = await response.text();
+      
+      // 检查响应是否是HTML
+      if (responseText.trim().startsWith('<') || responseText.includes('<!DOCTYPE')) {
+        throw new Error(`API返回了网页而不是JSON数据。请检查图像API URL配置是否正确，应该指向API端点而不是网页地址。当前URL: ${apiUrl}`);
+      }
+      
+      // 尝试解析JSON
+      let data: any;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        throw new Error(`无法解析API响应为JSON。响应内容: ${responseText.substring(0, 200)}...`);
+      }
+      
       if (!data.data || !data.data[0] || !data.data[0].url) {
         throw new Error('DALL-E API返回的数据格式不正确');
       }
@@ -336,46 +365,9 @@ export class IconGenerationService {
     const isRecraftModel = imageModel.startsWith('recraft');
     const isGeminiModel = imageModel.startsWith('gemini');
     
-    // 构建正确的图片生成API URL
-    let imageApiUrl = customApiUrl;
-    
-    if (isSSOpenAPI) {
-      // SSOPEN API 根据模型类型使用不同端点
-      // 移除尾部斜杠和 /chat/completions，同时移除 /v1 以便统一处理
-      const baseUrl = customApiUrl.replace(/\/+$/, '').replace('/chat/completions', '').replace(/\/v1$/, '');
-      
-      if (isMidjourneyModel) {
-        // Midjourney 使用专门的端点
-        imageApiUrl = `${baseUrl}/mj/submit/imagine`;
-      } else if (isIdeogramModel) {
-        // Ideogram 使用专门的端点
-        imageApiUrl = `${baseUrl}/ideogram/generate`;
-      } else if (isStableDiffusionModel) {
-        // Stable Diffusion 使用 Replicate 端点
-        imageApiUrl = `${baseUrl}/replicate/predictions`;
-      } else if (isDoubaoModel) {
-        // 豆包模型使用专门的端点
-        imageApiUrl = `${baseUrl}/doubao/text2image`;
-      } else if (isRecraftModel) {
-        // Recraft 使用 Replicate 端点
-        imageApiUrl = `${baseUrl}/replicate/predictions`;
-      } else if (isGeminiModel) {
-        // Gemini 图像生成使用原生 Gemini 端点
-        // 格式: /v1beta/models/{model-name}:generateContent
-        imageApiUrl = `${baseUrl}/v1beta/models/${imageModel}:generateContent`;
-      } else {
-        // DALL-E, GPT-Image, Flux 使用标准端点
-        imageApiUrl = `${baseUrl}/images/generations`;
-      }
-    } else {
-      // 其他API使用标准端点
-      if (customApiUrl.includes('/chat/completions')) {
-        imageApiUrl = customApiUrl.replace('/chat/completions', '/images/generations');
-      } else if (!customApiUrl.includes('/images/generations')) {
-        const baseUrl = customApiUrl.replace(/\/+$/, '');
-        imageApiUrl = `${baseUrl}/images/generations`;
-      }
-    }
+    // ⚠️ 完全使用用户配置的 API URL，不做任何自动拼接
+    // 用户需要在设置中配置完整的图像生成 API 端点
+    const imageApiUrl = customApiUrl.replace(/\/+$/, ''); // 只移除末尾斜杠
     
     // 处理不同API和模型对尺寸的要求
     let adjustedSize = iconSize;
@@ -542,12 +534,18 @@ export class IconGenerationService {
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => '');
+        
+        // 检查响应是否是HTML（通常是错误页面）
+        if (errorText.trim().startsWith('<') || errorText.includes('<!DOCTYPE')) {
+          throw new Error(`API返回了网页而不是JSON数据（状态码: ${response.status}）。请检查图像API URL配置是否正确，应该指向API端点而不是网页地址。当前URL: ${imageApiUrl}`);
+        }
+        
         let errorData: any = {};
         
         try {
           errorData = JSON.parse(errorText);
         } catch {
-          errorData = { message: errorText };
+          errorData = { message: errorText.substring(0, 200) };
         }
         
         // 特殊处理常见错误，提供更友好的提示
@@ -562,7 +560,21 @@ export class IconGenerationService {
         throw new Error(`第三方API调用失败: ${response.status} - ${errorMessage}`);
       }
 
-      const data = await response.json();
+      // 先获取响应文本以便调试
+      const responseText = await response.text();
+      
+      // 检查响应是否是HTML
+      if (responseText.trim().startsWith('<') || responseText.includes('<!DOCTYPE')) {
+        throw new Error(`API返回了网页而不是JSON数据。请检查图像API URL配置是否正确，应该指向API端点而不是网页地址。当前URL: ${imageApiUrl}`);
+      }
+      
+      // 尝试解析JSON
+      let data: any;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        throw new Error(`无法解析API响应为JSON。响应内容: ${responseText.substring(0, 200)}...`);
+      }
       console.log('API响应数据:', data);
       
       // 处理不同模型的响应格式
