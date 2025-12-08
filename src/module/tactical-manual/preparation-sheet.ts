@@ -133,11 +133,32 @@ export class TacticalPreparationSheet extends FormApplication {
 
         // 双击显示动作详情
         html.find('.action-item').on('dblclick', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
             const actionId = $(event.currentTarget).data('action-id');
             const action = this.tacticalManual.actor.items.get(actionId);
             if (action?.sheet) {
                 action.sheet.render(true);
             }
+        });
+
+        // 启用动作项的拖动功能
+        html.find('.action-item').each((_i: number, el: HTMLElement) => {
+            el.setAttribute('draggable', 'true');
+            
+            el.addEventListener('dragstart', (event: DragEvent) => {
+                const actionId = el.getAttribute('data-action-id');
+                const action = this.tacticalManual.actor.items.get(actionId);
+                if (action && event.dataTransfer) {
+                    const dragData = {
+                        type: 'Item',
+                        itemType: 'action',
+                        uuid: action.uuid,
+                    };
+                    event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+                    event.dataTransfer.effectAllowed = 'copy';
+                }
+            });
         });
 
         // 删除战术动作

@@ -234,6 +234,7 @@ function bindTacticalManualEvents(html: any, actor: any, tacticalManual: Tactica
     // 点击图标发送到聊天
     tacticalSection.on('click', '.tactical-action [data-action="item-to-chat"]', async (event: any) => {
         event.preventDefault();
+        event.stopPropagation();
         const actionId = $(event.currentTarget).closest('.tactical-action').data('item-id');
         const action = actor.items.get(actionId);
         if (action) {
@@ -244,6 +245,7 @@ function bindTacticalManualEvents(html: any, actor: any, tacticalManual: Tactica
     // 点击名称展开/收起详情
     tacticalSection.on('click', '.tactical-action [data-action="toggle-summary"]', async (event: any) => {
         event.preventDefault();
+        event.stopPropagation();
         const li = $(event.currentTarget).closest('.tactical-action');
         const actionId = li.data('item-id');
         const action = actor.items.get(actionId);
@@ -270,6 +272,7 @@ function bindTacticalManualEvents(html: any, actor: any, tacticalManual: Tactica
     // 使用动作按钮
     tacticalSection.on('click', '.tactical-action [data-action="use-action"]', async (event: any) => {
         event.preventDefault();
+        event.stopPropagation();
         const actionId = $(event.currentTarget).closest('.tactical-action').data('item-id');
         const action = actor.items.get(actionId);
         if (action && typeof action.use === 'function') {
@@ -282,6 +285,7 @@ function bindTacticalManualEvents(html: any, actor: any, tacticalManual: Tactica
     // 编辑动作
     tacticalSection.on('click', '.tactical-action [data-action="edit-item"]', async (event: any) => {
         event.preventDefault();
+        event.stopPropagation();
         const actionId = $(event.currentTarget).closest('.tactical-action').data('item-id');
         const action = actor.items.get(actionId);
         if (action) {
@@ -292,10 +296,30 @@ function bindTacticalManualEvents(html: any, actor: any, tacticalManual: Tactica
     // 取消准备（从战术手册移除，但不删除动作）
     tacticalSection.on('click', '.tactical-action [data-action="unprepare-tactical"]', async (event: any) => {
         event.preventDefault();
+        event.stopPropagation();
         const actionId = $(event.currentTarget).closest('.tactical-action').data('item-id');
         await tacticalManual.collection.unprepareAction(actionId);
         // 刷新角色表
         actor.sheet?.render(false);
+    });
+
+    // 启用拖动功能 - 设置战术动作可拖动
+    tacticalSection.find('.tactical-action').each((_i: number, el: HTMLElement) => {
+        el.setAttribute('draggable', 'true');
+        
+        el.addEventListener('dragstart', (event: DragEvent) => {
+            const itemId = el.getAttribute('data-item-id');
+            const action = actor.items.get(itemId);
+            if (action && event.dataTransfer) {
+                const dragData = {
+                    type: 'Item',
+                    itemType: 'action',
+                    uuid: action.uuid,
+                };
+                event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+                event.dataTransfer.effectAllowed = 'copy';
+            }
+        });
     });
 }
 
