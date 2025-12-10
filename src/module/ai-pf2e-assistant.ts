@@ -909,7 +909,7 @@ export class AIPF2eAssistant {
         // 创建法术储存箱按钮（小型图标按钮）
         const storageButton = $(`
           <a class="spell-storage-button item-control" data-tooltip="${game.i18n.localize('ai-pf2e-assistant.buttons.spellStorageTooltip')}" style="margin-left: 0.25rem;">
-            <i class="fa-solid fa-box"></i>
+            <i class="fa-solid fa-box-archive"></i>
           </a>
         `);
         
@@ -1005,6 +1005,22 @@ export class AIPF2eAssistant {
         this.openEquipmentSynthesis(app.actor);
       });
       
+      // 创建物品存储箱按钮（小型图标按钮）
+      const equipmentStorageButton = $(`
+        <a class="equipment-storage-button item-control" data-tooltip="物品储存箱" style="margin-left: 0.25rem;">
+          <i class="fa-solid fa-box-archive"></i>
+        </a>
+      `);
+      
+      // 添加点击事件
+      equipmentStorageButton.on('click', (event: Event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        Logger.debug('物品储存箱按钮被点击');
+        // 打开物品储存箱，切换到equipment分页
+        this.openItemStorage(app.actor, 'equipment');
+      });
+      
       // 创建碎片物品存储箱按钮（小型图标按钮）
       const fragmentStorageButton = $(`
         <a class="fragment-storage-button item-control" data-tooltip="碎片物品储存箱" style="margin-left: 0.25rem;">
@@ -1022,8 +1038,8 @@ export class AIPF2eAssistant {
       });
       
       // 将按钮添加到找到的元素
-      wealthRow.first().append(synthesisButton).append(fragmentStorageButton);
-      Logger.debug('已添加物品合成按钮和碎片物品存储箱按钮到全部财产行');
+      wealthRow.first().append(synthesisButton).append(equipmentStorageButton).append(fragmentStorageButton);
+      Logger.debug('已添加物品合成按钮、物品存储箱按钮和碎片物品存储箱按钮到全部财产行');
 
     } catch (error) {
       Logger.error('添加物品合成按钮失败:', error);
@@ -2457,11 +2473,11 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
   }
 
   /**
-   * 打开物品储存箱（专长、法术或碎片物品）
+   * 打开物品储存箱（专长、法术、物品或碎片物品）
    * @param actor 角色文档
-   * @param initialTab 初始打开的分页（'feats'、'spells' 或 'fragments'）
+   * @param initialTab 初始打开的分页（'feats'、'spells'、'equipment' 或 'fragments'）
    */
-  openItemStorage(actor?: any, initialTab: 'feats' | 'spells' | 'fragments' = 'feats'): void {
+  openItemStorage(actor?: any, initialTab: 'feats' | 'spells' | 'equipment' | 'fragments' = 'feats'): void {
     try {
       if (!actor) {
         ui.notifications.warn('请先选择一个角色');
@@ -3780,6 +3796,16 @@ ${JSON.stringify(structureData, null, 2)}
         // 简单调用：callService(messages) 或 未识别的参数
         return this.callAIAPI(messages, optionsOrFunctionDef);
       }
+    };
+  }
+
+  /**
+   * 获取AI服务实例（用于外部API）
+   * @returns AI服务对象，包含callService方法
+   */
+  public getAIServiceInstance(): any {
+    return {
+      callService: this.createCompatibleCallService()
     };
   }
 
@@ -8120,8 +8146,28 @@ Hooks.once('ready', function() {
   if (game && game.modules && typeof game.modules.get === 'function') {
     const mod = game.modules.get(MODULE_ID);
     if (mod) {
-      mod.api = moduleInstance;
-      Logger.debug('API exposed successfully');
+      // 导入神龛宏API
+      import('./api/shrine-macro-api').then(({ ShrineMacroAPI }) => {
+        // 确保moduleInstance存在
+        if (!moduleInstance) {
+          Logger.error('模块实例不存在，无法初始化神龛宏API');
+          return;
+        }
+        
+        // 初始化神龛宏API
+        ShrineMacroAPI.setAIService(moduleInstance.getAIServiceInstance());
+        
+        // 设置API对象
+        mod.api = {
+          ...moduleInstance,
+          shrine: ShrineMacroAPI
+        };
+        Logger.debug('API exposed successfully with shrine macro API');
+      }).catch(err => {
+        Logger.error('Failed to load shrine macro API:', err);
+        // 降级处理：只导出主实例
+        mod.api = moduleInstance;
+      });
     } else {
       Logger.error('无法获取模块实例');
     }

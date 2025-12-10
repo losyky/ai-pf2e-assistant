@@ -187,6 +187,14 @@ export class ShrineSynthesisApp extends Application {
       Logger.debug('找到合成环容器:', synthesisContainer.length);
       
       if (synthesisContainer.length > 0) {
+        // 检查神龛是否有自定义背景图
+        if (this.selectedShrine && this.selectedShrine.data) {
+          const customBackground = this._getCustomShrineBackground(this.selectedShrine.data);
+          if (customBackground) {
+            this._applyCustomBackground(synthesisContainer, customBackground);
+            // 如果有自定义背景，仍然应用主题颜色到其他元素
+          }
+        }
         // 根据主题设置不同的环颜色、文字和背景
         if (currentTheme.id === 'pokemon') {
           // 爱达梦主题：蓝色系环和背景
@@ -239,6 +247,169 @@ export class ShrineSynthesisApp extends Application {
     }
   }
   
+  /**
+   * 从神龛的描述中解析自定义背景图（使用 BACKGROUND_IMAGE: <URL> 格式）
+   * @private
+   */
+  private _getCustomShrineBackground(shrineData: any): string | null {
+    try {
+      // 从GM描述中解析 BACKGROUND_IMAGE 配置
+      const gmNotes = shrineData.system?.description?.gm || '';
+      
+      console.log('[神龛背景] 解析神龛背景图:', {
+        shrineName: shrineData.name,
+        hasGmNotes: !!gmNotes.trim(),
+        gmNotesLength: gmNotes.length
+      });
+      
+      if (!gmNotes.trim()) {
+        console.log('[神龛背景] GM描述为空，无法解析背景图');
+        return null;
+      }
+      
+      // Foundry VTT 使用 <p></p> 标签分隔每一行
+      // 清理HTML标签，保留换行结构
+      const cleanText = gmNotes
+        .replace(/<\/p>/gi, '\n')   // </p> 标签替换为换行符
+        .replace(/<p>/gi, '')        // 移除 <p> 标签
+        .replace(/<br\s*\/?>/gi, '\n') // <br> 替换为换行符
+        .replace(/<[^>]*>/g, '')     // 移除其他HTML标签
+        .replace(/\r\n/g, '\n')      // 统一换行符
+        .replace(/\r/g, '\n')        // 统一换行符
+        .replace(/\n{3,}/g, '\n\n')  // 将3个以上连续换行符合并为2个
+        .trim();                     // 去除首尾空白
+      
+      console.log('[神龛背景] 清理后的文本（前300字符）:', cleanText.substring(0, 300));
+      
+      // 匹配 BACKGROUND_IMAGE: <URL> 格式（不区分大小写）
+      // URL 可以包含路径分隔符、点、下划线、连字符等，但不能有空白字符
+      const bgMatch = cleanText.match(/BACKGROUND_IMAGE:\s*([^\s\n]+)/i);
+      if (bgMatch && bgMatch[1]) {
+        const bgUrl = bgMatch[1].trim();
+        console.log('[神龛背景] ✅ 成功解析背景图URL:', bgUrl);
+        console.log('[神龛背景] URL长度:', bgUrl.length, '字符');
+        return bgUrl;
+      }
+      
+      console.log('[神龛背景] 未找到 BACKGROUND_IMAGE 配置');
+      return null;
+    } catch (error) {
+      console.error('[神龛背景] 获取神龛背景图失败:', error);
+      return null;
+    }
+  }
+
+  /**
+   * 应用自定义背景图到圆环
+   * @param container - 合成环的父容器 (#circular-synthesis-container)
+   * @param backgroundUrl - 背景图URL
+   * @private
+   */
+  private _applyCustomBackground(container: JQuery, backgroundUrl: string) {
+    try {
+      console.log('[神龛背景] 开始应用背景图...');
+      console.log('[神龛背景] 容器:', container.length, '个');
+      console.log('[神龛背景] URL:', backgroundUrl);
+      
+      // 移除可能存在的旧背景层
+      const oldBgCount = container.find('.custom-shrine-background').length;
+      container.find('.custom-shrine-background').remove();
+      console.log('[神龛背景] 移除旧背景层:', oldBgCount, '个');
+      
+      // 创建背景图层（完全取代默认背景）
+      // 使用绝对定位到容器左上角
+      const bgLayer = $(`
+        <div class="custom-shrine-background" style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 500px;
+          height: 500px;
+          background-image: url('${backgroundUrl}');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          border-radius: 50%;
+          z-index: 0;
+          opacity: 0;
+          pointer-events: none;
+        "></div>
+      `);
+      
+      console.log('[神龛背景] 背景层已创建');
+      
+      // 确保容器是相对定位，但不使用 flex 居中
+      const oldPosition = container.css('position');
+      
+      if (oldPosition === 'static') {
+        container.css('position', 'relative');
+        console.log('[神龛背景] 容器 position 从 static 改为 relative');
+      }
+      
+      // 将背景层插入到容器的最前面（在 SVG 之前）
+      container.prepend(bgLayer);
+      console.log('[神龛背景] 背景层已插入容器');
+      
+      // 确保 SVG 元素有固定尺寸和正常的 z-index（在背景层之上）
+      const svg = container.find('svg.synthesis-circle-svg');
+      if (svg.length > 0) {
+        svg.css({
+          'position': 'relative',
+          'z-index': '1',
+          'width': '500px',
+          'height': '500px'
+        });
+        console.log('[神龛背景] SVG 元素已设置为固定 500px');
+        
+        // 隐藏 SVG 的背景渐变
+        svg.css('background', 'transparent');
+        
+        // 隐藏所有装饰性的圆环和背景元素
+        svg.find('.altar-base, .outer-decoration, .inner-decoration, .divinities-ring, .offerings-ring, .fragments-ring').css('opacity', '0');
+        console.log('[神龛背景] SVG 装饰性环已隐藏');
+      }
+      
+      // 验证背景层是否成功添加
+      const addedBgCount = container.find('.custom-shrine-background').length;
+      console.log('[神龛背景] 验证背景层数量:', addedBgCount);
+      
+      // 添加淡入动画（完全不透明，取代默认背景）
+      bgLayer.css('opacity', 0).animate({ opacity: 1 }, 500);
+      console.log('[神龛背景] ✅ 背景图应用完成！');
+    } catch (error) {
+      console.error('[神龛背景] ❌ 应用自定义背景失败:', error);
+    }
+  }
+
+  /**
+   * 移除自定义背景图，恢复默认背景
+   * @private
+   */
+  private _removeCustomBackground(container: JQuery) {
+    try {
+      // 移除自定义背景层
+      container.find('.custom-shrine-background').remove();
+      
+      // 恢复 SVG 默认背景、装饰性元素和原始尺寸
+      const svg = container.find('svg.synthesis-circle-svg');
+      if (svg.length > 0) {
+        svg.css({
+          'background': '',
+          'width': '',
+          'height': ''
+        });
+        
+        // 恢复所有装饰性的圆环
+        svg.find('.altar-base, .outer-decoration, .inner-decoration, .divinities-ring, .offerings-ring, .fragments-ring').css('opacity', '');
+        console.log('[神龛背景] SVG 默认背景、装饰性元素和尺寸已恢复');
+      }
+      
+      Logger.debug('已移除自定义神龛背景');
+    } catch (error) {
+      console.error('移除自定义背景失败:', error);
+    }
+  }
+
   /**
    * 更新SVG环的颜色
    */
@@ -323,6 +494,29 @@ export class ShrineSynthesisApp extends Application {
       // 更新当前状态
       this.circularComponent.updateMaterials(this.selectedMaterials);
       this.circularComponent.updateShrine(this.selectedShrine);
+      
+      // 如果已经选择了神龛，检查并应用自定义背景
+      if (this.selectedShrine) {
+        let customBg: string | null = null;
+        
+        // 优先使用宏提供的自定义背景图
+        if ((this as any)._customBackgroundImage) {
+          customBg = (this as any)._customBackgroundImage;
+          console.log('[神龛背景] 使用宏配置的背景图:', customBg);
+        }
+        // 否则从神龛物品中读取
+        else if (this.selectedShrine.originalItem) {
+          customBg = this._getCustomShrineBackground(this.selectedShrine.originalItem);
+          console.log('[神龛背景] 从神龛物品读取背景图:', customBg);
+        }
+        
+        // 应用背景
+        if (customBg) {
+          const containerJQ = $(container);
+          this._applyCustomBackground(containerJQ, customBg);
+          console.log('[神龛背景] 初始化时应用自定义背景:', customBg);
+        }
+      }
     }
   }
 
@@ -330,6 +524,16 @@ export class ShrineSynthesisApp extends Application {
    * 处理材料添加
    */
   private async _onMaterialAdd(item: any, itemType?: string) {
+    // 检查是否允许添加额外材料
+    const allowAdditionalMaterials = (this as any)._allowAdditionalMaterials !== false; // 默认允许
+    const lockedItems = (this as any)._lockedItems;
+    
+    if (!allowAdditionalMaterials && lockedItems && lockedItems.materials && lockedItems.materials.length > 0) {
+      // 如果不允许添加额外材料，且已有锁定材料，则拒绝添加
+      ui.notifications?.warn('已禁止添加额外材料');
+      return;
+    }
+    
     // 如果没有传入类型，则识别一次
     if (!itemType) {
       itemType = ShrineItemService.getItemType(item);
@@ -447,6 +651,13 @@ export class ShrineSynthesisApp extends Application {
    * 处理神龛拖拽添加
    */
   private async _onShrineAdd(item: any, itemType?: string) {
+    // 检查神龛是否被锁定
+    const lockedItems = (this as any)._lockedItems;
+    if (lockedItems && lockedItems.shrine && lockedItems.shrine.locked) {
+      ui.notifications?.warn('神龛已被锁定，无法更换');
+      return;
+    }
+    
     // 如果没有传入类型，则识别一次
     if (!itemType) {
       itemType = ShrineItemService.getItemType(item);
@@ -478,6 +689,45 @@ export class ShrineSynthesisApp extends Application {
     }
     
     this._updateSynthesisDisplay($(this.element));
+    
+    // 检查并应用自定义背景
+    const html = $(this.element);
+    const synthesisContainer = html.find('#circular-synthesis-container');
+    
+    console.log('[神龛背景] 容器查找结果:', synthesisContainer.length);
+    
+    if (synthesisContainer.length > 0) {
+      let customBg: string | null = null;
+      
+      // 优先使用宏提供的自定义背景图
+      if ((this as any)._customBackgroundImage) {
+        customBg = (this as any)._customBackgroundImage;
+        console.log('[神龛背景] 使用宏配置的背景图:', customBg);
+      }
+      // 否则从神龛物品中读取
+      else if (this.selectedShrine?.originalItem) {
+        customBg = this._getCustomShrineBackground(this.selectedShrine.originalItem);
+        console.log('[神龛背景] 从神龛物品读取背景图:', customBg);
+      }
+      
+      console.log('[神龛背景] 背景图检查:', {
+        shrineName: item.name,
+        hasOriginalItem: !!this.selectedShrine?.originalItem,
+        backgroundUrl: customBg
+      });
+      
+      if (customBg) {
+        console.log('[神龛背景] 应用自定义背景:', customBg);
+        this._applyCustomBackground(synthesisContainer, customBg);
+      } else {
+        console.log('[神龛背景] 恢复默认背景');
+        // 如果没有自定义背景，恢复默认背景
+        this._removeCustomBackground(synthesisContainer);
+      }
+    } else {
+      console.error('[神龛背景] 未找到 #circular-synthesis-container 容器！');
+    }
+    
     ui.notifications.info(`${this.themeService.getMessage('shrineSelected')}: ${item.name}`);
   }
 
@@ -984,15 +1234,15 @@ export class ShrineSynthesisApp extends Application {
         ui.notifications.info(`法术 ${itemData.name} 已导入到世界物品库`);
         }
       } else if (this.synthesisMode === 'equipment') {
-        // 物品模式：同时添加到角色物品栏和物品文件夹
+        // 物品模式：存入储存箱而非直接添加到角色
         if (this.actorData) {
           const actor = game.actors?.get(this.actorData.id);
           if (actor) {
-            // 导入ItemFolderStorageService
-            const { ItemFolderStorageService } = await import('../services/item-folder-storage-service.js');
-            await ItemFolderStorageService.addEquipmentToActorAndFolder(actor, itemData);
-            console.log('物品已添加到角色和文件夹:', actor.name);
-            ui.notifications.info(`物品 ${itemData.name} 已添加到角色物品栏，并存入"${actor.name}物品"文件夹`);
+            // 导入EquipmentStorageService
+            const { EquipmentStorageService } = await import('../services/equipment-storage-service.js');
+            await EquipmentStorageService.addEquipment(actor, itemData);
+            console.log('物品已添加到储存箱:', actor.name);
+            ui.notifications.info(`物品 ${itemData.name} 已存入储存箱，请从储存箱拖出使用`);
           } else {
             throw new Error('找不到目标角色');
           }
@@ -1034,11 +1284,38 @@ export class ShrineSynthesisApp extends Application {
   private _onClearMaterials(event: Event) {
     event.preventDefault();
     
-    this.selectedMaterials = [];
+    // 检查是否有锁定配置
+    const lockedItems = (this as any)._lockedItems;
+    const showClearButton = (this as any)._showClearButton !== false; // 默认显示
+    
+    if (!showClearButton) {
+      ui.notifications?.warn('清空材料功能已被禁用');
+      return;
+    }
+    
+    // 清空材料，但保留锁定的材料
+    if (lockedItems && lockedItems.materials && lockedItems.materials.length > 0) {
+      this.selectedMaterials = lockedItems.materials.filter((m: any) => m.locked);
+      ui.notifications.info('已清空非锁定材料');
+    } else {
+      this.selectedMaterials = [];
+      ui.notifications.info((game as any).i18n.localize('AIPF2E.ShrineSynthesis.materialsCleared'));
+    }
+    
+    // 清空神龛（如果没有锁定）
+    if (!lockedItems || !lockedItems.shrine || !lockedItems.shrine.locked) {
+      this.selectedShrine = null;
+      
+      // 移除自定义背景
+      const html = $(this.element);
+      const synthesisContainer = html.find('#circular-synthesis-container');
+      if (synthesisContainer.length > 0) {
+        this._removeCustomBackground(synthesisContainer);
+      }
+    }
+    
     this.lastSynthesisResult = null;
     this._updateSynthesisDisplay($(this.element));
-    
-    ui.notifications.info((game as any).i18n.localize('AIPF2E.ShrineSynthesis.materialsCleared'));
   }
 
   /**
@@ -1048,6 +1325,14 @@ export class ShrineSynthesisApp extends Application {
     event.preventDefault();
     
     const materialId = $(event.currentTarget).data('material-id');
+    
+    // 检查是否是锁定的材料
+    const material = this.selectedMaterials.find(m => m.id === materialId);
+    if (material && (material as any).locked) {
+      ui.notifications?.warn('无法移除锁定的材料');
+      return;
+    }
+    
     this.selectedMaterials = this.selectedMaterials.filter(m => m.id !== materialId);
     
     this._updateSynthesisDisplay($(this.element));

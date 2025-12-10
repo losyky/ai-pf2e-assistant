@@ -2,7 +2,7 @@
   "name": "ai-pf2e-assistant",
   "title": "AI PF2e Assistant",
   "description": "An AI-powered assistant for creating PF2e content in Foundry VTT",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "minimumCoreVersion": "10",
   "compatibleCoreVersion": "10",
   "author": "Your Name",

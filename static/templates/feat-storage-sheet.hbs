@@ -15,6 +15,10 @@
       <i class="fa-solid fa-wand-magic-sparkles"></i>
     </a>
     
+    <a class="item {{#if (eq currentTab 'equipment')}}active{{/if}}" data-action="switch-tab" data-tab="equipment" data-tooltip="物品 ({{equipmentTotalCount}})" role="tab" aria-label="物品">
+      <i class="fa-solid fa-box-archive"></i>
+    </a>
+    
     <a class="item {{#if (eq currentTab 'fragments')}}active{{/if}}" data-action="switch-tab" data-tab="fragments" data-tooltip="碎片物品 ({{fragmentTotalCount}})" role="tab" aria-label="碎片物品">
       <i class="fa-solid fa-gem"></i>
     </a>
@@ -28,7 +32,7 @@
         <section class="feat-section item-storage-section storage-unconfirmed" data-storage-area="unconfirmed">
           <header>
             <h3>
-              <i class="fa-solid fa-box"></i> 普通存储区
+              <i class="fa-solid fa-box-archive"></i> 普通存储区
               <span class="section-hint">（合成后的专长会先进入此区域）</span>
             </h3>
           </header>
@@ -135,7 +139,7 @@
         <section class="spell-section item-storage-section storage-unconfirmed" data-storage-area="unconfirmed">
           <header>
             <h3>
-              <i class="fa-solid fa-box"></i> 普通存储区
+              <i class="fa-solid fa-box-archive"></i> 普通存储区
               <span class="section-hint">（合成后的法术会先进入此区域）</span>
             </h3>
           </header>
@@ -235,6 +239,113 @@
       {{/if}}
     {{/if}}
 
+    {{!-- 物品分页内容 --}}
+    {{#if (eq currentTab 'equipment')}}
+      {{#if hasAnyEquipment}}
+        {{!-- 普通存储区 --}}
+        <section class="equipment-section item-storage-section storage-unconfirmed" data-storage-area="unconfirmed">
+          <header>
+            <h3>
+              <i class="fa-solid fa-box-archive"></i> 普通存储区
+              <span class="section-hint">（合成后的物品会先进入此区域）</span>
+            </h3>
+          </header>
+          {{#if unconfirmedEquipment}}
+            <ol class="equipment-list">
+              {{#each unconfirmedEquipment as |item|}}
+                <li class="slot" data-item-id="{{item.id}}" data-item-type="equipment" data-confirmed="false" draggable="true">
+                  <div class="item-name drag-handle" data-drag-handle>
+                    <a class="item-image framed" data-action="item-to-chat">
+                      <img class="item-icon" src="{{item.img}}" alt="{{item.name}}">
+                      <i class="fa-solid fa-message"></i>
+                    </a>
+                    <h4 class="name"><a data-action="toggle-summary">{{item.name}}</a></h4>
+                  </div>
+                  <div class="item-controls">
+                    {{#if @root.editable}}
+                      <a data-action="edit-item" data-tooltip="查看详情"><i class="fa-solid fa-fw fa-eye"></i></a>
+                      <a data-action="delete-item" data-tooltip="删除物品"><i class="fa-solid fa-fw fa-trash"></i></a>
+                    {{/if}}
+                  </div>
+                  <div class="item-summary" hidden></div>
+                </li>
+              {{/each}}
+            </ol>
+          {{else}}
+            <div class="area-empty">
+              <i class="fa-solid fa-inbox"></i>
+              <p>普通存储区为空。合成物品后会自动进入此区域。</p>
+            </div>
+          {{/if}}
+          
+          {{!-- 清除按钮放在普通存储区底部 --}}
+          {{#if hasUnconfirmedEquipment}}
+            <div class="section-footer">
+              <button type="button" class="clear-unconfirmed-button" data-action="clear-unconfirmed" data-tooltip="删除所有普通区（未确认）的物品">
+                <i class="fa-solid fa-broom"></i> 一键清除普通区
+              </button>
+            </div>
+          {{/if}}
+        </section>
+
+        {{!-- 确认存储区 --}}
+        <section class="equipment-section item-storage-section storage-confirmed" data-storage-area="confirmed">
+          <header>
+            <h3>
+              <i class="fa-solid fa-check-circle"></i> 确认存储区
+              <span class="section-hint">（拖入此区域的物品不会被一键清除）</span>
+            </h3>
+          </header>
+          {{#if confirmedEquipment}}
+            <ol class="equipment-list">
+              {{#each confirmedEquipment as |item|}}
+                <li class="slot" data-item-id="{{item.id}}" data-item-type="equipment" data-confirmed="true" draggable="true">
+                  <div class="item-name drag-handle" data-drag-handle>
+                    <a class="item-image framed" data-action="item-to-chat">
+                      <img class="item-icon" src="{{item.img}}" alt="{{item.name}}">
+                      <i class="fa-solid fa-message"></i>
+                    </a>
+                    <h4 class="name"><a data-action="toggle-summary">{{item.name}}</a></h4>
+                  </div>
+                  <div class="item-controls">
+                    {{#if @root.editable}}
+                      <a data-action="edit-item" data-tooltip="查看详情"><i class="fa-solid fa-fw fa-eye"></i></a>
+                      <a data-action="delete-item" data-tooltip="删除物品"><i class="fa-solid fa-fw fa-trash"></i></a>
+                    {{/if}}
+                  </div>
+                  <div class="item-summary" hidden></div>
+                </li>
+              {{/each}}
+            </ol>
+          {{else}}
+            <div class="area-empty">
+              <i class="fa-solid fa-inbox"></i>
+              <p>确认存储区为空。将重要物品拖入此区域，它们不会被一键清除。</p>
+            </div>
+          {{/if}}
+        </section>
+        
+        {{!-- 存储统计信息放在最底部 --}}
+        <div class="storage-summary">
+          <i class="fa-solid fa-chart-simple"></i>
+          <span>物品: <strong>{{totalCount}}</strong> (普通: <strong>{{unconfirmedCount}}</strong> / 确认: <strong>{{confirmedCount}}</strong>)</span>
+        </div>
+      {{else}}
+        <div class="storage-empty">
+          <div class="empty-icon">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+          <h3>储存箱是空的</h3>
+          <p>通过神龛合成物品后，它们会自动存储在这里。</p>
+          <p>您也可以将角色卡上的物品拖入此处进行储存。</p>
+          <div class="empty-hint">
+            <i class="fa-solid fa-info-circle"></i>
+            储存的物品不会激活规则元素，拖出到角色卡后才会生效。
+          </div>
+        </div>
+      {{/if}}
+    {{/if}}
+
     {{!-- 碎片物品分页内容 --}}
     {{#if (eq currentTab 'fragments')}}
       {{#if hasAnyFragments}}
@@ -242,7 +353,7 @@
         <section class="fragment-section item-storage-section storage-unconfirmed" data-storage-area="unconfirmed">
           <header>
             <h3>
-              <i class="fa-solid fa-box"></i> 普通存储区
+              <i class="fa-solid fa-box-archive"></i> 普通存储区
               <span class="section-hint">（添加的碎片物品会先进入此区域）</span>
             </h3>
           </header>
