@@ -981,20 +981,68 @@ export class ShrineSynthesisApp extends Application {
       
       // 根据模式选择合成方法
       if (this.synthesisMode === 'spell' && this.synthesisService instanceof SpellSynthesisService) {
-        // 法术合成：等级除以2向上取整得到环级
-        const rank = Math.ceil(baseLevel / 2);
+        // 法术合成：优先使用贡品法术的环级和类型，否则随机决定
+        let rank = Math.ceil(baseLevel / 2);
+        let rankSource = '角色等级计算';
+        let isCantrip = false;
+        let cantripSource = '随机决定';
+        
+        // 检查材料中是否有法术贡品
+        const offeringSpell = allMaterials.find((m: any) => 
+          m.type === 'offering' && m.originalSpellData && m.originalSpellData.level !== undefined
+        );
+        
+        if (offeringSpell && offeringSpell.originalSpellData) {
+          // 使用贡品法术的环级
+          rank = offeringSpell.originalSpellData.level;
+          rankSource = `贡品法术「${offeringSpell.name}」`;
+          
+          // 检查贡品是否为戏法（通过traits判断）
+          const traits = offeringSpell.originalSpellData.traits || [];
+          isCantrip = traits.includes('cantrip');
+          cantripSource = `贡品法术「${offeringSpell.name}」`;
+          
+          console.log('[法术合成] 使用贡品法术信息:', {
+            贡品名称: offeringSpell.name,
+            贡品环级: rank,
+            是否为戏法: isCantrip,
+            贡品特征: traits,
+            原本计算的环级: Math.ceil(baseLevel / 2)
+          });
+        } else {
+          // 没有贡品时，随机决定是否生成戏法
+          // 戏法概率：30%（戏法较为常见但不应过多）
+          isCantrip = Math.random() < 0.3;
+          
+          if (isCantrip) {
+            // 戏法的环级固定为1
+            rank = 1;
+            rankSource = '戏法（随机决定）';
+          }
+          
+          console.log('[法术合成] 无贡品，随机决定:', {
+            是否生成戏法: isCantrip,
+            最终环级: rank,
+            角色等级: baseLevel
+          });
+        }
+        
         const traditions = [this.spellTradition];  // 使用从按钮传入的施法传统
         
         const spellConfig: SpellSynthesisConfig = {
           rank,
           traditions,
           actorData: this.actorData,
-          shrineItem: this.selectedShrine as any
+          shrineItem: this.selectedShrine as any,
+          isCantrip: isCantrip  // 添加戏法标记
         };
         
         console.log('法术合成配置:', { 
           角色等级: baseLevel, 
-          法术环级: rank, 
+          法术环级: rank,
+          是否为戏法: isCantrip,
+          环级来源: rankSource,
+          戏法判断来源: cantripSource,
           traditions, 
           等级来源: shrineConfig?.level ? '神龛配置' : (this.actorData?.level ? '角色等级' : (uiLevel ? 'UI输入' : '默认值'))
         });

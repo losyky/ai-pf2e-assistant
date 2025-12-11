@@ -130,6 +130,14 @@ export class ShrineMacroAPI {
       try {
         const shrineItem = await fromUuid(config.lockedShrine);
         if (shrineItem) {
+          // 提取神龛的隐藏提示词
+          const hiddenPrompt = shrineItem.system?.description?.gm || 
+                              shrineItem.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
+          
+          // 提取合成需求配置
+          const { ShrineItemService } = require('../services/shrine-item-service');
+          const synthesisRequirements = ShrineItemService.extractSynthesisRequirements(shrineItem);
+          
           locks.shrine = {
             id: shrineItem.id || shrineItem._id,
             uuid: config.lockedShrine,
@@ -137,9 +145,19 @@ export class ShrineMacroAPI {
             img: shrineItem.img,
             type: 'shrine',
             locked: true,
+            hiddenPrompt: hiddenPrompt,  // 添加隐藏提示词
+            description: shrineItem.system?.description?.value || '',
+            rarity: shrineItem.system?.traits?.rarity || 'common',
+            synthesisRequirements: synthesisRequirements,
             data: shrineItem,
             originalItem: shrineItem  // 保存原始物品，用于背景图检测
           };
+          
+          console.log(`[锁定神龛] ${shrineItem.name}:`, {
+            hasHiddenPrompt: !!hiddenPrompt,
+            promptLength: hiddenPrompt.length,
+            hasSynthesisRequirements: !!synthesisRequirements
+          });
         }
       } catch (error) {
         console.error('无法加载锁定的神龛:', config.lockedShrine, error);
@@ -156,6 +174,27 @@ export class ShrineMacroAPI {
             // 判断材料类型
             const materialType = this._detectMaterialType(materialItem);
             
+            // 提取隐藏提示词（关键！）
+            let hiddenPrompt = '';
+            
+            // 根据材料类型提取隐藏提示词
+            if (materialType === 'fragment') {
+              // 碎片：从GM描述或flags中提取
+              hiddenPrompt = materialItem.system?.description?.gm || 
+                           materialItem.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
+            } else if (materialType === 'divinity') {
+              // 神性：从GM描述或flags中提取
+              hiddenPrompt = materialItem.system?.description?.gm || 
+                           materialItem.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
+            } else if (materialType === 'offering') {
+              // 贡品（专长/法术）：从GM描述或flags中提取
+              hiddenPrompt = materialItem.system?.description?.gm || 
+                           materialItem.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
+            }
+            
+            // 提取描述
+            const description = materialItem.system?.description?.value || '';
+            
             locks.materials.push({
               id: materialItem.id || materialItem._id,
               uuid: materialUuid,
@@ -163,7 +202,19 @@ export class ShrineMacroAPI {
               img: materialItem.img,
               type: materialType,
               locked: true,
+              hiddenPrompt: hiddenPrompt,  // 添加隐藏提示词
+              description: description,     // 添加描述
+              rarity: materialItem.system?.traits?.rarity || 'common',
+              deity: materialItem.flags?.['ai-pf2e-assistant']?.deity,
+              aspect: materialItem.flags?.['ai-pf2e-assistant']?.aspect,
+              originalItem: materialItem,   // 保存原始物品引用
               data: materialItem
+            });
+            
+            console.log(`[锁定材料] ${materialItem.name}:`, {
+              type: materialType,
+              hasHiddenPrompt: !!hiddenPrompt,
+              promptLength: hiddenPrompt.length
             });
           }
         } catch (error) {

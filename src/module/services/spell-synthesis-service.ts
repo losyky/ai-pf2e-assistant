@@ -37,6 +37,7 @@ export interface SpellSynthesisConfig {
   traditions: string[];  // 施法传统 ['arcane', 'divine', 'primal', 'occult']
   actorData?: any;
   shrineItem: SpellSynthesisMaterial;
+  isCantrip?: boolean;  // 是否为戏法（可选，用于明确指定）
 }
 
 /**
@@ -1400,8 +1401,9 @@ ${JSON.stringify(spell, null, 2)}
       console.log('[法术生成阶段] 未启用PF2e规则机制知识库（默认关闭）');
     }
     
-    // 检查是否为戏法（rank 1 + cantrip特征）
-    const isCantrip = config.rank === 1;  // PF2e中戏法的rank是1，通过traits中的cantrip标记区分
+    // 检查是否为戏法
+    // 优先使用配置中的 isCantrip 标记，如果没有则根据 rank 判断（rank 1 可能是戏法）
+    const isCantrip = config.isCantrip !== undefined ? config.isCantrip : (config.rank === 1);
     
     // 根据系统语言和是否有设计方案构建提示词
     let systemPrompt = isChinese 
