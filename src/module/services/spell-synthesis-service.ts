@@ -38,6 +38,7 @@ export interface SpellSynthesisConfig {
   actorData?: any;
   shrineItem: SpellSynthesisMaterial;
   isCantrip?: boolean;  // 是否为戏法（可选，用于明确指定）
+  requiredTraits?: string[]; // 合成后必定携带的特征
 }
 
 /**
@@ -1345,6 +1346,24 @@ ${JSON.stringify(spell, null, 2)}
     } else {
       console.log('--- 跳过格式化阶段 ---');
       finalSpell = generatedSpell;
+    }
+
+    // 应用必定携带的特征
+    if (config.requiredTraits && config.requiredTraits.length > 0) {
+      if (!finalSpell.system.traits) {
+        finalSpell.system.traits = { value: [], rarity: 'common', traditions: config.traditions || [] };
+      }
+      if (!finalSpell.system.traits.value) {
+        finalSpell.system.traits.value = [];
+      }
+      
+      // 添加必定携带的特征（避免重复）
+      for (const trait of config.requiredTraits) {
+        if (!finalSpell.system.traits.value.includes(trait)) {
+          finalSpell.system.traits.value.push(trait);
+          console.log(`[generateSpellDirect] ✓ 添加必定携带的特征: "${trait}"`);
+        }
+      }
     }
 
     // 如果需要生成图标，添加图标提示词

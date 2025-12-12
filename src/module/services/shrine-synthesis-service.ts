@@ -39,6 +39,10 @@ export interface ShrineSynthesisMaterial {
   synthesisRequirements?: any;
   img?: string; // 保留原始物品图标
   originalItem?: any; // 保留原始物品引用，用于后续操作
+  // 贡品物品的子类型信息（用于推断合成结果的类型）
+  offeringCategory?: string; // 对于专长贡品，保存其category（如'class', 'skill'等）
+  offeringFeatType?: string; // 对于职业专长贡品，保存其featType
+  offeringItemType?: string; // 对于装备贡品，保存其实际物品类型（如'weapon', 'armor'等）
 }
 
 /**
@@ -50,7 +54,8 @@ export interface ShrineSynthesisConfig {
   className?: string;
   actorData?: any;
   shrineItem: ShrineSynthesisMaterial; // 必需的神龛物品
-  mechanismComplexity?: 'none' | 'simple' | 'moderate' | 'complex'; // 机制复杂度，默认为moderate
+  mechanismComplexity?: 'none' | 'simple' | 'moderate' | 'complex';
+  requiredTraits?: string[]; // 合成后必定携带的特征 // 机制复杂度，默认为moderate
 }
 
 /**
@@ -309,7 +314,8 @@ export class ShrineSynthesisService {
       config.category,
       config.className,
       shouldGenerateIcon,
-      materials  // 传递材料以提取模板专长
+      materials,  // 传递材料以提取模板专长
+      config.requiredTraits  // 传递必定携带的特征
     );
 
     // 合成成功，消耗神龛点数（GM用户不消耗）
@@ -1197,7 +1203,8 @@ ${JSON.stringify(feat, null, 2)}
     category: string, 
     className?: string,
     shouldGenerateIcon: boolean = false,
-    materials?: ShrineSynthesisMaterial[]
+    materials?: ShrineSynthesisMaterial[],
+    requiredTraits?: string[]
   ): Promise<any> {
     console.log('=== 开始神龛专长统一生成流程 ===');
     
@@ -1259,6 +1266,24 @@ ${JSON.stringify(feat, null, 2)}
     if (sanitizedFeat.system) {
       sanitizedFeat.system.category = category;
       console.log(`[generateFeatDirect] ✓ 强制设置 category 为配置值: "${category}"`);
+    }
+    
+    // 应用必定携带的特征
+    if (requiredTraits && requiredTraits.length > 0) {
+      if (!sanitizedFeat.system.traits) {
+        sanitizedFeat.system.traits = { value: [], rarity: 'common', otherTags: [] };
+      }
+      if (!sanitizedFeat.system.traits.value) {
+        sanitizedFeat.system.traits.value = [];
+      }
+      
+      // 添加必定携带的特征（避免重复）
+      for (const trait of requiredTraits) {
+        if (!sanitizedFeat.system.traits.value.includes(trait)) {
+          sanitizedFeat.system.traits.value.push(trait);
+          console.log(`[generateFeatDirect] ✓ 添加必定携带的特征: "${trait}"`);
+        }
+      }
     }
     
     console.log('=== 神龛专长生成流程完成 ===');
@@ -2307,6 +2332,28 @@ ${TECHNICAL_REQUIREMENTS}
       hiddenPrompt = item.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
     }
     
+    // 提取贡品的子类型信息
+    let offeringCategory: string | undefined = undefined;
+    let offeringFeatType: string | undefined = undefined;
+    let offeringItemType: string | undefined = undefined;
+    
+    // 如果是专长类型的贡品
+    if (item.type === 'feat') {
+      // 提取专长类别（如'class', 'skill', 'general'等）
+      offeringCategory = item.system?.category;
+      // 提取职业专长的featType（如'fighter', 'wizard'等）
+      offeringFeatType = item.system?.traits?.value?.find((t: string) => 
+        ['fighter', 'wizard', 'rogue', 'cleric', 'ranger', 'barbarian', 'bard', 
+         'druid', 'monk', 'champion', 'sorcerer', 'alchemist'].includes(t.toLowerCase())
+      );
+      console.log(`贡品"${item.name}"的子类型: category=${offeringCategory}, featType=${offeringFeatType}`);
+    }
+    // 如果是装备类型的贡品
+    else if (['equipment', 'weapon', 'armor', 'consumable'].includes(item.type)) {
+      offeringItemType = item.type;
+      console.log(`贡品"${item.name}"的物品类型: ${offeringItemType}`);
+    }
+    
     return {
       id: item.id || item._id,
       name: item.name,
@@ -2316,7 +2363,10 @@ ${TECHNICAL_REQUIREMENTS}
       rarity: item.system?.traits?.rarity || 'common',
       originalFeatData: item.flags?.['ai-pf2e-assistant']?.originalFeatData,
       img: item.img, // 保留原始物品图标
-      originalItem: item // 保留原始物品引用
+      originalItem: item, // 保留原始物品引用
+      offeringCategory,
+      offeringFeatType,
+      offeringItemType
     };
   }
 

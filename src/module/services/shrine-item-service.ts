@@ -373,6 +373,7 @@ export class ShrineItemService {
     mechanismComplexity?: 'none' | 'simple' | 'moderate' | 'complex';
     equipmentType?: 'weapon' | 'equipment' | 'consumable' | 'armor' | 'treasure';
     equipmentCategory?: string;
+    requiredTraits?: string[]; // 合成后必定携带的特征
   } | null {
     // 优先使用GM描述，如果没有则使用hiddenPrompt
     let configText = shrineItem.system?.description?.gm || '';
@@ -411,6 +412,15 @@ export class ShrineItemService {
       const equipmentCategoryMatch = cleanText.match(equipmentCategoryPattern);
       const equipmentCategory = equipmentCategoryMatch && equipmentCategoryMatch[1].trim() ? equipmentCategoryMatch[1].trim() : undefined;
       
+      // 解析必定携带的特征
+      const requiredTraitsPattern = /REQUIRED_TRAITS:\s*([^\r\n]+)/i;
+      const requiredTraitsMatch = cleanText.match(requiredTraitsPattern);
+      let requiredTraits: string[] | undefined = undefined;
+      if (requiredTraitsMatch && requiredTraitsMatch[1].trim()) {
+        // 支持逗号分隔的特征列表
+        requiredTraits = requiredTraitsMatch[1].split(',').map(t => t.trim()).filter(t => t.length > 0);
+      }
+      
       console.log('神龛配置解析:', {
         原始文本长度: configText.length,
         清理后文本: cleanText.substring(0, 200) + '...',
@@ -419,7 +429,8 @@ export class ShrineItemService {
         职业匹配: classMatch,
         机制复杂度: mechanismComplexity,
         物品类型: equipmentType,
-        物品子类别: equipmentCategory
+        物品子类别: equipmentCategory,
+        必定携带特征: requiredTraits
       });
       
       // 专长配置
@@ -428,12 +439,13 @@ export class ShrineItemService {
         const category = categoryMatch[1].toLowerCase();
         const className = classMatch && classMatch[1].trim() ? classMatch[1].trim() : undefined;
         
-        const result = { level, category, className, mechanismComplexity };
+        const result = { level, category, className, mechanismComplexity, requiredTraits };
         console.log('✅ 神龛配置解析成功（专长）:');
         console.log('  - level:', level);
         console.log('  - category:', category);
         console.log('  - className:', className);
         console.log('  - mechanismComplexity:', mechanismComplexity);
+        console.log('  - requiredTraits:', requiredTraits);
         return result;
       }
       
@@ -441,8 +453,8 @@ export class ShrineItemService {
       if (equipmentType) {
         const level = levelMatch ? parseInt(levelMatch[1]) : undefined;
         
-        console.log('神龛配置解析成功（物品）:', { level, equipmentType, equipmentCategory, mechanismComplexity });
-        return { level, equipmentType, equipmentCategory, mechanismComplexity };
+        console.log('神龛配置解析成功（物品）:', { level, equipmentType, equipmentCategory, mechanismComplexity, requiredTraits });
+        return { level, equipmentType, equipmentCategory, mechanismComplexity, requiredTraits };
       }
       
       console.warn('神龛配置解析失败 - 缺少必要字段');

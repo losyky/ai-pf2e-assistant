@@ -1028,13 +1028,15 @@ export class ShrineSynthesisApp extends Application {
         }
         
         const traditions = [this.spellTradition];  // 使用从按钮传入的施法传统
+        const requiredTraits = shrineConfig?.requiredTraits;
         
         const spellConfig: SpellSynthesisConfig = {
           rank,
           traditions,
           actorData: this.actorData,
           shrineItem: this.selectedShrine as any,
-          isCantrip: isCantrip  // 添加戏法标记
+          isCantrip: isCantrip,  // 添加戏法标记
+          requiredTraits
         };
         
         console.log('法术合成配置:', { 
@@ -1043,7 +1045,8 @@ export class ShrineSynthesisApp extends Application {
           是否为戏法: isCantrip,
           环级来源: rankSource,
           戏法判断来源: cantripSource,
-          traditions, 
+          traditions,
+          requiredTraits,
           等级来源: shrineConfig?.level ? '神龛配置' : (this.actorData?.level ? '角色等级' : (uiLevel ? 'UI输入' : '默认值'))
         });
         this.lastSynthesisResult = await (this.synthesisService as SpellSynthesisService).synthesizeSpell(allMaterials as any, spellConfig);
@@ -1054,12 +1057,15 @@ export class ShrineSynthesisApp extends Application {
         const equipmentCategory = shrineConfig?.equipmentCategory;
         const mechanismComplexity = shrineConfig?.mechanismComplexity || 'moderate';
         
+        const requiredTraits = shrineConfig?.requiredTraits;
+        
         const equipmentConfig: EquipmentSynthesisConfig = {
           level: baseLevel,
           equipmentType: equipmentType as any,
           equipmentCategory: equipmentCategory,
           actorData: this.actorData,
-          shrineItem: this.selectedShrine as any
+          shrineItem: this.selectedShrine as any,
+          requiredTraits
         };
         
         console.log('物品合成配置:', { 
@@ -1067,6 +1073,7 @@ export class ShrineSynthesisApp extends Application {
           equipmentType, 
           equipmentCategory, 
           mechanismComplexity,
+          requiredTraits,
           等级来源: shrineConfig?.level ? '神龛配置' : (this.actorData?.level ? '角色等级' : (uiLevel ? 'UI输入' : '默认值'))
         });
         this.lastSynthesisResult = await (this.synthesisService as EquipmentSynthesisService).synthesizeEquipment(allMaterials as any, equipmentConfig);
@@ -1076,15 +1083,30 @@ export class ShrineSynthesisApp extends Application {
         console.log('[专长合成] shrineConfig详情:', shrineConfig);
         console.log('[专长合成] category来源: UI=', category, ', 神龛=', shrineConfig?.category);
         
-        // 类别优先级：神龛配置 > UI 输入
-        const finalCategory = shrineConfig?.category || category;
+        // 查找第一个贡品物品，获取其子类型信息
+        const firstOffering = allMaterials.find((m: any) => m.type === 'offering');
+        const firstOfferingCategory = firstOffering?.offeringCategory;
+        const firstOfferingFeatType = firstOffering?.offeringFeatType;
         
-        // 职业名称优先级：神龛配置（处理 self） > UI 输入
-        const finalClassName = shrineConfig?.className === 'self' 
-          ? (this.actorData?.class?.name || className) 
-          : (shrineConfig?.className || className);
+        console.log('[专长合成] 第一个贡品子类型:', {
+          name: firstOffering?.name,
+          category: firstOfferingCategory,
+          featType: firstOfferingFeatType
+        });
+        
+        // 类别优先级：神龛配置 > 第一个贡品的类别 > UI 输入
+        const finalCategory = shrineConfig?.category || firstOfferingCategory || category;
+        
+        // 职业名称优先级：神龛配置（处理 self） > 第一个贡品的featType > UI 输入
+        let finalClassName: string | undefined;
+        if (shrineConfig?.className === 'self') {
+          finalClassName = this.actorData?.class?.name || className;
+        } else {
+          finalClassName = shrineConfig?.className || firstOfferingFeatType || className;
+        }
         
         const mechanismComplexity = shrineConfig?.mechanismComplexity || 'moderate';
+        const requiredTraits = shrineConfig?.requiredTraits;
         
         const config: ShrineSynthesisConfig = {
           level: baseLevel,
@@ -1092,7 +1114,8 @@ export class ShrineSynthesisApp extends Application {
           className: finalClassName || undefined,
           actorData: this.actorData,
           shrineItem: this.selectedShrine,
-          mechanismComplexity
+          mechanismComplexity,
+          requiredTraits
         };
         
         console.log('专长合成配置:', { 
@@ -1101,8 +1124,8 @@ export class ShrineSynthesisApp extends Application {
           className: finalClassName, 
           mechanismComplexity,
           等级来源: shrineConfig?.level ? '神龛配置' : (this.actorData?.level ? '角色等级' : (uiLevel ? 'UI输入' : '默认值')),
-          类别来源: shrineConfig?.category ? '神龛配置' : 'UI输入',
-          职业来源: shrineConfig?.className ? '神龛配置' : 'UI输入'
+          类别来源: shrineConfig?.category ? '神龛配置' : (firstOfferingCategory ? '第一贡品' : 'UI输入'),
+          职业来源: shrineConfig?.className ? '神龛配置' : (firstOfferingFeatType ? '第一贡品' : 'UI输入')
         });
         this.lastSynthesisResult = await (this.synthesisService as ShrineSynthesisService).synthesizeFeat(allMaterials, config);
         this.updateProgress(`${this.themeService.getFeatTypeName()}设计完成`, 65);

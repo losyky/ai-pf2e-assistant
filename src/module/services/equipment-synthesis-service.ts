@@ -34,6 +34,7 @@ export interface EquipmentSynthesisConfig {
   equipmentCategory?: string;  // 物品子类别（如武器的 simple/martial/advanced）
   actorData?: any;
   shrineItem: EquipmentSynthesisMaterial;
+  requiredTraits?: string[]; // 合成后必定携带的特征
 }
 
 /**
@@ -773,6 +774,24 @@ export class EquipmentSynthesisService {
     
     // 后处理：确保必需字段存在
     equipment = this.postProcessEquipment(equipment, config);
+
+    // 应用必定携带的特征
+    if (config.requiredTraits && config.requiredTraits.length > 0) {
+      if (!equipment.system.traits) {
+        equipment.system.traits = { value: [], rarity: 'common', otherTags: [] };
+      }
+      if (!equipment.system.traits.value) {
+        equipment.system.traits.value = [];
+      }
+      
+      // 添加必定携带的特征（避免重复）
+      for (const trait of config.requiredTraits) {
+        if (!equipment.system.traits.value.includes(trait)) {
+          equipment.system.traits.value.push(trait);
+          console.log(`[generateEquipmentDirect] ✓ 添加必定携带的特征: "${trait}"`);
+        }
+      }
+    }
 
     // 图标生成（如果需要）
     if (shouldGenerateIcon && !equipment.img) {

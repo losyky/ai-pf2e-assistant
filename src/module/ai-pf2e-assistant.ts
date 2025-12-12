@@ -75,15 +75,9 @@ function mergeObject(original: any, other: any): any {
   return foundry?.utils?.mergeObject ? foundry.utils.mergeObject(original, other) : { ...original, ...other };
 }
 
-// 尝试导入默认 API 密钥，如果文件不存在则使用空字符串
-let DEFAULT_API_KEY = '';
-try {
-  // 这个 require 是在运行时调用的，所以如果文件不存在，会抛出异常
-  const config = require('./config');
-  DEFAULT_API_KEY = config.DEFAULT_API_KEY || '';
-} catch (e) {
-  // 配置文件不存在是正常情况，不需要输出日志
-}
+// 默认 API 密钥（空字符串，用户需要在设置中配置）
+// 注意：如果需要开发时使用默认密钥，可以创建 src/module/config.ts 文件并导出 DEFAULT_API_KEY
+const DEFAULT_API_KEY = '';
 
 // 默认 AI API 接口地址（OpenAI 兼容格式）
 // 注意：这是默认值，用户应该在模块设置中配置自己的 API 地址

@@ -1,5 +1,7 @@
 import { ShrineSynthesisApp } from '../ui/shrine-synthesis-app';
 import { AIService } from '../services/ai-service';
+import { ShrineItemService } from '../services/shrine-item-service';
+import { ShrinePointService } from '../services/shrine-point-service';
 
 /**
  * 神龛合成宏API配置接口
@@ -135,7 +137,6 @@ export class ShrineMacroAPI {
                               shrineItem.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
           
           // 提取合成需求配置
-          const { ShrineItemService } = require('../services/shrine-item-service');
           const synthesisRequirements = ShrineItemService.extractSynthesisRequirements(shrineItem);
           
           locks.shrine = {
@@ -279,7 +280,6 @@ export class ShrineMacroAPI {
       return 0;
     }
 
-    const { ShrinePointService } = require('../services/shrine-point-service');
     return ShrinePointService.getActorPoints(actor);
   }
 
@@ -301,7 +301,6 @@ export class ShrineMacroAPI {
       return false;
     }
 
-    const { ShrinePointService } = require('../services/shrine-point-service');
     return ShrinePointService.setActorPoints(actor, points);
   }
 
@@ -323,7 +322,6 @@ export class ShrineMacroAPI {
       return false;
     }
 
-    const { ShrinePointService } = require('../services/shrine-point-service');
     return ShrinePointService.addActorPoints(actor, amount);
   }
 }
