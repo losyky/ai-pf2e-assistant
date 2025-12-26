@@ -1,6 +1,16 @@
 <div class="tactical-preparation-sheet">
     <header>
-        <h1>{{i18n.prepareHeader}}</h1>
+        <div class="header-title-with-buttons">
+            <h1>{{i18n.prepareHeader}}</h1>
+            <div class="header-buttons">
+                <button class="synthesis-button header-icon-button" type="button" title="{{i18n.synthesizeAction}}">
+                    <i class="fa-solid fa-flask"></i>
+                </button>
+                <button class="storage-button header-icon-button" type="button" title="{{i18n.actionStorage}}">
+                    <i class="fa-solid fa-box-archive"></i>
+                </button>
+            </div>
+        </div>
         <p class="hint">{{i18n.prepareInfo}}</p>
     </header>
 

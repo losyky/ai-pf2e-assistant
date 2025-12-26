@@ -195,9 +195,14 @@ export class ShrineItemService {
       return 'divinity';
     }
     
-    // 专长、法术、装备类型的物品自动识别为贡品
+    // 专长、动作、法术、装备类型的物品自动识别为贡品
     if (item.type === 'feat') {
       console.log('专长物品识别为: offering');
+      return 'offering';
+    }
+    
+    if (item.type === 'action') {
+      console.log('动作物品识别为: offering');
       return 'offering';
     }
     

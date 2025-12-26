@@ -705,7 +705,18 @@
       "ConfigTitle": "战术手册配置",
       "ConfigMaxSlots": "最大准备槽位数:",
       "Save": "保存",
-      "Cancel": "取消"
+      "Cancel": "取消",
+      "Synthesize": "合成",
+      "SynthesizeAction": "合成战术动作",
+      "Storage": "储存箱",
+      "ActionStorage": "战术动作储存箱",
+      "SynthesisNotAvailable": "战术动作合成功能不可用",
+      "StorageNotAvailable": "战术动作储存箱不可用"
+    },
+    "FeatStorage": {
+      "deleteAction": "删除战术动作",
+      "confirmDeleteAction": "确定要删除战术动作「{name}」吗？",
+      "confirmClearActions": "确定要清除 {count} 个未确认的战术动作吗？此操作不可撤销。"
     }
   }
 } 

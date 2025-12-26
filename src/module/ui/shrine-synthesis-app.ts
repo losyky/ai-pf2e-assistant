@@ -1,6 +1,7 @@
 import { ShrineSynthesisService, ShrineSynthesisMaterial, ShrineSynthesisConfig, ShrineSynthesisResult } from '../services/shrine-synthesis-service';
 import { SpellSynthesisService, SpellSynthesisMaterial, SpellSynthesisConfig, SpellSynthesisResult } from '../services/spell-synthesis-service';
 import { EquipmentSynthesisService, EquipmentSynthesisMaterial, EquipmentSynthesisConfig, EquipmentSynthesisResult } from '../services/equipment-synthesis-service';
+import { ActionSynthesisService, ActionSynthesisMaterial, ActionSynthesisConfig, ActionSynthesisResult } from '../services/action-synthesis-service';
 import { ShrineItemService } from '../services/shrine-item-service';
 import { BalanceDataService } from '../services/balance-data-service';
 import { CircularSynthesisComponent } from './circular-synthesis-component';
@@ -15,16 +16,16 @@ import { Logger } from '../utils/logger';
  * 支持三模式：专长合成、法术合成和物品合成
  */
 export class ShrineSynthesisApp extends Application {
-  private synthesisService?: ShrineSynthesisService | SpellSynthesisService | EquipmentSynthesisService;
+  private synthesisService?: ShrineSynthesisService | SpellSynthesisService | EquipmentSynthesisService | ActionSynthesisService;
   private balanceService: BalanceDataService;
   private selectedMaterials: ShrineSynthesisMaterial[] = [];
   private selectedShrine: ShrineSynthesisMaterial | null = null;
   private actorData: any = null;
-  private lastSynthesisResult: ShrineSynthesisResult | SpellSynthesisResult | EquipmentSynthesisResult | null = null;
+  private lastSynthesisResult: ShrineSynthesisResult | SpellSynthesisResult | EquipmentSynthesisResult | ActionSynthesisResult | null = null;
   private validation: any = null;
   private circularComponent?: CircularSynthesisComponent;
   private themeService: ThemeService;
-  private synthesisMode: 'feat' | 'spell' | 'equipment' = 'feat';  // 合成模式
+  private synthesisMode: 'feat' | 'spell' | 'equipment' | 'action' = 'feat';  // 合成模式
   private spellTradition: string = 'arcane';  // 法术施法传统（仅spell模式有效）
 
   static get defaultOptions() {
@@ -78,6 +79,8 @@ export class ShrineSynthesisApp extends Application {
       this.synthesisService = new SpellSynthesisService(aiService);
     } else if (this.synthesisMode === 'equipment') {
       this.synthesisService = new EquipmentSynthesisService(aiService);
+    } else if (this.synthesisMode === 'action') {
+      this.synthesisService = new ActionSynthesisService(aiService);
     } else {
       this.synthesisService = new ShrineSynthesisService(aiService);
     }
@@ -590,12 +593,14 @@ export class ShrineSynthesisApp extends Application {
     }
 
     // 转换为神龛合成材料对象，传递已知类型避免重复识别
-    // 注意：模式由入口决定（专长页面/法术页面/物品页面），不根据贡品类型自动切换
+    // 注意：模式由入口决定（专长页面/法术页面/物品页面/战术动作页面），不根据贡品类型自动切换
     let materials: any[] = [];
     if (this.synthesisMode === 'spell' && this.synthesisService instanceof SpellSynthesisService) {
       materials = (this.synthesisService as SpellSynthesisService).extractSpellMaterials([item], [itemType]);
     } else if (this.synthesisMode === 'equipment' && this.synthesisService instanceof EquipmentSynthesisService) {
       materials = (this.synthesisService as EquipmentSynthesisService).extractEquipmentMaterials([item], [itemType]);
+    } else if (this.synthesisMode === 'action' && this.synthesisService instanceof ActionSynthesisService) {
+      materials = (this.synthesisService as ActionSynthesisService).extractActionMaterials([item], [itemType]);
     } else if (this.synthesisService instanceof ShrineSynthesisService) {
       materials = (this.synthesisService as ShrineSynthesisService).extractShrineMaterials([item], [itemType]);
     }
@@ -603,7 +608,13 @@ export class ShrineSynthesisApp extends Application {
     if (materials.length > 0) {
       this.selectedMaterials.push(materials[0]);
       this._updateSynthesisDisplay($(this.element));
-      ui.notifications.info(`${this.themeService.getMessage('materialAdded')}: ${item.name} (${this._getItemTypeDisplayName(itemType)})`);
+      
+      // 战术动作合成模式下，提示贡品类型
+      if (this.synthesisMode === 'action' && itemType === 'offering' && item.type !== 'action') {
+        ui.notifications.info(`${this.themeService.getMessage('materialAdded')}: ${item.name} (${this._getItemTypeDisplayName(itemType)}) - 提示：战术动作合成建议使用动作类型的贡品`);
+      } else {
+        ui.notifications.info(`${this.themeService.getMessage('materialAdded')}: ${item.name} (${this._getItemTypeDisplayName(itemType)})`);
+      }
     } else {
       console.error('无法转换材料:', item);
       ui.notifications.warn((game as any).i18n.localize('AIPF2E.ShrineSynthesis.addMaterialFailed'));
@@ -676,6 +687,8 @@ export class ShrineSynthesisApp extends Application {
       this.selectedShrine = (this.synthesisService as SpellSynthesisService).extractSpellMaterials([item], [itemType])[0] || null;
     } else if (this.synthesisMode === 'equipment' && this.synthesisService instanceof EquipmentSynthesisService) {
       this.selectedShrine = (this.synthesisService as EquipmentSynthesisService).extractEquipmentMaterials([item], [itemType])[0] || null;
+    } else if (this.synthesisMode === 'action' && this.synthesisService instanceof ActionSynthesisService) {
+      this.selectedShrine = (this.synthesisService as ActionSynthesisService).extractActionMaterials([item], [itemType])[0] || null;
     } else if (this.synthesisService instanceof ShrineSynthesisService) {
       this.selectedShrine = (this.synthesisService as ShrineSynthesisService).extractShrineMaterials([item], [itemType])[0] || null;
     }
@@ -1078,6 +1091,24 @@ export class ShrineSynthesisApp extends Application {
         });
         this.lastSynthesisResult = await (this.synthesisService as EquipmentSynthesisService).synthesizeEquipment(allMaterials as any, equipmentConfig);
         this.updateProgress('物品设计完成', 65);
+      } else if (this.synthesisMode === 'action' && this.synthesisService instanceof ActionSynthesisService) {
+        // 战术动作合成
+        const requiredTraits = shrineConfig?.requiredTraits || [];
+        
+        const actionConfig: ActionSynthesisConfig = {
+          level: baseLevel,
+          actorData: this.actorData,
+          shrineItem: this.selectedShrine as any,
+          requiredTraits
+        };
+        
+        console.log('战术动作合成配置:', { 
+          level: baseLevel, 
+          requiredTraits,
+          等级来源: shrineConfig?.level ? '神龛配置' : (this.actorData?.level ? '角色等级' : (uiLevel ? 'UI输入' : '默认值'))
+        });
+        this.lastSynthesisResult = await (this.synthesisService as ActionSynthesisService).synthesizeAction(allMaterials as any, actionConfig);
+        this.updateProgress('战术动作设计完成', 65);
       } else {
         // 专长合成
         console.log('[专长合成] shrineConfig详情:', shrineConfig);
@@ -1155,6 +1186,8 @@ export class ShrineSynthesisApp extends Application {
             iconToUse = 'icons/magic/symbols/rune-sigil-rough-white-teal.webp';  // 法术默认图标
         } else if (this.synthesisMode === 'equipment') {
             iconToUse = 'icons/containers/bags/pack-leather-brown.webp';  // 物品默认图标
+          } else if (this.synthesisMode === 'action') {
+            iconToUse = 'systems/pf2e/icons/actions/OneAction.webp';  // 战术动作默认图标
           } else {
             iconToUse = 'icons/sundries/books/book-red-exclamation.webp';  // 专长默认图标
           }
@@ -1168,6 +1201,9 @@ export class ShrineSynthesisApp extends Application {
         } else if (this.synthesisMode === 'equipment' && (this.lastSynthesisResult as any)?.equipment) {
           (this.lastSynthesisResult as any).equipment.img = iconToUse;
           console.log('物品图标设置完成:', iconToUse);
+        } else if (this.synthesisMode === 'action' && (this.lastSynthesisResult as any)?.action) {
+          (this.lastSynthesisResult as any).action.img = iconToUse;
+          console.log('战术动作图标设置完成:', iconToUse);
         } else if (this.lastSynthesisResult?.feat) {
           this.lastSynthesisResult.feat.img = iconToUse;
           console.log('专长图标设置完成:', iconToUse);
@@ -1279,7 +1315,7 @@ export class ShrineSynthesisApp extends Application {
 
     try {
       // 获取要导入的物品
-      const itemData = (this.lastSynthesisResult as any).feat || (this.lastSynthesisResult as any).spell || (this.lastSynthesisResult as any).equipment;
+      const itemData = (this.lastSynthesisResult as any).feat || (this.lastSynthesisResult as any).spell || (this.lastSynthesisResult as any).equipment || (this.lastSynthesisResult as any).action;
       if (!itemData) {
         throw new Error('没有可导入的物品数据');
       }
@@ -1322,6 +1358,25 @@ export class ShrineSynthesisApp extends Application {
           await Item.create(itemData);
           console.log('物品已导入到世界');
           ui.notifications.info(`物品 ${itemData.name} 已导入到世界物品库`);
+        }
+      } else if (this.synthesisMode === 'action') {
+        // 战术动作模式：存入储存箱
+        if (this.actorData) {
+          const actor = game.actors?.get(this.actorData.id);
+          if (actor) {
+            // 导入ActionStorageService
+            const { ActionStorageService } = await import('../services/action-storage-service.js');
+            await ActionStorageService.addAction(actor, itemData);
+            console.log('战术动作已添加到储存箱:', actor.name);
+            ui.notifications.info(`战术动作 ${itemData.name} 已存入储存箱，请从储存箱拖出使用`);
+          } else {
+            throw new Error('找不到目标角色');
+          }
+        } else {
+          // 如果没有角色，导入到世界
+          await Item.create(itemData);
+          console.log('战术动作已导入到世界');
+          ui.notifications.info(`战术动作 ${itemData.name} 已导入到世界物品库`);
         }
       } else {
         // 专长模式：存入储存箱而非直接添加到角色

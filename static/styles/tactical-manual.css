@@ -75,17 +75,66 @@
     border-bottom: 1px solid var(--color-border-dark);
 }
 
+.tactical-preparation-sheet .header-title-with-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8, 8px);
+}
+
 .tactical-preparation-sheet header h1 {
     display: flex;
     flex: 1;
     font-family: var(--serif-condensed);
     font-weight: 700;
     font-size: var(--font-size-18, 18px);
-    justify-content: space-between;
     overflow: hidden;
     white-space: nowrap;
     color: var(--color-text-light-primary);
     margin: 0;
+}
+
+.tactical-preparation-sheet .header-buttons {
+    display: flex;
+    gap: var(--space-4, 4px);
+    flex-shrink: 0;
+}
+
+.tactical-preparation-sheet .header-icon-button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-cool-2);
+    border: 1px solid var(--color-border-dark);
+    border-radius: 3px;
+    color: var(--color-text-light-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tactical-preparation-sheet .header-icon-button:hover {
+    background: var(--color-cool-3);
+    border-color: var(--color-border-highlight);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.tactical-preparation-sheet .header-icon-button i {
+    font-size: var(--font-size-14, 14px);
+}
+
+.tactical-preparation-sheet .header-icon-button.synthesis-button:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+.tactical-preparation-sheet .header-icon-button.storage-button:hover {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border-color: #f093fb;
 }
 
 .tactical-preparation-sheet header p.hint {

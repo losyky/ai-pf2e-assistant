@@ -22,6 +22,10 @@
     <a class="item {{#if (eq currentTab 'fragments')}}active{{/if}}" data-action="switch-tab" data-tab="fragments" data-tooltip="碎片物品 ({{fragmentTotalCount}})" role="tab" aria-label="碎片物品">
       <i class="fa-solid fa-gem"></i>
     </a>
+    
+    <a class="item {{#if (eq currentTab 'actions')}}active{{/if}}" data-action="switch-tab" data-tab="actions" data-tooltip="战术动作 ({{actionTotalCount}})" role="tab" aria-label="战术动作">
+      <i class="fa-solid fa-chess-knight"></i>
+    </a>
   </nav>
 
   <section class="sheet-body">
@@ -447,6 +451,112 @@
           <div class="empty-hint">
             <i class="fa-solid fa-info-circle"></i>
             储存的碎片物品不会激活规则元素，拖出到角色卡后才会生效。
+          </div>
+        </div>
+      {{/if}}
+    {{/if}}
+
+    {{!-- 战术动作分页内容 --}}
+    {{#if (eq currentTab 'actions')}}
+      {{#if hasAnyActions}}
+        {{!-- 普通存储区 --}}
+        <section class="feat-section item-storage-section storage-unconfirmed" data-storage-area="unconfirmed">
+          <header>
+            <h3>
+              <i class="fa-solid fa-box-archive"></i> 普通存储区
+              <span class="section-hint">（合成后的战术动作会先进入此区域）</span>
+            </h3>
+          </header>
+          {{#if unconfirmedActions}}
+            <ol class="actions-list">
+              {{#each unconfirmedActions as |action|}}
+                <li class="slot" data-item-id="{{action.id}}" data-item-type="action" data-confirmed="false" draggable="true">
+                  <div class="item-name drag-handle" data-drag-handle>
+                    <a class="item-image framed" data-action="item-to-chat">
+                      <img class="item-icon" src="{{action.img}}" alt="{{action.name}}">
+                      <i class="fa-solid fa-message"></i>
+                    </a>
+                    <h4 class="name"><a data-action="toggle-summary">{{action.name}}</a></h4>
+                  </div>
+                  <div class="item-controls">
+                    {{#if @root.editable}}
+                      <a data-action="edit-item" data-tooltip="查看详情"><i class="fa-solid fa-fw fa-eye"></i></a>
+                      <a data-action="delete-item" data-tooltip="删除战术动作"><i class="fa-solid fa-fw fa-trash"></i></a>
+                    {{/if}}
+                  </div>
+                  <div class="item-summary" hidden></div>
+                </li>
+              {{/each}}
+            </ol>
+          {{else}}
+            <div class="area-empty">
+              <i class="fa-solid fa-inbox"></i>
+              <p>普通存储区为空。合成战术动作后会自动进入此区域。</p>
+            </div>
+          {{/if}}
+          
+          {{!-- 清除按钮放在普通存储区底部 --}}
+          {{#if hasUnconfirmedActions}}
+            <div class="section-footer">
+              <button type="button" class="clear-unconfirmed-button" data-action="clear-unconfirmed" data-tooltip="删除所有普通区（未确认）的战术动作">
+                <i class="fa-solid fa-broom"></i> 一键清除普通区
+              </button>
+            </div>
+          {{/if}}
+        </section>
+
+        {{!-- 确认存储区 --}}
+        <section class="feat-section item-storage-section storage-confirmed" data-storage-area="confirmed">
+          <header>
+            <h3>
+              <i class="fa-solid fa-check-circle"></i> 确认存储区
+              <span class="section-hint">（拖入此区域的战术动作不会被一键清除）</span>
+            </h3>
+          </header>
+          {{#if confirmedActions}}
+            <ol class="actions-list">
+              {{#each confirmedActions as |action|}}
+                <li class="slot" data-item-id="{{action.id}}" data-item-type="action" data-confirmed="true" draggable="true">
+                  <div class="item-name drag-handle" data-drag-handle>
+                    <a class="item-image framed" data-action="item-to-chat">
+                      <img class="item-icon" src="{{action.img}}" alt="{{action.name}}">
+                      <i class="fa-solid fa-message"></i>
+                    </a>
+                    <h4 class="name"><a data-action="toggle-summary">{{action.name}}</a></h4>
+                  </div>
+                  <div class="item-controls">
+                    {{#if @root.editable}}
+                      <a data-action="edit-item" data-tooltip="查看详情"><i class="fa-solid fa-fw fa-eye"></i></a>
+                      <a data-action="delete-item" data-tooltip="删除战术动作"><i class="fa-solid fa-fw fa-trash"></i></a>
+                    {{/if}}
+                  </div>
+                  <div class="item-summary" hidden></div>
+                </li>
+              {{/each}}
+            </ol>
+          {{else}}
+            <div class="area-empty">
+              <i class="fa-solid fa-inbox"></i>
+              <p>确认存储区为空。将重要战术动作拖入此区域，它们不会被一键清除。</p>
+            </div>
+          {{/if}}
+        </section>
+        
+        {{!-- 存储统计信息放在最底部 --}}
+        <div class="storage-summary">
+          <i class="fa-solid fa-chart-simple"></i>
+          <span>战术动作: <strong>{{totalCount}}</strong> (普通: <strong>{{unconfirmedCount}}</strong> / 确认: <strong>{{confirmedCount}}</strong>)</span>
+        </div>
+      {{else}}
+        <div class="storage-empty">
+          <div class="empty-icon">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+          <h3>储存箱是空的</h3>
+          <p>您可以将战术动作拖入此处进行储存，或通过战术手册合成新的战术动作。</p>
+          <div class="empty-hint">
+            <i class="fa-solid fa-info-circle"></i>
+            储存的战术动作不会被激活，拖出到角色卡后才会生效。
           </div>
         </div>
       {{/if}}

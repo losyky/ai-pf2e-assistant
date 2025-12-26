@@ -758,7 +758,14 @@ Please create this fragment strictly according to the above design direction, en
    - 控制类效果：说明控制类型（如"施加战栗状态"、"减速效果"）
    - 治疗类效果：说明治疗方向（如"恢复生命值"、"获得临时HP"）
    - 特征关联效果：说明特征方向（如"和水特征相关的效果"）
-   - 条件触发方向：说明触发条件类型（如"在特定地形时"）
+   - **效果应用场景**：必须使用PF2e规则中明确可判定的场景，例如：
+     * 动作使用时："当你进行打击时"、"当你施放法术时"、"当你使用跨步动作时"
+     * 被动响应："当你被敌人攻击时"、"当你受到伤害时"（注：这些是反应动作的触发条件）
+     * 回合节点："在你的回合开始时"、"在你的回合结束时"
+     * 状态条件："当你处于战栗状态时"、"当你倒地时"
+     * 成功度相关："当你的攻击大成功时"、"当你豁免失败时"
+     * 特定目标："对抗不死生物时"、"对抗具有邪恶特征的敌人时"
+   - **避免抽象或无效的场景**：不要使用"当周围人群陷入愤怒时"、"当月圆之夜"等在规则上无法明确判定的条件
    - **避免具体数值**（不说1d6、+1等）和完整机制框架（不说动作类型、频次等）
    - 重点在于提供**效果的可能性和方向**，让神龛系统去决定具体实现
 
@@ -788,6 +795,7 @@ ${mechanicsKnowledge}
 - 增益效果示例："提升攻击能力"、"增强防御"、"强化特定豁免"
 - 控制效果示例："施加战栗状态"、"减速效果"、"阻碍行动"
 - 特征方向示例："和水相关的效果"、"火焰特征互动"、"光明与黑暗对立"
+- **效果应用场景必须规则有效**：使用明确的游戏规则场景，如"当你进行打击时"、"当你被攻击时"、"在你的回合开始时"、"当你施放法术时"等，避免使用抽象或无法判定的条件如"当周围人群愤怒时"
 - **重点**：提供灵感和方向，具体数值和机制由神龛合成时决定
 `
           : `You are a professional TTRPG content designer responsible for creating entry fragments for PF2e. Entry fragments are auxiliary materials used in shrine synthesis, providing flavor elements and effect content.
@@ -835,7 +843,14 @@ The hidden prompt should be divided into two parts in the following format:
    - Control effects: Indicate control type (e.g., "apply frightened condition", "slowing effect")
    - Healing effects: Indicate healing direction (e.g., "restore Hit Points", "gain temporary HP")
    - Trait-related effects: Indicate trait direction (e.g., "water trait related effects")
-   - Conditional triggers: Indicate trigger type (e.g., "in specific terrain")
+   - **Effect application scenarios**: Must use valid PF2e rule scenarios, such as:
+     * Action usage: "when you make a Strike", "when you Cast a Spell", "when you Stride"
+     * Passive response: "when you are attacked by an enemy", "when you take damage" (Note: these are triggers for reactions)
+     * Turn-based: "at the start of your turn", "at the end of your turn"
+     * Condition-based: "when you are frightened", "when you are prone"
+     * Degree of success: "when you critically succeed on an attack", "when you fail a save"
+     * Specific targets: "against undead", "against creatures with the evil trait"
+   - **Avoid abstract or invalid scenarios**: Don't use conditions like "when the crowd around you becomes angry" or "when the moon is full" that cannot be clearly determined by game rules
    - **Avoid specific values** (no 1d6, +1, etc.) and complete mechanism descriptions
    - Focus on providing **possibilities and directions**, let the shrine system determine implementation
 

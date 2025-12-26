@@ -2467,11 +2467,11 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
   }
 
   /**
-   * 打开物品储存箱（专长、法术、物品或碎片物品）
+   * 打开物品储存箱（专长、法术、物品、碎片物品或战术动作）
    * @param actor 角色文档
-   * @param initialTab 初始打开的分页（'feats'、'spells'、'equipment' 或 'fragments'）
+   * @param initialTab 初始打开的分页（'feats'、'spells'、'equipment'、'fragments' 或 'actions'）
    */
-  openItemStorage(actor?: any, initialTab: 'feats' | 'spells' | 'equipment' | 'fragments' = 'feats'): void {
+  openItemStorage(actor?: any, initialTab: 'feats' | 'spells' | 'equipment' | 'fragments' | 'actions' = 'feats'): void {
     try {
       if (!actor) {
         ui.notifications.warn('请先选择一个角色');
@@ -2492,6 +2492,46 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
       console.error(`${MODULE_ID} | 打开物品储存箱失败:`, error);
       ui.notifications.error('打开物品储存箱失败，请查看控制台错误信息');
     }
+  }
+
+  /**
+   * 打开战术动作合成界面
+   */
+  openActionSynthesis(actor?: any): void {
+    try {
+      const game = getGame();
+      const useShrineSystem = game?.settings?.get(MODULE_ID, 'useShrineSystem') || false;
+      
+      if (!useShrineSystem) {
+        ui.notifications.warn('请先在模块设置中启用神龛系统');
+        return;
+      }
+      
+      // 使用ShrineSynthesisApp，明确传入action模式
+      const app = new ShrineSynthesisApp(actor, { 
+        synthesisMode: 'action'
+      });
+      
+      // 设置AI服务实例
+      app.setAIService({
+        callService: this.createCompatibleCallService(),
+        getServiceName: () => 'AI Assistant',
+        getAvailableModels: () => Object.values(AIModel)
+      });
+      
+      (app as any).render(true);
+      Logger.debug('战术动作合成界面已打开');
+    } catch (error) {
+      console.error(`${MODULE_ID} | 打开战术动作合成失败:`, error);
+      ui.notifications.error('打开战术动作合成失败');
+    }
+  }
+
+  /**
+   * 打开战术动作储存箱
+   */
+  openActionStorage(actor?: any): void {
+    this.openItemStorage(actor, 'actions');
   }
 
   /**
@@ -3465,7 +3505,7 @@ ${JSON.stringify(structureData, null, 2)}
    * @param options 可选配置
    * @returns API响应
    */
-  private async callAIAPI(
+  public async callAIAPI(
     messages: Message[], 
     options?: {
       // 新的 tools 格式（推荐）
@@ -8151,15 +8191,14 @@ Hooks.once('ready', function() {
         // 初始化神龛宏API
         ShrineMacroAPI.setAIService(moduleInstance.getAIServiceInstance());
         
-        // 设置API对象
-        mod.api = {
-          ...moduleInstance,
-          shrine: ShrineMacroAPI
-        };
-        Logger.debug('API exposed successfully with shrine macro API');
+        // 设置API对象 - 直接导出实例以保持方法绑定
+        mod.api = moduleInstance;
+        // 添加神龛宏API
+        (mod.api as any).shrine = ShrineMacroAPI;
+        Logger.debug('API exposed successfully with shrine macro API and tactical action methods');
       }).catch(err => {
         Logger.error('Failed to load shrine macro API:', err);
-        // 降级处理：只导出主实例
+        // 降级处理：直接导出主实例
         mod.api = moduleInstance;
       });
     } else {

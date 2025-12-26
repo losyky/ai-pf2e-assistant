@@ -616,7 +616,18 @@
       "ConfigTitle": "Tactical Manual Configuration",
       "ConfigMaxSlots": "Maximum Prepared Slots:",
       "Save": "Save",
-      "Cancel": "Cancel"
+      "Cancel": "Cancel",
+      "Synthesize": "Synthesize",
+      "SynthesizeAction": "Synthesize Tactical Action",
+      "Storage": "Storage",
+      "ActionStorage": "Tactical Action Storage",
+      "SynthesisNotAvailable": "Tactical action synthesis is not available",
+      "StorageNotAvailable": "Tactical action storage is not available"
+    },
+    "FeatStorage": {
+      "deleteAction": "Delete Tactical Action",
+      "confirmDeleteAction": "Are you sure you want to delete the tactical action '{name}'?",
+      "confirmClearActions": "Are you sure you want to clear {count} unconfirmed tactical actions? This action cannot be undone."
     }
   }
 } 

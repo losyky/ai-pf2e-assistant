@@ -1217,7 +1217,7 @@ ${prompt}
 
   /**
    * 法术格式转换智能体（阶段3）
-   * 将法术设计转换为标准的PF2e格式
+   * 将法术设计转换为标准的PF2e格式，并进行数值审核
    */
   private async convertSpellToFormat(
     spell: any,
@@ -1225,12 +1225,24 @@ ${prompt}
   ): Promise<PF2eSpellFormat> {
     console.log('=== 开始法术格式转换阶段 ===');
     
-    const systemPrompt = `你是一个PF2e法术数据格式专家，专注于严格的格式转换。你的任务是将输入的法术数据转换为标准的Foundry VTT PF2e系统格式。
+    // 检查是否为戏法
+    const isCantrip = config.isCantrip !== undefined ? config.isCantrip : (config.rank === 1 && spell?.system?.traits?.value?.includes('cantrip'));
+    
+    const cantripWarning = isCantrip ? `
+
+**⚠️ 戏法数值审核重点**：
+- 基础伤害（1级使用）应该约2d4（平均5点）
+- 升阶应该通过heightening字段实现（interval: 2，每次+1d4）
+- 不要给予过高的基础伤害
+` : '';
+    
+    const systemPrompt = `你是一个PF2e法术数据格式专家，专注于严格的格式转换和数值审核。你的任务是将输入的法术数据转换为标准的Foundry VTT PF2e系统格式，并审核数值平衡性。
 
 **核心原则**：
 1. **尽量保留原有内容** - 如果输入数据中某个字段已经存在且格式正确，保持原样
 2. **仅补充缺失部分** - 只在字段缺失、格式错误或不完整时才进行修复和补充
 3. **严格遵守格式规范** - 确保所有字段类型正确、符合PF2e标准
+4. **审核数值平衡性** - 检查伤害期望值是否符合${config.rank}环法术标准
 
 **必须严格保留的内容**：
 - system.level.value - 环级必须保持为${config.rank}
@@ -1242,6 +1254,48 @@ ${prompt}
 - system.description.value 必须是完整的HTML格式描述（如果缺失或格式不正确，才补充）
 - time、range、area、target、duration 等字段格式必须正确
 - damage、defense 等字段必须符合PF2e数据结构
+
+**【数值平衡性审核 - 重要】**：
+
+在格式化时，必须审核法术的数值是否合理：
+
+1. **伤害期望值计算**：
+   - 计算所有伤害类型的总期望值（不是简单看骰子数量）
+   - 例如："1d6火焰 + 1d6寒冷" = 平均7点伤害（不是1d6！）
+   - 例如："2d4火焰" = 平均5点伤害
+   - 例如："3d6火焰" = 平均10.5点伤害
+
+2. **${config.rank}环法术的标准伤害期望值**：
+   ${isCantrip ? `- 戏法基础（1级使用）：约2d4 = 5点平均伤害
+   - 戏法升阶：每2级+1d4（通过heightening实现）
+   - 10级角色使用戏法：约6d4 = 15点平均伤害` : 
+   config.rank === 1 ? `- 1环单体：2d6到2d10（平均7-11点）
+   - 1环范围：1d6到2d6（平均3.5-7点）` :
+   config.rank === 2 ? `- 2环单体：3d6到4d6（平均10.5-14点）
+   - 2环范围：2d6到3d6（平均7-10.5点）` :
+   config.rank === 3 ? `- 3环单体：5d6到6d6（平均17.5-21点）
+   - 3环范围：3d6到4d6（平均10.5-14点）` :
+   `- ${config.rank}环法术：参考等级缩放公式`}
+
+3. **多种伤害类型的处理**：
+   - 如果法术造成多种伤害类型，**必须累加所有伤害的期望值**
+   - 例如："1d6火焰 + 1d6寒冷" 的总期望值是7点，不是3.5点
+   - 多种伤害类型通常意味着更容易绕过抗性，应该略微降低总伤害
+
+4. **单动作效果的等效性**：
+   - 2动作法术的效果应该约等于"单动作×2"的价值
+   - 3动作法术的效果应该约等于"单动作×3"的价值
+   - 如果法术是2动作但伤害期望值过低，需要调整
+
+5. **审核检查清单**：
+   - [ ] 计算所有伤害类型的总期望值
+   - [ ] 对比${config.rank}环法术的标准期望值
+   - [ ] 考虑动作成本（2动作应该更强）
+   - [ ] 考虑范围（单体应该比范围伤害高）
+   - [ ] 考虑附加效果（如果有控制/debuff，伤害应该略低）
+   - [ ] 如果数值明显超标或不足，进行调整
+
+${cantripWarning}
 
 ${DESCRIPTION_PRINCIPLE}
 
@@ -1432,8 +1486,66 @@ ${JSON.stringify(spell, null, 2)}
     // 如果是戏法，添加特别说明
     if (isCantrip) {
       systemPrompt += isChinese
-        ? `\n\n⚠️ **你正在生成戏法（Cantrip）**：\n- **环级为1**，但必须在traits.value中包含"cantrip"特征标记\n- **可无限施放**：效果强度必须适合无限使用\n- **自动升环**：必须包含heightening字段，通常每2级增加效果（interval: 2）或每级增加（interval: 1）\n- **效果较弱**：伤害基准约2d4，明显弱于普通1环法术（约2d6到2d10）\n- **参考规则知识库中的"戏法设计原则"章节**`
-        : `\n\n⚠️ **You are generating a Cantrip**:\n- **Rank is 1**, but must include "cantrip" trait in traits.value\n- **Unlimited casting**: Effect strength must be suitable for unlimited use\n- **Auto-heightening**: Must include heightening field, typically every 2 levels (interval: 2) or every level (interval: 1)\n- **Weaker effects**: Damage baseline ~2d4, noticeably weaker than regular rank 1 spells (~2d6 to 2d10)\n- **Refer to "Cantrip Design Principles" section in rules knowledge**`;
+        ? `\n\n⚠️ **你正在生成戏法（Cantrip）**：
+
+**【戏法的核心规则 - 必须严格遵守】**：
+
+1. **环级固定为1** - 戏法的环级永远是1，这只是分类标识
+2. **基础强度基于1级法术** - 戏法的基础效果（1级角色使用时）应该：
+   - 伤害：约2d4（平均5点）
+   - 明显弱于普通1环法术（2d6到2d10，平均7-11点）
+   - 适合无限施放的强度
+
+3. **自动升阶机制** - 戏法通过heightening字段随**施法者等级**自动增强：
+   - **必须包含heightening字段**
+   - type: "interval"
+   - interval: 通常为2（每2级增强一次）或1（每级增强）
+   - damage: 每次升阶增加的伤害（通常1d4）
+   
+4. **等级计算示例**：
+   - 1级角色使用：2d4伤害（基础）
+   - 3级角色使用：2d4 + 1d4 = 3d4（升阶1次）
+   - 5级角色使用：2d4 + 2d4 = 4d4（升阶2次）
+   - 10级角色使用：2d4 + 4d4 = 6d4（升阶4次，约15点平均伤害）
+
+5. **❌ 常见错误**：
+   - ❌ 把戏法当作"与角色等级相同环级的法术"（错误！）
+   - ❌ 10级角色使用时给予10环法术的强度（错误！）
+   - ✅ 正确：戏法永远是1环基础 + 自动升阶增强
+
+6. **必须在traits.value中包含"cantrip"特征标记**
+
+**参考规则知识库中的"戏法设计原则"章节获取更多细节。**`
+        : `\n\n⚠️ **You are generating a Cantrip**:
+
+**【Core Cantrip Rules - Must Strictly Follow】**:
+
+1. **Rank is always 1** - Cantrip rank is permanently 1, this is just a classification
+2. **Base power based on rank 1 spell** - Cantrip base effect (when used by level 1 character) should be:
+   - Damage: ~2d4 (average 5)
+   - Noticeably weaker than regular rank 1 spells (2d6 to 2d10, average 7-11)
+   - Suitable for unlimited casting
+
+3. **Auto-heightening mechanism** - Cantrips auto-heighten with **caster level** via heightening field:
+   - **Must include heightening field**
+   - type: "interval"
+   - interval: usually 2 (heighten every 2 levels) or 1 (every level)
+   - damage: damage increase per heightening (usually 1d4)
+   
+4. **Level calculation example**:
+   - Level 1 caster: 2d4 damage (base)
+   - Level 3 caster: 2d4 + 1d4 = 3d4 (heightened once)
+   - Level 5 caster: 2d4 + 2d4 = 4d4 (heightened twice)
+   - Level 10 caster: 2d4 + 4d4 = 6d4 (heightened 4 times, ~15 average damage)
+
+5. **❌ Common Mistakes**:
+   - ❌ Treating cantrip as "spell of same rank as character level" (Wrong!)
+   - ❌ Giving rank 10 spell power when used by level 10 character (Wrong!)
+   - ✅ Correct: Cantrip is always rank 1 base + auto-heightening
+
+6. **Must include "cantrip" trait in traits.value**
+
+**Refer to "Cantrip Design Principles" section in rules knowledge for more details.**`;
     }
     
     if (designPlan) {

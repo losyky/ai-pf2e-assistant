@@ -63,6 +63,10 @@ export class TacticalPreparationSheet extends FormApplication {
                 prepareAction: game.i18n.localize("AIPF2E.TacticalManual.PrepareAction"),
                 deleteAction: game.i18n.localize("AIPF2E.TacticalManual.DeleteAction"),
                 dropHint: game.i18n.localize("AIPF2E.TacticalManual.DropHint"),
+                synthesize: game.i18n.localize("AIPF2E.TacticalManual.Synthesize"),
+                synthesizeAction: game.i18n.localize("AIPF2E.TacticalManual.SynthesizeAction"),
+                storage: game.i18n.localize("AIPF2E.TacticalManual.Storage"),
+                actionStorage: game.i18n.localize("AIPF2E.TacticalManual.ActionStorage"),
             }
         };
     }
@@ -108,6 +112,20 @@ export class TacticalPreparationSheet extends FormApplication {
 
     override activateListeners(html: JQuery): void {
         super.activateListeners(html);
+
+        // 打开战术动作合成界面
+        html.find('.synthesis-button').on('click', async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            await this.openActionSynthesis();
+        });
+
+        // 打开战术动作存储箱
+        html.find('.storage-button').on('click', async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            await this.openActionStorage();
+        });
 
         // 准备动作
         html.find('.prepare-action').on('click', async (event) => {
@@ -204,25 +222,46 @@ export class TacticalPreparationSheet extends FormApplication {
             try {
                 const data = JSON.parse(dataString);
                 
-                // 检查是否是动作类型
-                if (data.type !== 'Item' || data.itemType !== 'action') {
+                // 检查是否是Item类型
+                if (data.type !== 'Item') {
                     ui.notifications?.warn(game.i18n.localize("AIPF2E.TacticalManual.OnlyActions"));
                     return;
                 }
 
-                // 创建动作副本并添加战术特征
-                const sourceItem = await fromUuid(data.uuid);
-                if (!sourceItem) return;
-
-                const itemData = sourceItem.toObject();
+                // 获取物品数据
+                let itemData: any = null;
+                
+                // 如果有完整的data字段（从储存箱拖入），直接使用
+                if (data.data) {
+                    itemData = data.data;
+                } else if (data.uuid) {
+                    // 否则从UUID获取（从角色卡或其他地方拖入）
+                    const sourceItem = await fromUuid(data.uuid);
+                    if (!sourceItem) return;
+                    itemData = sourceItem.toObject();
+                }
+                
+                if (!itemData) return;
+                
+                // 检查是否是动作类型
+                if (itemData.type !== 'action') {
+                    ui.notifications?.warn(game.i18n.localize("AIPF2E.TacticalManual.OnlyActions"));
+                    return;
+                }
+                
+                // 清理储存箱专用字段
+                const cleanItemData = { ...itemData };
+                delete cleanItemData.confirmed;
+                delete cleanItemData.storageTimestamp;
+                
                 // 添加 tactic 特征
-                if (!itemData.system.traits.value.includes('tactic')) {
-                    itemData.system.traits.value.push('tactic');
+                if (!cleanItemData.system.traits.value.includes('tactic')) {
+                    cleanItemData.system.traits.value.push('tactic');
                 }
 
                 // 创建到当前角色
-                await this.tacticalManual.actor.createEmbeddedDocuments('Item', [itemData]);
-                ui.notifications?.info(game.i18n.format("AIPF2E.TacticalManual.ActionAdded", { name: itemData.name }));
+                await this.tacticalManual.actor.createEmbeddedDocuments('Item', [cleanItemData]);
+                ui.notifications?.info(game.i18n.format("AIPF2E.TacticalManual.ActionAdded", { name: cleanItemData.name }));
                 this.render(false);
             } catch (error) {
                 console.error('AI PF2e Assistant | 拖放错误:', error);
@@ -233,6 +272,38 @@ export class TacticalPreparationSheet extends FormApplication {
 
     override async _updateObject(event: Event, formData: Record<string, unknown>): Promise<void> {
         // 不需要处理表单提交
+    }
+
+    /**
+     * 打开战术动作合成界面
+     */
+    private async openActionSynthesis(): Promise<void> {
+        const game = (window as any).game;
+        const module = game.modules.get(MODULE_ID);
+        
+        if (!module?.api?.openActionSynthesis) {
+            ui.notifications?.error(game.i18n.localize("AIPF2E.TacticalManual.SynthesisNotAvailable"));
+            return;
+        }
+
+        // 调用模块API打开合成界面
+        module.api.openActionSynthesis(this.tacticalManual.actor);
+    }
+
+    /**
+     * 打开战术动作存储箱
+     */
+    private async openActionStorage(): Promise<void> {
+        const game = (window as any).game;
+        const module = game.modules.get(MODULE_ID);
+        
+        if (!module?.api?.openActionStorage) {
+            ui.notifications?.error(game.i18n.localize("AIPF2E.TacticalManual.StorageNotAvailable"));
+            return;
+        }
+
+        // 调用模块API打开存储箱
+        module.api.openActionStorage(this.tacticalManual.actor);
     }
 }
 
