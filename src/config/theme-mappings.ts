@@ -32,12 +32,13 @@ export interface ThemeMapping {
     connectionLine: string;   // 连接线颜色
   };
   
-  // UI文本映射
+  // UI文本映射 - 存储i18n键值，而不是实际文本
+  // 注意：这些是主题特定的概念映射，实际文本通过 game.i18n.localize 获取
   ui: {
     // 窗口标题
     synthesisTitle: string;   // 神龛合成 -> 爱达梦学习
     
-    // 材料类型
+    // 材料类型标签（用于显示）
     materialTypes: {
       divinity: string;       // 神性材料 -> 指导
       offering: string;       // 贡品材料 -> 技能机
@@ -45,7 +46,7 @@ export interface ThemeMapping {
       shrine: string;         // 神龛 -> 爱达梦训练场
     };
     
-    // 按钮文本
+    // 按钮文本（主题特定）
     buttons: {
       synthesize: string;     // 开始合成 -> 开始融合
       synthesisButton: string; // 合成专长 -> 学习特性
@@ -54,7 +55,7 @@ export interface ThemeMapping {
       close: string;          // 关闭 -> 关闭
     };
     
-    // 提示信息
+    // 提示信息（主题特定）
     messages: {
       selectShrine: string;           // 请选择神龛 -> 请选择爱达梦训练场
       addMaterials: string;           // 添加合成材料 -> 添加融合材料
@@ -79,7 +80,7 @@ export interface ThemeMapping {
       synthesisCompleteTitle: string; // 完成标题 -> 完成标题
     };
     
-    // 描述文本
+    // 描述文本（主题特定）
     descriptions: {
       shrineSystem: string;           // 神龛系统说明 -> 爱达梦学习系统说明
       materialSystem: string;         // 材料系统说明 -> 融合材料说明

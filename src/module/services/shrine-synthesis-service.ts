@@ -35,6 +35,7 @@ export interface ShrineSynthesisMaterial {
   rarity?: string;
   deity?: string;
   aspect?: string;
+  effectiveLevel?: number; // 神性的等效等级，用于提升数值强度（不改变实际等级）
   originalFeatData?: any;
   synthesisRequirements?: any;
   img?: string; // 保留原始物品图标
@@ -959,13 +960,20 @@ export class ShrineSynthesisService {
       divinities.forEach((divinity, index) => {
         divinityGuidance += `**方向${index + 1}：${divinity.name}**\n`;
         const cleanPrompt = this.extractTextFromHtml(divinity.hiddenPrompt || divinity.description || '').substring(0, 300);
-        divinityGuidance += `机制描述：${cleanPrompt}${cleanPrompt.length >= 300 ? '...' : ''}\n\n`;
+        divinityGuidance += `机制描述：${cleanPrompt}${cleanPrompt.length >= 300 ? '...' : ''}\n`;
+        
+        // 如果设置了等效等级，添加数值强度说明
+        if (divinity.effectiveLevel !== undefined) {
+          divinityGuidance += `**等效等级：${divinity.effectiveLevel}级** - 该调整指导方向添加了机制限制，因此数值强度应按${divinity.effectiveLevel}级专长设计（而非实际等级${level}级）\n`;
+        }
+        divinityGuidance += `\n`;
       });
       
       divinityGuidance += `**你的职责**：\n`;
       divinityGuidance += `1. 深入理解调整指导方向提供的机制框架\n`;
       divinityGuidance += `2. 基于这个机制设计专长的具体实现\n`;
       divinityGuidance += `3. 融入补充设计要素提供的效果内容\n`;
+      divinityGuidance += `4. 如果调整指导方向设置了等效等级，按该等级的数值强度设计（以补偿机制限制）\n`;
       divinityGuidance += `\n**关键**：调整指导方向所述机制皆为已有机制概念，你只需要按照机制中需要填充的效果进行组合即可，无需在专长中复述其中提到的任何机制概念名称。\n\n`;
     }
     
@@ -2302,11 +2310,21 @@ ${TECHNICAL_REQUIREMENTS}
       }
     }
     
+    // 解析等效等级配置（用于提升数值强度）
+    let effectiveLevel: number | undefined = undefined;
+    const cleanText = this.extractTextFromHtml(hiddenPrompt);
+    const effectiveLevelMatch = cleanText.match(/EFFECTIVE_LEVEL:\s*(\d+)/i);
+    if (effectiveLevelMatch) {
+      effectiveLevel = parseInt(effectiveLevelMatch[1]);
+      console.log(`神性 "${item.name}" 设置了等效等级: ${effectiveLevel}`);
+    }
+    
     console.log(`提取神性材料 "${item.name}":`, {
       hasGmDescription: !!(item.system?.description?.gm),
       hasFlags: !!item.flags?.['ai-pf2e-assistant']?.hiddenPrompt,
       extractedPrompt: hiddenPrompt.substring(0, 100) + '...',
-      deity: item.flags?.['ai-pf2e-assistant']?.deity
+      deity: item.flags?.['ai-pf2e-assistant']?.deity,
+      effectiveLevel: effectiveLevel
     });
     
     return {
@@ -2318,6 +2336,7 @@ ${TECHNICAL_REQUIREMENTS}
       rarity: item.system?.traits?.rarity || 'common',
       deity: item.flags?.['ai-pf2e-assistant']?.deity,
       aspect: item.flags?.['ai-pf2e-assistant']?.aspect,
+      effectiveLevel: effectiveLevel, // 添加等效等级
       img: item.img, // 保留原始物品图标
       originalItem: item // 保留原始物品引用
     };

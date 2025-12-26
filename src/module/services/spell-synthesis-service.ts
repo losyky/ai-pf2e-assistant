@@ -23,6 +23,7 @@ export interface SpellSynthesisMaterial {
   rarity?: string;
   deity?: string;
   aspect?: string;
+  effectiveLevel?: number; // 神性的等效等级，用于提升数值强度
   originalSpellData?: any;  // 法术贡品专用
   synthesisRequirements?: any;
   img?: string;
@@ -404,6 +405,15 @@ export class SpellSynthesisService {
       hiddenPrompt = item.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
     }
     
+    // 解析等效等级配置
+    let effectiveLevel: number | undefined = undefined;
+    const cleanText = this.extractTextFromHtml(hiddenPrompt);
+    const effectiveLevelMatch = cleanText.match(/EFFECTIVE_LEVEL:\s*(\d+)/i);
+    if (effectiveLevelMatch) {
+      effectiveLevel = parseInt(effectiveLevelMatch[1]);
+      console.log(`神性 "${item.name}" 设置了等效等级: ${effectiveLevel}`);
+    }
+    
     return {
       id: item.id || item._id,
       name: item.name,
@@ -413,6 +423,7 @@ export class SpellSynthesisService {
       rarity: item.system?.traits?.rarity || 'common',
       deity: item.flags?.['ai-pf2e-assistant']?.deity,
       aspect: item.flags?.['ai-pf2e-assistant']?.aspect,
+      effectiveLevel: effectiveLevel,
       img: item.img,
       originalItem: item
     };

@@ -119,18 +119,25 @@ export class ShrineSynthesisApp extends Application {
       emptySlots.push(i);
     }
 
-    // 获取当前主题的文字
-    const currentTheme = this.themeService.currentTheme;
-    const themeTexts = {
-      blessing: currentTheme.ui.messages.blessing,
-      synthesisAction: currentTheme.ui.messages.synthesisAction,
-      synthesisButton: currentTheme.ui.messages.synthesisButton,
-      description: currentTheme.ui.messages.description,
-      clearMaterials: currentTheme.ui.messages.clearMaterials,
-      progressWorking: currentTheme.ui.messages.progressWorking,
-      progressPreparing: currentTheme.ui.messages.progressPreparing,
-      synthesisCompleteTitle: currentTheme.ui.messages.synthesisCompleteTitle,
-      dragShrineHere: currentTheme.ui.messages.dragShrineHere
+    // 使用 i18n 获取本地化文本
+    const g = (game as any).i18n;
+    const i18n = {
+      title: g.localize('ai-pf2e-assistant.ShrineSynthesis.title'),
+      subtitle: this.actorData 
+        ? g.format('ai-pf2e-assistant.ShrineSynthesis.subtitle', {
+            name: this.actorData.name,
+            level: this.actorData.level,
+            class: this.actorData.class || '未知'
+          })
+        : g.localize('ai-pf2e-assistant.ShrineSynthesis.title'),
+      gmUserUnlimited: g.localize('ai-pf2e-assistant.ShrineSynthesis.gmUserUnlimited'),
+      managePoints: g.localize('ai-pf2e-assistant.ShrineSynthesis.managePoints'),
+      shrineTab: g.localize('ai-pf2e-assistant.ShrineSynthesis.shrineTab'),
+      offeringTab: g.localize('ai-pf2e-assistant.ShrineSynthesis.offeringTab'),
+      fragmentTab: g.localize('ai-pf2e-assistant.ShrineSynthesis.fragmentTab'),
+      dragShrine: g.localize('ai-pf2e-assistant.ShrineSynthesis.dragShrine'),
+      clearMaterials: g.localize('ai-pf2e-assistant.ShrineSynthesis.clearMaterials'),
+      startSynthesis: g.localize('ai-pf2e-assistant.ShrineSynthesis.startSynthesis')
     };
 
     // 获取点数相关信息
@@ -147,7 +154,7 @@ export class ShrineSynthesisApp extends Application {
       iconPaths: this.getIconPaths(),
       emptySlots: emptySlots,
       lastSynthesisResult: this.lastSynthesisResult,
-      themeTexts: themeTexts, // 提供主题化文字给模板
+      i18n: i18n, // 提供国际化文本给模板
       isGM,
       shrinePoints
     };
