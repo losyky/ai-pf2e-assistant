@@ -518,7 +518,10 @@
       "confirmedSpellStorageEmpty": "Confirmed storage is empty. Drag important spells to this area, they will not be cleared.",
       "featsCount": "Feats: {total} (Normal: {normal} / Confirmed: {confirmed})",
       "spellsCount": "Spells: {total} (Normal: {normal} / Confirmed: {confirmed})",
-      "storageForPlayerCharacters": "Storage for Player Characters"
+      "storageForPlayerCharacters": "Storage for Player Characters",
+      "deleteAction": "Delete Tactical Action",
+      "confirmDeleteAction": "Are you sure you want to delete the tactical action '{name}'?",
+      "confirmClearActions": "Are you sure you want to clear {count} unconfirmed tactical actions? This action cannot be undone."
     },
     "ShrinePointManager": {
       "title": "Shrine Point Manager",
@@ -623,11 +626,6 @@
       "ActionStorage": "Tactical Action Storage",
       "SynthesisNotAvailable": "Tactical action synthesis is not available",
       "StorageNotAvailable": "Tactical action storage is not available"
-    },
-    "FeatStorage": {
-      "deleteAction": "Delete Tactical Action",
-      "confirmDeleteAction": "Are you sure you want to delete the tactical action '{name}'?",
-      "confirmClearActions": "Are you sure you want to clear {count} unconfirmed tactical actions? This action cannot be undone."
     }
   }
 } 

@@ -145,6 +145,11 @@ export class ShrineSynthesisApp extends Application {
     const currentActor = this.getCurrentActor();
     const shrinePoints = currentActor ? ShrinePointService.getActorPoints(currentActor) : 0;
 
+    // 获取主题文本 - 模板使用 themeTexts 变量
+    const theme = this.themeService.getCurrentTheme();
+    const themeTexts = theme.ui.messages;
+
+
     return {
       actor: this.actorData,
       availableShrines: [], // 不在渲染时加载神龛列表，改为在需要时动态获取
@@ -155,6 +160,7 @@ export class ShrineSynthesisApp extends Application {
       emptySlots: emptySlots,
       lastSynthesisResult: this.lastSynthesisResult,
       i18n: i18n, // 提供国际化文本给模板
+      themeTexts: themeTexts, // 修复：添加 themeTexts 给模板使用
       isGM,
       shrinePoints
     };
