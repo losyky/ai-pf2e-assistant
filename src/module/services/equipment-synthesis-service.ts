@@ -23,8 +23,6 @@ export interface EquipmentSynthesisMaterial {
   synthesisRequirements?: any;
   img?: string;
   originalItem?: any;
-  // 贡品物品的子类型信息（用于推断合成结果的类型）
-  offeringItemType?: string; // 对于装备贡品，保存其实际物品类型（如'weapon', 'armor', 'consumable'等）
 }
 
 /**
@@ -317,12 +315,6 @@ export class EquipmentSynthesisService {
             bulk: item.system?.bulk?.value,
             usage: item.system?.usage?.value
           };
-          
-          // 提取贡品的物品类型（用于推断合成结果的类型）
-          if (['equipment', 'weapon', 'armor', 'consumable'].includes(item.type)) {
-            material.offeringItemType = item.type;
-            console.log(`贡品"${item.name}"的物品类型: ${material.offeringItemType}`);
-          }
         }
         
         if (materialType === 'shrine') {
