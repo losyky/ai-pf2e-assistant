@@ -1079,7 +1079,39 @@ export class ShrineSynthesisApp extends Application {
         this.updateProgress('法术设计完成', 65);
       } else if (this.synthesisMode === 'equipment' && this.synthesisService instanceof EquipmentSynthesisService) {
         // 物品合成
-        const equipmentType = shrineConfig?.equipmentType || 'equipment';
+        // 查找第一个贡品物品，获取其类型信息
+        const firstOffering = allMaterials.find((m: any) => m.type === 'offering');
+        let equipmentType: string;
+        let equipmentTypeSource: string;
+        
+        // 类型优先级：第一个贡品的类型 > 神龛配置 > 默认值 'equipment'
+        if (firstOffering?.originalEquipmentData?.type) {
+          // 映射PF2e物品类型到合成类型
+          const typeMapping: { [key: string]: string } = {
+            'weapon': 'weapon',
+            'armor': 'armor',
+            'equipment': 'equipment',
+            'consumable': 'consumable',
+            'treasure': 'treasure',
+            'shield': 'armor',  // 盾牌归类为护甲
+            'backpack': 'equipment',
+            'kit': 'equipment'
+          };
+          
+          const offeringType = firstOffering.originalEquipmentData.type;
+          equipmentType = typeMapping[offeringType] || shrineConfig?.equipmentType || 'equipment';
+          equipmentTypeSource = `第一贡品(${firstOffering.name})`;
+          
+          console.log('[物品合成] 使用第一个贡品的类型:', {
+            贡品名称: firstOffering.name,
+            原始类型: offeringType,
+            映射后类型: equipmentType
+          });
+        } else {
+          equipmentType = shrineConfig?.equipmentType || 'equipment';
+          equipmentTypeSource = shrineConfig?.equipmentType ? '神龛配置' : '默认值';
+        }
+        
         const equipmentCategory = shrineConfig?.equipmentCategory;
         const mechanismComplexity = shrineConfig?.mechanismComplexity || 'moderate';
         
@@ -1100,7 +1132,8 @@ export class ShrineSynthesisApp extends Application {
           equipmentCategory, 
           mechanismComplexity,
           requiredTraits,
-          等级来源: shrineConfig?.level ? '神龛配置' : (this.actorData?.level ? '角色等级' : (uiLevel ? 'UI输入' : '默认值'))
+          等级来源: shrineConfig?.level ? '神龛配置' : (this.actorData?.level ? '角色等级' : (uiLevel ? 'UI输入' : '默认值')),
+          类型来源: equipmentTypeSource
         });
         this.lastSynthesisResult = await (this.synthesisService as EquipmentSynthesisService).synthesizeEquipment(allMaterials as any, equipmentConfig);
         this.updateProgress('物品设计完成', 65);
