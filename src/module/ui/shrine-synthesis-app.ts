@@ -1073,7 +1073,31 @@ export class ShrineSynthesisApp extends Application {
         this.updateProgress('法术设计完成', 65);
       } else if (this.synthesisMode === 'equipment' && this.synthesisService instanceof EquipmentSynthesisService) {
         // 物品合成
-        const equipmentType = shrineConfig?.equipmentType || 'equipment';
+        
+        // 查找第一个贡品物品，获取其物品类型信息
+        const firstOffering = allMaterials.find((m: any) => m.type === 'offering');
+        const firstOfferingItemType = firstOffering?.offeringItemType;
+        
+        console.log('[物品合成] 第一个贡品物品类型:', {
+          name: firstOffering?.name,
+          itemType: firstOfferingItemType
+        });
+        
+        // 物品类型优先级：第一个贡品的物品类型 > 神龛配置 > 默认值
+        let equipmentType: string;
+        let equipmentTypeSource: string;
+        
+        if (firstOfferingItemType && ['weapon', 'armor', 'consumable', 'equipment'].includes(firstOfferingItemType)) {
+          equipmentType = firstOfferingItemType;
+          equipmentTypeSource = `贡品物品「${firstOffering.name}」`;
+        } else if (shrineConfig?.equipmentType) {
+          equipmentType = shrineConfig.equipmentType;
+          equipmentTypeSource = '神龛配置';
+        } else {
+          equipmentType = 'equipment';
+          equipmentTypeSource = '默认值';
+        }
+        
         const equipmentCategory = shrineConfig?.equipmentCategory;
         const mechanismComplexity = shrineConfig?.mechanismComplexity || 'moderate';
         
@@ -1091,6 +1115,7 @@ export class ShrineSynthesisApp extends Application {
         console.log('物品合成配置:', { 
           level: baseLevel, 
           equipmentType, 
+          equipmentTypeSource,
           equipmentCategory, 
           mechanismComplexity,
           requiredTraits,
