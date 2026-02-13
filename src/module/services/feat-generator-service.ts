@@ -431,6 +431,32 @@ ${JSON.stringify(feat, null, 2)}`;
   }
 
   /**
+   * 标准化先决条件格式为 [{value: string}]
+   */
+  private normalizePrerequisites(rawPrereqs: any): Array<{value: string}> {
+    if (!rawPrereqs) return [];
+    if (typeof rawPrereqs === 'string') {
+      const trimmed = rawPrereqs.trim();
+      return trimmed.length > 0 ? [{ value: trimmed }] : [];
+    }
+    if (!Array.isArray(rawPrereqs)) return [];
+
+    const normalized: Array<{value: string}> = [];
+    for (const item of rawPrereqs) {
+      if (typeof item === 'string') {
+        const trimmed = item.trim();
+        if (trimmed.length > 0) normalized.push({ value: trimmed });
+      } else if (item && typeof item === 'object') {
+        const text = item.value || item.label || item.name;
+        if (typeof text === 'string' && text.trim().length > 0) {
+          normalized.push({ value: text.trim() });
+        }
+      }
+    }
+    return normalized;
+  }
+
+  /**
    * 构建标准的PF2e专长格式
    */
   private buildPF2eFeatFormat(args: any): PF2eFeatFormat {
@@ -463,7 +489,7 @@ ${JSON.stringify(feat, null, 2)}`;
           value: args.system?.actions?.value || args.actions || null
         },
         prerequisites: {
-          value: Array.isArray(args.system?.prerequisites?.value) ? args.system.prerequisites.value : []
+          value: this.normalizePrerequisites(args.system?.prerequisites?.value)
         },
         location: null
       },

@@ -183,8 +183,14 @@ const FEAT_GENERATION_SCHEMA = {
             properties: {
               value: {
                 type: "array",
-                items: { type: "object" },
-                description: "先决条件数组"
+                items: {
+                  type: "object",
+                  properties: {
+                    value: { type: "string", description: "先决条件文字描述，如'专家级运动'、'力量 14'" }
+                  },
+                  required: ["value"]
+                },
+                description: "先决条件数组，每项格式为 {value: '先决条件文字'}。无先决条件时使用空数组[]"
               }
             }
           }
@@ -725,9 +731,54 @@ export class ShrineSynthesisService {
       prompt += '\n';
     }
 
+    // 检查并处理等效等级（神龛 + 神性）
+    const shrineEffectiveLevel = config.shrineItem?.effectiveLevel;
+    const divinityEffectiveLevels = divinities.map(d => d.effectiveLevel).filter(Boolean);
+    let effectiveLevelNote = '';
+    
+    console.log('[等效等级检查]', {
+      神龛等效等级: shrineEffectiveLevel || '无',
+      神性等效等级: divinityEffectiveLevels.length > 0 ? divinityEffectiveLevels : '无',
+      基础等级: config.level
+    });
+    
+    if (shrineEffectiveLevel || divinityEffectiveLevels.length > 0) {
+      // 计算最终的等效等级
+      let finalLevel = config.level;
+      const shrineLevel = shrineEffectiveLevel;
+      const divinityLevel = divinityEffectiveLevels.length > 0 ? divinityEffectiveLevels[0] : undefined;
+      
+      if (shrineLevel || divinityLevel) {
+        finalLevel = this.calculateStackedEffectiveLevel(
+          config.level,
+          shrineLevel,
+          divinityLevel
+        );
+        
+        // 构建说明文本
+        let levelDescription = '';
+        if (shrineLevel && divinityLevel) {
+          levelDescription = `神龛${shrineLevel} + 神性${divinityLevel}`;
+        } else if (shrineLevel) {
+          levelDescription = `神龛${shrineLevel}`;
+        } else {
+          levelDescription = `神性${divinityLevel}`;
+        }
+        
+        console.log(`✅ [等效等级] 最终计算结果: ${finalLevel}级 (基础${config.level}级, 神龛${shrineLevel || '无'}, 神性${divinityLevel || '无'})`);
+        console.log(`   → 数值强度将按${finalLevel}级专长设计`);
+        effectiveLevelNote = `- **等效等级: ${finalLevel}级（${levelDescription}）** - 数值强度应按${finalLevel}级专长设计（基础等级${config.level}级）\n`;
+      }
+    } else {
+      console.log('ℹ️ [等效等级] 未设置等效等级，使用基础等级:', config.level);
+    }
+    
     // 专长规格要求
     prompt += `【专长规格要求】\n`;
     prompt += `- 专长等级: ${config.level}\n`;
+    if (effectiveLevelNote) {
+      prompt += effectiveLevelNote;
+    }
     prompt += `- 专长类别: ${this.getCategoryDisplayName(config.category)}\n`;
     if (config.className) {
       prompt += `- 关联职业: ${config.className}\n`;
@@ -860,18 +911,18 @@ export class ShrineSynthesisService {
    * 负责设计符合神龛合成要求的专长
    */
   private async designShrineFeature(prompt: string, level: number, category: string, className?: string, materials?: ShrineSynthesisMaterial[]): Promise<any> {
-    // 从优化版知识库获取格式规范和标准
+    // 设计阶段只需要职业设计指南（如有），不需要完整的格式规范
     let knowledgeStandards = '';
     try {
-      const knowledgeGuidance = this.featKnowledgeService.getClassFeatGuidance(level, className);
-      
-      if (knowledgeGuidance) {
-        knowledgeStandards = knowledgeGuidance;
-        if (className) {
-          console.log(`✓ 已添加PF2e官方标准到设计智能体（格式规范+${className.toUpperCase()}职业指导）`);
-        } else {
-          console.log('✓ 已添加PF2e官方标准到设计智能体（格式规范）');
+      if (className) {
+        const classGuide = this.featKnowledgeService.getClassDesignGuide(className);
+        if (classGuide) {
+          knowledgeStandards = `\n\n【${className.toUpperCase()}职业专长设计参考】\n\n${classGuide}\n`;
+          console.log(`✓ 已添加${className.toUpperCase()}职业设计指南到设计智能体`);
         }
+      }
+      if (!knowledgeStandards) {
+        console.log('ℹ️ 设计阶段：无职业特定指导（通用设计模式）');
       }
     } catch (error) {
       console.warn('获取知识库标准失败:', error);
@@ -883,14 +934,8 @@ export class ShrineSynthesisService {
     
     // 从GM描述中解析USE_RULES_KNOWLEDGE配置
     let useRulesKnowledge = false;
-    if (shrineItem?.originalItem) {
-      const configText = shrineItem.originalItem.system?.description?.gm || '';
-      const match = configText.match(/USE_RULES_KNOWLEDGE:\s*(true|false|yes|no|1|0)/i);
-      if (match) {
-        const value = match[1].toLowerCase();
-        useRulesKnowledge = value === 'true' || value === 'yes' || value === '1';
-        console.log(`[设计阶段] 从GM描述解析到 USE_RULES_KNOWLEDGE: ${useRulesKnowledge}`);
-      }
+    if (shrineItem) {
+      useRulesKnowledge = this.parseUseRulesKnowledge(shrineItem, '设计阶段');
     }
     
     if (useRulesKnowledge) {
@@ -953,6 +998,14 @@ export class ShrineSynthesisService {
         divinityGuidance += `3. 确保机制与专长等级和类别相匹配\n`;
         divinityGuidance += `4. 不要过度拘泥于复杂度指导，创造力优先\n\n`;
       }
+      
+      // 无神性时，仍需检查神龛自身的等效等级
+      const shrineEffectiveLevel = shrineItem?.effectiveLevel;
+      if (shrineEffectiveLevel) {
+        const finalLevel = this.calculateEffectiveLevel(shrineEffectiveLevel, level);
+        console.log(`[等效等级] 最终计算结果: ${finalLevel}级 (基础${level}级, 神龛${shrineEffectiveLevel}, 无神性)`);
+        divinityGuidance += `\n**等效等级：${finalLevel}级（神龛${shrineEffectiveLevel}）** - 神龛设置了等效等级，数值强度应按${finalLevel}级专长设计（基础等级${level}级）\n\n`;
+      }
     } else {
       // 有调整指导方向：已提供机制设计
       divinityGuidance = `\n\n---\n\n## 调整指导方向理解（重要！）\n\n当前合成提供了${divinities.length}个调整指导方向，它们定义了专长的核心机制。\n\n`;
@@ -972,6 +1025,8 @@ export class ShrineSynthesisService {
             shrineEffectiveLevel,
             divinityEffectiveLevel
           );
+          
+          console.log(`[等效等级] 最终计算结果: ${finalLevel}级 (基础${level}级, 神龛${shrineEffectiveLevel || '无'}, 神性${divinityEffectiveLevel || '无'})`);
           
           // 构建说明文本
           let levelDescription = '';
@@ -1115,57 +1170,54 @@ ${prompt}
    * 将神龛专长设计转换为标准的PF2e格式
    */
   private async convertShrineToFeatFormat(feat: any): Promise<any> {
-    // 从优化版知识库获取格式转换指导
-    let knowledgeStandards = '';
-    try {
-      const formatConversionGuidance = this.featKnowledgeService.getFormatConversionGuidance();
-      
-      if (formatConversionGuidance) {
-        knowledgeStandards = formatConversionGuidance;
-      }
-    } catch (error) {
-      console.warn('获取知识库标准失败:', error);
-    }
-    
-      const systemPrompt = `你是一个PF2e数据格式专家，专注于严格的格式转换。你的任务是将输入的专长数据转换为标准的Foundry VTT PF2e系统格式。
+      const systemPrompt = `你是一个Foundry VTT PF2e数据格式验证专家。你的**唯一任务**是检查和修复JSON格式问题。
 
-**核心原则**：
-1. **尽量保留原有内容** - 如果输入数据中某个字段已经存在且格式正确，保持原样
-2. **仅补充缺失部分** - 只在字段缺失、格式错误或不完整时才进行修复和补充
-3. **严格遵守格式规范** - 确保所有字段类型正确、符合PF2e标准
+**🚨 最高优先级规则：不要改写内容！**
 
-**必须严格保留的内容**：
-- **system.traits.value** - 必须完整保留所有输入的特征，包括职业名称特征（如"swashbuckler"、"fighter"等）
-- 如果 description.value 已经完整且格式正确，不要重写
-- 如果 rules 数组已经存在，不要随意修改（除非明显错误）
-- 如果专长的主题和风格已经明确，不要改变
+你**只能做**以下操作：
+1. 修复JSON结构错误（字段类型错误、缺失必需字段）
+2. 修复HTML标签问题（未闭合的标签、格式错误）
+3. 修复嵌入式引用格式（方括号内改为英文，如 @Damage[2d6[fire]]）
+4. 补充缺失的必需字段（如 level、actionType）
+5. 修复 actionType 与触发条件的不一致（action 类型不应有触发词条）
+6. 标准化 prerequisites.value 格式为 [{value: "文字"}] 对象数组
 
-**必须检查和修复的内容**：
-- system.description.value 必须是完整的HTML格式描述（如果缺失或格式不正确，才补充）
-- actionType、actions 等字段格式必须正确
-- level 等必需字段必须存在
-- 触发词条只能用于 reaction 和 free action
+你**绝对不能做**以下操作：
+- ❌ 修改 description.value 的文字表述或效果内容
+- ❌ 调整数值大小（如 +1 改成 +2）
+- ❌ 添加或删除效果描述段落
+- ❌ 修改专长名称、主题或风格
+- ❌ 修改 traits 数组中的内容
+- ❌ 修改 rules 数组中的内容（除非JSON格式错误）
 
-${DESCRIPTION_PRINCIPLE}
+**字段类型检查清单**：
+- name: string（保持不变）
+- type: "feat"
+- system.level.value: number
+- system.actionType.value: "passive" | "action" | "reaction" | "free"
+- system.actions.value: number | null（passive时为null，action时为1-3）
+- system.traits.value: string[]（保持不变）
+- system.traits.rarity: "common" | "uncommon" | "rare" | "unique"
+- system.description.value: string（HTML格式，保持内容不变，只修标签）
+- system.prerequisites.value: [{value: "先决条件文字"}]（**对象数组**，每项必须是 {value: string} 格式）
+- system.frequency: { max: number, per: string }（如果存在）
 
-${PF2E_FORMAT_STANDARD}
-
-${knowledgeStandards}
+**先决条件格式修复（重要！）**：
+- ✅ 正确格式：[{value: "专家级运动"}, {value: "力量 14"}]
+- ❌ 错误格式：["专家级运动", "力量 14"]（纯字符串数组）
+- ❌ 错误格式：[{}, {label: "..."}]（空对象或错误key）
+- 如果输入是字符串数组，转换为 [{value: "字符串"}] 格式
+- 如果没有先决条件，使用空数组 []
 
 ${TECHNICAL_REQUIREMENTS}
 
-请使用JSON格式返回转换后的PF2e专长数据。`;
+请返回修复后的JSON数据。如果输入数据格式已经正确，原样返回即可。`;
 
-    const userPrompt = `请将以下专长数据严格转换为PF2e格式，保留已有的正确内容，只修复缺失或错误的部分：
+    const userPrompt = `检查以下专长数据的格式问题，只修复格式错误，**不要改写内容**：
 
 ${JSON.stringify(feat, null, 2)}
 
-请确保description.value包含完整的专长效果描述，并且所有规则都正确实现。请使用标准的PF2e格式和嵌入式引用。
-
-**重要：嵌入式引用格式要求**
-- 所有方括号[]内的内容必须使用英文，不能使用中文
-- 例如：@Damage[2d6[fire]] 而不是 @Damage[2d6[火焰]]
-- 伤害类型：fire(火焰), cold(寒冷), electricity(闪电), acid(强酸), piercing(穿刺), slashing(挥砍), bludgeoning(钝击)等`;
+请原样保留 description.value 的文字内容，只修复其中的HTML标签和嵌入式引用格式。`;
 
     // 输出格式转换的提示词到控制台
     console.log('=== 神龛格式转换提示词 ===');
@@ -1243,20 +1295,40 @@ ${JSON.stringify(feat, null, 2)}
   ): Promise<any> {
     console.log('=== 开始神龛专长统一生成流程 ===');
     
-    // 检查是否有神性材料
+    // 检查是否有神性材料和贡品材料
     const hasDivinities = materials && materials.some(m => m.type === 'divinity');
+    const hasOfferings = materials && materials.some(m => m.type === 'offering');
     
-    // 如果有神性，自动跳过设计阶段（神性已提供核心机制设计）
+    // 计算等效等级（用于数值强度参考）
+    const shrineItem = materials?.find(m => m.type === 'shrine');
+    const divinities = materials?.filter(m => m.type === 'divinity') || [];
+    const shrineEffectiveLevel = shrineItem?.effectiveLevel;
+    const divinityEffectiveLevel = divinities.length > 0 && divinities[0].effectiveLevel ? divinities[0].effectiveLevel : undefined;
+    
+    let effectiveLevel = level; // 默认使用基础等级
+    if (shrineEffectiveLevel || divinityEffectiveLevel) {
+      effectiveLevel = this.calculateStackedEffectiveLevel(level, shrineEffectiveLevel, divinityEffectiveLevel);
+      console.log(`[生成流程] 计算等效等级: ${effectiveLevel}级 (基础${level}级, 神龛${shrineEffectiveLevel || '无'}, 神性${divinityEffectiveLevel || '无'})`);
+    }
+    
+    // 如果有神性或贡品，自动跳过设计阶段
+    // - 神性：已提供核心机制设计
+    // - 贡品：已提供模板专长结构，设计阶段多余
     let enableDesign = this.getShrinePhaseEnabled('design');
+    let designSkipReason = '';
     if (hasDivinities) {
       enableDesign = false;
+      designSkipReason = '神性已提供核心机制';
       console.log('检测到神性材料，自动跳过设计阶段（神性已提供核心机制）');
+    } else if (hasOfferings) {
+      enableDesign = false;
+      designSkipReason = '贡品已提供模板结构';
+      console.log('检测到贡品材料，自动跳过设计阶段（贡品已提供模板专长结构）');
     }
     
     const enableFormat = this.getShrinePhaseEnabled('format');
     
-    const designReason = hasDivinities ? '神性存在' : '配置关闭';
-    console.log(`流程配置: 设计阶段=${enableDesign ? '开启' : `关闭（${designReason}）`}, 格式化阶段=${enableFormat ? '开启' : '关闭'}`);
+    console.log(`流程配置: 设计阶段=${enableDesign ? '开启' : `关闭（${designSkipReason || '配置关闭'}）`}, 格式化阶段=${enableFormat ? '开启' : '关闭'}`);
     
     let designPlan: any = null;
     let generatedFeat: any;
@@ -1268,12 +1340,12 @@ ${JSON.stringify(feat, null, 2)}
       designPlan = await this.designShrineFeature(prompt, level, category, className, materials);
       console.log(`设计方案完成: ${designPlan.name}`);
     } else {
-      console.log(`--- 跳过设计阶段${hasDivinities ? '（神性已提供机制设计）' : ''} ---`);
+      console.log(`--- 跳过设计阶段（${designSkipReason || '配置关闭'}） ---`);
     }
     
     // ========== 阶段2: 生成 (核心) ==========
     console.log('--- 阶段2: 生成阶段 ---');
-    generatedFeat = await this.generateFeatWithPrompt(prompt, level, category, className, materials, designPlan);
+    generatedFeat = await this.generateFeatWithPrompt(prompt, level, effectiveLevel, category, className, materials, designPlan);
     console.log(`专长生成完成: ${generatedFeat.name}`);
       
     // ========== 阶段3: 格式化 (可选) ==========
@@ -1330,7 +1402,8 @@ ${JSON.stringify(feat, null, 2)}
    * 核心生成方法：基于神龛提示词和可选的设计方案生成专长
    * 
    * @param prompt 神龛合成提示词（材料、指导等）
-   * @param level 专长等级
+   * @param level 专长等级（基础等级）
+   * @param effectiveLevel 等效等级（用于数值强度参考）
    * @param category 专长类别
    * @param className 职业名称（可选）
    * @param materials 材料列表（包含贡品模板）
@@ -1340,6 +1413,7 @@ ${JSON.stringify(feat, null, 2)}
     prompt: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     level: number,
+    effectiveLevel: number,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     category: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1366,14 +1440,8 @@ ${JSON.stringify(feat, null, 2)}
     
     // 从GM描述中解析USE_RULES_KNOWLEDGE配置
     let useRulesKnowledge = false;
-    if (shrineItem?.originalItem) {
-      const configText = shrineItem.originalItem.system?.description?.gm || '';
-      const match = configText.match(/USE_RULES_KNOWLEDGE:\s*(true|false|yes|no|1|0)/i);
-      if (match) {
-        const value = match[1].toLowerCase();
-        useRulesKnowledge = value === 'true' || value === 'yes' || value === '1';
-        console.log(`[生成阶段] 从GM描述解析到 USE_RULES_KNOWLEDGE: ${useRulesKnowledge}`);
-      }
+    if (shrineItem) {
+      useRulesKnowledge = this.parseUseRulesKnowledge(shrineItem, '生成阶段');
     }
     
     if (useRulesKnowledge) {
@@ -1381,7 +1449,14 @@ ${JSON.stringify(feat, null, 2)}
       try {
         const mechanicsKnowledgeService = PF2eMechanicsKnowledgeService.getInstance();
         const mechanicsKnowledge = mechanicsKnowledgeService.getFullKnowledge();
-        rulesKnowledgeSection = `\n\n---\n\n## PF2e 规则机制参考（用于生成阶段）\n\n${mechanicsKnowledge}\n\n**生成阶段重点**：\n- 将机制框架转化为具体的数值和描述\n- 确保数值范围符合等级对应的强度（参考"机制强度参考"章节）\n- 使用正确的术语和表述方式\n- 在描述中清晰说明所有规则细节`;
+        
+        // 根据是否有等效等级，构建不同的强度参考说明
+        let strengthGuidance = '';
+        if (effectiveLevel !== level) {
+          strengthGuidance = `\n\n**⚠️ 重要 - 数值强度调整**：\n- 专长基础等级：${level}级\n- 等效等级（数值强度参考）：${effectiveLevel}级\n- **数值强度应按${effectiveLevel}级专长设计**（伤害、治疗、加值等参考${effectiveLevel}级标准）\n- 但专长的level字段仍设置为${level}`;
+        }
+        
+        rulesKnowledgeSection = `\n\n---\n\n## PF2e 规则机制参考（用于生成阶段）\n\n${mechanicsKnowledge}${strengthGuidance}\n\n**生成阶段重点**：\n- 将机制框架转化为具体的数值和描述\n- 确保数值范围符合${effectiveLevel}级专长的强度（参考"机制强度参考"章节）\n- 使用正确的术语和表述方式\n- 在描述中清晰说明所有规则细节`;
       } catch (error) {
         console.warn('获取PF2e规则机制知识库失败:', error);
       }
@@ -1389,55 +1464,53 @@ ${JSON.stringify(feat, null, 2)}
       console.log('[生成阶段] 未启用PF2e规则机制知识库（默认关闭）');
     }
     
-    const systemPrompt = `你是一个专业的Pathfinder 2e专长生成师。你的角色是**实现者**，负责将机制框架转化为具体的专长内容。
+    // 根据是否有设计方案，构建不同详细度的 systemPrompt
+    let systemPrompt: string;
+    
+    if (designPlan) {
+      // ===== 有设计方案：精简提示词，聚焦实现 =====
+      console.log('[生成阶段] 有设计方案，使用精简提示词');
+      systemPrompt = `你是一个专业的Pathfinder 2e专长生成师。你的角色是**实现者**，严格基于设计方案生成专长数据。
+
+**🌏 语言要求**：专长名称和描述必须使用中文。
+
+## 你的任务
+
+将设计方案的机制框架转化为完整的PF2e专长JSON数据：
+
+1. **严格遵循设计方案**的名称、理念和机制框架
+2. **填充具体数值**：根据专长等级确定加值、伤害骰等
+3. **编写description.value**：完整的HTML格式规则描述，包含所有细节
+4. **确定技术字段**：actionType、actions、traits、frequency等
+
+**关键原则**：你是实现者，不是设计者。不要偏离设计方案的机制框架。
+
+${DESCRIPTION_PRINCIPLE}
+
+${TECHNICAL_REQUIREMENTS}
+
+**Rules数组说明**：description.value是核心，rules可以简化或留空。不确定格式时，只在description中详细描述效果即可。
+${materials && materials.filter(m => m.type === 'offering').length > 0 ? '如果贡品的rules有错误，不要复制。\n' : ''}
+${knowledgeStandards}${rulesKnowledgeSection}
+
+请使用JSON格式返回完整的PF2e专长数据。`;
+    } else {
+      // ===== 无设计方案：完整提示词，从头创作 =====
+      console.log('[生成阶段] 无设计方案，使用完整提示词');
+      systemPrompt = `你是一个专业的Pathfinder 2e专长生成师。你需要从头创作完整的专长内容。
 
 **🌏 语言要求（最高优先级）**：
 - **专长名称（name字段）必须使用中文，绝对不要使用英文**
 - 所有描述内容（description.value）必须使用中文
-- 如果设计方案中有英文名称，请将其翻译为中文
 
 ---
 
-## 你的职责（生成阶段）
+## 你的任务
 
-${designPlan ? `**你有一个设计方案作为指导**，你的任务是：
-
-1. **实现设计方案的机制框架**
-   - 设计方案已经确定了动作类型、触发条件、频次等框架
-   - 你需要为这个框架填入具体的数值和详细描述
-   
-2. **编写完整的description.value**
-   - 这是最重要的字段，必须包含所有规则细节
-   - 使用HTML格式，包括必要的段落、粗体标记等
-   - 参考设计方案的mechanicsFramework来编写具体效果
-   
-3. **确定合理的数值**
-   - 根据专长等级确定加值大小（参考机制强度参考）
-   - 根据等级确定伤害骰数量
-   - 确保数值与动作成本、频次限制匹配
-   
-4. **保持设计理念**
-   - 设计方案中的designRationale说明了设计思路
-   - 确保生成的专长体现这个理念
-   - ${materials && materials.filter(m => m.type === 'offering').length > 0 ? '如果设计方案基于贡品进行了创新，确保体现这种创新' : '确保融合材料的主题'}
-
-**关键原则**：你不是在创作新设计，而是在实现已有的设计方案。` : `**你需要从头创作专长内容**：
-
-1. **分析合成材料**
-   - 理解神龛、神性、碎片${materials && materials.filter(m => m.type === 'offering').length > 0 ? '、贡品' : ''}的主题
-   - 确定专长的核心概念
-   
-2. **选择合适的机制**
-   - 根据主题选择动作类型、触发条件、频次
-   - 确保机制与${level}级${category}专长匹配
-   
-3. **编写完整的description.value**
-   - 包含所有规则细节
-   - 使用正确的PF2e术语和格式
-   
-4. **设置合理数值**
-   - 参考同等级官方专长的强度
-   - 确保平衡性`}
+1. **分析合成材料**：理解神龛、神性、碎片${materials && materials.filter(m => m.type === 'offering').length > 0 ? '、贡品' : ''}的主题
+2. **选择合适的机制**：动作类型、触发条件、频次，确保与${level}级${category}专长匹配
+3. **编写description.value**：完整HTML格式，包含所有规则细节
+4. **设置合理数值**：${effectiveLevel !== level ? `数值强度按${effectiveLevel}级专长设计（基础等级${level}级）` : `参考${level}级官方专长的强度`}
 
 ---
 
@@ -1458,6 +1531,7 @@ ${knowledgeStandards}${rulesKnowledgeSection}
 ${TECHNICAL_REQUIREMENTS}
 
 请使用JSON格式返回完整的PF2e专长数据。`;
+    }
 
     // 构建user prompt，优先展示设计方案（如果有）
     let userPrompt = '';
@@ -1465,6 +1539,9 @@ ${TECHNICAL_REQUIREMENTS}
       userPrompt += `【设计方案】（重要！请严格遵循）\n\n`;
       userPrompt += `专长名称：${designPlan.name}\n`;
       userPrompt += `等级：${level}\n`;
+      if (effectiveLevel !== level) {
+        userPrompt += `等效等级（数值强度）：${effectiveLevel}级\n`;
+      }
       userPrompt += `类别：${category}\n`;
       if (className) {
         userPrompt += `职业：${className}\n`;
@@ -1479,14 +1556,28 @@ ${TECHNICAL_REQUIREMENTS}
       userPrompt += `**关键要求**：\n`;
       userPrompt += `1. 专长名称必须是"${designPlan.name}"（中文）\n`;
       userPrompt += `2. 等级必须是${level}\n`;
-      userPrompt += `3. 这是${category}专长${className ? `（${className}职业）` : ''}\n`;
-      if (className) {
-        userPrompt += `4. 这是${className}职业专长，traits必须包含"${className.toLowerCase()}"但不包含"class"\n`;
+      if (effectiveLevel !== level) {
+        userPrompt += `3. 数值强度（伤害、治疗、加值等）应按${effectiveLevel}级专长设计\n`;
+        userPrompt += `4. 这是${category}专长${className ? `（${className}职业）` : ''}\n`;
+        if (className) {
+          userPrompt += `5. 这是${className}职业专长，traits必须包含"${className.toLowerCase()}"但不包含"class"\n`;
+          userPrompt += `6. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
+        } else {
+          userPrompt += `5. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
+        }
+      } else {
+        userPrompt += `3. 这是${category}专长${className ? `（${className}职业）` : ''}\n`;
+        if (className) {
+          userPrompt += `4. 这是${className}职业专长，traits必须包含"${className.toLowerCase()}"但不包含"class"\n`;
+          userPrompt += `5. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
+        } else {
+          userPrompt += `4. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
+        }
       }
-      userPrompt += `5. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
-      userPrompt += `6. 机制框架是交互逻辑的描述，你需要将它转化为游戏规则文本\n`;
-      userPrompt += `7. 动作类型（actionType）、动作数量（actions）、特征（traits）等技术细节由你根据机制框架确定\n`;
-      userPrompt += `8. **注意**：不需要在返回的数据中包含 category 字段，category 会由系统自动设置\n\n`;
+      const nextNum = effectiveLevel !== level ? (className ? 7 : 6) : (className ? 6 : 5);
+      userPrompt += `${nextNum}. 机制框架是交互逻辑的描述，你需要将它转化为游戏规则文本\n`;
+      userPrompt += `${nextNum + 1}. 动作类型（actionType）、动作数量（actions）、特征（traits）等技术细节由你根据机制框架确定\n`;
+      userPrompt += `${nextNum + 2}. **注意**：不需要在返回的数据中包含 category 字段，category 会由系统自动设置\n\n`;
       console.log('[生成阶段] 已优先展示设计方案');
     }
     
@@ -1972,6 +2063,66 @@ ${TECHNICAL_REQUIREMENTS}
   }
 
   /**
+   * 标准化先决条件格式为 PF2e Foundry VTT 要求的 [{value: string}] 格式
+   * 处理多种可能的AI输出格式：
+   * - 正确: [{value: "专家级运动"}]
+   * - 字符串数组: ["专家级运动"] → [{value: "专家级运动"}]
+   * - 空对象: [{}] → 过滤掉
+   * - 错误key: [{label: "..."}] → [{value: "..."}]
+   * - 纯字符串: "专家级运动" → [{value: "专家级运动"}]
+   */
+  private normalizePrerequisites(rawPrereqs: any): Array<{value: string}> {
+    if (!rawPrereqs) return [];
+
+    // 如果是纯字符串，包装成数组
+    if (typeof rawPrereqs === 'string') {
+      const trimmed = rawPrereqs.trim();
+      if (trimmed.length === 0) return [];
+      console.warn(`[先决条件] 修正格式：纯字符串 "${trimmed}" → [{value: "${trimmed}"}]`);
+      return [{ value: trimmed }];
+    }
+
+    if (!Array.isArray(rawPrereqs)) {
+      console.warn(`[先决条件] 非数组类型 (${typeof rawPrereqs})，忽略`);
+      return [];
+    }
+
+    const normalized: Array<{value: string}> = [];
+    for (const item of rawPrereqs) {
+      if (typeof item === 'string') {
+        // 字符串数组 → 对象数组
+        const trimmed = item.trim();
+        if (trimmed.length > 0) {
+          normalized.push({ value: trimmed });
+        }
+      } else if (item && typeof item === 'object') {
+        // 对象项
+        if (typeof item.value === 'string' && item.value.trim().length > 0) {
+          // 正确格式
+          normalized.push({ value: item.value.trim() });
+        } else if (typeof item.label === 'string' && item.label.trim().length > 0) {
+          // 错误key: label → value
+          console.warn(`[先决条件] 修正格式：{label: "${item.label}"} → {value: "${item.label}"}`);
+          normalized.push({ value: item.label.trim() });
+        } else if (typeof item.name === 'string' && item.name.trim().length > 0) {
+          // 错误key: name → value
+          console.warn(`[先决条件] 修正格式：{name: "${item.name}"} → {value: "${item.name}"}`);
+          normalized.push({ value: item.name.trim() });
+        } else {
+          // 空对象或无法识别的结构，跳过
+          console.warn(`[先决条件] 过滤无效项:`, JSON.stringify(item));
+        }
+      }
+    }
+
+    if (rawPrereqs.length > 0 && normalized.length !== rawPrereqs.length) {
+      console.log(`[先决条件] 标准化: ${rawPrereqs.length}项 → ${normalized.length}项有效`);
+    }
+
+    return normalized;
+  }
+
+  /**
    * 构建标准的PF2e神龛专长格式
    */
   private buildShrineFeatureFormat(args: any): any {
@@ -2004,7 +2155,7 @@ ${TECHNICAL_REQUIREMENTS}
           value: args.system?.actions?.value || args.actions || null
         },
         prerequisites: {
-          value: Array.isArray(args.system?.prerequisites?.value) ? args.system.prerequisites.value : []
+          value: this.normalizePrerequisites(args.system?.prerequisites?.value)
         },
         location: null
       },
@@ -2650,6 +2801,50 @@ ${TECHNICAL_REQUIREMENTS}
     }
     
     return finalLevel;
+  }
+
+  /**
+   * 解析 USE_RULES_KNOWLEDGE 配置，包含拼写容错
+   * T开头/yes/1 → true，F开头/no/0 → false
+   * @param shrineItem 神龛材料
+   * @param stageName 阶段名称（用于日志）
+   * @returns 是否启用规则知识库
+   */
+  private parseUseRulesKnowledge(shrineItem: ShrineSynthesisMaterial, stageName: string): boolean {
+    const rawConfigText = shrineItem.hiddenPrompt || shrineItem.originalItem?.system?.description?.gm || '';
+    const configText = this.extractTextFromHtml(rawConfigText);
+    
+    const match = configText.match(/USE_RULES_KNOWLEDGE:\s*(\S+)/i);
+    if (!match) {
+      console.log(`[${stageName}] 未配置 USE_RULES_KNOWLEDGE`);
+      return false;
+    }
+    
+    const rawValue = match[1].toLowerCase();
+    const firstChar = rawValue.charAt(0);
+    
+    // T开头 或 yes 或 1 → true
+    if (firstChar === 't' || rawValue === 'yes' || rawValue === '1') {
+      if (rawValue !== 'true') {
+        console.warn(`[${stageName}] USE_RULES_KNOWLEDGE: "${match[1]}" → 识别为 true（建议修正拼写为 "true"）`);
+      } else {
+        console.log(`[${stageName}] USE_RULES_KNOWLEDGE: true`);
+      }
+      return true;
+    }
+    
+    // F开头 或 no 或 0 → false
+    if (firstChar === 'f' || rawValue === 'no' || rawValue === '0') {
+      if (rawValue !== 'false') {
+        console.warn(`[${stageName}] USE_RULES_KNOWLEDGE: "${match[1]}" → 识别为 false（建议修正拼写为 "false"）`);
+      } else {
+        console.log(`[${stageName}] USE_RULES_KNOWLEDGE: false`);
+      }
+      return false;
+    }
+    
+    console.warn(`[${stageName}] ⚠️ USE_RULES_KNOWLEDGE 值无法识别: "${match[1]}"，T开头=启用, F开头=关闭`);
+    return false;
   }
 
   /**

@@ -291,7 +291,10 @@ export const FEAT_KNOWLEDGE_UNIFIED_GUIDE = `
 - **frequency**: 如果有频率限制，使用字符串描述频率，例如"once per day"。
 
 ### 先决条件
-- **prerequisites**: 使用字符串或字符串数组描述先决条件，保持简洁明了。
+- **prerequisites.value**: 使用对象数组格式，每项格式为 {value: "先决条件文字"}。
+  - ✅ 正确格式：[{value: "专家级运动"}, {value: "力量 14"}]
+  - ❌ 错误格式：["专家级运动"]（不要用字符串数组！）
+  - 无先决条件时使用空数组 []
 - **注意区分**：prerequisites（选择专长的前置条件）≠ 需求（使用专长的临时条件）
 
 ### 描述字段
@@ -525,7 +528,7 @@ export const FEAT_KNOWLEDGE_UNIFIED_GUIDE = `
 - ❌ 把prerequisites（选择专长的前置条件）误写成需求
 - ✅ **需求** = 使用专长时的临时条件（如【你持用武器】、【你处于防御姿态】）
 - ✅ **先决条件** = 选择专长时的永久要求（如【力量14】、【专家级杂技】）
-- 📝 说明：先决条件在JSON的prerequisites字段中，不写在description.value里
+- 📝 说明：先决条件在JSON的prerequisites.value字段中（格式为[{value:"文字"}]），不写在description.value里
 
 **错误 3：为所有动作都写触发（极其常见且严重的错误）**
 - ❌ Action（1-3动作）写【触发】 → **这是最常见的错误！**主动动作不需要触发

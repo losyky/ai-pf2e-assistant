@@ -851,9 +851,58 @@ export class SpellSynthesisService {
       prompt += '**使用方式**：选择合适的设计要素融入法术中，可以作为主要效果、次要效果或触发条件的一部分。\n\n';
     }
 
+    // 检查并处理等效等级（神龛 + 神性）
+    const shrineEffectiveLevel = config.shrineItem?.effectiveLevel;
+    const divinityEffectiveLevels = divinities.map(d => d.effectiveLevel).filter(Boolean);
+    let effectiveLevelNote = '';
+    
+    console.log('[等效等级检查]', {
+      神龛等效等级: shrineEffectiveLevel || '无',
+      神性等效等级: divinityEffectiveLevels.length > 0 ? divinityEffectiveLevels : '无',
+      角色基础等级: config.actorLevel,
+      法术环级: config.rank
+    });
+    
+    if (shrineEffectiveLevel || divinityEffectiveLevels.length > 0) {
+      // 计算最终的等效等级（基于角色等级）
+      const baseLevel = config.actorLevel;
+      const shrineLevel = shrineEffectiveLevel;
+      const divinityLevel = divinityEffectiveLevels.length > 0 ? divinityEffectiveLevels[0] : undefined;
+      
+      if (shrineLevel || divinityLevel) {
+        const effectiveActorLevel = this.calculateStackedEffectiveLevel(
+          baseLevel,
+          shrineLevel,
+          divinityLevel
+        );
+        
+        // 根据等效角色等级计算对应的法术环级
+        const effectiveRank = this.calculateRankFromLevel(effectiveActorLevel);
+        
+        // 构建说明文本
+        let levelDescription = '';
+        if (shrineLevel && divinityLevel) {
+          levelDescription = `神龛${shrineLevel} + 神性${divinityLevel}`;
+        } else if (shrineLevel) {
+          levelDescription = `神龛${shrineLevel}`;
+        } else {
+          levelDescription = `神性${divinityLevel}`;
+        }
+        
+        console.log(`✅ [等效等级] 最终计算结果: 角色${effectiveActorLevel}级对应${effectiveRank}环 (基础${baseLevel}级/${config.rank}环, 神龛${shrineLevel || '无'}, 神性${divinityLevel || '无'})`);
+        console.log(`   → 数值强度将按${effectiveRank}环法术设计`);
+        effectiveLevelNote = `- **等效等级: 角色${effectiveActorLevel}级对应${effectiveRank}环（${levelDescription}）** - 数值强度应按${effectiveRank}环法术设计（基础${baseLevel}级/${config.rank}环）\n`;
+      }
+    } else {
+      console.log('ℹ️ [等效等级] 未设置等效等级，使用基础环级:', config.rank);
+    }
+    
     // 法术规格要求
     prompt += `【法术规格要求】\n`;
     prompt += `- 法术环级: ${config.rank}\n`;
+    if (effectiveLevelNote) {
+      prompt += effectiveLevelNote;
+    }
     prompt += `- 施法传统: ${config.traditions.join(', ')}\n`;
     prompt += '\n';
 
@@ -970,6 +1019,50 @@ export class SpellSynthesisService {
   }
 
   /**
+   * 解析 USE_RULES_KNOWLEDGE 配置，包含拼写容错
+   * T开头/yes/1 → true，F开头/no/0 → false
+   * @param shrineItem 神龛材料
+   * @param stageName 阶段名称（用于日志）
+   * @returns 是否启用规则知识库
+   */
+  private parseUseRulesKnowledge(shrineItem: SpellSynthesisMaterial, stageName: string): boolean {
+    const rawConfigText = shrineItem.hiddenPrompt || shrineItem.originalItem?.system?.description?.gm || '';
+    const configText = this.extractTextFromHtml(rawConfigText);
+    
+    const match = configText.match(/USE_RULES_KNOWLEDGE:\s*(\S+)/i);
+    if (!match) {
+      console.log(`[${stageName}] 未配置 USE_RULES_KNOWLEDGE`);
+      return false;
+    }
+    
+    const rawValue = match[1].toLowerCase();
+    const firstChar = rawValue.charAt(0);
+    
+    // T开头 或 yes 或 1 → true
+    if (firstChar === 't' || rawValue === 'yes' || rawValue === '1') {
+      if (rawValue !== 'true') {
+        console.warn(`[${stageName}] USE_RULES_KNOWLEDGE: "${match[1]}" → 识别为 true（建议修正拼写为 "true"）`);
+      } else {
+        console.log(`[${stageName}] USE_RULES_KNOWLEDGE: true`);
+      }
+      return true;
+    }
+    
+    // F开头 或 no 或 0 → false
+    if (firstChar === 'f' || rawValue === 'no' || rawValue === '0') {
+      if (rawValue !== 'false') {
+        console.warn(`[${stageName}] USE_RULES_KNOWLEDGE: "${match[1]}" → 识别为 false（建议修正拼写为 "false"）`);
+      } else {
+        console.log(`[${stageName}] USE_RULES_KNOWLEDGE: false`);
+      }
+      return false;
+    }
+    
+    console.warn(`[${stageName}] ⚠️ USE_RULES_KNOWLEDGE 值无法识别: "${match[1]}"，T开头=启用, F开头=关闭`);
+    return false;
+  }
+
+  /**
    * 从HTML中提取文本
    */
   private extractTextFromHtml(content: string): string {
@@ -1060,14 +1153,8 @@ export class SpellSynthesisService {
     let mechanicsKnowledgeSection = '';
     let useRulesKnowledge = false;
     
-    if (config.shrineItem?.originalItem) {
-      const configText = config.shrineItem.originalItem.system?.description?.gm || '';
-      const match = configText.match(/USE_RULES_KNOWLEDGE:\s*(true|false|yes|no|1|0)/i);
-      if (match) {
-        const value = match[1].toLowerCase();
-        useRulesKnowledge = value === 'true' || value === 'yes' || value === '1';
-        console.log(`[法术设计阶段] 从GM描述解析到 USE_RULES_KNOWLEDGE: ${useRulesKnowledge}`);
-      }
+    if (config.shrineItem) {
+      useRulesKnowledge = this.parseUseRulesKnowledge(config.shrineItem, '法术设计阶段');
     }
     
     if (useRulesKnowledge) {
@@ -1130,6 +1217,9 @@ export class SpellSynthesisService {
             shrineEffectiveLevel,
             divinityEffectiveLevel
           );
+          
+          console.log(`[等效等级] 最终计算结果: 角色${finalLevel}级 (基础${actorLevel}级, 神龛${shrineEffectiveLevel || '无'}, 神性${divinityEffectiveLevel || '无'})`);
+          
           // 将计算出的角色等级转换为环级（向上取整）
           const calculatedRank = Math.min(10, Math.ceil(finalLevel / 2));
           
@@ -1351,24 +1441,26 @@ ${prompt}
 - 不要给予过高的基础伤害
 ` : '';
     
-    const systemPrompt = `你是一个PF2e法术数据格式专家，专注于严格的格式转换和数值审核。你的任务是将输入的法术数据转换为标准的Foundry VTT PF2e系统格式，并审核数值平衡性。
+    const systemPrompt = `你是一个PF2e法术数据格式验证和数值审核专家。
 
-**核心原则**：
-1. **尽量保留原有内容** - 如果输入数据中某个字段已经存在且格式正确，保持原样
-2. **仅补充缺失部分** - 只在字段缺失、格式错误或不完整时才进行修复和补充
-3. **严格遵守格式规范** - 确保所有字段类型正确、符合PF2e标准
-4. **审核数值平衡性** - 检查伤害期望值是否符合${config.rank}环法术标准
+**🚨 最高优先级：不要改写描述内容！**
 
-**必须严格保留的内容**：
-- system.level.value - 环级必须保持为${config.rank}
-- system.traits.traditions - 施法传统必须为${JSON.stringify(config.traditions)}
-- 如果 description.value 已经完整且格式正确，不要重写
-- 如果法术的主题和风格已经明确，不要改变
+你的两个任务：
+1. **格式验证**：修复JSON结构和HTML标签错误
+2. **数值审核**：检查伤害期望值是否符合${config.rank}环法术标准，如果明显不合理才调整数值
 
-**必须检查和修复的内容**：
-- system.description.value 必须是完整的HTML格式描述（如果缺失或格式不正确，才补充）
-- time、range、area、target、duration 等字段格式必须正确
-- damage、defense 等字段必须符合PF2e数据结构
+**严格保留（不能修改）**：
+- description.value 的文字表述和效果内容
+- 法术名称、主题和风格
+- system.level.value = ${config.rank}
+- system.traits.traditions = ${JSON.stringify(config.traditions)}
+
+**允许修复**：
+- JSON字段类型错误
+- HTML标签问题（未闭合等）
+- 嵌入式引用格式（方括号内改为英文）
+- 缺失的必需字段
+- **数值调整**（仅当伤害期望值明显超标或不足时）
 
 **【数值平衡性审核 - 重要】**：
 
@@ -1412,19 +1504,17 @@ ${prompt}
 
 ${cantripWarning}
 
-${DESCRIPTION_PRINCIPLE}
-
-${PF2E_FORMAT_STANDARD}
+**以下是Foundry VTT的完整格式参考（嵌入式引用语法、UUID、缩放公式等）**：
 
 ${TECHNICAL_REQUIREMENTS}
 
 请使用提供的generateSpell函数返回完整的PF2e法术数据。`;
 
-    const userPrompt = `请将以下法术数据严格转换为PF2e格式，保留已有的正确内容，只修复缺失或错误的部分：
+    const userPrompt = `检查以下法术数据的格式和数值问题，**不要改写描述内容**：
 
 ${JSON.stringify(spell, null, 2)}
 
-请确保description.value包含完整的法术效果描述。`;
+只修复格式错误和明显的数值不平衡。保留 description.value 的原始文字内容。`;
 
     console.log('=== 法术格式转换提示词 ===');
     console.log('User Prompt:', userPrompt.substring(0, 500) + '...');
@@ -1566,14 +1656,8 @@ ${JSON.stringify(spell, null, 2)}
     
     // 从GM描述中解析USE_RULES_KNOWLEDGE配置
     let useRulesKnowledge = false;
-    if (config.shrineItem?.originalItem) {
-      const configText = config.shrineItem.originalItem.system?.description?.gm || '';
-      const match = configText.match(/USE_RULES_KNOWLEDGE:\s*(true|false|yes|no|1|0)/i);
-      if (match) {
-        const value = match[1].toLowerCase();
-        useRulesKnowledge = value === 'true' || value === 'yes' || value === '1';
-        console.log(`[法术生成阶段] 从GM描述解析到 USE_RULES_KNOWLEDGE: ${useRulesKnowledge}`);
-      }
+    if (config.shrineItem) {
+      useRulesKnowledge = this.parseUseRulesKnowledge(config.shrineItem, '法术生成阶段');
     }
     
     if (useRulesKnowledge) {

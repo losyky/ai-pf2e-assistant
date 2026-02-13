@@ -736,6 +736,8 @@ export class EquipmentSynthesisService {
             divinityEffectiveLevel
           );
           
+          console.log(`[等效等级] 最终计算结果: ${finalLevel}级 (基础${config.level}级, 神龛${shrineEffectiveLevel || '无'}, 神性${divinityEffectiveLevel || '无'})`);
+          
           // 构建说明文本
           let levelDescription = '';
           if (shrineEffectiveLevel && divinityEffectiveLevel) {
@@ -780,9 +782,54 @@ export class EquipmentSynthesisService {
       prompt += `**使用方式**：选择合适的设计要素融入物品中，可以作为主要效果、次要效果或触发条件的一部分。\n\n`;
     }
 
+    // 检查并处理等效等级（神龛 + 神性，如果神性部分还没计算）
+    const shrineEffectiveLevel = config.shrineItem?.effectiveLevel;
+    const divinityEffectiveLevels = divinities.map(d => d.effectiveLevel).filter(Boolean);
+    let effectiveLevelNote = '';
+    
+    console.log('[等效等级检查]', {
+      神龛等效等级: shrineEffectiveLevel || '无',
+      神性等效等级: divinityEffectiveLevels.length > 0 ? divinityEffectiveLevels : '无',
+      基础等级: config.level
+    });
+    
+    if (shrineEffectiveLevel || divinityEffectiveLevels.length > 0) {
+      // 计算最终的等效等级
+      let finalLevel = config.level;
+      const shrineLevel = shrineEffectiveLevel;
+      const divinityLevel = divinityEffectiveLevels.length > 0 ? divinityEffectiveLevels[0] : undefined;
+      
+      if (shrineLevel || divinityLevel) {
+        finalLevel = this.calculateStackedEffectiveLevel(
+          config.level,
+          shrineLevel,
+          divinityLevel
+        );
+        
+        // 构建说明文本
+        let levelDescription = '';
+        if (shrineLevel && divinityLevel) {
+          levelDescription = `神龛${shrineLevel} + 神性${divinityLevel}`;
+        } else if (shrineLevel) {
+          levelDescription = `神龛${shrineLevel}`;
+        } else {
+          levelDescription = `神性${divinityLevel}`;
+        }
+        
+        console.log(`✅ [等效等级] 最终计算结果: ${finalLevel}级 (基础${config.level}级, 神龛${shrineLevel || '无'}, 神性${divinityLevel || '无'})`);
+        console.log(`   → 数值强度将按${finalLevel}级装备设计`);
+        effectiveLevelNote = `- **等效等级: ${finalLevel}级（${levelDescription}）** - 数值强度应按${finalLevel}级装备设计（基础等级${config.level}级）\n`;
+      }
+    } else {
+      console.log('ℹ️ [等效等级] 未设置等效等级，使用基础等级:', config.level);
+    }
+    
     // 物品要求
     prompt += `## 【物品要求】\n\n`;
     prompt += `- **等级**: ${config.level}\n`;
+    if (effectiveLevelNote) {
+      prompt += effectiveLevelNote;
+    }
     prompt += `- **类型**: ${this.getEquipmentTypeName(config.equipmentType)}\n`;
     if (config.equipmentCategory) {
       prompt += `- **类别**: ${config.equipmentCategory}\n`;
@@ -989,6 +1036,14 @@ ${this.getTypeSpecificGuidance(config.equipmentType)}
 
 ---
 
+${DESCRIPTION_PRINCIPLE}
+
+${PF2E_FORMAT_STANDARD}
+
+${TECHNICAL_REQUIREMENTS}
+
+---
+
 # 技术要求
 
 1. **必需字段**：确保所有必需字段都存在
@@ -996,6 +1051,7 @@ ${this.getTypeSpecificGuidance(config.equipmentType)}
 3. **合理数值**：等级、价格、属性值要合理
 4. **HTML格式**：description.value使用HTML格式（<p>标签等）
 5. **特征完整**：traits.value应包含相关特征（magical等）
+6. **嵌入式引用**：使用正确的 @Damage、@Check、@Template、@UUID 格式（详见上方格式参考）
 
 现在请调用generateEquipment函数生成完整的物品数据。`;
   }
