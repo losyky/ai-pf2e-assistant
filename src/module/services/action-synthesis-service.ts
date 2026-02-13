@@ -27,7 +27,7 @@ export interface ActionSynthesisMaterial {
   rarity?: string;
   deity?: string;
   aspect?: string;
-  effectiveLevel?: number; // 神性的等效等级，用于提升数值强度
+  effectiveLevel?: string; // 神性的等效等级，支持绝对值（如"5"）或相对值（如"+2"、"+3"）
   originalActionData?: any;  // 动作贡品专用
   synthesisRequirements?: any;
   img?: string;
@@ -236,12 +236,13 @@ export class ActionSynthesisService {
   private extractDivinityMaterial(item: any): ActionSynthesisMaterial {
     const hiddenPrompt = item.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
     
-    // 解析等效等级配置
-    let effectiveLevel: number | undefined = undefined;
+    // 解析等效等级配置（用于提升数值强度）
+    // 支持绝对值（如"5"）或相对值（如"+2"、"+3"）
+    let effectiveLevel: string | undefined = undefined;
     const cleanText = this.extractTextFromHtml(hiddenPrompt);
-    const effectiveLevelMatch = cleanText.match(/EFFECTIVE_LEVEL:\s*(\d+)/i);
+    const effectiveLevelMatch = cleanText.match(/EFFECTIVE_LEVEL:\s*([+\-]?\d+)/i);
     if (effectiveLevelMatch) {
-      effectiveLevel = parseInt(effectiveLevelMatch[1]);
+      effectiveLevel = effectiveLevelMatch[1];
       console.log(`神性 "${item.name}" 设置了等效等级: ${effectiveLevel}`);
     }
     

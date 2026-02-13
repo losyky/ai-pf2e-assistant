@@ -45,6 +45,18 @@
         class="custom-requirements-input" 
         placeholder="例如：使用FlatModifier添加+2环境加值到力量相关的检定；当装备在头部槽位时生效；需要使用predicate限制生效条件..."
         rows="4">{{customRequirements}}</textarea>
+      <div class="generation-options">
+        <label class="option-row">
+          <input type="checkbox" id="ignore-original-description" {{#if ignoreOriginalDescription}}checked{{/if}}>
+          <span>忽略原文描述，仅使用上方输入生成</span>
+        </label>
+        <p class="option-hint">启用后必须填写自定义实现要求。</p>
+        <label class="option-row">
+          <input type="checkbox" id="buff-implementation-toggle" {{#if isBuffToggle}}checked{{/if}}>
+          <span>临时buff使用“开关方式”（RollOption）</span>
+        </label>
+        <p class="option-hint">关闭则优先创建Effect物品；不涉及临时状态时将被忽略。</p>
+      </div>
       <div class="generate-button-container">
         <button class="generate-rules primary-button">
           <i class="fas fa-wand-magic-sparkles"></i> 开始生成规则元素

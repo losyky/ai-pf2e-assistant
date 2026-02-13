@@ -25,6 +25,11 @@ export interface RuleElementGenerationResult {
   effectConfigs?: EffectItemData[]; // 待创建的Effect配置
 }
 
+export interface RuleElementGenerationOptions {
+  ignoreOriginalDescription?: boolean;
+  buffImplementationMode?: 'toggle' | 'effect';
+}
+
 /**
  * Function Calling的函数定义接口
  */
@@ -63,24 +68,35 @@ export class RuleElementGeneratorService {
    */
   public async generateRuleElements(
     itemData: any, 
-    customRequirements?: string
+    customRequirements?: string,
+    options: RuleElementGenerationOptions = {}
   ): Promise<RuleElementGenerationResult> {
     try {
       console.log(`${MODULE_ID} | 开始生成规则元素...`);
+      const ignoreOriginalDescription = Boolean(options.ignoreOriginalDescription);
+      const buffImplementationMode = options.buffImplementationMode || 'toggle';
       
       if (customRequirements) {
         console.log(`${MODULE_ID} | 检测到自定义要求: ${customRequirements}`);
       }
+      if (ignoreOriginalDescription) {
+        console.log(`${MODULE_ID} | 忽略原文描述，仅使用自定义输入`);
+        if (!customRequirements) {
+          throw new Error('已启用忽略原文描述，但自定义实现要求为空');
+        }
+      }
 
       // 1. 提取物品描述
-      const description = this.extractItemDescription(itemData);
+      const description = ignoreOriginalDescription
+        ? (customRequirements || '')
+        : this.extractItemDescription(itemData);
       if (!description) {
         throw new Error('物品描述为空，无法生成规则元素');
       }
 
       // 2. AI分析物品机制（如果没有自定义要求才进行自动分析）
       let mechanics: string[] = [];
-      if (!customRequirements) {
+      if (!customRequirements && !ignoreOriginalDescription) {
         console.log(`${MODULE_ID} | AI分析物品机制...`);
         mechanics = await this.analyzeMechanics(itemData, description);
         console.log(`${MODULE_ID} | 识别到的机制:`, mechanics);
@@ -102,7 +118,11 @@ export class RuleElementGeneratorService {
         description,
         similarItems,
         mechanics,
-        customRequirements
+        customRequirements,
+        {
+          ignoreOriginalDescription,
+          buffImplementationMode
+        }
       );
 
       console.log(`${MODULE_ID} | 成功生成${rules.length}个规则元素`);
@@ -110,16 +130,30 @@ export class RuleElementGeneratorService {
       // 5. 分析是否需要创建effect物品（只生成配置，不创建）
       let effectConfigs: EffectItemData[] | undefined = undefined;
       
-      const effectAnalysis = this.effectService.analyzeEffectNeeds(itemData);
+      const analysisItemData = ignoreOriginalDescription
+        ? {
+          ...itemData,
+          system: {
+            ...(itemData.system || {}),
+            description: { value: description }
+          }
+        }
+        : itemData;
+      const effectAnalysis = this.effectService.analyzeEffectNeeds(analysisItemData);
       
-      if (effectAnalysis.needsEffect && effectAnalysis.suggestedEffects.length > 0) {
+      const suggestedEffects = effectAnalysis.suggestedEffects || [];
+      const filteredEffects = buffImplementationMode === 'toggle'
+        ? suggestedEffects.filter(effect => effect.type === 'aura' || effect.type === 'target')
+        : suggestedEffects;
+
+      if (effectAnalysis.needsEffect && filteredEffects.length > 0) {
         console.log(`${MODULE_ID} | 检测到需要创建effect物品: ${effectAnalysis.reasoning}`);
         
         // 请求AI为每个建议的effect生成详细配置
         effectConfigs = await this.generateEffectConfigurations(
           itemData,
           description,
-          effectAnalysis.suggestedEffects,
+          filteredEffects,
           rules
         );
 
@@ -161,7 +195,7 @@ export class RuleElementGeneratorService {
 
         for (const effectConfig of effectConfigs) {
           try {
-            const { item, uuid, folder } = await this.effectService.createEffectForItem(
+            const { uuid, folder } = await this.effectService.createEffectForItem(
               itemData.name,
               effectConfig
             );
@@ -637,7 +671,8 @@ export class RuleElementGeneratorService {
     description: string,
     similarItems: SimilarItem[],
     mechanics?: string[],
-    customRequirements?: string
+    customRequirements?: string,
+    options: RuleElementGenerationOptions = {}
   ): Promise<{ rules: any[], explanation: string }> {
     // 获取AI服务
     const game = (window as any).game;
@@ -647,13 +682,14 @@ export class RuleElementGeneratorService {
     }
 
     // 构建提示词
-    const systemPrompt = this.buildSystemPrompt(customRequirements);
+    const systemPrompt = this.buildSystemPrompt(customRequirements, options);
     const userPrompt = this.buildUserPrompt(
       itemData, 
       description, 
       similarItems, 
       mechanics, 
-      customRequirements
+      customRequirements,
+      options
     );
 
     // 定义Function Calling Schema
@@ -812,8 +848,13 @@ export class RuleElementGeneratorService {
   /**
    * 构建系统提示词
    */
-  private buildSystemPrompt(customRequirements?: string): string {
+  private buildSystemPrompt(
+    customRequirements?: string,
+    options: RuleElementGenerationOptions = {}
+  ): string {
     const knowledge = this.knowledgeService.getFullKnowledge();
+    const ignoreOriginalDescription = Boolean(options.ignoreOriginalDescription);
+    const buffImplementationMode = options.buffImplementationMode || 'toggle';
     
     let systemPrompt = `你是一个Pathfinder 2e规则专家，精通PF2e系统的Rule Elements（规则元素）配置。
 
@@ -835,6 +876,33 @@ ${knowledge}
 `;
     }
 
+    if (ignoreOriginalDescription) {
+      systemPrompt += `**额外要求：忽略原文描述**
+你必须完全忽略物品原始描述，仅使用用户输入的自定义要求来生成规则元素。
+
+`;
+    }
+
+    if (buffImplementationMode === 'toggle') {
+      systemPrompt += `**临时buff实现方式（用户选择）：开关模式**
+1. 对临时buff（可开关/持续时间/姿态类增益），优先使用RollOption（toggleable）+ predicate在主物品中实现
+2. 不要为这类临时buff创建Effect物品
+3. 如果是光环或施加给目标的效果，仍可使用Effect物品
+
+`;
+    } else {
+      systemPrompt += `**临时buff实现方式（用户选择）：Effect物品模式**
+1. 临时buff优先通过Effect物品实现
+2. 主物品仅保留触发/限制/说明与引用
+3. 光环或目标类效果也应使用Effect物品
+
+`;
+    }
+
+    const temporaryRuleLine = buffImplementationMode === 'toggle'
+      ? '- 临时战术增益(攻击加值、伤害加值、AC加值等)应在主物品中用RollOption(toggleable)+predicate实现（除光环/目标效果外不创建Effect）'
+      : '- 临时战术增益(攻击加值、伤害加值、AC加值等)应由Effect物品实现';
+
     systemPrompt += `重要原则：
 1. ${customRequirements ? '**首要任务：严格遵循用户的自定义要求**' : '仔细阅读物品描述，识别所有可以自动化的效果'}
 2. 选择最合适的规则元素类型来实现这些效果
@@ -844,12 +912,19 @@ ${knowledge}
 6. 提供清晰的label（标签）说明
 7. 参考相似物品的规则元素作为示例
 8. 如果描述中没有明确的自动化效果，也要生成基本的规则元素（如添加trait等）
-9. 必须使用提供的generateRuleElements函数返回结果
+9. 必须调用generateRuleElements函数返回结果，**不要输出任何解释性正文**
 
 **效果划分重要原则:**
-- 主物品只包含：永久被动效果、选择配置(ChoiceSet)、光环(Aura)、使用说明(Note)
-- 临时战术增益(攻击加值、伤害加值、AC加值等)应该由系统自动创建为Effect物品
-- 不要在主物品中包含临时战术增益的rules
+- 是否写入主物品取决于“是否创建Effect物品”，而不是单纯依据临时/非临时
+- **如果不创建Effect**：所有需要自动化的效果（含临时/非临时）都写在主物品规则中
+- **如果创建Effect**：临时战术增益应放入Effect，主物品保留触发/限制/说明与引用
+- 主物品可包含：永久被动效果、选择配置(ChoiceSet)、光环(Aura)
+${temporaryRuleLine}
+- **临时效果判断**：只要涉及条件触发（如“当你…/如果…”）或频率/次数限制（如“每回合/每天/每10分钟/次数”），都视为临时效果
+
+**禁止使用Note:**
+- 不要用Note规则元素替代数值效果或自动化
+- 除非用户明确要求，否则不要生成Note规则元素
 
 **AdjustStrike的正确使用:**
 - ✅ property可以是: "weapon-traits", "materials", "property-runes", "range-increment"
@@ -869,8 +944,10 @@ ${knowledge}
     description: string,
     similarItems: SimilarItem[],
     mechanics?: string[],
-    customRequirements?: string
+    customRequirements?: string,
+    options: RuleElementGenerationOptions = {}
   ): string {
+    const ignoreOriginalDescription = Boolean(options.ignoreOriginalDescription);
     let prompt = `请为以下物品生成Rule Elements配置：
 
 **物品信息**
@@ -891,8 +968,18 @@ ${description}
       prompt += `${customRequirements}\n\n`;
       prompt += `**重要提醒：**\n`;
       prompt += `1. 上述自定义要求是最高优先级，必须完全按照要求实现\n`;
-      prompt += `2. 在满足自定义要求的基础上，可以参考物品描述补充其他规则\n`;
-      prompt += `3. 如果自定义要求与物品描述有任何冲突，以自定义要求为准\n\n`;
+      if (ignoreOriginalDescription) {
+        prompt += `2. 已启用忽略原文描述，不要参考物品原始描述\n`;
+        prompt += `3. 仅使用自定义要求完成规则生成\n\n`;
+      } else {
+        prompt += `2. 在满足自定义要求的基础上，可以参考物品描述补充其他规则\n`;
+        prompt += `3. 如果自定义要求与物品描述有任何冲突，以自定义要求为准\n\n`;
+      }
+    }
+
+    if (ignoreOriginalDescription) {
+      prompt += `\n**⚠️ 忽略原文描述**\n`;
+      prompt += `请完全忽略物品原始描述，仅使用用户自定义要求来生成规则元素。\n\n`;
     }
 
     // 添加识别的机制（仅在没有自定义要求时）

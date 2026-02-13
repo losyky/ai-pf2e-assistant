@@ -16,6 +16,8 @@ export class RuleElementConfigApp extends Application {
   private isReviewing: boolean = false; // 是否正在复查修正
   private generatorService: RuleElementGeneratorService;
   private customRequirements: string = ''; // 人工介入的自定义要求
+  private ignoreOriginalDescription: boolean = false; // 忽略原文描述
+  private buffImplementationMode: 'toggle' | 'effect' = 'toggle'; // 临时buff实现方式
   private consoleWarnings: string[] = []; // 捕获的控制台警告
   private originalConsoleWarn: any = null; // 原始的console.warn函数
 
@@ -47,6 +49,8 @@ export class RuleElementConfigApp extends Application {
       itemLevel: this.itemData.system?.level?.value || 'N/A',
       description: description,
       customRequirements: this.customRequirements,
+      ignoreOriginalDescription: this.ignoreOriginalDescription,
+      isBuffToggle: this.buffImplementationMode === 'toggle',
       isGenerating: this.isGenerating,
       isReviewing: this.isReviewing,
       hasResult: this.generationResult !== null,
@@ -107,6 +111,19 @@ export class RuleElementConfigApp extends Application {
       console.log(`${MODULE_ID} | 自定义要求已更新:`, this.customRequirements);
     });
 
+    // 忽略原文描述选项
+    html.find('#ignore-original-description').on('change', (event: any) => {
+      this.ignoreOriginalDescription = Boolean($(event.currentTarget).prop('checked'));
+      console.log(`${MODULE_ID} | 忽略原文描述:`, this.ignoreOriginalDescription);
+    });
+
+    // 临时buff实现方式切换
+    html.find('#buff-implementation-toggle').on('change', (event: any) => {
+      const checked = Boolean($(event.currentTarget).prop('checked'));
+      this.buffImplementationMode = checked ? 'toggle' : 'effect';
+      console.log(`${MODULE_ID} | 临时buff实现方式:`, this.buffImplementationMode);
+    });
+
     // 移除自动触发生成 - 改为手动点击按钮
     // 用户需要先填写自定义要求（如果需要），然后手动点击生成按钮
   }
@@ -125,10 +142,24 @@ export class RuleElementConfigApp extends Application {
     if (customReqElement) {
       this.customRequirements = customReqElement.value?.trim() || '';
     }
+    const ignoreOriginalElement = document.getElementById('ignore-original-description') as HTMLInputElement;
+    if (ignoreOriginalElement) {
+      this.ignoreOriginalDescription = Boolean(ignoreOriginalElement.checked);
+    }
+    const buffToggleElement = document.getElementById('buff-implementation-toggle') as HTMLInputElement;
+    if (buffToggleElement) {
+      this.buffImplementationMode = buffToggleElement.checked ? 'toggle' : 'effect';
+    }
     
     this.render();
 
     try {
+      if (this.ignoreOriginalDescription && !this.customRequirements) {
+        ui.notifications?.warn((game as any).i18n.localize('AIPF2E.RuleElementConfig.ignoreOriginalNeedsInput'));
+        this.isGenerating = false;
+        return;
+      }
+
       if (this.customRequirements) {
         ui.notifications?.info((game as any).i18n.localize('AIPF2E.RuleElementConfig.generatingCustom'));
       } else {
@@ -137,7 +168,11 @@ export class RuleElementConfigApp extends Application {
 
       this.generationResult = await this.generatorService.generateRuleElements(
         this.itemData, 
-        this.customRequirements
+        this.customRequirements,
+        {
+          ignoreOriginalDescription: this.ignoreOriginalDescription,
+          buffImplementationMode: this.buffImplementationMode
+        }
       );
 
       // 验证生成的规则

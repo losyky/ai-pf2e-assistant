@@ -313,10 +313,46 @@ export class EffectItemService {
       '敌人',
       '范围内'
     ];
+    const frequencyKeywords = [
+      '每回合',
+      '每轮',
+      '每次',
+      '每分钟',
+      '每10分钟',
+      '每小时',
+      '每天',
+      '每周',
+      '每月',
+      '每场遭遇',
+      '次数',
+      '频率',
+      '冷却'
+    ];
+    const conditionKeywords = [
+      '当你',
+      '当目标',
+      '当敌人',
+      '当盟友',
+      '如果',
+      '直到',
+      '只要',
+      '在你',
+      '成功',
+      '失败',
+      '大成功',
+      '大失败',
+      'when you',
+      'if you',
+      'on a success',
+      'on a failure',
+      'while you'
+    ];
 
     const lowerDesc = description.toLowerCase();
 
-    return effectKeywords.some(keyword => lowerDesc.includes(keyword));
+    return effectKeywords.some(keyword => lowerDesc.includes(keyword))
+      || frequencyKeywords.some(keyword => lowerDesc.includes(keyword))
+      || conditionKeywords.some(keyword => lowerDesc.includes(keyword));
   }
 
   /**
@@ -327,6 +363,42 @@ export class EffectItemService {
   public analyzeEffectNeeds(itemData: any): EffectNeedsAnalysis {
     const description = itemData.system?.description?.value || '';
     const name = itemData.name || '';
+    const lowerDesc = description.toLowerCase();
+
+    const frequencyKeywords = [
+      '每回合',
+      '每轮',
+      '每次',
+      '每分钟',
+      '每10分钟',
+      '每小时',
+      '每天',
+      '每周',
+      '每月',
+      '每场遭遇',
+      '次数',
+      '频率',
+      '冷却'
+    ];
+    const conditionKeywords = [
+      '当你',
+      '当目标',
+      '当敌人',
+      '当盟友',
+      '如果',
+      '直到',
+      '只要',
+      '在你',
+      '成功',
+      '失败',
+      '大成功',
+      '大失败',
+      'when you',
+      'if you',
+      'on a success',
+      'on a failure',
+      'while you'
+    ];
 
     const analysis: EffectNeedsAnalysis = {
       needsEffect: false,
@@ -343,8 +415,6 @@ export class EffectItemService {
     analysis.needsEffect = true;
 
     // 检测effect类型
-    const lowerDesc = description.toLowerCase();
-
     // 1. 开关型效果
     if (lowerDesc.includes('激活') || lowerDesc.includes('开关') || lowerDesc.includes('你可以')) {
       analysis.suggestedEffects.push({
@@ -387,6 +457,16 @@ export class EffectItemService {
         type: 'duration',
         name: `Effect: ${name}`,
         description: '有持续时间的效果'
+      });
+    }
+
+    const hasFrequency = frequencyKeywords.some(keyword => lowerDesc.includes(keyword));
+    const hasCondition = conditionKeywords.some(keyword => lowerDesc.includes(keyword));
+    if ((hasFrequency || hasCondition) && !analysis.suggestedEffects.some(effect => effect.type === 'duration')) {
+      analysis.suggestedEffects.push({
+        type: 'duration',
+        name: `Effect: ${name}`,
+        description: '条件触发或频率限制的临时效果'
       });
     }
 

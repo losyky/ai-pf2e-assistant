@@ -1,4 +1,4 @@
-﻿import { AIService } from './ai-service';
+import { AIService } from './ai-service';
 import { ShrineItemService } from './shrine-item-service';
 import { FragmentGeneratorService } from './fragment-generator-service';
 import { ShrinePointService } from './shrine-point-service';
@@ -35,7 +35,7 @@ export interface ShrineSynthesisMaterial {
   rarity?: string;
   deity?: string;
   aspect?: string;
-  effectiveLevel?: number; // 神性的等效等级，用于提升数值强度（不改变实际等级）
+  effectiveLevel?: string; // 神性的等效等级，支持绝对值（如"5"）或相对值（如"+2"、"+3"）
   originalFeatData?: any;
   synthesisRequirements?: any;
   img?: string; // 保留原始物品图标
@@ -962,9 +962,28 @@ export class ShrineSynthesisService {
         const cleanPrompt = this.extractTextFromHtml(divinity.hiddenPrompt || divinity.description || '').substring(0, 300);
         divinityGuidance += `机制描述：${cleanPrompt}${cleanPrompt.length >= 300 ? '...' : ''}\n`;
         
-        // 如果设置了等效等级，添加数值强度说明
-        if (divinity.effectiveLevel !== undefined) {
-          divinityGuidance += `**等效等级：${divinity.effectiveLevel}级** - 该调整指导方向添加了机制限制，因此数值强度应按${divinity.effectiveLevel}级专长设计（而非实际等级${level}级）\n`;
+        // 计算叠加的等效等级（神龛基础 + 神性调整）
+        const shrineEffectiveLevel = shrineItem?.effectiveLevel;
+        const divinityEffectiveLevel = divinity.effectiveLevel;
+        
+        if (shrineEffectiveLevel || divinityEffectiveLevel) {
+          const finalLevel = this.calculateStackedEffectiveLevel(
+            level,
+            shrineEffectiveLevel,
+            divinityEffectiveLevel
+          );
+          
+          // 构建说明文本
+          let levelDescription = '';
+          if (shrineEffectiveLevel && divinityEffectiveLevel) {
+            levelDescription = `神龛${shrineEffectiveLevel} + 神性${divinityEffectiveLevel}`;
+          } else if (shrineEffectiveLevel) {
+            levelDescription = `神龛${shrineEffectiveLevel}`;
+          } else {
+            levelDescription = `神性${divinityEffectiveLevel}`;
+          }
+          
+          divinityGuidance += `**等效等级：${finalLevel}级（${levelDescription}）** - 该调整指导方向添加了机制限制，因此数值强度应按${finalLevel}级专长设计（基础等级${level}级）\n`;
         }
         divinityGuidance += `\n`;
       });
@@ -973,7 +992,15 @@ export class ShrineSynthesisService {
       divinityGuidance += `1. 深入理解调整指导方向提供的机制框架\n`;
       divinityGuidance += `2. 基于这个机制设计专长的具体实现\n`;
       divinityGuidance += `3. 融入补充设计要素提供的效果内容\n`;
-      divinityGuidance += `4. 如果调整指导方向设置了等效等级，按该等级的数值强度设计（以补偿机制限制）\n`;
+      
+      const hasAnyEffectiveLevel = shrineItem?.effectiveLevel || divinities.some(d => d.effectiveLevel);
+      if (hasAnyEffectiveLevel) {
+        divinityGuidance += `4. 如果设置了等效等级（神龛或神性），按该等级的数值强度设计（以补偿机制限制）\n`;
+        if (shrineItem?.effectiveLevel && divinities.some(d => d.effectiveLevel)) {
+          divinityGuidance += `   - 注意：神龛和神性的等效等级会叠加计算\n`;
+        }
+      }
+      
       divinityGuidance += `\n**关键**：调整指导方向所述机制皆为已有机制概念，你只需要按照机制中需要填充的效果进行组合即可，无需在专长中复述其中提到的任何机制概念名称。\n\n`;
     }
     
@@ -2311,11 +2338,12 @@ ${TECHNICAL_REQUIREMENTS}
     }
     
     // 解析等效等级配置（用于提升数值强度）
-    let effectiveLevel: number | undefined = undefined;
+    // 支持绝对值（如"5"）或相对值（如"+2"、"+3"）
+    let effectiveLevel: string | undefined = undefined;
     const cleanText = this.extractTextFromHtml(hiddenPrompt);
-    const effectiveLevelMatch = cleanText.match(/EFFECTIVE_LEVEL:\s*(\d+)/i);
+    const effectiveLevelMatch = cleanText.match(/EFFECTIVE_LEVEL:\s*([+\-]?\d+)/i);
     if (effectiveLevelMatch) {
-      effectiveLevel = parseInt(effectiveLevelMatch[1]);
+      effectiveLevel = effectiveLevelMatch[1];
       console.log(`神性 "${item.name}" 设置了等效等级: ${effectiveLevel}`);
     }
     
@@ -2398,7 +2426,20 @@ ${TECHNICAL_REQUIREMENTS}
       hiddenPrompt = item.flags?.['ai-pf2e-assistant']?.hiddenPrompt || '';
     }
     
-    console.log('提取神龛材料:', item.name);
+    // 解析神龛的等效等级配置（用于全局提升数值强度）
+    // 支持绝对值（如"5"）或相对值（如"+2"、"+3"）
+    let effectiveLevel: string | undefined = undefined;
+    const cleanText = this.extractTextFromHtml(hiddenPrompt);
+    const effectiveLevelMatch = cleanText.match(/EFFECTIVE_LEVEL:\s*([+\-]?\d+)/i);
+    if (effectiveLevelMatch) {
+      effectiveLevel = effectiveLevelMatch[1];
+      console.log(`神龛 "${item.name}" 设置了等效等级: ${effectiveLevel}`);
+    }
+    
+    console.log('提取神龛材料:', item.name, {
+      hasEffectiveLevel: !!effectiveLevel,
+      effectiveLevel: effectiveLevel
+    });
     console.log('使用的配置文本:', hiddenPrompt.substring(0, 100) + '...');
     
     return {
@@ -2410,6 +2451,7 @@ ${TECHNICAL_REQUIREMENTS}
       rarity: item.system?.traits?.rarity || 'common',
       deity: item.flags?.['ai-pf2e-assistant']?.deity,
       synthesisRequirements: item.flags?.['ai-pf2e-assistant']?.synthesisRequirements,
+      effectiveLevel: effectiveLevel, // 添加神龛的等效等级
       img: item.img, // 保留原始物品图标
       originalItem: item // 保留原始物品引用
     };
@@ -2553,6 +2595,61 @@ ${TECHNICAL_REQUIREMENTS}
       console.error('获取角色信息失败:', error);
       return '';
     }
+  }
+
+  /**
+   * 计算等效等级
+   * @param effectiveLevelConfig 等效等级配置（如 "5" 或 "+2"）
+   * @param baseLevel 基础等级
+   * @returns 计算后的等效等级
+   */
+  private calculateEffectiveLevel(effectiveLevelConfig: string, baseLevel: number): number {
+    if (effectiveLevelConfig.startsWith('+')) {
+      // 相对值：基础等级 + 修正值
+      const modifier = parseInt(effectiveLevelConfig.substring(1));
+      return baseLevel + modifier;
+    } else if (effectiveLevelConfig.startsWith('-')) {
+      // 相对值：基础等级 - 修正值
+      const modifier = parseInt(effectiveLevelConfig.substring(1));
+      return Math.max(1, baseLevel - modifier);
+    } else {
+      // 绝对值：直接使用指定的等级
+      return parseInt(effectiveLevelConfig);
+    }
+  }
+
+  /**
+   * 计算叠加的等效等级（神龛 + 神性）
+   * @param baseLevel 基础等级
+   * @param shrineLevel 神龛的等效等级配置
+   * @param divinityLevel 神性的等效等级配置
+   * @returns 最终的等效等级
+   */
+  private calculateStackedEffectiveLevel(
+    baseLevel: number,
+    shrineLevel?: string,
+    divinityLevel?: string
+  ): number {
+    let finalLevel = baseLevel;
+    
+    // 先应用神龛的等效等级
+    if (shrineLevel) {
+      finalLevel = this.calculateEffectiveLevel(shrineLevel, finalLevel);
+    }
+    
+    // 再应用神性的等效等级（如果是相对值，基于神龛调整后的等级）
+    if (divinityLevel) {
+      if (divinityLevel.startsWith('+') || divinityLevel.startsWith('-')) {
+        // 相对值：叠加在已调整的等级上
+        finalLevel = this.calculateEffectiveLevel(divinityLevel, finalLevel);
+      } else {
+        // 绝对值：如果神性使用绝对值，优先使用较高的那个
+        const divinityAbsolute = parseInt(divinityLevel);
+        finalLevel = Math.max(finalLevel, divinityAbsolute);
+      }
+    }
+    
+    return finalLevel;
   }
 
   /**

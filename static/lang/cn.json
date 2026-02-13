@@ -263,6 +263,7 @@
         "generating": "正在分析物品描述并生成规则元素...",
         "generatingCustom": "正在根据您的自定义要求生成规则元素...",
         "reviewing": "AI正在分析并修正错误...",
+        "ignoreOriginalNeedsInput": "已启用忽略原文描述，请先填写自定义实现要求。",
         "ruleExplanation": "规则说明:",
         "ruleConfig": "规则配置 ({count}个规则元素):",
         "regenerate": "重新生成",
