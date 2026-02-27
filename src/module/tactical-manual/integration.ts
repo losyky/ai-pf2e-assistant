@@ -6,6 +6,18 @@
 import { TacticalManualCasting } from './tactical-casting';
 import { TacticalPreparationSheet } from './preparation-sheet';
 
+const MODULE_ID = 'ai-pf2e-assistant';
+
+function isTacticalManualEnabled(): boolean {
+    try {
+        // @ts-ignore
+        const game = (window as any).game;
+        return game?.settings?.get(MODULE_ID, 'tacticalManualEnabled') !== false;
+    } catch {
+        return true;
+    }
+}
+
 // 存储每个角色的战术手册实例
 const tacticalManualInstances = new Map<string, TacticalManualCasting>();
 
@@ -59,6 +71,8 @@ export function integrateTacticalManual(): void {
     // 在角色表渲染时注入战术手册UI并隐藏常规动作区域的战术动作
     // @ts-ignore
     Hooks.on('renderActorSheet', async (app: any, html: any, data: any) => {
+        if (!isTacticalManualEnabled()) return;
+
         const actor = app.actor;
         if (!actor) return;
         
@@ -91,6 +105,7 @@ export function integrateTacticalManual(): void {
     // 在角色数据更新时刷新战术手册
     // @ts-ignore
     Hooks.on('updateActor', (actor: any, changes: any, options: any, userId: string) => {
+        if (!isTacticalManualEnabled()) return;
         const manual = tacticalManualInstances.get(actor.id);
         if (manual) {
             manual.refresh();
@@ -100,6 +115,7 @@ export function integrateTacticalManual(): void {
     // 在创建/删除动作时刷新战术手册
     // @ts-ignore
     Hooks.on('createItem', (item: any, options: any, userId: string) => {
+        if (!isTacticalManualEnabled()) return;
         if (item.type === 'action' && item.actor) {
             const manual = tacticalManualInstances.get(item.actor.id);
             if (manual) {
@@ -110,6 +126,7 @@ export function integrateTacticalManual(): void {
 
     // @ts-ignore
     Hooks.on('deleteItem', (item: any, options: any, userId: string) => {
+        if (!isTacticalManualEnabled()) return;
         if (item.type === 'action' && item.actor) {
             const manual = tacticalManualInstances.get(item.actor.id);
             if (manual) {

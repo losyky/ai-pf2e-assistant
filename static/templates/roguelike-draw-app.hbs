@@ -1,0 +1,89 @@
+<div class="roguelike-draw-container">
+  {{#if isFinished}}
+    <div class="roguelike-summary">
+      <div class="roguelike-summary-header">
+        <i class="fas fa-trophy"></i>
+        <h2>抽取完成</h2>
+      </div>
+
+      {{#if allSelectedItems.length}}
+        <p class="roguelike-summary-subtitle">共获得 {{allSelectedItems.length}} 个物品，已存入 {{actorName}} 的储存箱</p>
+        <ul class="roguelike-summary-list">
+          {{#each allSelectedItems}}
+            <li class="roguelike-summary-item">
+              <img src="{{this.img}}" alt="{{this.name}}" width="32" height="32" />
+              <span class="roguelike-summary-name">{{this.name}}</span>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p class="roguelike-summary-subtitle">未选择任何物品</p>
+      {{/if}}
+
+      <div class="roguelike-actions">
+        <button class="roguelike-finish-btn" type="button">
+          <i class="fas fa-check"></i> 关闭
+        </button>
+      </div>
+    </div>
+  {{else}}
+    <div class="roguelike-status-bar">
+      <div class="roguelike-round-info">
+        <i class="fas fa-dice-d20"></i>
+        <span>第 {{currentRound}} / {{totalDraws}} 轮</span>
+      </div>
+      <div class="roguelike-select-info">
+        <i class="fas fa-hand-pointer"></i>
+        <span>已选 {{selectedCount}} / {{selectablePerDraw}}</span>
+      </div>
+    </div>
+
+    <div class="roguelike-items-grid">
+      {{#each items}}
+        <div class="roguelike-item-card rarity-{{this.rarity}} {{#if this.selected}}selected{{/if}}"
+             data-uuid="{{this.uuid}}">
+          <div class="roguelike-item-header">
+            <img src="{{this.img}}" alt="{{this.name}}" class="roguelike-item-icon" />
+            <div class="roguelike-item-title">
+              <span class="roguelike-item-name">{{this.name}}</span>
+              <div class="roguelike-item-meta">
+                <span class="roguelike-item-level">Lv.{{this.level}}</span>
+                <span class="roguelike-item-type">{{this.typeLabel}}</span>
+                <span class="roguelike-rarity-badge rarity-{{this.rarity}}">{{this.rarity}}</span>
+              </div>
+            </div>
+            <div class="roguelike-item-actions">
+              {{#if this.selected}}
+                <i class="fas fa-check-circle roguelike-check-icon"></i>
+              {{/if}}
+              <button class="roguelike-expand-btn" type="button" title="查看详情">
+                <i class="fas fa-{{#if this.expanded}}chevron-up{{else}}chevron-down{{/if}}"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="roguelike-item-traits">
+            {{#each this.traits}}
+              <span class="roguelike-trait-tag">{{this}}</span>
+            {{/each}}
+          </div>
+
+          {{#if this.expanded}}
+            <div class="roguelike-item-description">
+              {{{this.description}}}
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="roguelike-actions">
+      <button class="roguelike-skip-btn" type="button">
+        <i class="fas fa-forward"></i> 跳过本轮
+      </button>
+      <button class="roguelike-confirm-btn" type="button" {{#unless canConfirm}}disabled{{/unless}}>
+        <i class="fas fa-check"></i> 确认选择 ({{selectedCount}})
+      </button>
+    </div>
+  {{/if}}
+</div>

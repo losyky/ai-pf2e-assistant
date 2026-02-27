@@ -112,9 +112,25 @@
         "name": "平衡关键词数据",
         "hint": "存储的平衡关键词配置（内部使用）"
       },
+      "aiGeneratorEnabled": {
+        "name": "AI 内容生成系统",
+        "hint": "启用后将显示 AI 内容生成相关的入口按钮（工具栏的物品/专长/碎片生成器、角色标题栏的 AI 助手按钮等）"
+      },
+      "terminologyEnabled": {
+        "name": "术语翻译系统",
+        "hint": "启用后将在日志（Journal）页面显示 AI 翻译按钮"
+      },
+      "tacticalManualEnabled": {
+        "name": "战术手册系统",
+        "hint": "启用后将在角色表单中显示战术手册 UI（需要角色拥有战术动作）"
+      },
+      "ruleElementEnabled": {
+        "name": "规则元素配置",
+        "hint": "启用后将在物品表单标题栏显示规则元素配置按钮"
+      },
       "enableIconGeneration": {
-        "name": "启用图标生成",
-        "hint": "启用后将为生成的物品和怪物自动生成图标"
+        "name": "AI 图标生成",
+        "hint": "启用后将在物品表单标题栏显示 AI 图标生成按钮，并为生成的物品和怪物自动生成图标"
       },
       "imageModel": {
         "name": "图像生成模型",
@@ -163,14 +179,6 @@
       "shrineSpellEnableFormatPhase": {
         "name": "神龛法术-启用格式化阶段",
         "hint": "启用后，会在生成后使用格式化智能体严格转换为PF2e格式（推荐开启以确保格式正确）"
-      },
-      "autoCollectTerminology": {
-        "name": "自动收集新术语",
-        "hint": "启用后，AI在翻译时识别出的新专有名词会自动添加到术语表中"
-      },
-      "useShrineSystem": {
-        "name": "启用神龛系统",
-        "hint": "启用后将使用基于阿兹特克神话的神龛合成系统，替代原有的专长合成器"
       }
     },
     "ui": {
@@ -718,6 +726,76 @@
       "deleteAction": "删除战术动作",
       "confirmDeleteAction": "确定要删除战术动作「{name}」吗？",
       "confirmClearActions": "确定要清除 {count} 个未确认的战术动作吗？此操作不可撤销。"
+    },
+    "Roguelike": {
+      "title": "Roguelike 抽取",
+      "drawComplete": "抽取完成",
+      "itemsObtained": "共获得 {count} 个物品，已存入储存箱",
+      "noItemsSelected": "未选择任何物品",
+      "round": "第 {current} / {total} 轮",
+      "selected": "已选 {current} / {max}",
+      "confirm": "确认选择",
+      "skip": "跳过本轮",
+      "close": "关闭",
+      "maxSelectionReached": "每轮最多选择 {max} 个物品",
+      "storedItems": "已将 {count} 个物品存入储存箱",
+      "emptyPool": "当前筛选条件下没有可用物品，请调整筛选条件",
+      "noActor": "请先选择一个角色或提供角色参数",
+      "generatorTitle": "Roguelike 宏生成器",
+      "totalDraws": "总抽取轮数",
+      "itemsPerDraw": "每轮展示数量",
+      "selectablePerDraw": "每轮可选数量",
+      "contentTypes": "内容类型",
+      "levelRange": "等级范围",
+      "rarity": "稀有度",
+      "requiredTraits": "必须包含的特征",
+      "excludedTraits": "必须排除的特征",
+      "allowDuplicates": "允许重复抽取",
+      "useToken": "使用当前选中 Token 的角色",
+      "customTitle": "自定义窗口标题",
+      "generatedCode": "生成的宏代码",
+      "copyCode": "复制代码",
+      "createMacro": "创建宏",
+      "macroCreated": "宏创建成功",
+      "codeCopied": "宏代码已复制到剪贴板",
+      "feat": "专长",
+      "spell": "法术",
+      "equipment": "装备",
+      "action": "动作",
+      "viewDetails": "查看详情",
+      "common": "普通",
+      "uncommon": "罕见",
+      "rare": "稀有",
+      "unique": "独特",
+      "banlist": {
+        "managerTitle": "屏蔽列表管理",
+        "title": "屏蔽列表",
+        "newList": "新建列表",
+        "edit": "编辑",
+        "delete": "删除",
+        "back": "返回",
+        "cancel": "取消",
+        "emptyHint": "暂无屏蔽列表，点击「新建列表」开始配置。",
+        "usageHint": "在宏中使用 banListIds: ['列表ID'] 来应用屏蔽列表。",
+        "defaultName": "屏蔽列表",
+        "listNamePlaceholder": "列表名称",
+        "openBrowser": "打开合集包浏览器",
+        "dropHint": "从合集包浏览器拖拽物品到此处添加",
+        "removeItem": "从列表中移除",
+        "categoryEmpty": "此分类暂无物品",
+        "confirmDeleteTitle": "确认删除",
+        "confirmDeleteContent": "确定要删除这个屏蔽列表吗？此操作不可撤销。",
+        "addedToList": "已添加到屏蔽列表",
+        "batchAddBtn": "批量添加到屏蔽列表",
+        "batchAddTitle": "批量添加到屏蔽列表",
+        "batchAddInfo": "当前共筛选出 {count} 个物品。",
+        "selectList": "选择屏蔽列表",
+        "batchConfirm": "添加",
+        "batchAddSuccess": "已将 {count} 个物品添加到「{name}」",
+        "noBanlistsExist": "请先在模块设置中创建屏蔽列表",
+        "noActiveTab": "无法获取当前浏览器标签页",
+        "noFilteredResults": "当前筛选条件下没有结果"
+      }
     }
   }
 } 

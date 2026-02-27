@@ -1,0 +1,106 @@
+<form class="banlist-manager-container" autocomplete="off">
+
+  {{!-- ───── 列表总览 ───── --}}
+  {{#unless isEditing}}
+  <div class="banlist-overview">
+    <div class="banlist-overview-header">
+      <h3><i class="fas fa-ban"></i> {{localize "AIPF2E.Roguelike.banlist.title"}}</h3>
+      <button type="button" class="banlist-new-btn">
+        <i class="fas fa-plus"></i> {{localize "AIPF2E.Roguelike.banlist.newList"}}
+      </button>
+    </div>
+
+    {{#if banlists.length}}
+    <ol class="banlist-list directory-list">
+      {{#each banlists}}
+      <li class="banlist-row directory-item" data-id="{{this.id}}">
+        <div class="banlist-row-icon">
+          <i class="fas fa-list-alt"></i>
+        </div>
+        <h4 class="banlist-row-name">{{this.name}}</h4>
+        <span class="banlist-row-count">{{this.items.length}}</span>
+        <div class="banlist-row-actions">
+          <a class="banlist-edit-btn" data-id="{{this.id}}" data-tooltip="{{localize "AIPF2E.Roguelike.banlist.edit"}}">
+            <i class="fas fa-edit"></i>
+          </a>
+          <a class="banlist-delete-btn" data-id="{{this.id}}" data-tooltip="{{localize "AIPF2E.Roguelike.banlist.delete"}}">
+            <i class="fas fa-trash"></i>
+          </a>
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+    {{else}}
+    <div class="banlist-empty-state">
+      <i class="fas fa-inbox"></i>
+      <p>{{localize "AIPF2E.Roguelike.banlist.emptyHint"}}</p>
+    </div>
+    {{/if}}
+
+    <div class="banlist-usage-hint">
+      <i class="fas fa-info-circle"></i>
+      <span>{{localize "AIPF2E.Roguelike.banlist.usageHint"}}</span>
+    </div>
+  </div>
+  {{/unless}}
+
+  {{!-- ───── 编辑视图 ───── --}}
+  {{#if isEditing}}
+  <div class="banlist-edit-view">
+
+    <header class="banlist-edit-header">
+      <a class="banlist-back-btn" data-tooltip="{{localize "AIPF2E.Roguelike.banlist.back"}}">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <input type="text" class="banlist-rename-input" value="{{editingList.name}}" placeholder="{{localize "AIPF2E.Roguelike.banlist.listNamePlaceholder"}}" />
+      <a class="banlist-browse-btn" data-tooltip="{{localize "AIPF2E.Roguelike.banlist.openBrowser"}}">
+        <i class="fas fa-search"></i>
+      </a>
+    </header>
+
+    <div class="banlist-id-hint">
+      ID: <code>{{editingList.id}}</code>
+    </div>
+
+    <div class="banlist-drop-zone">
+      <i class="fas fa-arrows-alt"></i>
+      <span>{{localize "AIPF2E.Roguelike.banlist.dropHint"}}</span>
+    </div>
+
+    <div class="banlist-categories">
+      {{#each categories}}
+      <section class="banlist-category {{#if this.collapsed}}collapsed{{/if}}" data-type="{{this.type}}">
+        <header class="banlist-category-header" data-action="toggle-category">
+          <i class="fas fa-chevron-down collapse-icon"></i>
+          <h4>{{this.label}}</h4>
+          <span class="banlist-category-count">{{this.items.length}}</span>
+        </header>
+        {{#unless this.collapsed}}
+        <ol class="banlist-category-items">
+          {{#if this.items.length}}
+          {{#each this.items}}
+          <li class="banlist-item" data-uuid="{{this.uuid}}">
+            <img src="{{this.img}}" class="banlist-item-img" alt="{{this.name}}" loading="lazy" />
+            <div class="banlist-item-info">
+              <a class="banlist-item-name content-link" data-uuid="{{this.uuid}}">{{this.name}}</a>
+              {{#if this.level}}<span class="banlist-item-level">Lv.{{this.level}}</span>{{/if}}
+              {{#if this.category}}<span class="banlist-item-tag">{{this.category}}</span>{{/if}}
+            </div>
+            <a class="banlist-remove-item" data-uuid="{{this.uuid}}" data-tooltip="{{localize "AIPF2E.Roguelike.banlist.removeItem"}}">
+              <i class="fas fa-times"></i>
+            </a>
+          </li>
+          {{/each}}
+          {{else}}
+          <li class="banlist-category-empty">{{localize "AIPF2E.Roguelike.banlist.categoryEmpty"}}</li>
+          {{/if}}
+        </ol>
+        {{/unless}}
+      </section>
+      {{/each}}
+    </div>
+
+  </div>
+  {{/if}}
+
+</form>

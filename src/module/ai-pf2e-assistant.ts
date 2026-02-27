@@ -18,6 +18,7 @@ import { ShrineConfigManager } from './ui/config-managers/shrine-config-manager'
 import { IconConfigManager } from './ui/config-managers/icon-config-manager';
 import { TerminologyConfigManager } from './ui/config-managers/terminology-config-manager';
 import { BalanceConfigManager } from './ui/config-managers/balance-config-manager';
+import { RoguelikeBanlistManagerApp } from './ui/roguelike-banlist-manager-app';
 // 不直接导入game对象，而是在需要时使用全局访问
 // import { Hooks, ui, game } from '../foundry-imports';
 import { Hooks, ui } from '../foundry-imports';
@@ -342,6 +343,8 @@ export class AIPF2eAssistant {
     // 使用Hooks.on注册getApplicationHeaderButtons钩子
     Hooks.on('getApplicationHeaderButtons', (app: any, buttons: any[]) => {
       try {
+        const game = getGame();
+
         // 检查应用程序类型，只为角色和物品表单添加按钮
         const isActor = app.document?.documentName === 'Actor' || 
                         app.actor?.documentName === 'Actor' || 
@@ -352,38 +355,48 @@ export class AIPF2eAssistant {
                       app.constructor?.name?.includes('ItemSheet');
         
         if (isActor) {
-          Logger.debug('为角色表单添加按钮:', app.constructor?.name);
-          
-          // AI助手按钮（只显示图标）
-          buttons.unshift({
-            label: '',
-            class: 'ai-pf2e-button',
-            icon: 'fas fa-robot',
-            onclick: () => this.handleAIButtonClick(app),
-            title: 'AI助手'
-          });
+          // 检查 AI 内容生成系统开关
+          const aiEnabled = game?.settings?.get(MODULE_ID, 'aiGeneratorEnabled') ?? true;
+          if (aiEnabled) {
+            Logger.debug('为角色表单添加按钮:', app.constructor?.name);
+            
+            // AI助手按钮（只显示图标）
+            buttons.unshift({
+              label: '',
+              class: 'ai-pf2e-button',
+              icon: 'fas fa-robot',
+              onclick: () => this.handleAIButtonClick(app),
+              title: 'AI助手'
+            });
+          }
         }
         
         if (isItem) {
           Logger.debug('为物品表单添加按钮:', app.constructor?.name);
           
-          // 规则元素配置按钮（替代原AI助手按钮）
-          buttons.unshift({
-            label: '',
-            class: 'ai-pf2e-rule-button',
-            icon: 'fas fa-wand-magic-sparkles',
-            onclick: () => this.handleRuleElementButtonClick(app),
-            title: '规则元素配置'
-          });
+          // 检查规则元素配置开关
+          const ruleEnabled = game?.settings?.get(MODULE_ID, 'ruleElementEnabled') ?? true;
+          if (ruleEnabled) {
+            buttons.unshift({
+              label: '',
+              class: 'ai-pf2e-rule-button',
+              icon: 'fas fa-wand-magic-sparkles',
+              onclick: () => this.handleRuleElementButtonClick(app),
+              title: '规则元素配置'
+            });
+          }
           
-          // AI图标生成按钮（保持不变）
-          buttons.unshift({
-            label: '',
-            class: 'ai-pf2e-icon-button',
-            icon: 'fas fa-image',
-            onclick: () => this.handleIconGenerationButtonClick(app),
-            title: 'AI图标生成'
-          });
+          // 检查图标生成开关
+          const iconEnabled = game?.settings?.get(MODULE_ID, 'enableIconGeneration') ?? false;
+          if (iconEnabled) {
+            buttons.unshift({
+              label: '',
+              class: 'ai-pf2e-icon-button',
+              icon: 'fas fa-image',
+              onclick: () => this.handleIconGenerationButtonClick(app),
+              title: 'AI图标生成'
+            });
+          }
         }
       } catch (error) {
         console.error(`${MODULE_ID} | 添加标题栏按钮时出错:`, error);
@@ -478,9 +491,21 @@ export class AIPF2eAssistant {
       return;
     }
     
+    // 检查各系统开关
+    const isAiGeneratorEnabled = (() => {
+      try { return (game as any).settings?.get(MODULE_ID, 'aiGeneratorEnabled') !== false; }
+      catch { return true; }
+    })();
+    const isRoguelikeEnabled = (() => {
+      try { return (game as any).settings?.get(MODULE_ID, 'roguelikeEnabled') !== false; }
+      catch { return true; }
+    })();
+
     // 添加AI工具
-    const aiTools = {
-      'ai-pf2e-item-generator': {
+    const aiTools: Record<string, any> = {};
+
+    if (isAiGeneratorEnabled) {
+      aiTools['ai-pf2e-item-generator'] = {
         name: 'ai-pf2e-item-generator',
         title: game.i18n.localize('AIPF2E.tools.itemGenerator'),
         icon: 'fas fa-magic',
@@ -490,8 +515,8 @@ export class AIPF2eAssistant {
           console.log(`${MODULE_ID} | 物品生成器按钮被点击`);
           this.openItemGenerator();
         }
-      },
-      'ai-feat-generator': {
+      };
+      aiTools['ai-feat-generator'] = {
         name: 'ai-feat-generator',
         title: game.i18n.localize('AIPF2E.tools.featGenerator'),
         icon: 'fas fa-medal',
@@ -501,8 +526,8 @@ export class AIPF2eAssistant {
           console.log(`${MODULE_ID} | 专长生成器按钮被点击`);
           this.openFeatGenerator();
         }
-      },
-      'ai-fragment-generator': {
+      };
+      aiTools['ai-fragment-generator'] = {
         name: 'ai-fragment-generator',
         title: game.i18n.localize('AIPF2E.tools.fragmentGenerator'),
         icon: 'fas fa-puzzle-piece',
@@ -512,8 +537,24 @@ export class AIPF2eAssistant {
           console.log(`${MODULE_ID} | 词条碎片生成器按钮被点击`);
           this.openFragmentGenerator();
         }
-      }
-    };
+      };
+    }
+
+    if (isRoguelikeEnabled) {
+      aiTools['ai-roguelike-generator'] = {
+        name: 'ai-roguelike-generator',
+        title: 'Roguelike 宏生成器',
+        icon: 'fas fa-dice-d20',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | Roguelike 宏生成器按钮被点击`);
+          import('./api/roguelike-macro-api').then(({ RoguelikeMacroAPI }) => {
+            RoguelikeMacroAPI.openGenerator();
+          });
+        }
+      };
+    }
     
     // 添加所有工具
     Object.assign(tokenControl.tools, aiTools);
@@ -555,41 +596,58 @@ export class AIPF2eAssistant {
         return;
       }
       
-      const aiTools = [
-        {
-          name: 'ai-pf2e-item-generator',
-          title: game.i18n.localize('AIPF2E.tools.itemGenerator'),
-          icon: 'fas fa-magic',
-          button: true,
-          visible: true,
-          onClick: () => {
-            console.log(`${MODULE_ID} | 物品生成器按钮被点击`);
-            this.openItemGenerator();
+      // 检查各系统开关
+      const isAiGeneratorOn = (() => {
+        try { return game.settings?.get(MODULE_ID, 'aiGeneratorEnabled') !== false; }
+        catch { return true; }
+      })();
+      const isShrineOn = (() => {
+        try { return game.settings?.get(MODULE_ID, 'useShrineSystem') !== false; }
+        catch { return false; }
+      })();
+
+      const aiTools: any[] = [];
+
+      if (isAiGeneratorOn) {
+        aiTools.push(
+          {
+            name: 'ai-pf2e-item-generator',
+            title: game.i18n.localize('AIPF2E.tools.itemGenerator'),
+            icon: 'fas fa-magic',
+            button: true,
+            visible: true,
+            onClick: () => {
+              console.log(`${MODULE_ID} | 物品生成器按钮被点击`);
+              this.openItemGenerator();
+            }
+          },
+          {
+            name: 'ai-feat-generator',
+            title: game.i18n.localize('AIPF2E.tools.featGenerator'),
+            icon: 'fas fa-medal',
+            button: true,
+            visible: true,
+            onClick: () => {
+              console.log(`${MODULE_ID} | 专长生成器按钮被点击`);
+              this.openFeatGenerator();
+            }
+          },
+          {
+            name: 'ai-fragment-generator',
+            title: game.i18n.localize('AIPF2E.tools.fragmentGenerator'),
+            icon: 'fas fa-puzzle-piece',
+            button: true,
+            visible: true,
+            onClick: () => {
+              console.log(`${MODULE_ID} | 词条碎片生成器按钮被点击`);
+              this.openFragmentGenerator();
+            }
           }
-        },
-        {
-          name: 'ai-feat-generator',
-          title: game.i18n.localize('AIPF2E.tools.featGenerator'),
-          icon: 'fas fa-medal',
-          button: true,
-          visible: true,
-          onClick: () => {
-            console.log(`${MODULE_ID} | 专长生成器按钮被点击`);
-            this.openFeatGenerator();
-          }
-        },
-        {
-          name: 'ai-fragment-generator',
-          title: game.i18n.localize('AIPF2E.tools.fragmentGenerator'),
-          icon: 'fas fa-puzzle-piece',
-          button: true,
-          visible: true,
-          onClick: () => {
-            console.log(`${MODULE_ID} | 词条碎片生成器按钮被点击`);
-            this.openFragmentGenerator();
-          }
-        },
-        {
+        );
+      }
+
+      if (isShrineOn) {
+        aiTools.push({
           name: 'shrine-point-manager',
           title: game.i18n.localize('AIPF2E.tools.shrineManager'),
           icon: 'fas fa-coins',
@@ -599,9 +657,9 @@ export class AIPF2eAssistant {
             console.log(`${MODULE_ID} | 神龛点数管理器按钮被点击`);
             this.openShrinePointManager();
           }
-        }
-      ];
-      
+        });
+      }
+
       aiTools.forEach(tool => tokenControl.tools.push(tool));
       console.log(`${MODULE_ID} | 成功添加${aiTools.length}个AI工具按钮，新的工具总数:`, tokenControl.tools.length);
     } else {
@@ -620,7 +678,13 @@ export class AIPF2eAssistant {
     Hooks.on('renderActorSheet', (app: any, html: any, data: any) => {
       // 忽略快速访问窗口
       if (app?.actor?.isToken && !app?.token?.isLinked) return;
-      this.addButtonToSheet(app, html);
+
+      // AI 助手按钮受 aiGeneratorEnabled 控制
+      const game = getGame();
+      const aiEnabled = game?.settings?.get(MODULE_ID, 'aiGeneratorEnabled') ?? true;
+      if (aiEnabled) {
+        this.addButtonToSheet(app, html);
+      }
       
       // 如果是角色表单，添加专长合成按钮、法术合成按钮和物品合成按钮
       if (app.actor?.type === 'character') {
@@ -632,28 +696,48 @@ export class AIPF2eAssistant {
     
     // 注册Item表单
     Hooks.on('renderItemSheet', (app: any, html: any, data: any) => {
-      this.addButtonToSheet(app, html);
+      const game = getGame();
+      const aiEnabled = game?.settings?.get(MODULE_ID, 'aiGeneratorEnabled') ?? true;
+      if (aiEnabled) {
+        this.addButtonToSheet(app, html);
+      }
     });
     
-    // 注册Journal表单
-    Hooks.on('renderJournalSheet', (app: any, html: any, data: any) => {
-      this.addJournalTranslationButton(app, html);
-    });
-    
-    // 注册Journal页面表单
-    Hooks.on('renderJournalPageSheet', (app: any, html: any, data: any) => {
-      this.addJournalPageTranslationButton(app, html);
-    });
+    // 术语翻译按钮受 terminologyEnabled 控制
+    const registerJournalHooks = () => {
+      const game = getGame();
+      const termEnabled = game?.settings?.get(MODULE_ID, 'terminologyEnabled') ?? true;
+      if (!termEnabled) return;
 
-    // 注册Journal页面内容渲染
-    Hooks.on('renderJournalTextPageSheet', (app: any, html: any, data: any) => {
-      this.addJournalPageTranslationButton(app, html);
-    });
+      // 注册Journal表单
+      Hooks.on('renderJournalSheet', (app: any, html: any, data: any) => {
+        const g = getGame();
+        if (g?.settings?.get(MODULE_ID, 'terminologyEnabled') === false) return;
+        this.addJournalTranslationButton(app, html);
+      });
+      
+      // 注册Journal页面表单
+      Hooks.on('renderJournalPageSheet', (app: any, html: any, data: any) => {
+        const g = getGame();
+        if (g?.settings?.get(MODULE_ID, 'terminologyEnabled') === false) return;
+        this.addJournalPageTranslationButton(app, html);
+      });
 
-    // 注册Journal页面标题渲染
-    Hooks.on('renderJournalEntryPage', (app: any, html: any, data: any) => {
-      this.addJournalPageTranslationButton(app, html);
-    });
+      // 注册Journal页面内容渲染
+      Hooks.on('renderJournalTextPageSheet', (app: any, html: any, data: any) => {
+        const g = getGame();
+        if (g?.settings?.get(MODULE_ID, 'terminologyEnabled') === false) return;
+        this.addJournalPageTranslationButton(app, html);
+      });
+
+      // 注册Journal页面标题渲染
+      Hooks.on('renderJournalEntryPage', (app: any, html: any, data: any) => {
+        const g = getGame();
+        if (g?.settings?.get(MODULE_ID, 'terminologyEnabled') === false) return;
+        this.addJournalPageTranslationButton(app, html);
+      });
+    };
+    registerJournalHooks();
     
     console.log(`${MODULE_ID} | 渲染钩子注册完成`);
   }
@@ -940,6 +1024,15 @@ export class AIPF2eAssistant {
   private addEquipmentSynthesisButton(app: any, html: any): void {
     try {
       Logger.debug('为角色表单添加物品合成按钮', app.actor?.name);
+
+      // 检查神龛系统是否启用
+      const game = getGame();
+      const shrineEnabled = game?.settings?.get(MODULE_ID, 'useShrineSystem') ?? false;
+      if (!shrineEnabled) {
+        Logger.debug('神龛系统未启用，跳过添加物品合成按钮');
+        return;
+      }
+
       const $ = (window as any).$;
       
       // 查找物品栏
@@ -7662,6 +7755,89 @@ function registerSettings() {
       type: BalanceConfigManager,
       restricted: true
     });
+
+    // Roguelike 屏蔽列表管理器
+    game.settings.registerMenu(MODULE_ID, 'roguelikeBanlistManager', {
+      name: 'Roguelike 屏蔽列表',
+      label: '管理屏蔽列表',
+      hint: '管理 Roguelike 抽取系统的物品屏蔽列表',
+      icon: 'fas fa-ban',
+      type: RoguelikeBanlistManagerApp,
+      restricted: true
+    });
+
+    // ========================================
+    // 系统总开关（主配置界面显示）
+    // ========================================
+
+    // AI 内容生成系统开关
+    game.settings.register(MODULE_ID, 'aiGeneratorEnabled', {
+      name: game.i18n.localize("ai-pf2e-assistant.settings.aiGeneratorEnabled.name"),
+      hint: game.i18n.localize("ai-pf2e-assistant.settings.aiGeneratorEnabled.hint"),
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+    });
+
+    // 术语翻译系统开关
+    game.settings.register(MODULE_ID, 'terminologyEnabled', {
+      name: game.i18n.localize("ai-pf2e-assistant.settings.terminologyEnabled.name"),
+      hint: game.i18n.localize("ai-pf2e-assistant.settings.terminologyEnabled.hint"),
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+    });
+
+    // 战术手册系统开关
+    game.settings.register(MODULE_ID, 'tacticalManualEnabled', {
+      name: game.i18n.localize("ai-pf2e-assistant.settings.tacticalManualEnabled.name"),
+      hint: game.i18n.localize("ai-pf2e-assistant.settings.tacticalManualEnabled.hint"),
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+    });
+
+    // 规则元素配置开关
+    game.settings.register(MODULE_ID, 'ruleElementEnabled', {
+      name: game.i18n.localize("ai-pf2e-assistant.settings.ruleElementEnabled.name"),
+      hint: game.i18n.localize("ai-pf2e-assistant.settings.ruleElementEnabled.hint"),
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+    });
+
+    // AI 图标生成开关
+    game.settings.register(MODULE_ID, 'enableIconGeneration', {
+      name: game.i18n.localize("ai-pf2e-assistant.settings.enableIconGeneration.name"),
+      hint: game.i18n.localize("ai-pf2e-assistant.settings.enableIconGeneration.hint"),
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: false,
+    });
+
+    // Roguelike 开关
+    game.settings.register(MODULE_ID, 'roguelikeEnabled', {
+      name: 'Roguelike 系统',
+      hint: '启用后工具栏将显示 Roguelike 宏生成器按钮（需要重新加载页面生效）',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+    });
+
+    // Roguelike 屏蔽列表数据（JSON 存储）
+    game.settings.register(MODULE_ID, 'roguelikeBanlists', {
+      name: 'Roguelike 屏蔽列表数据',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: [],
+    });
     
     // ========================================
     // API设置（隐藏，通过API配置管理器访问）
@@ -7788,16 +7964,8 @@ function registerSettings() {
     
     // ========================================
     // 图标生成设置（隐藏，通过图标配置管理器访问）
+    // enableIconGeneration 已移至系统开关区域
     // ========================================
-    
-    game.settings.register(MODULE_ID, 'enableIconGeneration', {
-      name: game.i18n.localize("ai-pf2e-assistant.settings.enableIconGeneration.name"),
-      hint: game.i18n.localize("ai-pf2e-assistant.settings.enableIconGeneration.hint"),
-      scope: 'world',
-      config: false, // 隐藏，通过图标配置管理器访问
-      type: Boolean,
-      default: false
-    });
 
     game.settings.register(MODULE_ID, 'imageModel', {
       name: game.i18n.localize("ai-pf2e-assistant.settings.imageModel.name"),
@@ -7987,6 +8155,7 @@ function registerSettings() {
       default: ''
     });
 
+
     return true;
   } catch (error) {
     console.error(`${MODULE_ID} | 注册设置时出错:`, error);
@@ -8165,6 +8334,10 @@ Hooks.once('ready', function() {
   // 初始化设置（除了Scene Control按钮）
   moduleInstance.initWithoutSceneControls();
   Logger.debug('模块实例已初始化');
+
+  // 注册 CompendiumBrowser 批量添加到屏蔽列表的 Hook
+  RoguelikeBanlistManagerApp.registerCompendiumBrowserHook();
+  Logger.debug('CompendiumBrowser banlist hook registered');
   
   // 集成战术手册系统
   Logger.debug('Integrating Tactical Manual...');
@@ -8196,6 +8369,15 @@ Hooks.once('ready', function() {
         // 添加神龛宏API
         (mod.api as any).shrine = ShrineMacroAPI;
         Logger.debug('API exposed successfully with shrine macro API and tactical action methods');
+
+        // 导入 Roguelike 宏API
+        import('./api/roguelike-macro-api').then(({ RoguelikeMacroAPI }) => {
+          (mod.api as any).roguelike = RoguelikeMacroAPI;
+          Logger.debug('Roguelike macro API exposed successfully');
+        }).catch(err => {
+          Logger.error('Failed to load roguelike macro API:', err);
+        });
+
       }).catch(err => {
         Logger.error('Failed to load shrine macro API:', err);
         // 降级处理：直接导出主实例
@@ -8220,6 +8402,11 @@ Hooks.once('ready', function() {
         Logger.debug('非GM用户，跳过手动添加按钮');
         return;
       }
+
+      // 检查各系统开关
+      const aiEnabled = game.settings?.get(MODULE_ID, 'aiGeneratorEnabled') ?? true;
+      const ruleEnabled = game.settings?.get(MODULE_ID, 'ruleElementEnabled') ?? true;
+      const iconEnabled = game.settings?.get(MODULE_ID, 'enableIconGeneration') ?? false;
       
       Logger.debug('尝试检查现有应用并添加按钮');
       const $ = (window as any).$;
@@ -8236,7 +8423,7 @@ Hooks.once('ready', function() {
             const header = $(appElement).find('.window-header');
             
             // 如果是角色表单，添加AI助手按钮
-            if (app.constructor.name.includes('ActorSheet')) {
+            if (app.constructor.name.includes('ActorSheet') && aiEnabled) {
               if (header.length && !header.find('.ai-pf2e-button').length) {
                 const button = $(`<a class="ai-pf2e-button"><i class="fas fa-robot"></i>AI助手</a>`);
                 button.click(function() {
@@ -8252,7 +8439,7 @@ Hooks.once('ready', function() {
             // 如果是物品表单，添加规则元素配置按钮和AI图标按钮
             if (app.constructor.name.includes('ItemSheet')) {
               // 添加规则元素配置按钮
-              if (header.length && !header.find('.ai-pf2e-rule-button').length) {
+              if (ruleEnabled && header.length && !header.find('.ai-pf2e-rule-button').length) {
                 const ruleButton = $(`<a class="ai-pf2e-rule-button"><i class="fas fa-wand-magic-sparkles"></i>规则元素</a>`);
                 ruleButton.click(function() {
                   if (instance) {
@@ -8264,7 +8451,7 @@ Hooks.once('ready', function() {
               }
               
               // 添加AI图标按钮
-              if (header.length && !header.find('.ai-pf2e-icon-button').length) {
+              if (iconEnabled && header.length && !header.find('.ai-pf2e-icon-button').length) {
                 // 获取物品文档
                 const item = app.document || app.item || app.object;
                 

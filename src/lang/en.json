@@ -112,9 +112,25 @@
         "name": "Balance Keywords Data",
         "hint": "Stored balance keyword configuration (internal use)"
       },
+      "aiGeneratorEnabled": {
+        "name": "AI Content Generation System",
+        "hint": "When enabled, AI content generation entry buttons will be shown (toolbar item/feat/fragment generators, character title bar AI assistant button, etc.)"
+      },
+      "terminologyEnabled": {
+        "name": "Terminology Translation System",
+        "hint": "When enabled, AI translation buttons will be shown on Journal pages"
+      },
+      "tacticalManualEnabled": {
+        "name": "Tactical Manual System",
+        "hint": "When enabled, tactical manual UI will be shown in character sheets (requires character to have tactical actions)"
+      },
+      "ruleElementEnabled": {
+        "name": "Rule Element Configuration",
+        "hint": "When enabled, rule element configuration button will be shown in item sheet title bar"
+      },
       "enableIconGeneration": {
-        "name": "Enable Icon Generation",
-        "hint": "When enabled, icons will be automatically generated for created items and monsters"
+        "name": "AI Icon Generation",
+        "hint": "When enabled, AI icon generation button will be shown in item sheet title bar, and icons will be automatically generated for created items and monsters"
       },
       "imageModel": {
         "name": "Image Generation Model",
@@ -163,14 +179,6 @@
       "shrineSpellEnableFormatPhase": {
         "name": "Shrine Spell - Enable Format Phase",
         "hint": "When enabled, will use formatting agent to strictly convert to PF2e format after generation (recommended to enable for format correctness)"
-      },
-      "autoCollectTerminology": {
-        "name": "Auto Collect New Terms",
-        "hint": "When enabled, new proper nouns identified by AI during translation will be automatically added to the terminology glossary"
-      },
-      "useShrineSystem": {
-        "name": "Enable Shrine System",
-        "hint": "When enabled, the Aztec mythology-based shrine synthesis system will be used, replacing the original feat synthesizer"
       }
     },
     "ui": {
@@ -626,6 +634,76 @@
       "ActionStorage": "Tactical Action Storage",
       "SynthesisNotAvailable": "Tactical action synthesis is not available",
       "StorageNotAvailable": "Tactical action storage is not available"
+    },
+    "Roguelike": {
+      "title": "Roguelike Draw",
+      "drawComplete": "Draw Complete",
+      "itemsObtained": "Obtained {count} items, stored in storage box",
+      "noItemsSelected": "No items selected",
+      "round": "Round {current} / {total}",
+      "selected": "Selected {current} / {max}",
+      "confirm": "Confirm Selection",
+      "skip": "Skip Round",
+      "close": "Close",
+      "maxSelectionReached": "Maximum {max} items per round",
+      "storedItems": "Stored {count} items in storage box",
+      "emptyPool": "No items available with current filters, please adjust",
+      "noActor": "Please select a character or provide an actor parameter",
+      "generatorTitle": "Roguelike Macro Generator",
+      "totalDraws": "Total Draws",
+      "itemsPerDraw": "Items Per Draw",
+      "selectablePerDraw": "Selectable Per Draw",
+      "contentTypes": "Content Types",
+      "levelRange": "Level Range",
+      "rarity": "Rarity",
+      "requiredTraits": "Required Traits",
+      "excludedTraits": "Excluded Traits",
+      "allowDuplicates": "Allow Duplicates",
+      "useToken": "Use Selected Token's Actor",
+      "customTitle": "Custom Window Title",
+      "generatedCode": "Generated Macro Code",
+      "copyCode": "Copy Code",
+      "createMacro": "Create Macro",
+      "macroCreated": "Macro created successfully",
+      "codeCopied": "Macro code copied to clipboard",
+      "feat": "Feat",
+      "spell": "Spell",
+      "equipment": "Equipment",
+      "action": "Action",
+      "viewDetails": "View Details",
+      "common": "Common",
+      "uncommon": "Uncommon",
+      "rare": "Rare",
+      "unique": "Unique",
+      "banlist": {
+        "managerTitle": "Ban List Manager",
+        "title": "Ban Lists",
+        "newList": "New List",
+        "edit": "Edit",
+        "delete": "Delete",
+        "back": "Back",
+        "cancel": "Cancel",
+        "emptyHint": "No ban lists yet. Click \"New List\" to get started.",
+        "usageHint": "Use banListIds: ['listID'] in macros to apply ban lists.",
+        "defaultName": "Ban List",
+        "listNamePlaceholder": "List name",
+        "openBrowser": "Open Compendium Browser",
+        "dropHint": "Drag items from Compendium Browser to add",
+        "removeItem": "Remove from list",
+        "categoryEmpty": "No items in this category",
+        "confirmDeleteTitle": "Confirm Delete",
+        "confirmDeleteContent": "Are you sure you want to delete this ban list? This cannot be undone.",
+        "addedToList": "has been added to the ban list",
+        "batchAddBtn": "Batch Add to Ban List",
+        "batchAddTitle": "Batch Add to Ban List",
+        "batchAddInfo": "{count} items found with current filters.",
+        "selectList": "Select Ban List",
+        "batchConfirm": "Add",
+        "batchAddSuccess": "Added {count} items to \"{name}\"",
+        "noBanlistsExist": "Please create a ban list first in module settings",
+        "noActiveTab": "Cannot determine active browser tab",
+        "noFilteredResults": "No results with current filters"
+      }
     }
   }
 } 

@@ -1,0 +1,147 @@
+<form class="roguelike-generator-container" autocomplete="off">
+  <div class="roguelike-generator-form">
+    <h3 style="margin:0 0 4px 0;"><i class="fas fa-dice-d20"></i> Roguelike 抽取宏生成器</h3>
+
+    <div class="roguelike-form-row">
+      <div class="roguelike-form-group">
+        <label>总抽取轮数</label>
+        <input type="number" name="totalDraws" value="{{totalDraws}}" min="1" max="20" />
+      </div>
+      <div class="roguelike-form-group">
+        <label>每轮展示数量</label>
+        <input type="number" name="itemsPerDraw" value="{{itemsPerDraw}}" min="1" max="20" />
+      </div>
+      <div class="roguelike-form-group">
+        <label>每轮可选数量</label>
+        <input type="number" name="selectablePerDraw" value="{{selectablePerDraw}}" min="1" max="20" />
+      </div>
+    </div>
+
+    <div class="roguelike-form-group">
+      <label>内容类型</label>
+      <div class="roguelike-checkbox-group">
+        {{#each contentTypeOptions}}
+          <label>
+            <input type="checkbox" name="contentType" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+            {{this.label}}
+          </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{#if showFeatCategories}}
+    <div class="roguelike-form-group">
+      <label>专长子分类 <span style="font-size:0.75rem;opacity:0.6;">（不勾选则包含所有）</span></label>
+      <div class="roguelike-checkbox-group roguelike-feat-categories">
+        {{#each featCategoryOptions}}
+          <label>
+            <input type="checkbox" name="featCategory" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+            {{this.label}}
+          </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <div class="roguelike-form-row">
+      <div class="roguelike-form-group">
+        <label>最低等级</label>
+        <input type="number" name="levelMin" value="{{levelMin}}" min="0" max="25" />
+      </div>
+      <div class="roguelike-form-group">
+        <label>最高等级</label>
+        <input type="number" name="levelMax" value="{{levelMax}}" min="0" max="25" />
+      </div>
+    </div>
+
+    <div class="roguelike-form-group">
+      <label>稀有度</label>
+      <div class="roguelike-checkbox-group">
+        {{#each rarityOptions}}
+          <label>
+            <input type="checkbox" name="rarity" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+            {{this.label}}
+          </label>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="roguelike-form-group">
+      <label>必须包含的特征</label>
+      <div class="roguelike-tag-input" data-field="requiredTraits">
+        {{#each requiredTraitLabels}}
+          <span class="roguelike-tag">{{this.label}} <i class="fas fa-times remove-tag" data-tag="{{this.value}}"></i></span>
+        {{/each}}
+        <input type="text" placeholder="输入特征名称后按回车添加..." class="roguelike-tag-text-input" data-field="requiredTraits" list="roguelike-traits-datalist" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="roguelike-form-group">
+      <label>必须排除的特征</label>
+      <div class="roguelike-tag-input" data-field="excludedTraits">
+        {{#each excludedTraitLabels}}
+          <span class="roguelike-tag">{{this.label}} <i class="fas fa-times remove-tag" data-tag="{{this.value}}"></i></span>
+        {{/each}}
+        <input type="text" placeholder="输入特征名称后按回车排除..." class="roguelike-tag-text-input" data-field="excludedTraits" list="roguelike-traits-datalist" autocomplete="off" />
+      </div>
+    </div>
+
+    <datalist id="roguelike-traits-datalist">
+      {{#each availableTraits}}
+        <option value="{{this.label}}">{{this.label}} ({{this.value}})</option>
+      {{/each}}
+    </datalist>
+
+    <div class="roguelike-form-group">
+      <div class="roguelike-banlist-header">
+        <label>应用屏蔽列表</label>
+        <button type="button" class="roguelike-open-banlist-btn">
+          <i class="fas fa-cog"></i> 管理屏蔽列表
+        </button>
+      </div>
+      {{#if hasBanlists}}
+      <div class="roguelike-checkbox-group">
+        {{#each banlistOptions}}
+          <label>
+            <input type="checkbox" name="banList" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />
+            {{this.name}} <span style="opacity:0.6;">({{this.itemCount}} 项)</span>
+          </label>
+        {{/each}}
+      </div>
+      {{else}}
+      <p style="font-size:0.8rem;opacity:0.6;margin:2px 0 0;">暂无屏蔽列表，点击"管理屏蔽列表"创建。</p>
+      {{/if}}
+    </div>
+
+    <div class="roguelike-checkbox-group" style="margin-top: 4px;">
+      <label>
+        <input type="checkbox" name="allowDuplicates" {{#if allowDuplicates}}checked{{/if}} />
+        允许重复抽取
+      </label>
+      <label>
+        <input type="checkbox" name="useToken" {{#if useToken}}checked{{/if}} />
+        强制使用选中 Token 的角色
+      </label>
+    </div>
+    <p style="font-size:0.75rem;opacity:0.6;margin:0;">不勾选"强制使用选中 Token"时，将自动弹出角色选择对话框</p>
+
+    <div class="roguelike-form-group">
+      <label>自定义窗口标题（可选）</label>
+      <input type="text" name="customTitle" value="{{customTitle}}" placeholder="留空使用默认标题" />
+    </div>
+
+    <div class="roguelike-form-group">
+      <label><i class="fas fa-code"></i> 生成的宏代码</label>
+      <div class="roguelike-code-preview">{{macroCode}}</div>
+    </div>
+  </div>
+
+  <div class="roguelike-generator-actions">
+    <button class="roguelike-copy-code-btn" type="button">
+      <i class="fas fa-copy"></i> 复制代码
+    </button>
+    <button class="roguelike-create-macro-btn" type="button">
+      <i class="fas fa-plus"></i> 创建宏
+    </button>
+  </div>
+</form>
