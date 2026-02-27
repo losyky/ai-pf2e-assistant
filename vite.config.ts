@@ -7,13 +7,15 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/module/ai-pf2e-assistant.ts'),
       name: 'ai-pf2e-assistant',
-      fileName: 'ai-pf2e-assistant'
+      fileName: 'ai-pf2e-assistant',
+      formats: ['es']
     },
     rollupOptions: {
       output: {
         dir: 'dist',
         entryFileNames: '[name].js',
-        format: 'es'
+        format: 'es',
+        inlineDynamicImports: true
       }
     }
   },
