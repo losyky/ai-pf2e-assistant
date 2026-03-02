@@ -124,6 +124,7 @@ export class RoguelikeMacroAPI {
       selectablePerDraw: config.selectablePerDraw ?? 1,
       contentTypes: config.contentTypes ?? ['feat'],
       featCategories: config.featCategories ?? [],
+      equipmentCategories: config.equipmentCategories ?? [],
       levelRange: config.levelRange ?? { min: 0, max: 20 },
       rarityFilter: config.rarityFilter ?? [],
       requiredTraits: config.requiredTraits ?? [],

@@ -751,12 +751,15 @@ export class AIPF2eAssistant {
     try {
       Logger.debug('为角色表单添加专长合成按钮', app.actor?.name);
       
-      // 检查神龛系统是否启用
       const game = getGame();
       const shrineEnabled = game?.settings?.get(MODULE_ID, 'useShrineSystem') ?? false;
-      
-      if (!shrineEnabled) {
-        Logger.debug('神龛系统未启用，跳过添加合成按钮');
+      const roguelikeEnabled = (() => {
+        try { return game?.settings?.get(MODULE_ID, 'roguelikeEnabled') !== false; }
+        catch { return true; }
+      })();
+
+      if (!shrineEnabled && !roguelikeEnabled) {
+        Logger.debug('神龛系统和肉鸽系统均未启用，跳过');
         return;
       }
       
@@ -790,68 +793,63 @@ export class AIPF2eAssistant {
           return;
         }
 
-        // 创建专长合成按钮（先使用默认文本）
-        const synthesisButton = $(`
-          <button type="button" class="feat-synthesis-button" data-tooltip="${game.i18n.localize('ai-pf2e-assistant.buttons.synthesizeFeatTooltip')}">
-            <i class="fa-solid fa-fw fa-flask"></i>${game.i18n.localize('ai-pf2e-assistant.buttons.synthesizeFeat')}
-          </button>
-        `);
-        
-        // 异步加载主题化的按钮文本
-        import('./services/theme-service.js').then((module) => {
-          const themeService = module.ThemeService.getInstance();
-          const buttonText = themeService.getText('ui.buttons.synthesisButton');
+        // 合成按钮仅在神龛系统启用时显示
+        let synthesisButton: any = null;
+        if (shrineEnabled) {
+          synthesisButton = $(`
+            <button type="button" class="feat-synthesis-button" data-tooltip="${game.i18n.localize('ai-pf2e-assistant.buttons.synthesizeFeatTooltip')}">
+              <i class="fa-solid fa-fw fa-flask"></i>${game.i18n.localize('ai-pf2e-assistant.buttons.synthesizeFeat')}
+            </button>
+          `);
           
-          // 更新按钮文本
-          synthesisButton.contents().filter(function(this: Node) {
-            return this.nodeType === 3; // 文本节点
-          }).remove();
-          synthesisButton.find('i').after(buttonText);
-        }).catch((err) => {
-          console.warn(`${MODULE_ID} | 无法加载主题服务，使用默认文本`, err);
-        });
+          import('./services/theme-service.js').then((module) => {
+            const themeService = module.ThemeService.getInstance();
+            const buttonText = themeService.getText('ui.buttons.synthesisButton');
+            synthesisButton.contents().filter(function(this: Node) {
+              return this.nodeType === 3;
+            }).remove();
+            synthesisButton.find('i').after(buttonText);
+          }).catch((err) => {
+            console.warn(`${MODULE_ID} | 无法加载主题服务，使用默认文本`, err);
+          });
 
-        // 添加点击事件
-        synthesisButton.on('click', (event: Event) => {
-          event.preventDefault();
-          Logger.debug('专长合成按钮被点击');
-          this.openFeatSynthesis(app.actor);
-        });
+          synthesisButton.on('click', (event: Event) => {
+            event.preventDefault();
+            Logger.debug('专长合成按钮被点击');
+            this.openFeatSynthesis(app.actor);
+          });
 
-        // 添加CSS样式
-        synthesisButton.css({
-          'margin-left': '8px',
-          'background': '#6f42c1',
-          'color': 'white',
-          'border': 'none',
-          'border-radius': '3px',
-          'padding': '6px 12px',
-          'cursor': 'pointer',
-          'font-size': '13px'
-        });
+          synthesisButton.css({
+            'margin-left': '8px',
+            'background': '#6f42c1',
+            'color': 'white',
+            'border': 'none',
+            'border-radius': '3px',
+            'padding': '6px 12px',
+            'cursor': 'pointer',
+            'font-size': '13px'
+          });
 
-        // 添加悬停效果
-        synthesisButton.on('mouseenter', function(this: HTMLElement) {
-          $(this).css('background', '#5a32a3');
-        }).on('mouseleave', function(this: HTMLElement) {
-          $(this).css('background', '#6f42c1');
-        });
+          synthesisButton.on('mouseenter', function(this: HTMLElement) {
+            $(this).css('background', '#5a32a3');
+          }).on('mouseleave', function(this: HTMLElement) {
+            $(this).css('background', '#6f42c1');
+          });
+        }
 
-        // 创建储存箱按钮
+        // 储存箱按钮：神龛或肉鸽启用时均显示
         const storageButton = $(`
           <button type="button" class="feat-storage-button" data-tooltip="${game.i18n.localize('ai-pf2e-assistant.buttons.featStorageTooltip')}">
             <i class="fa-solid fa-fw fa-box-archive"></i>${game.i18n.localize('ai-pf2e-assistant.buttons.storage')}
           </button>
         `);
 
-        // 添加储存箱按钮点击事件
         storageButton.on('click', (event: Event) => {
           event.preventDefault();
           Logger.debug('储存箱按钮被点击');
           this.openFeatStorage(app.actor);
         });
 
-        // 添加储存箱按钮CSS样式
         storageButton.css({
           'margin-left': '8px',
           'background': '#17a2b8',
@@ -863,26 +861,23 @@ export class AIPF2eAssistant {
           'font-size': '13px'
         });
 
-        // 添加悬停效果
         storageButton.on('mouseenter', function(this: HTMLElement) {
           $(this).css('background', '#138496');
         }).on('mouseleave', function(this: HTMLElement) {
           $(this).css('background', '#17a2b8');
         });
 
-        // 将按钮添加到控制区域（紧挨着创建专长按钮）
         const createFeatButton = controls.find('button[data-action="create-feat"]');
         if (createFeatButton.length > 0) {
-          // 如果找到创建专长按钮，在它后面插入合成按钮
-          createFeatButton.after(synthesisButton);
-          // 在合成按钮后面插入储存箱按钮
-          synthesisButton.after(storageButton);
-          Logger.debug('已在创建专长按钮后添加合成按钮和储存箱按钮');
+          if (synthesisButton) {
+            createFeatButton.after(synthesisButton);
+            synthesisButton.after(storageButton);
+          } else {
+            createFeatButton.after(storageButton);
+          }
         } else {
-          // 如果没找到创建专长按钮，添加到控制区域末尾
-          controls.append(synthesisButton);
+          if (synthesisButton) controls.append(synthesisButton);
           controls.append(storageButton);
-          Logger.debug('已添加合成按钮和储存箱按钮到控制区域末尾');
         }
       });
 
@@ -900,12 +895,15 @@ export class AIPF2eAssistant {
     try {
       Logger.debug('为角色表单添加法术合成按钮', app.actor?.name);
       
-      // 检查神龛系统是否启用
       const game = getGame();
       const shrineEnabled = game?.settings?.get(MODULE_ID, 'useShrineSystem') ?? false;
+      const roguelikeEnabled = (() => {
+        try { return game?.settings?.get(MODULE_ID, 'roguelikeEnabled') !== false; }
+        catch { return true; }
+      })();
       
-      if (!shrineEnabled) {
-        Logger.debug('神龛系统未启用，跳过添加法术合成按钮');
+      if (!shrineEnabled && !roguelikeEnabled) {
+        Logger.debug('神龛系统和肉鸽系统均未启用，跳过');
         return;
       }
       
@@ -968,44 +966,40 @@ export class AIPF2eAssistant {
         
         Logger.debug(`找到控制区域，类名: ${controls.attr('class')}`);
         
-        // 创建法术合成按钮（小型图标按钮）
-        const synthesisButton = $(`
-          <a class="spell-synthesis-button item-control" data-tooltip="使用神龛合成${tradition}法术" data-tradition="${tradition}">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-          </a>
-        `);
+        // 合成按钮仅在神龛系统启用时显示
+        let synthesisButton: any = null;
+        if (shrineEnabled) {
+          synthesisButton = $(`
+            <a class="spell-synthesis-button item-control" data-tooltip="使用神龛合成${tradition}法术" data-tradition="${tradition}">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </a>
+          `);
+          synthesisButton.on('click', (event: Event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            Logger.debug(`法术合成按钮被点击，施法传统: ${tradition}`);
+            this.openSpellSynthesis(app.actor, tradition);
+          });
+        }
         
-        // 添加点击事件
-        synthesisButton.on('click', (event: Event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          Logger.debug(`法术合成按钮被点击，施法传统: ${tradition}`);
-          // 打开法术合成界面，并传入施法传统
-          this.openSpellSynthesis(app.actor, tradition);
-        });
-        
-        // 创建法术储存箱按钮（小型图标按钮）
-        const storageButton = $(`
-          <a class="spell-storage-button item-control" data-tooltip="${game.i18n.localize('ai-pf2e-assistant.buttons.spellStorageTooltip')}" style="margin-left: 0.25rem;">
-            <i class="fa-solid fa-box-archive"></i>
-          </a>
-        `);
-        
-        // 添加点击事件 - 只在第一个传统上添加一次
+        // 储存箱按钮：神龛或肉鸽启用时均显示（只在第一个传统上添加）
         if (index === 0) {
+          const storageButton = $(`
+            <a class="spell-storage-button item-control" data-tooltip="${game.i18n.localize('ai-pf2e-assistant.buttons.spellStorageTooltip')}" style="margin-left: 0.25rem;">
+              <i class="fa-solid fa-box-archive"></i>
+            </a>
+          `);
           storageButton.on('click', (event: Event) => {
             event.preventDefault();
             event.stopPropagation();
             Logger.debug('法术储存箱按钮被点击');
-            // 打开法术储存箱，切换到法术分页
             this.openItemStorage(app.actor, 'spells');
           });
           
-        // 将按钮添加到找到的第一个控制区域
-          $(controls[0]).append(synthesisButton).append(storageButton);
+          if (synthesisButton) $(controls[0]).append(synthesisButton);
+          $(controls[0]).append(storageButton);
         } else {
-          // 其他传统只添加合成按钮
-        $(controls[0]).append(synthesisButton);
+          if (synthesisButton) $(controls[0]).append(synthesisButton);
         }
       });
       
@@ -1025,11 +1019,14 @@ export class AIPF2eAssistant {
     try {
       Logger.debug('为角色表单添加物品合成按钮', app.actor?.name);
 
-      // 检查神龛系统是否启用
       const game = getGame();
       const shrineEnabled = game?.settings?.get(MODULE_ID, 'useShrineSystem') ?? false;
-      if (!shrineEnabled) {
-        Logger.debug('神龛系统未启用，跳过添加物品合成按钮');
+      const roguelikeEnabled = (() => {
+        try { return game?.settings?.get(MODULE_ID, 'roguelikeEnabled') !== false; }
+        catch { return true; }
+      })();
+      if (!shrineEnabled && !roguelikeEnabled) {
+        Logger.debug('神龛系统和肉鸽系统均未启用，跳过');
         return;
       }
 
@@ -1077,56 +1074,53 @@ export class AIPF2eAssistant {
         return;
       }
       
-      // 创建物品合成按钮（小型图标按钮，类似法术合成按钮）
-      const synthesisButton = $(`
-        <a class="equipment-synthesis-button item-control" data-tooltip="使用神龛合成魔法物品" style="margin-left: 8px;">
-          <i class="fa-solid fa-wand-sparkles"></i>
-        </a>
-      `);
-      
-      // 添加点击事件
-      synthesisButton.on('click', (event: Event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        Logger.debug('物品合成按钮被点击');
-        this.openEquipmentSynthesis(app.actor);
-      });
-      
-      // 创建物品存储箱按钮（小型图标按钮）
+      const target = wealthRow.first();
+
+      // 合成按钮仅在神龛系统启用时显示
+      if (shrineEnabled) {
+        const synthesisButton = $(`
+          <a class="equipment-synthesis-button item-control" data-tooltip="使用神龛合成魔法物品" style="margin-left: 8px;">
+            <i class="fa-solid fa-wand-sparkles"></i>
+          </a>
+        `);
+        synthesisButton.on('click', (event: Event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          Logger.debug('物品合成按钮被点击');
+          this.openEquipmentSynthesis(app.actor);
+        });
+        target.append(synthesisButton);
+      }
+
+      // 储存箱按钮：神龛或肉鸽启用时均显示
       const equipmentStorageButton = $(`
         <a class="equipment-storage-button item-control" data-tooltip="物品储存箱" style="margin-left: 0.25rem;">
           <i class="fa-solid fa-box-archive"></i>
         </a>
       `);
-      
-      // 添加点击事件
       equipmentStorageButton.on('click', (event: Event) => {
         event.preventDefault();
         event.stopPropagation();
         Logger.debug('物品储存箱按钮被点击');
-        // 打开物品储存箱，切换到equipment分页
         this.openItemStorage(app.actor, 'equipment');
       });
-      
-      // 创建碎片物品存储箱按钮（小型图标按钮）
+      target.append(equipmentStorageButton);
+
+      // 碎片物品存储箱按钮
       const fragmentStorageButton = $(`
         <a class="fragment-storage-button item-control" data-tooltip="碎片物品储存箱" style="margin-left: 0.25rem;">
           <i class="fa-solid fa-gem"></i>
         </a>
       `);
-      
-      // 添加点击事件
       fragmentStorageButton.on('click', (event: Event) => {
         event.preventDefault();
         event.stopPropagation();
         Logger.debug('碎片物品储存箱按钮被点击');
-        // 打开碎片物品储存箱，切换到fragments分页
         this.openItemStorage(app.actor, 'fragments');
       });
-      
-      // 将按钮添加到找到的元素
-      wealthRow.first().append(synthesisButton).append(equipmentStorageButton).append(fragmentStorageButton);
-      Logger.debug('已添加物品合成按钮、物品存储箱按钮和碎片物品存储箱按钮到全部财产行');
+      target.append(fragmentStorageButton);
+
+      Logger.debug('已添加物品相关按钮到全部财产行');
 
     } catch (error) {
       Logger.error('添加物品合成按钮失败:', error);

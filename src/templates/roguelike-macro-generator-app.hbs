@@ -43,6 +43,20 @@
     </div>
     {{/if}}
 
+    {{#if showEquipmentCategories}}
+    <div class="roguelike-form-group">
+      <label>装备子分类 <span style="font-size:0.75rem;opacity:0.6;">（不勾选则包含所有）</span></label>
+      <div class="roguelike-checkbox-group roguelike-equipment-categories">
+        {{#each equipmentCategoryOptions}}
+          <label>
+            <input type="checkbox" name="equipmentCategory" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+            {{this.label}}
+          </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
     <div class="roguelike-form-row">
       <div class="roguelike-form-group">
         <label>最低等级</label>

@@ -20,6 +20,8 @@ export interface RoguelikeDrawConfig {
   contentTypes?: string[];
   /** 专长子分类过滤（仅对 feat tab 生效），为空则不过滤 */
   featCategories?: string[];
+  /** 装备子分类过滤（仅对 equipment tab 生效），为空则不过滤。按 item type 筛选 */
+  equipmentCategories?: string[];
   levelRange?: { min: number; max: number };
   rarityFilter?: string[];
   requiredTraits?: string[];
@@ -52,6 +54,18 @@ export const FEAT_CATEGORIES: Record<string, string> = {
   archetype:      'PF2E.Item.Feat.Category.Archetype',
   pfsboon:        'PF2E.Item.Feat.Category.PFSBoon',
   bonus:          'PF2E.Item.Feat.Category.Bonus',
+};
+
+/** PF2e 装备子分类配置（按 item type 区分） */
+export const EQUIPMENT_CATEGORIES: Record<string, string> = {
+  weapon:     'TYPES.Item.weapon',
+  armor:      'TYPES.Item.armor',
+  shield:     'TYPES.Item.shield',
+  equipment:  'TYPES.Item.equipment',
+  consumable: 'TYPES.Item.consumable',
+  treasure:   'TYPES.Item.treasure',
+  backpack:   'TYPES.Item.backpack',
+  kit:        'TYPES.Item.kit',
 };
 
 const TAB_NAMES = ['feat', 'spell', 'equipment', 'action'] as const;
@@ -93,6 +107,9 @@ export class RoguelikeDrawService {
     const featCategories = config.featCategories && config.featCategories.length > 0
       ? new Set(config.featCategories)
       : null;
+    const equipmentCategories = config.equipmentCategories && config.equipmentCategories.length > 0
+      ? new Set(config.equipmentCategories)
+      : null;
     const levelMin = config.levelRange?.min ?? 0;
     const levelMax = config.levelRange?.max ?? 20;
     const requiredTraits = config.requiredTraits || [];
@@ -120,6 +137,12 @@ export class RoguelikeDrawService {
         // feat 子分类过滤
         if (tabName === 'feat' && featCategories !== null) {
           if (!featCategories.has(entryCategory)) continue;
+        }
+
+        // equipment 子分类过滤（按 item type）
+        if (tabName === 'equipment' && equipmentCategories !== null) {
+          const entryType = entry.type || '';
+          if (!equipmentCategories.has(entryType)) continue;
         }
 
         if (!this.matchesFilter(entryTraits, entryRarity, entryLevel, levelMin, levelMax, requiredTraits, excludedTraits, rarityFilter)) {
@@ -260,6 +283,17 @@ export class RoguelikeDrawService {
     bonus: '额外专长',
   };
 
+  private static readonly EQUIPMENT_CATEGORY_FALLBACK: Record<string, string> = {
+    weapon: '武器',
+    armor: '护甲',
+    shield: '盾牌',
+    equipment: '装备',
+    consumable: '消耗品',
+    treasure: '财宝',
+    backpack: '背包',
+    kit: '套组',
+  };
+
   /**
    * 获取专长分类选项列表（已本地化）
    */
@@ -279,6 +313,23 @@ export class RoguelikeDrawService {
       }));
     }
     return Object.entries(FEAT_CATEGORIES).map(([value, labelKey]) => ({
+      value,
+      label: resolve(value, labelKey),
+    }));
+  }
+
+  /**
+   * 获取装备子分类选项列表（已本地化）
+   */
+  static getEquipmentCategoryOptions(): { value: string; label: string }[] {
+    const g = game as any;
+    const resolve = (value: string, labelKey: string): string => {
+      const localized = g.i18n?.localize(labelKey);
+      if (localized && localized !== labelKey) return localized;
+      return this.EQUIPMENT_CATEGORY_FALLBACK[value] || value;
+    };
+
+    return Object.entries(EQUIPMENT_CATEGORIES).map(([value, labelKey]) => ({
       value,
       label: resolve(value, labelKey),
     }));

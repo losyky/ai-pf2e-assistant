@@ -19,6 +19,7 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
     selectablePerDraw: 1,
     contentTypes: ['feat'] as string[],
     featCategories: [] as string[],
+    equipmentCategories: [] as string[],
     levelMin: 0,
     levelMax: 20,
     rarityFilter: [] as string[],
@@ -65,6 +66,14 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
         }))
       : [];
 
+    const showEquipmentCategories = this.formState.contentTypes.includes('equipment');
+    const equipmentCategoryOptions = showEquipmentCategories
+      ? RoguelikeDrawService.getEquipmentCategoryOptions().map(opt => ({
+          ...opt,
+          checked: this.formState.equipmentCategories.includes(opt.value),
+        }))
+      : [];
+
     const rarityOptions = [
       { value: 'common',   label: '普通 (Common)',   checked: this.formState.rarityFilter.includes('common') },
       { value: 'uncommon', label: '罕见 (Uncommon)', checked: this.formState.rarityFilter.includes('uncommon') },
@@ -94,6 +103,8 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
       contentTypeOptions,
       showFeatCategories,
       featCategoryOptions,
+      showEquipmentCategories,
+      equipmentCategoryOptions,
       rarityOptions,
       availableTraits: this.availableTraits,
       requiredTraitLabels,
@@ -225,6 +236,12 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
     });
     this.formState.featCategories = featCategories;
 
+    const equipmentCategories: string[] = [];
+    html.find('input[name="equipmentCategory"]:checked').each(function () {
+      equipmentCategories.push((this as HTMLInputElement).value);
+    });
+    this.formState.equipmentCategories = equipmentCategories;
+
     const rarityFilter: string[] = [];
     html.find('input[name="rarity"]:checked').each(function () {
       rarityFilter.push((this as HTMLInputElement).value);
@@ -258,6 +275,11 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
     if (s.featCategories.length > 0 && s.contentTypes.includes('feat')) {
       const fcArr = s.featCategories.map(function(c) { return "'" + c + "'"; }).join(', ');
       lines.push('  featCategories: [' + fcArr + '],');
+    }
+
+    if (s.equipmentCategories.length > 0 && s.contentTypes.includes('equipment')) {
+      const ecArr = s.equipmentCategories.map(function(c) { return "'" + c + "'"; }).join(', ');
+      lines.push('  equipmentCategories: [' + ecArr + '],');
     }
 
     lines.push('  levelRange: { min: ' + s.levelMin + ', max: ' + s.levelMax + ' },');
