@@ -1,0 +1,57 @@
+<div class="map-template-panel">
+  <div class="panel-header">
+    <h3>地图模板</h3>
+    <div class="panel-actions">
+      <button class="panel-btn" data-action="new" title="新建空白模板">
+        <i class="fas fa-plus"></i> 新建
+      </button>
+      <button class="panel-btn" data-action="presets" title="加载预设模板">
+        <i class="fas fa-cubes"></i> 预设
+      </button>
+      <button class="panel-btn" data-action="style" title="配置当前场景的地图风格">
+        <i class="fas fa-paint-brush"></i> 风格
+      </button>
+    </div>
+  </div>
+
+  <div class="panel-hint">
+    <i class="fas fa-info-circle"></i> 将模板拖入场景，或点击 <i class="fas fa-crosshairs"></i> 放置到视口中心
+  </div>
+
+  {{#if hasTemplates}}
+  <div class="template-list">
+    {{#each templates}}
+    <div class="template-card" data-template-id="{{this.id}}" draggable="true">
+      <div class="template-thumbnail">
+        <img src="{{this.thumbnail}}" alt="{{this.name}}" />
+      </div>
+      <div class="template-info">
+        <span class="template-name">{{this.name}}</span>
+        {{#if this.description}}
+        <span class="template-desc">{{this.description}}</span>
+        {{/if}}
+      </div>
+      <div class="template-actions">
+        <button class="template-action-btn" data-action="place" data-template-id="{{this.id}}" title="放置到场景">
+          <i class="fas fa-crosshairs"></i>
+        </button>
+        <button class="template-action-btn" data-action="edit" data-template-id="{{this.id}}" title="编辑">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="template-action-btn" data-action="duplicate" data-template-id="{{this.id}}" title="复制">
+          <i class="fas fa-copy"></i>
+        </button>
+        <button class="template-action-btn danger" data-action="delete" data-template-id="{{this.id}}" title="删除">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{else}}
+  <div class="empty-state">
+    <i class="fas fa-map"></i>
+    <p>暂无模板，点击「新建」或「预设」开始创建</p>
+  </div>
+  {{/if}}
+</div>

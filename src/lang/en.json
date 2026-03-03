@@ -132,6 +132,10 @@
         "name": "AI Icon Generation",
         "hint": "When enabled, AI icon generation button will be shown in item sheet title bar, and icons will be automatically generated for created items and monsters"
       },
+      "mapBuilderEnabled": {
+        "name": "Modular Map Builder",
+        "hint": "When enabled, map template panel and style config buttons will be shown in the toolbar, supporting drag-and-drop roguelike map tile generation (requires page reload)"
+      },
       "imageModel": {
         "name": "Image Generation Model",
         "hint": "Select the AI model to use for icon generation"
@@ -211,7 +215,9 @@
       "featureGenerator": "PF2e Feature Generator",
       "featGenerator": "PF2e Feat Generator",
       "fragmentGenerator": "PF2e Fragment Generator",
-      "shrineManager": "Shrine Point Manager"
+      "shrineManager": "Shrine Point Manager",
+      "mapTemplatePanel": "Map Template Panel",
+      "mapStyleConfig": "Map Style Config"
     },
     "ItemGenerator": {
       "title": "PF2e Item Generator",
@@ -704,6 +710,40 @@
         "noActiveTab": "Cannot determine active browser tab",
         "noFilteredResults": "No results with current filters"
       }
+    },
+    "mapBuilder": {
+      "panel": "Map Template Panel",
+      "styleConfig": "Map Style Config",
+      "editorTitle": "Map Template Editor",
+      "panelTitle": "Map Template Panel",
+      "styleConfigTitle": "Map Generation Style Config",
+      "newTemplate": "New",
+      "presets": "Presets",
+      "style": "Style",
+      "save": "Save Template",
+      "cancel": "Cancel",
+      "export": "Export",
+      "import": "Import",
+      "edit": "Edit",
+      "delete": "Delete",
+      "duplicate": "Duplicate",
+      "cellMode": "Cell",
+      "wallMode": "Wall",
+      "fillAll": "Fill All",
+      "clearAll": "Clear All",
+      "autoWalls": "Auto Walls",
+      "clearWalls": "Clear Walls",
+      "dragHint": "Drag a template onto the scene to generate a map tile",
+      "emptyState": "No templates yet. Click 'New' or 'Presets' to get started",
+      "presetsLoaded": "Preset templates loaded",
+      "templateSaved": "Template saved",
+      "templateDeleted": "Template deleted",
+      "generating": "Generating map image...",
+      "generateComplete": "Map image generation complete!",
+      "generateFailed": "Map image generation failed",
+      "noStylePrompt": "No map style prompt configured, skipping AI image generation",
+      "noScene": "No active scene",
+      "styleSaved": "Map style config saved"
     }
   }
 } 

@@ -1,0 +1,553 @@
+/* ========================================
+   地图构建系统样式
+   ======================================== */
+
+/* ---------- 模板编辑器 ---------- */
+
+.map-template-editor-app .window-content {
+  padding: 8px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+}
+
+.map-template-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.map-template-editor .editor-header {
+  display: flex;
+  gap: 10px;
+}
+
+.map-template-editor .editor-header .form-group {
+  flex: 1;
+  margin: 0;
+}
+
+.map-template-editor .editor-header label {
+  display: block;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: #aaa;
+  margin-bottom: 2px;
+}
+
+.map-template-editor .editor-header input,
+.map-template-editor .editor-header select {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #2a2a3e;
+  color: #e0e0e0;
+  font-size: 0.9em;
+}
+
+.map-template-editor .editor-header .grid-info {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 0.8em;
+  color: #888;
+}
+
+.map-template-editor .editor-body {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.map-template-editor .editor-canvas-area {
+  flex: 0 0 auto;
+  overflow: auto;
+  max-height: 660px;
+}
+
+.map-template-editor .editor-preview-area .hint {
+  font-size: 0.78em;
+  color: #777;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.map-template-editor .editor-canvas-area canvas {
+  border: 2px solid #555;
+  border-radius: 4px;
+  cursor: crosshair;
+  image-rendering: pixelated;
+}
+
+.map-template-editor .editor-preview-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-template-editor .editor-preview-area h3 {
+  margin: 0;
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+.map-template-editor .editor-preview-area canvas {
+  border: 1px solid #444;
+  border-radius: 4px;
+  image-rendering: pixelated;
+}
+
+.map-template-editor .editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid #333;
+}
+
+.map-template-editor .tool-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.map-template-editor .tool-group label {
+  font-size: 0.85em;
+  color: #aaa;
+  white-space: nowrap;
+}
+
+.map-template-editor .mode-btn,
+.map-template-editor .action-btn {
+  padding: 4px 10px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #2a2a3e;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 0.85em;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.map-template-editor .mode-btn:hover,
+.map-template-editor .action-btn:hover {
+  background: #3a3a5e;
+  border-color: #777;
+}
+
+.map-template-editor .mode-btn.active {
+  background: #4361ee;
+  border-color: #4361ee;
+  color: #fff;
+}
+
+.map-template-editor .wall-type-group select {
+  padding: 4px 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #2a2a3e;
+  color: #e0e0e0;
+  font-size: 0.85em;
+}
+
+.map-template-editor .wall-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+  padding: 6px 10px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #22223a;
+}
+
+.map-template-editor .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8em;
+  color: #ccc;
+}
+
+.map-template-editor .legend-swatch {
+  display: inline-block;
+  width: 20px;
+  height: 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.map-template-editor .editor-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid #333;
+}
+
+.map-template-editor .save-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #4361ee;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.map-template-editor .save-btn:hover {
+  background: #3451d1;
+}
+
+.map-template-editor .cancel-btn {
+  padding: 6px 16px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: transparent;
+  color: #ccc;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.map-template-editor .cancel-btn:hover {
+  background: #3a3a5e;
+}
+
+/* ---------- 模板面板 ---------- */
+
+.map-template-panel-app .window-content {
+  padding: 8px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+}
+
+.map-template-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.map-template-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.map-template-panel .panel-header h3 {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 1.1em;
+}
+
+.map-template-panel .panel-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.map-template-panel .panel-btn {
+  padding: 4px 10px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #2a2a3e;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 0.85em;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.map-template-panel .panel-btn:hover {
+  background: #3a3a5e;
+  border-color: #777;
+}
+
+.map-template-panel .panel-hint {
+  font-size: 0.8em;
+  color: #888;
+  padding: 4px 0;
+}
+
+.map-template-panel .panel-hint i {
+  margin-right: 4px;
+}
+
+.map-template-panel .template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.map-template-panel .template-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #22223a;
+  cursor: grab;
+  transition: all 0.15s;
+}
+
+.map-template-panel .template-card:hover {
+  border-color: #4361ee;
+  background: #2a2a4a;
+}
+
+.map-template-panel .template-card:active {
+  cursor: grabbing;
+}
+
+.map-template-panel .template-thumbnail {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #444;
+}
+
+.map-template-panel .template-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.map-template-panel .template-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.map-template-panel .template-name {
+  font-weight: 600;
+  font-size: 0.95em;
+  color: #e0e0e0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map-template-panel .template-desc {
+  font-size: 0.8em;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map-template-panel .template-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.map-template-panel .template-action-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.map-template-panel .template-action-btn:hover {
+  background: #3a3a5e;
+  color: #ccc;
+}
+
+.map-template-panel .template-action-btn.danger:hover {
+  background: #5a2020;
+  color: #ff6b6b;
+}
+
+.map-template-panel .empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #666;
+}
+
+.map-template-panel .empty-state i {
+  font-size: 2.5em;
+  opacity: 0.5;
+}
+
+.map-template-panel .empty-state p {
+  font-size: 0.9em;
+  text-align: center;
+}
+
+/* ---------- 风格配置 ---------- */
+
+.map-style-config-app .window-content {
+  padding: 12px;
+  background: #f8f9fa;
+}
+
+.map-style-config .form-group {
+  margin-bottom: 14px;
+}
+
+.map-style-config .form-group label {
+  display: block;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 4px;
+}
+
+.map-style-config .form-group textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9em;
+  resize: vertical;
+}
+
+.map-style-config .form-group select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.map-style-config .form-group .notes {
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.map-style-config .ref-image-controls {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.map-style-config .ref-image-controls input {
+  flex: 1;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.map-style-config .ref-image-controls button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.map-style-config .ref-image-controls button:hover {
+  background: #e9ecef;
+  border-color: #999;
+}
+
+.map-style-config .ref-image-preview {
+  margin-top: 6px;
+  min-height: 40px;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  padding: 4px;
+  text-align: center;
+  background: #fafafa;
+}
+
+.map-style-config .ref-image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.map-style-config .ref-image-preview .ref-empty {
+  display: block;
+  padding: 10px;
+  color: #aaa;
+  font-size: 0.85em;
+  font-style: italic;
+}
+
+.map-style-config .sheet-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #ddd;
+}
+
+.map-style-config .sheet-footer button {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #4361ee;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.map-style-config .sheet-footer button:hover {
+  background: #3451d1;
+}
+
+/* ---------- 放置预览覆盖层 ---------- */
+
+#map-placement-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  cursor: crosshair;
+}
+
+#map-placement-overlay .placement-hint {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 18px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+#map-placement-overlay .placement-hint i {
+  margin-right: 6px;
+}

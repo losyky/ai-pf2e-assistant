@@ -19,6 +19,7 @@ import { IconConfigManager } from './ui/config-managers/icon-config-manager';
 import { TerminologyConfigManager } from './ui/config-managers/terminology-config-manager';
 import { BalanceConfigManager } from './ui/config-managers/balance-config-manager';
 import { RoguelikeBanlistManagerApp } from './ui/roguelike-banlist-manager-app';
+import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler } from './map-builder';
 // 不直接导入game对象，而是在需要时使用全局访问
 // import { Hooks, ui, game } from '../foundry-imports';
 import { Hooks, ui } from '../foundry-imports';
@@ -555,6 +556,36 @@ export class AIPF2eAssistant {
         }
       };
     }
+
+    const isMapBuilderEnabled = (() => {
+      try { return (game as any).settings?.get(MODULE_ID, 'mapBuilderEnabled') === true; }
+      catch { return false; }
+    })();
+
+    if (isMapBuilderEnabled) {
+      aiTools['ai-map-template-panel'] = {
+        name: 'ai-map-template-panel',
+        title: game.i18n.localize('AIPF2E.tools.mapTemplatePanel'),
+        icon: 'fas fa-map',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 地图模板面板按钮被点击`);
+          MapTemplatePanelApp.open();
+        }
+      };
+      aiTools['ai-map-style-config'] = {
+        name: 'ai-map-style-config',
+        title: game.i18n.localize('AIPF2E.tools.mapStyleConfig'),
+        icon: 'fas fa-paint-brush',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 地图风格配置按钮被点击`);
+          new MapStyleConfigApp().render(true);
+        }
+      };
+    }
     
     // 添加所有工具
     Object.assign(tokenControl.tools, aiTools);
@@ -658,6 +689,31 @@ export class AIPF2eAssistant {
             this.openShrinePointManager();
           }
         });
+      }
+
+      const isMapOn = (() => {
+        try { return game.settings?.get(MODULE_ID, 'mapBuilderEnabled') === true; }
+        catch { return false; }
+      })();
+      if (isMapOn) {
+        aiTools.push(
+          {
+            name: 'ai-map-template-panel',
+            title: game.i18n.localize('AIPF2E.tools.mapTemplatePanel'),
+            icon: 'fas fa-map',
+            button: true,
+            visible: true,
+            onClick: () => { MapTemplatePanelApp.open(); }
+          },
+          {
+            name: 'ai-map-style-config',
+            title: game.i18n.localize('AIPF2E.tools.mapStyleConfig'),
+            icon: 'fas fa-paint-brush',
+            button: true,
+            visible: true,
+            onClick: () => { new MapStyleConfigApp().render(true); }
+          }
+        );
       }
 
       aiTools.forEach(tool => tokenControl.tools.push(tool));
@@ -7832,6 +7888,25 @@ function registerSettings() {
       type: Array,
       default: [],
     });
+
+    // 地图构建系统开关
+    game.settings.register(MODULE_ID, 'mapBuilderEnabled', {
+      name: game.i18n.localize("ai-pf2e-assistant.settings.mapBuilderEnabled.name"),
+      hint: game.i18n.localize("ai-pf2e-assistant.settings.mapBuilderEnabled.hint"),
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: false,
+    });
+
+    // 地图模板数据（数组存储，元素为纯字符串属性的对象）
+    game.settings.register(MODULE_ID, 'mapTemplates', {
+      name: '地图模板数据',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: [],
+    });
     
     // ========================================
     // API设置（隐藏，通过API配置管理器访问）
@@ -8332,6 +8407,18 @@ Hooks.once('ready', function() {
   // 注册 CompendiumBrowser 批量添加到屏蔽列表的 Hook
   RoguelikeBanlistManagerApp.registerCompendiumBrowserHook();
   Logger.debug('CompendiumBrowser banlist hook registered');
+
+  // 注册地图构建系统的 drop 处理
+  // MapDropHandler 内部同时注册 Foundry hook 和 DOM 级别备选监听
+  try {
+    const isMapBuilderEnabled = (game as any).settings?.get(MODULE_ID, 'mapBuilderEnabled') === true;
+    if (isMapBuilderEnabled) {
+      MapDropHandler.register();
+      Logger.debug('Map builder drop handler registered');
+    }
+  } catch (e) {
+    Logger.warn('Map builder not enabled or failed to register:', e);
+  }
   
   // 集成战术手册系统
   Logger.debug('Integrating Tactical Manual...');

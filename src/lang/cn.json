@@ -132,6 +132,10 @@
         "name": "AI 图标生成",
         "hint": "启用后将在物品表单标题栏显示 AI 图标生成按钮，并为生成的物品和怪物自动生成图标"
       },
+      "mapBuilderEnabled": {
+        "name": "模块化地图构建系统",
+        "hint": "启用后将在工具栏显示地图模板面板和风格配置按钮，支持通过模板拖放快速生成 Roguelike 风格地图图块（需要重新加载页面生效）"
+      },
       "imageModel": {
         "name": "图像生成模型",
         "hint": "选择用于生成图标的AI模型"
@@ -294,7 +298,9 @@
       "featureGenerator": "PF2e 特性生成器",
       "featGenerator": "PF2e 专长生成器",
       "fragmentGenerator": "PF2e 词条碎片生成器",
-      "shrineManager": "神龛点数管理"
+      "shrineManager": "神龛点数管理",
+      "mapTemplatePanel": "地图模板面板",
+      "mapStyleConfig": "地图风格配置"
     },
     "ItemGenerator": {
       "title": "PF2e 物品生成器",
@@ -794,6 +800,40 @@
         "noActiveTab": "无法获取当前浏览器标签页",
         "noFilteredResults": "当前筛选条件下没有结果"
       }
+    },
+    "mapBuilder": {
+      "panel": "地图模板面板",
+      "styleConfig": "地图风格配置",
+      "editorTitle": "地图模板编辑器",
+      "panelTitle": "地图模板面板",
+      "styleConfigTitle": "地图生成风格配置",
+      "newTemplate": "新建",
+      "presets": "预设",
+      "style": "风格",
+      "save": "保存模板",
+      "cancel": "取消",
+      "export": "导出",
+      "import": "导入",
+      "edit": "编辑",
+      "delete": "删除",
+      "duplicate": "复制",
+      "cellMode": "区域",
+      "wallMode": "墙壁",
+      "fillAll": "全填充",
+      "clearAll": "全清空",
+      "autoWalls": "自动围墙",
+      "clearWalls": "清墙壁",
+      "dragHint": "将模板拖入场景以生成地图图块",
+      "emptyState": "暂无模板，点击「新建」或「预设」开始创建",
+      "presetsLoaded": "已加载预设模板",
+      "templateSaved": "模板已保存",
+      "templateDeleted": "模板已删除",
+      "generating": "正在生成地图图片...",
+      "generateComplete": "地图图片生成完成！",
+      "generateFailed": "地图图片生成失败",
+      "noStylePrompt": "未配置地图风格提示词，跳过 AI 图像生成",
+      "noScene": "没有活动场景",
+      "styleSaved": "地图风格配置已保存"
     }
   }
 } 

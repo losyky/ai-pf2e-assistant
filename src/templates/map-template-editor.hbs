@@ -1,0 +1,89 @@
+<div class="map-template-editor">
+  <div class="editor-header">
+    <div class="form-group">
+      <label>模板名称</label>
+      <input type="text" name="templateName" value="{{templateName}}" placeholder="输入模板名称" />
+    </div>
+    <div class="form-group">
+      <label>描述</label>
+      <input type="text" name="templateDesc" value="{{templateDesc}}" placeholder="可选描述" />
+    </div>
+    <div class="form-group">
+      <label>地图尺寸</label>
+      <select name="sizePreset">
+        {{#each sizePresets}}
+        <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+        {{/each}}
+      </select>
+      <span class="grid-info hint">{{gridInfo}}</span>
+    </div>
+  </div>
+
+  <div class="editor-body">
+    <div class="editor-canvas-area">
+      <canvas id="map-editor-canvas" width="640" height="640"></canvas>
+    </div>
+    <div class="editor-preview-area">
+      <h3>垫图预览</h3>
+      <canvas id="map-preview-canvas" width="256" height="256"></canvas>
+      <p class="hint">不同颜色代表不同墙壁类型，右键点击已有墙壁可切换类型<br/>AI 垫图中墙线统一为灰色以减少干扰</p>
+
+      <h3>墙壁图例</h3>
+      <div class="wall-legend">
+        {{#each wallTypes}}
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:{{this.color}}"></span>
+          <span class="legend-label">{{this.label}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <div class="editor-toolbar">
+    <div class="tool-group mode-group">
+      <label>编辑模式：</label>
+      <button class="mode-btn {{#if isCellMode}}active{{/if}}" data-mode="cell" title="区域模式：点击格子切换可通行/不可通行">
+        <i class="fas fa-th"></i> 区域
+      </button>
+      <button class="mode-btn {{#if isWallMode}}active{{/if}}" data-mode="wall" title="墙壁模式：点击格子边切换墙壁">
+        <i class="fas fa-border-all"></i> 墙壁
+      </button>
+    </div>
+    <div class="tool-group wall-type-group">
+      <label>墙壁类型：</label>
+      <select name="wallType">
+        {{#each wallTypes}}
+        <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="tool-group action-group">
+      <button class="action-btn" data-action="fill-all" title="全部填充为可通行">
+        <i class="fas fa-fill"></i> 全填充
+      </button>
+      <button class="action-btn" data-action="clear-all" title="全部清空为不可通行">
+        <i class="fas fa-eraser"></i> 全清空
+      </button>
+      <button class="action-btn" data-action="auto-walls" title="根据区域自动生成围墙">
+        <i class="fas fa-magic"></i> 自动围墙
+      </button>
+      <button class="action-btn" data-action="clear-walls" title="清除所有墙壁">
+        <i class="fas fa-times"></i> 清墙壁
+      </button>
+    </div>
+    <div class="tool-group io-group">
+      <button class="action-btn" data-action="export" title="导出模板为 JSON 文件">
+        <i class="fas fa-download"></i> 导出
+      </button>
+      <button class="action-btn" data-action="import" title="导入 JSON 模板文件">
+        <i class="fas fa-upload"></i> 导入
+      </button>
+    </div>
+  </div>
+
+  <div class="editor-footer">
+    <button class="save-btn" data-action="save"><i class="fas fa-save"></i> 保存模板</button>
+    <button class="cancel-btn" data-action="cancel"><i class="fas fa-times"></i> 取消</button>
+  </div>
+</div>
