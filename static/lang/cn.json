@@ -136,6 +136,10 @@
         "name": "模块化地图构建系统",
         "hint": "启用后将在工具栏显示地图模板面板和风格配置按钮，支持通过模板拖放快速生成 Roguelike 风格地图图块（需要重新加载页面生效）"
       },
+      "vaultRulesEnabled": {
+        "name": "遗名之穹规则修正",
+        "hint": "启用后将加载属性伤害异常和更好的属性系统（需要重新加载页面生效）"
+      },
       "imageModel": {
         "name": "图像生成模型",
         "hint": "选择用于生成图标的AI模型"
@@ -184,6 +188,11 @@
         "name": "神龛法术-启用格式化阶段",
         "hint": "启用后，会在生成后使用格式化智能体严格转换为PF2e格式（推荐开启以确保格式正确）"
       }
+    },
+    "vaultRules": {
+      "betterDexLabel": "遗名之穹·敏捷加值",
+      "betterIntLabel": "遗名之穹·智力加值",
+      "betterChaLabel": "遗名之穹·魅力加值"
     },
     "ui": {
       "contentType": "内容类型",
@@ -300,69 +309,134 @@
       "fragmentGenerator": "PF2e 词条碎片生成器",
       "shrineManager": "神龛点数管理",
       "mapTemplatePanel": "地图模板面板",
-      "mapStyleConfig": "地图风格配置"
+      "mapStyleConfig": "地图风格配置",
+      "mapTileGallery": "已生成图块库",
+      "monsterDraw": "怪物抽取器",
+      "monsterModifier": "怪物改造工作台",
+      "portraitGeneration": "AI立绘生成"
+    },
+    "Portrait": {
+      "title": "AI立绘生成",
+      "generating": "正在生成立绘...",
+      "success": "立绘生成成功！",
+      "failed": "立绘生成失败",
+      "npcOnly": "只能为NPC生成立绘",
+      "analyzing": "正在分析怪物特征...",
+      "buttonLabel": "AI立绘"
+    },
+    "MonsterDraw": {
+      "title": "怪物抽取",
+      "configTitle": "怪物抽取配置",
+      "levelRange": "等级范围",
+      "rarity": "稀有度",
+      "size": "体型",
+      "traits": "特征",
+      "startDraw": "开始抽取",
+      "importToWorld": "导入到世界",
+      "dragToScene": "拖入场景",
+      "importAll": "全部导入到世界",
+      "round": "第 {current} / {total} 轮",
+      "selected": "已选 {count} / {max}",
+      "drawComplete": "抽取完成",
+      "noMonsters": "没有找到符合条件的怪物",
+      "poolBuilt": "已构建怪物池，包含 {count} 个怪物",
+      "importSuccess": "怪物 \"{name}\" 已导入到世界",
+      "importFailed": "导入怪物失败"
+    },
+    "MonsterModifier": {
+      "title": "怪物改造工作台",
+      "templateManager": "改造模板管理",
+      "dropMonster": "拖入怪物到此处",
+      "selectTemplate": "选择改造模板",
+      "startModification": "开始改造",
+      "preview": "改造预览",
+      "importResult": "导入改造结果",
+      "importAll": "全部导入到世界",
+      "modifying": "改造中...",
+      "modifySuccess": "成功改造 {count} 个怪物",
+      "modifyFailed": "改造失败",
+      "templateSaved": "模板已保存",
+      "templateDeleted": "模板已删除",
+      "npcOnly": "只支持 NPC 类型的 Actor",
+      "alreadyAdded": "该怪物已添加到工作台",
+      "noTemplate": "请先选择改造模板",
+      "backToInput": "返回",
+      "results": "改造结果",
+      "comparison": "对比",
+      "templateTypeAI": "AI 模板",
+      "templateTypeRecipe": "规则模板",
+      "recipeMode": "规则模板：使用存储的配方直接套用",
+      "aiMode": "AI 模板：每次改造实时调用 AI",
+      "generateRecipe": "从指令生成配方",
+      "regenerateRecipe": "重新生成",
+      "clearRecipe": "清除配方",
+      "viewRecipeJson": "查看 JSON",
+      "generatingRecipe": "正在生成配方...",
+      "recipeGenerated": "改造配方已生成并保存",
+      "recipeFailed": "配方生成失败",
+      "applyRecipe": "套用配方"
     },
     "ItemGenerator": {
       "title": "PF2e 物品生成器",
       "close": "关闭",
-      "equipment": {
-        "title": "装备生成",
-        "description": "装备描述",
-        "descriptionHint": "描述您想要生成的装备类型。可以是武器、护甲、工具或者魔法物品",
-        "descriptionPlaceholder": "例如：'古代精灵工匠制作的魔法武器，蕴含自然之力，具有独特的外观和能力。适合德鲁伊或游侠使用。' 或者 '由稀有金属锻造的重型盔甲，为骑士和战士提供强大的防护。'",
-        "level": "装备等级",
-        "levelHint": "1-20级装备",
-        "count": "生成数量",
-        "countHint": "建议1-10件装备",
-        "traits": "期望特征（可选）",
-        "traitsPlaceholder": "例如：magical, evocation, fire, weapon",
-        "traitsHint": "输入期望的PF2e特征，用逗号分隔。这些特征将用于搜索相似的参考物品",
-        "enableCompendium": "启用合集包搜索辅助（参考官方装备）",
-        "enableCompendiumHint": "启用后将搜索官方装备合集包，为生成提供参考",
-        "generate": "生成装备清单",
-        "generating": "生成中...",
-        "result": "装备生成结果",
-        "resultPlaceholder": "等待生成装备清单...",
-        "create": "创建装备",
-        "creating": "创建中...",
-        "clearPreview": "清空预览",
-        "generateIcon": "生成图标",
-        "iconGenerated": "图标已生成",
-        "iconFailed": "图标生成失败",
-        "noDescription": "请输入装备描述",
-        "generateFailed": "装备生成失败，请重试",
-        "noItems": "没有可创建的装备",
-        "createSuccess": "成功创建 {count} 件装备！"
+      "itemType": "物品类型",
+      "types": {
+        "equipment": "装备",
+        "weapon": "武器",
+        "armor": "护甲",
+        "consumable": "消耗品",
+        "treasure": "宝物"
       },
-      "consumable": {
-        "title": "消耗品生成",
-        "description": "消耗品描述",
-        "descriptionHint": "描述您想要生成的消耗品类型。可以是药剂、卷轴、炸弹或其他一次性物品",
-        "descriptionPlaceholder": "例如：'炼金术师制作的各种药剂，包括治疗药水、增强药剂、毒药和实用工具。具有不同的效果和稀有度。' 或者 '法师抄录的魔法卷轴，包含各种法术效果，适合不同职业使用。'",
-        "level": "消耗品等级",
-        "levelHint": "1-20级消耗品",
-        "count": "生成数量",
-        "countHint": "建议1-15件消耗品",
-        "traits": "期望特征（可选）",
-        "traitsPlaceholder": "例如：magical, consumable, healing, alchemical",
-        "traitsHint": "输入期望的PF2e特征，用逗号分隔。这些特征将用于搜索相似的参考物品",
-        "enableCompendium": "启用合集包搜索辅助（参考官方消耗品）",
-        "enableCompendiumHint": "启用后将搜索官方消耗品合集包，为生成提供参考",
-        "generate": "生成消耗品清单",
-        "generating": "生成中...",
-        "result": "消耗品生成结果",
-        "resultPlaceholder": "等待生成消耗品清单...",
-        "create": "创建消耗品",
-        "creating": "创建中...",
-        "clearPreview": "清空预览",
-        "generateIcon": "生成图标",
-        "iconGenerated": "图标已生成",
-        "iconFailed": "图标生成失败",
-        "noDescription": "请输入消耗品描述",
-        "generateFailed": "消耗品生成失败，请重试",
-        "noItems": "没有可创建的消耗品",
-        "createSuccess": "成功创建 {count} 件消耗品！"
-      }
+      "weaponCategory": "武器类别",
+      "weaponCategories": {
+        "simple": "简单武器",
+        "martial": "军用武器",
+        "advanced": "高级武器"
+      },
+      "armorCategory": "护甲类别",
+      "armorCategories": {
+        "light": "轻甲",
+        "medium": "中甲",
+        "heavy": "重甲"
+      },
+      "consumableType": "消耗品类型",
+      "consumableTypes": {
+        "potion": "药剂",
+        "elixir": "炼金药剂",
+        "scroll": "卷轴",
+        "talisman": "符文",
+        "oil": "油膏",
+        "ammunition": "弹药",
+        "other": "其他"
+      },
+      "description": "物品描述",
+      "descriptionHint": "描述您想要生成的物品，包括主题、功能、外观等",
+      "descriptionPlaceholder": "例如：'一把蕴含火焰之力的魔法长剑，适合5级战士使用，能够在攻击时释放火焰能量'",
+      "level": "物品等级",
+      "rarity": "稀有度",
+      "rarities": {
+        "common": "普通",
+        "uncommon": "罕见",
+        "rare": "稀有",
+        "unique": "独特"
+      },
+      "enableCompendium": "启用合集包搜索（参考官方物品）",
+      "enableCompendiumHint": "启用后将搜索官方合集包中的类似物品作为生成参考",
+      "generate": "生成物品",
+      "generating": "生成中...",
+      "result": "生成结果",
+      "resultPlaceholder": "等待生成物品...",
+      "create": "创建物品",
+      "creating": "创建中...",
+      "clearPreview": "清空预览",
+      "generateIcon": "生成图标",
+      "generatingIcon": "图标生成中...",
+      "iconGenerated": "图标已生成",
+      "iconFailed": "图标生成失败",
+      "noDescription": "请输入物品描述",
+      "generateFailed": "物品生成失败，请重试",
+      "noItems": "没有可创建的物品",
+      "createSuccess": "成功创建物品：{name}"
     },
     "Explorer": {
       "title": "PF2e 数据结构探索器",
@@ -834,6 +908,46 @@
       "noStylePrompt": "未配置地图风格提示词，跳过 AI 图像生成",
       "noScene": "没有活动场景",
       "styleSaved": "地图风格配置已保存"
+    },
+    "roguelike-packs": {
+      "classes": {
+        "warrior": {
+          "name": "战者",
+          "description": "物理战斗专家，精通所有武器和护甲。无内置施法，仅通过兼职变体获得有限法术。"
+        },
+        "chanter": {
+          "name": "咏者",
+          "description": "施法专家，默认获得法师施法与魔法书。施法传统由所选关键属性决定。"
+        }
+      },
+      "ancestries": {
+        "remnant": {
+          "name": "遗裔",
+          "description": "均衡型族裔，两次自由属性提升，适应力强。"
+        },
+        "altered": {
+          "name": "改造体",
+          "description": "被古代魔法改造的坚韧族裔，拥有暗视但速度较慢。"
+        }
+      },
+      "backgrounds": {
+        "guardian": {
+          "name": "守卫",
+          "description": "训练有素的守护者，精通阵列战术和重型武装。"
+        },
+        "scholar": {
+          "name": "学者",
+          "description": "专注的研究者，钻研奥术公式和古代铭文。"
+        },
+        "warden": {
+          "name": "巡林",
+          "description": "荒野守护者，与自然的韵律相通。"
+        },
+        "attendant": {
+          "name": "侍者",
+          "description": "神殿仆从，精通神圣仪式和治愈之术。"
+        }
+      }
     }
   }
 } 

@@ -42,3 +42,6 @@ h -u origin main
 
 # 空目录
 macros/ 
+
+# pf2e 内容参考
+pf2e-13-dev/ 

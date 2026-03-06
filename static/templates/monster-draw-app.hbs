@@ -1,0 +1,104 @@
+<div class="monster-draw-container">
+  {{#if isFinished}}
+    <div class="monster-summary">
+      <div class="monster-summary-header">
+        <i class="fas fa-trophy"></i>
+        <h2>抽取完成</h2>
+      </div>
+
+      {{#if allSelectedMonsters.length}}
+        <p class="monster-summary-subtitle">共选择 {{allSelectedMonsters.length}} 个怪物</p>
+        <p class="monster-summary-hint"><i class="fas fa-info-circle"></i> 可拖拽怪物到场景中，或点击下方按钮批量导入</p>
+        <ul class="monster-summary-list">
+          {{#each allSelectedMonsters}}
+            <li class="monster-summary-item" draggable="true" data-uuid="{{this.uuid}}" title="拖入场景放置怪物">
+              <img src="{{this.img}}" alt="{{this.name}}" width="36" height="36" />
+              <div class="monster-summary-info">
+                <span class="monster-summary-name">{{this.name}}</span>
+                <span class="monster-summary-level">Lv.{{this.level}}</span>
+              </div>
+              <i class="fas fa-grip-vertical monster-drag-handle"></i>
+            </li>
+          {{/each}}
+        </ul>
+        <div class="monster-actions">
+          <button class="monster-import-all-btn" type="button">
+            <i class="fas fa-file-import"></i> 全部导入到世界
+          </button>
+          <button class="monster-finish-btn" type="button">
+            <i class="fas fa-check"></i> 关闭
+          </button>
+        </div>
+      {{else}}
+        <p class="monster-summary-subtitle">未选择任何怪物</p>
+        <div class="monster-actions">
+          <button class="monster-finish-btn" type="button">
+            <i class="fas fa-check"></i> 关闭
+          </button>
+        </div>
+      {{/if}}
+    </div>
+  {{else}}
+    <div class="monster-status-bar">
+      <div class="monster-round-info">
+        <i class="fas fa-dragon"></i>
+        <span>第 {{currentRound}} / {{totalDraws}} 轮</span>
+      </div>
+      <div class="monster-select-info">
+        <i class="fas fa-hand-pointer"></i>
+        <span>已选 {{selectedCount}} / {{selectablePerDraw}}</span>
+      </div>
+    </div>
+
+    <div class="monster-items-grid">
+      {{#each monsters}}
+        <div class="monster-card rarity-{{this.rarity}} {{#if this.selected}}selected{{/if}}"
+             data-uuid="{{this.uuid}}" draggable="true">
+          <div class="monster-card-header">
+            <img src="{{this.img}}" alt="{{this.name}}" class="monster-card-icon" />
+            <div class="monster-card-title">
+              <span class="monster-card-name">{{this.name}}</span>
+              <div class="monster-card-meta">
+                <span class="monster-level-badge">Lv.{{this.level}}</span>
+                <span class="monster-size-badge">{{this.sizeLabel}}</span>
+                <span class="monster-rarity-badge rarity-{{this.rarity}}">{{this.rarity}}</span>
+              </div>
+            </div>
+            <div class="monster-card-actions">
+              {{#if this.selected}}
+                <i class="fas fa-check-circle monster-check-icon"></i>
+              {{/if}}
+              <button class="monster-import-btn" type="button" title="导入到世界" data-uuid="{{this.uuid}}">
+                <i class="fas fa-file-import"></i>
+              </button>
+              <button class="monster-expand-btn" type="button" title="查看详情">
+                <i class="fas fa-{{#if this.expanded}}chevron-up{{else}}chevron-down{{/if}}"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="monster-card-traits">
+            {{#each this.traits}}
+              <span class="monster-trait-tag">{{this}}</span>
+            {{/each}}
+          </div>
+
+          {{#if this.expanded}}
+            <div class="monster-card-description">
+              {{{this.description}}}
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="monster-actions">
+      <button class="monster-skip-btn" type="button">
+        <i class="fas fa-forward"></i> 跳过本轮
+      </button>
+      <button class="monster-confirm-btn" type="button" {{#unless canConfirm}}disabled{{/unless}}>
+        <i class="fas fa-check"></i> 确认选择 ({{selectedCount}})
+      </button>
+    </div>
+  {{/if}}
+</div>

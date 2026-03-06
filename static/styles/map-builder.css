@@ -521,6 +521,176 @@
   background: #3451d1;
 }
 
+/* ---------- 图块库画廊 ---------- */
+
+.map-tile-gallery-app .window-content {
+  padding: 8px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+}
+
+.map-tile-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.map-tile-gallery .gallery-hint {
+  font-size: 0.8em;
+  color: #888;
+  padding: 4px 0;
+}
+
+.map-tile-gallery .gallery-hint i {
+  margin-right: 4px;
+}
+
+.map-tile-gallery .tile-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.map-tile-gallery .group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-bottom: 1px solid #333;
+}
+
+.map-tile-gallery .group-header i {
+  color: #4361ee;
+  font-size: 0.85em;
+}
+
+.map-tile-gallery .group-name {
+  font-weight: 600;
+  font-size: 0.95em;
+  color: #e0e0e0;
+}
+
+.map-tile-gallery .group-count {
+  font-size: 0.8em;
+  color: #888;
+}
+
+.map-tile-gallery .tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  padding: 2px;
+}
+
+.map-tile-gallery .tile-item {
+  position: relative;
+  border: 2px solid #333;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.15s;
+  aspect-ratio: 1;
+}
+
+.map-tile-gallery .tile-item:hover {
+  border-color: #4361ee;
+  box-shadow: 0 0 8px rgba(67, 97, 238, 0.3);
+}
+
+.map-tile-gallery .tile-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.map-tile-gallery .tile-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.map-tile-gallery .tile-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 6px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.map-tile-gallery .tile-item:hover .tile-overlay {
+  opacity: 1;
+}
+
+.map-tile-gallery .tile-time {
+  font-size: 0.75em;
+  color: #aaa;
+}
+
+.map-tile-gallery .tile-btns {
+  display: flex;
+  gap: 2px;
+}
+
+.map-tile-gallery .tile-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+  transition: all 0.15s;
+}
+
+.map-tile-gallery .tile-btn:hover {
+  background: rgba(67, 97, 238, 0.6);
+  color: #fff;
+}
+
+.map-tile-gallery .tile-btn.danger:hover {
+  background: rgba(220, 53, 69, 0.6);
+  color: #ff6b6b;
+}
+
+.map-tile-gallery .empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #666;
+  padding: 40px 20px;
+}
+
+.map-tile-gallery .empty-state i {
+  font-size: 2.5em;
+  opacity: 0.5;
+}
+
+.map-tile-gallery .empty-state p {
+  font-size: 0.9em;
+  text-align: center;
+  margin: 0;
+}
+
+.map-tile-gallery .gallery-empty-hint {
+  font-size: 0.8em !important;
+  color: #555 !important;
+}
+
 /* ---------- 放置预览覆盖层 ---------- */
 
 #map-placement-overlay {

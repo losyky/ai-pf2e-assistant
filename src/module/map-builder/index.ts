@@ -6,4 +6,5 @@ export { MapTemplatePanelApp } from './map-template-panel-app';
 export { MapStyleConfigApp } from './map-style-config-app';
 export { MapDropHandler } from './map-drop-handler';
 export { MapPlacementPreview } from './map-placement-preview';
+export { MapTileGalleryApp } from './map-tile-gallery-app';
 export type { MapTemplate, MapWallSegment, MapStyleConfig, MapDropData } from './types';

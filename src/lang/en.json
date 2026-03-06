@@ -136,6 +136,10 @@
         "name": "Modular Map Builder",
         "hint": "When enabled, map template panel and style config buttons will be shown in the toolbar, supporting drag-and-drop roguelike map tile generation (requires page reload)"
       },
+      "vaultRulesEnabled": {
+        "name": "Vault of the Nameless Rules",
+        "hint": "When enabled, loads the Damage Anomaly and Better Attributes systems (requires page reload)"
+      },
       "imageModel": {
         "name": "Image Generation Model",
         "hint": "Select the AI model to use for icon generation"
@@ -185,6 +189,11 @@
         "hint": "When enabled, will use formatting agent to strictly convert to PF2e format after generation (recommended to enable for format correctness)"
       }
     },
+    "vaultRules": {
+      "betterDexLabel": "Vault: DEX Crit Bonus",
+      "betterIntLabel": "Vault: INT Crit Bonus",
+      "betterChaLabel": "Vault: CHA Save Bonus"
+    },
     "ui": {
       "contentType": "Content Type",
       "params": "Generation Parameters",
@@ -217,69 +226,134 @@
       "fragmentGenerator": "PF2e Fragment Generator",
       "shrineManager": "Shrine Point Manager",
       "mapTemplatePanel": "Map Template Panel",
-      "mapStyleConfig": "Map Style Config"
+      "mapStyleConfig": "Map Style Config",
+      "mapTileGallery": "Generated Tile Gallery",
+      "monsterDraw": "Monster Draw",
+      "monsterModifier": "Monster Modifier",
+      "portraitGeneration": "AI Portrait"
+    },
+    "Portrait": {
+      "title": "AI Portrait Generation",
+      "generating": "Generating portrait...",
+      "success": "Portrait generated successfully!",
+      "failed": "Portrait generation failed",
+      "npcOnly": "Portraits can only be generated for NPCs",
+      "analyzing": "Analyzing creature features...",
+      "buttonLabel": "AI Portrait"
+    },
+    "MonsterDraw": {
+      "title": "Monster Draw",
+      "configTitle": "Monster Draw Configuration",
+      "levelRange": "Level Range",
+      "rarity": "Rarity",
+      "size": "Size",
+      "traits": "Traits",
+      "startDraw": "Start Draw",
+      "importToWorld": "Import to World",
+      "dragToScene": "Drag to Scene",
+      "importAll": "Import All to World",
+      "round": "Round {current} / {total}",
+      "selected": "Selected {count} / {max}",
+      "drawComplete": "Draw Complete",
+      "noMonsters": "No monsters found matching criteria",
+      "poolBuilt": "Monster pool built with {count} monsters",
+      "importSuccess": "Monster \"{name}\" imported to world",
+      "importFailed": "Failed to import monster"
+    },
+    "MonsterModifier": {
+      "title": "Monster Modifier Workbench",
+      "templateManager": "Template Manager",
+      "dropMonster": "Drop monsters here",
+      "selectTemplate": "Select Modification Template",
+      "startModification": "Start Modification",
+      "preview": "Modification Preview",
+      "importResult": "Import Result",
+      "importAll": "Import All to World",
+      "modifying": "Modifying...",
+      "modifySuccess": "Successfully modified {count} monsters",
+      "modifyFailed": "Modification failed",
+      "templateSaved": "Template saved",
+      "templateDeleted": "Template deleted",
+      "npcOnly": "Only NPC type Actors are supported",
+      "alreadyAdded": "Monster already added to workbench",
+      "noTemplate": "Please select a modification template first",
+      "backToInput": "Back",
+      "results": "Modification Results",
+      "comparison": "Comparison",
+      "templateTypeAI": "AI Template",
+      "templateTypeRecipe": "Recipe Template",
+      "recipeMode": "Recipe Template: Apply stored recipe directly",
+      "aiMode": "AI Template: Call AI for each modification",
+      "generateRecipe": "Generate Recipe from Instructions",
+      "regenerateRecipe": "Regenerate",
+      "clearRecipe": "Clear Recipe",
+      "viewRecipeJson": "View JSON",
+      "generatingRecipe": "Generating recipe...",
+      "recipeGenerated": "Recipe generated and saved",
+      "recipeFailed": "Recipe generation failed",
+      "applyRecipe": "Apply Recipe"
     },
     "ItemGenerator": {
       "title": "PF2e Item Generator",
       "close": "Close",
-      "equipment": {
-        "title": "Equipment Generation",
-        "description": "Equipment Description",
-        "descriptionHint": "Describe the type of equipment you want to generate. Can be weapons, armor, tools, or magical items",
-        "descriptionPlaceholder": "For example: 'A magical weapon crafted by ancient elven artisans, imbued with natural forces, with unique appearance and abilities. Suitable for druids or rangers.' or 'Heavy armor forged from rare metals, providing powerful protection for knights and warriors.'",
-        "level": "Equipment Level",
-        "levelHint": "Level 1-20 equipment",
-        "count": "Generation Count",
-        "countHint": "Recommended 1-10 items",
-        "traits": "Expected Traits (Optional)",
-        "traitsPlaceholder": "e.g., magical, evocation, fire, weapon",
-        "traitsHint": "Enter expected PF2e traits, separated by commas. These traits will be used to search for similar reference items",
-        "enableCompendium": "Enable Compendium Search (reference official equipment)",
-        "enableCompendiumHint": "When enabled, will search official equipment compendia for generation reference",
-        "generate": "Generate Equipment List",
-        "generating": "Generating...",
-        "result": "Equipment Generation Result",
-        "resultPlaceholder": "Waiting for equipment list generation...",
-        "create": "Create Equipment",
-        "creating": "Creating...",
-        "clearPreview": "Clear Preview",
-        "generateIcon": "Generate Icon",
-        "iconGenerated": "Icon generated",
-        "iconFailed": "Icon generation failed",
-        "noDescription": "Please enter equipment description",
-        "generateFailed": "Equipment generation failed, please retry",
-        "noItems": "No equipment to create",
-        "createSuccess": "Successfully created {count} equipment items!"
+      "itemType": "Item Type",
+      "types": {
+        "equipment": "Equipment",
+        "weapon": "Weapon",
+        "armor": "Armor",
+        "consumable": "Consumable",
+        "treasure": "Treasure"
       },
-      "consumable": {
-        "title": "Consumable Generation",
-        "description": "Consumable Description",
-        "descriptionHint": "Describe the type of consumable you want to generate. Can be potions, scrolls, bombs, or other one-time items",
-        "descriptionPlaceholder": "For example: 'Various alchemist potions, including healing potions, enhancement elixirs, poisons, and practical tools. With different effects and rarities.' or 'Magic scrolls transcribed by wizards, containing various spell effects, suitable for different classes.'",
-        "level": "Consumable Level",
-        "levelHint": "Level 1-20 consumables",
-        "count": "Generation Count",
-        "countHint": "Recommended 1-15 items",
-        "traits": "Expected Traits (Optional)",
-        "traitsPlaceholder": "e.g., magical, consumable, healing, alchemical",
-        "traitsHint": "Enter expected PF2e traits, separated by commas. These traits will be used to search for similar reference items",
-        "enableCompendium": "Enable Compendium Search (reference official consumables)",
-        "enableCompendiumHint": "When enabled, will search official consumable compendia for generation reference",
-        "generate": "Generate Consumable List",
-        "generating": "Generating...",
-        "result": "Consumable Generation Result",
-        "resultPlaceholder": "Waiting for consumable list generation...",
-        "create": "Create Consumables",
-        "creating": "Creating...",
-        "clearPreview": "Clear Preview",
-        "generateIcon": "Generate Icon",
-        "iconGenerated": "Icon generated",
-        "iconFailed": "Icon generation failed",
-        "noDescription": "Please enter consumable description",
-        "generateFailed": "Consumable generation failed, please retry",
-        "noItems": "No consumables to create",
-        "createSuccess": "Successfully created {count} consumable items!"
-      }
+      "weaponCategory": "Weapon Category",
+      "weaponCategories": {
+        "simple": "Simple",
+        "martial": "Martial",
+        "advanced": "Advanced"
+      },
+      "armorCategory": "Armor Category",
+      "armorCategories": {
+        "light": "Light",
+        "medium": "Medium",
+        "heavy": "Heavy"
+      },
+      "consumableType": "Consumable Type",
+      "consumableTypes": {
+        "potion": "Potion",
+        "elixir": "Elixir",
+        "scroll": "Scroll",
+        "talisman": "Talisman",
+        "oil": "Oil",
+        "ammunition": "Ammunition",
+        "other": "Other"
+      },
+      "description": "Item Description",
+      "descriptionHint": "Describe the item you want to generate, including theme, function, appearance, etc.",
+      "descriptionPlaceholder": "e.g., 'A magical longsword imbued with fire energy, suitable for a level 5 fighter'",
+      "level": "Item Level",
+      "rarity": "Rarity",
+      "rarities": {
+        "common": "Common",
+        "uncommon": "Uncommon",
+        "rare": "Rare",
+        "unique": "Unique"
+      },
+      "enableCompendium": "Enable Compendium Search (reference official items)",
+      "enableCompendiumHint": "Search official compendia for similar items as generation reference",
+      "generate": "Generate Item",
+      "generating": "Generating...",
+      "result": "Generation Result",
+      "resultPlaceholder": "Waiting for item generation...",
+      "create": "Create Item",
+      "creating": "Creating...",
+      "clearPreview": "Clear Preview",
+      "generateIcon": "Generate Icon",
+      "generatingIcon": "Generating icon...",
+      "iconGenerated": "Icon generated",
+      "iconFailed": "Icon generation failed",
+      "noDescription": "Please enter item description",
+      "generateFailed": "Item generation failed, please retry",
+      "noItems": "No item to create",
+      "createSuccess": "Successfully created item: {name}"
     },
     "Explorer": {
       "title": "PF2e Data Structure Explorer",
@@ -744,6 +818,46 @@
       "noStylePrompt": "No map style prompt configured, skipping AI image generation",
       "noScene": "No active scene",
       "styleSaved": "Map style config saved"
+    },
+    "roguelike-packs": {
+      "classes": {
+        "warrior": {
+          "name": "Warrior",
+          "description": "Physical combat specialist proficient in all weapons and armor. No innate spellcasting; magic only through multiclass archetype feats."
+        },
+        "chanter": {
+          "name": "Chanter",
+          "description": "Spellcasting specialist with Wizard Spellcasting and a spellbook by default. Tradition determined by key attribute."
+        }
+      },
+      "ancestries": {
+        "remnant": {
+          "name": "Remnant",
+          "description": "A balanced humanoid ancestry with two free attribute boosts and strong adaptability."
+        },
+        "altered": {
+          "name": "Altered",
+          "description": "A magically altered ancestry with darkvision, high HP but slower speed."
+        }
+      },
+      "backgrounds": {
+        "guardian": {
+          "name": "Guardian",
+          "description": "A disciplined protector trained in formation combat and heavy arms."
+        },
+        "scholar": {
+          "name": "Scholar",
+          "description": "A devoted researcher of arcane formulae and ancient inscriptions."
+        },
+        "warden": {
+          "name": "Warden",
+          "description": "A wilderness guardian attuned to the rhythms of the natural world."
+        },
+        "attendant": {
+          "name": "Attendant",
+          "description": "A temple servant trained in sacred rites and the art of healing."
+        }
+      }
     }
   }
 } 

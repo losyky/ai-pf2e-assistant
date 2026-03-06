@@ -19,6 +19,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "postbuild": "node scripts/build.js",
     "sync": "node scripts/build.js",
+    "build:packs": "node scripts/build-packs.js",
     "test-api": "node scripts/simple-test.js"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "chalk": "^4.1.2",
+    "classic-level": "^3.0.0",
     "dotenv": "^16.4.7",
     "eslint": "^8.0.0",
     "fs-extra": "^11.3.0",

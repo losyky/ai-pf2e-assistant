@@ -1,0 +1,34 @@
+{
+    "_id": "RLImperGuard001",
+    "img": "systems/pf2e/icons/default-icons/background.svg",
+    "name": "Guardian",
+    "system": {
+        "boosts": {
+            "0": {
+                "value": ["str", "con"]
+            },
+            "1": {
+                "value": ["str", "dex", "con", "int", "wis", "cha"]
+            }
+        },
+        "description": {
+            "value": "<p>You were once a disciplined protector, trained in formation combat and heavy arms.</p><p>Choose two attribute boosts. One must be to <strong>Strength</strong> or <strong>Constitution</strong>, and one is a free attribute boost.</p><p>You're trained in the Athletics skill and the Warfare Lore skill.</p>"
+        },
+        "items": {},
+        "publication": {
+            "license": "MIT",
+            "remaster": true,
+            "title": "AI PF2e Assistant — Roguelike Templates"
+        },
+        "rules": [],
+        "trainedSkills": {
+            "lore": ["Warfare Lore"],
+            "value": ["athletics"]
+        },
+        "traits": {
+            "rarity": "rare",
+            "value": []
+        }
+    },
+    "type": "background"
+}

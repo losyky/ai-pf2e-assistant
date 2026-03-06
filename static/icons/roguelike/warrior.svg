@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="warriorBlade" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="50%" style="stop-color:#B0B0B0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <linearGradient id="warriorHilt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#CD853F"/>
+      <stop offset="100%" style="stop-color:#8B4513"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="32" cy="32" r="28" fill="#1a1520" stroke="#8B0000" stroke-width="2.5"/>
+
+  <polygon points="32,6 35,28 32,32 29,28" fill="url(#warriorBlade)" stroke="#696969" stroke-width="1"/>
+  <polygon points="29,28 32,32 35,28 35,26 29,26" fill="#C0C0C0" opacity="0.6"/>
+
+  <rect x="26" y="30" width="12" height="4" rx="1" fill="url(#warriorHilt)" stroke="#5C3317" stroke-width="1"/>
+  <rect x="30" y="34" width="4" height="10" rx="1" fill="url(#warriorHilt)" stroke="#5C3317" stroke-width="0.8"/>
+  <circle cx="32" cy="46" r="2.5" fill="#CD853F" stroke="#5C3317" stroke-width="0.8"/>
+
+  <path d="M 16 22 Q 12 28 14 36 L 18 34 Q 16 28 18 24 Z" fill="#8B0000" opacity="0.7" stroke="#600000" stroke-width="0.8"/>
+  <path d="M 48 22 Q 52 28 50 36 L 46 34 Q 48 28 46 24 Z" fill="#8B0000" opacity="0.7" stroke="#600000" stroke-width="0.8"/>
+
+  <line x1="32" y1="8" x2="32" y2="4" stroke="#FFD700" stroke-width="1" opacity="0.5"/>
+  <g fill="#FFD700" opacity="0.4">
+    <circle cx="22" cy="14" r="1"/>
+    <circle cx="42" cy="14" r="1"/>
+    <circle cx="16" cy="44" r="1"/>
+    <circle cx="48" cy="44" r="1"/>
+  </g>
+
+  <path d="M 24 52 L 28 56 L 32 54 L 36 56 L 40 52" fill="none" stroke="#8B0000" stroke-width="1.5" opacity="0.6"/>
+</svg>

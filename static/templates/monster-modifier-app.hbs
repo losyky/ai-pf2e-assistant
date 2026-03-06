@@ -1,0 +1,153 @@
+<div class="monster-modifier-container">
+  {{#if showResults}}
+    <div class="monster-results-view">
+      <div class="monster-results-header">
+        <button class="monster-back-to-input-btn" type="button">
+          <i class="fas fa-arrow-left"></i> 返回
+        </button>
+        <h3><i class="fas fa-flask"></i> 改造结果</h3>
+      </div>
+
+      {{#if hasResults}}
+        <div class="monster-results-list">
+          {{#each results}}
+            <div class="monster-result-card" data-index="{{this.index}}" draggable="true">
+              <div class="monster-result-header">
+                <img src="{{this.img}}" alt="{{this.modifiedName}}" class="monster-result-icon" />
+                <div class="monster-result-info">
+                  <span class="monster-result-name">{{this.modifiedName}}</span>
+                  <div class="monster-result-comparison">
+                    <span class="monster-compare-item">
+                      <span class="compare-label">等级</span>
+                      <span class="compare-original">{{this.originalLevel}}</span>
+                      <i class="fas fa-arrow-right"></i>
+                      <span class="compare-modified">{{this.modifiedLevel}}</span>
+                    </span>
+                    <span class="monster-compare-item">
+                      <span class="compare-label">HP</span>
+                      <span class="compare-original">{{this.originalHp}}</span>
+                      <i class="fas fa-arrow-right"></i>
+                      <span class="compare-modified">{{this.modifiedHp}}</span>
+                    </span>
+                    <span class="monster-compare-item">
+                      <span class="compare-label">AC</span>
+                      <span class="compare-original">{{this.originalAc}}</span>
+                      <i class="fas fa-arrow-right"></i>
+                      <span class="compare-modified">{{this.modifiedAc}}</span>
+                    </span>
+                    <span class="monster-compare-item">
+                      <span class="compare-label">能力</span>
+                      <span class="compare-original">{{this.originalItemCount}}</span>
+                      <i class="fas fa-arrow-right"></i>
+                      <span class="compare-modified">{{this.modifiedItemCount}}</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="monster-result-actions">
+                  <button class="monster-import-result-btn" type="button" data-index="{{this.index}}" title="导入到世界">
+                    <i class="fas fa-file-import"></i>
+                  </button>
+                  <button class="monster-result-toggle" type="button" data-index="{{this.index}}" title="查看 JSON">
+                    <i class="fas fa-{{#if this.expanded}}chevron-up{{else}}code{{/if}}"></i>
+                  </button>
+                </div>
+              </div>
+
+              {{#if this.expanded}}
+                <div class="monster-result-json">
+                  <pre>{{this.modifiedJson}}</pre>
+                </div>
+              {{/if}}
+            </div>
+          {{/each}}
+        </div>
+
+        <div class="monster-results-actions">
+          <button class="monster-import-all-results-btn" type="button">
+            <i class="fas fa-file-import"></i> 全部导入到世界
+          </button>
+        </div>
+      {{else}}
+        <p style="text-align:center;opacity:0.6;">没有改造结果</p>
+      {{/if}}
+    </div>
+  {{else}}
+    <div class="monster-input-view">
+      <h3 style="margin:0 0 8px 0;"><i class="fas fa-flask"></i> 怪物改造工作台</h3>
+
+      <div class="monster-drop-zone">
+        {{#if hasMonsters}}
+          <div class="monster-dropped-list">
+            {{#each monsters}}
+              <div class="monster-dropped-item">
+                <img src="{{this.img}}" alt="{{this.name}}" width="40" height="40" />
+                <div class="monster-dropped-info">
+                  <span class="monster-dropped-name">{{this.name}}</span>
+                  <span class="monster-dropped-meta">
+                    Lv.{{this.level}} | HP {{this.hp}} | AC {{this.ac}} | {{this.sizeLabel}}
+                  </span>
+                </div>
+                <button class="monster-remove-btn" type="button" data-uuid="{{this.uuid}}" title="移除">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            {{/each}}
+          </div>
+          <div class="monster-drop-hint">
+            <i class="fas fa-plus-circle"></i> 继续拖入更多怪物，或
+            <a class="monster-clear-all-btn" href="#">清空全部</a>
+          </div>
+        {{else}}
+          <div class="monster-drop-empty">
+            <i class="fas fa-dragon" style="font-size:2.5rem;opacity:0.3;"></i>
+            <p>从 Actor 列表、合集或场景中拖入怪物</p>
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="monster-template-section">
+        <div class="monster-template-header">
+          <label><i class="fas fa-flask"></i> 选择改造模板</label>
+          <button class="monster-manage-templates-btn" type="button" title="管理模板">
+            <i class="fas fa-cog"></i>
+          </button>
+        </div>
+
+        {{#if hasTemplates}}
+          <select name="templateSelect">
+            <option value="">-- 请选择模板 --</option>
+            {{#each templateOptions}}
+              <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>
+                [{{this.typeLabel}}] {{this.name}}{{#if this.description}} — {{this.description}}{{/if}}
+              </option>
+            {{/each}}
+          </select>
+          {{#if isRecipeMode}}
+            <div class="monster-template-mode-hint recipe-mode">
+              <i class="fas fa-cogs"></i> 规则模板：使用存储的配方直接套用，无需调用 AI
+            </div>
+          {{/if}}
+        {{else}}
+          <div class="monster-no-templates">
+            <p>暂无改造模板，请先<a class="monster-manage-templates-btn" href="#">创建模板</a></p>
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="monster-modifier-actions">
+        <button class="monster-start-modify-btn" type="button"
+                {{#unless canStartModification}}disabled{{/unless}}>
+          {{#if isProcessing}}
+            <i class="fas fa-spinner fa-spin"></i> 改造中...
+          {{else}}
+            {{#if isRecipeMode}}
+              <i class="fas fa-cogs"></i> 套用配方 ({{monsters.length}} 个怪物)
+            {{else}}
+              <i class="fas fa-flask"></i> AI 改造 ({{monsters.length}} 个怪物)
+            {{/if}}
+          {{/if}}
+        </button>
+      </div>
+    </div>
+  {{/if}}
+</div>

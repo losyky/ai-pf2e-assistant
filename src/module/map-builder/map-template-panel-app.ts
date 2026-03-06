@@ -5,6 +5,7 @@ import { MapGuideImageService } from './map-guide-image-service';
 import { MapTemplateEditorApp } from './map-template-editor-app';
 import { MapStyleConfigApp } from './map-style-config-app';
 import { MapDropHandler } from './map-drop-handler';
+import { MapTileGalleryApp } from './map-tile-gallery-app';
 
 declare const Application: any;
 declare const foundry: any;
@@ -68,6 +69,7 @@ export class MapTemplatePanelApp extends Application {
     html.find('.panel-btn[data-action="new"]').on('click', () => this._onNew());
     html.find('.panel-btn[data-action="presets"]').on('click', () => this._onLoadPresets());
     html.find('.panel-btn[data-action="style"]').on('click', () => this._onOpenStyle());
+    html.find('.panel-btn[data-action="gallery"]').on('click', () => this._onOpenGallery());
 
     // Template card actions
     html.find('.template-action-btn').on('click', (ev: any) => {
@@ -77,6 +79,7 @@ export class MapTemplatePanelApp extends Application {
       if (!id) return;
       switch (action) {
         case 'place': this._onPlace(id); break;
+        case 'template-gallery': this._onTemplateGallery(id); break;
         case 'edit': this._onEdit(id); break;
         case 'duplicate': this._onDuplicate(id); break;
         case 'delete': this._onDelete(id); break;
@@ -125,6 +128,14 @@ export class MapTemplatePanelApp extends Application {
 
   private _onOpenStyle(): void {
     new MapStyleConfigApp().render(true);
+  }
+
+  private _onOpenGallery(): void {
+    new MapTileGalleryApp().render(true);
+  }
+
+  private _onTemplateGallery(id: string): void {
+    new MapTileGalleryApp(id).render(true);
   }
 
   private _onEdit(id: string): void {

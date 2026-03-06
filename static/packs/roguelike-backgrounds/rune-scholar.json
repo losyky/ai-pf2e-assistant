@@ -1,0 +1,34 @@
+{
+    "_id": "RLRuneScholar01",
+    "img": "systems/pf2e/icons/default-icons/background.svg",
+    "name": "Scholar",
+    "system": {
+        "boosts": {
+            "0": {
+                "value": ["int", "wis"]
+            },
+            "1": {
+                "value": ["str", "dex", "con", "int", "wis", "cha"]
+            }
+        },
+        "description": {
+            "value": "<p>You were once a devoted researcher of arcane formulae and ancient inscriptions.</p><p>Choose two attribute boosts. One must be to <strong>Intelligence</strong> or <strong>Wisdom</strong>, and one is a free attribute boost.</p><p>You're trained in the Arcana skill and the Academia Lore skill.</p>"
+        },
+        "items": {},
+        "publication": {
+            "license": "MIT",
+            "remaster": true,
+            "title": "AI PF2e Assistant — Roguelike Templates"
+        },
+        "rules": [],
+        "trainedSkills": {
+            "lore": ["Academia Lore"],
+            "value": ["arcana"]
+        },
+        "traits": {
+            "rarity": "rare",
+            "value": []
+        }
+    },
+    "type": "background"
+}

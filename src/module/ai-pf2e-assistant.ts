@@ -19,7 +19,8 @@ import { IconConfigManager } from './ui/config-managers/icon-config-manager';
 import { TerminologyConfigManager } from './ui/config-managers/terminology-config-manager';
 import { BalanceConfigManager } from './ui/config-managers/balance-config-manager';
 import { RoguelikeBanlistManagerApp } from './ui/roguelike-banlist-manager-app';
-import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler } from './map-builder';
+import { VaultRulesConfigManager } from './ui/config-managers/vault-rules-config-manager';
+import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler, MapTileGalleryApp } from './map-builder';
 // 不直接导入game对象，而是在需要时使用全局访问
 // import { Hooks, ui, game } from '../foundry-imports';
 import { Hooks, ui } from '../foundry-imports';
@@ -370,6 +371,17 @@ export class AIPF2eAssistant {
               title: 'AI助手'
             });
           }
+
+          const actorDoc = app.document || app.actor || app.object;
+          if (actorDoc?.type === 'npc') {
+            buttons.unshift({
+              label: '',
+              class: 'ai-pf2e-portrait-button',
+              icon: 'fas fa-portrait',
+              onclick: () => this.handlePortraitGenerationButtonClick(app),
+              title: 'AI立绘生成'
+            });
+          }
         }
         
         if (isItem) {
@@ -557,6 +569,40 @@ export class AIPF2eAssistant {
       };
     }
 
+    const isMonsterDrawEnabled = (() => {
+      try { return (game as any).settings?.get(MODULE_ID, 'monsterDrawEnabled') !== false; }
+      catch { return true; }
+    })();
+
+    if (isMonsterDrawEnabled) {
+      aiTools['ai-monster-draw'] = {
+        name: 'ai-monster-draw',
+        title: game.i18n.localize('AIPF2E.tools.monsterDraw'),
+        icon: 'fas fa-dragon',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 怪物抽取器按钮被点击`);
+          import('./ui/monster-draw-config-app').then(({ MonsterDrawConfigApp }) => {
+            (new MonsterDrawConfigApp({}) as any).render(true);
+          });
+        }
+      };
+      aiTools['ai-monster-modifier'] = {
+        name: 'ai-monster-modifier',
+        title: game.i18n.localize('AIPF2E.tools.monsterModifier'),
+        icon: 'fas fa-flask',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 怪物改造工作台按钮被点击`);
+          import('./ui/monster-modifier-app').then(({ MonsterModifierApp }) => {
+            (new MonsterModifierApp() as any).render(true);
+          });
+        }
+      };
+    }
+
     const isMapBuilderEnabled = (() => {
       try { return (game as any).settings?.get(MODULE_ID, 'mapBuilderEnabled') === true; }
       catch { return false; }
@@ -583,6 +629,17 @@ export class AIPF2eAssistant {
         onClick: () => {
           console.log(`${MODULE_ID} | 地图风格配置按钮被点击`);
           new MapStyleConfigApp().render(true);
+        }
+      };
+      aiTools['ai-map-tile-gallery'] = {
+        name: 'ai-map-tile-gallery',
+        title: game.i18n.localize('AIPF2E.tools.mapTileGallery'),
+        icon: 'fas fa-images',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 图块库按钮被点击`);
+          new MapTileGalleryApp().render(true);
         }
       };
     }
@@ -691,6 +748,39 @@ export class AIPF2eAssistant {
         });
       }
 
+      const isMonsterOn = (() => {
+        try { return game.settings?.get(MODULE_ID, 'monsterDrawEnabled') !== false; }
+        catch { return true; }
+      })();
+      if (isMonsterOn) {
+        aiTools.push(
+          {
+            name: 'ai-monster-draw',
+            title: game.i18n.localize('AIPF2E.tools.monsterDraw'),
+            icon: 'fas fa-dragon',
+            button: true,
+            visible: true,
+            onClick: () => {
+              import('./ui/monster-draw-config-app').then(({ MonsterDrawConfigApp }) => {
+                (new MonsterDrawConfigApp({}) as any).render(true);
+              });
+            }
+          },
+          {
+            name: 'ai-monster-modifier',
+            title: game.i18n.localize('AIPF2E.tools.monsterModifier'),
+            icon: 'fas fa-flask',
+            button: true,
+            visible: true,
+            onClick: () => {
+              import('./ui/monster-modifier-app').then(({ MonsterModifierApp }) => {
+                (new MonsterModifierApp() as any).render(true);
+              });
+            }
+          }
+        );
+      }
+
       const isMapOn = (() => {
         try { return game.settings?.get(MODULE_ID, 'mapBuilderEnabled') === true; }
         catch { return false; }
@@ -712,6 +802,14 @@ export class AIPF2eAssistant {
             button: true,
             visible: true,
             onClick: () => { new MapStyleConfigApp().render(true); }
+          },
+          {
+            name: 'ai-map-tile-gallery',
+            title: game.i18n.localize('AIPF2E.tools.mapTileGallery'),
+            icon: 'fas fa-images',
+            button: true,
+            visible: true,
+            onClick: () => { new MapTileGalleryApp().render(true); }
           }
         );
       }
@@ -1909,6 +2007,28 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
         
         Logger.debug('成功添加AI助手按钮到:', app.constructor?.name);
       }
+
+      // NPC 立绘生成按钮
+      const actorDoc = app.document || app.actor || app.object;
+      if (!isItemSheet && actorDoc?.type === 'npc' && header.find('.ai-pf2e-portrait-button').length === 0) {
+        const portraitButton = $(`<a class="ai-pf2e-portrait-button"><i class="fas fa-portrait"></i>AI立绘</a>`);
+        portraitButton.click(function() {
+          try {
+            self.handlePortraitGenerationButtonClick(app);
+          } catch (error) {
+            console.error(`${MODULE_ID} | 立绘按钮点击处理时出错:`, error);
+            if (ui && ui.notifications) {
+              ui.notifications.error("处理AI立绘生成请求时出错。");
+            }
+          }
+        });
+        if (closeButton.length) {
+          closeButton.before(portraitButton);
+        } else {
+          header.append(portraitButton);
+        }
+        Logger.debug('成功添加AI立绘按钮到NPC表单');
+      }
       
       // 如果是物品表单，添加规则元素配置按钮和AI图标按钮
       if (isItemSheet) {
@@ -2181,6 +2301,170 @@ ${batch.map((segment, index) => `<段落${index + 1}>\n${segment}\n</段落${ind
       
     } catch (error: any) {
       console.error(`${MODULE_ID} | 生成图标提示词失败:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 处理 NPC 立绘生成按钮点击事件
+   */
+  public async handlePortraitGenerationButtonClick(app: any): Promise<void> {
+    const game = getGame();
+    const { IconGenerationService } = await import('./services/icon-generation-service');
+    const iconService = IconGenerationService.getInstance();
+
+    const actor = app.document || app.actor || app.object;
+    if (!actor || actor.type !== 'npc') {
+      ui.notifications?.error('只能为 NPC 生成立绘');
+      return;
+    }
+
+    if (this.generatingIconItemIds.has(actor.id)) {
+      ui.notifications?.warn('该怪物正在生成立绘中，请稍候...');
+      return;
+    }
+
+    const $ = (window as any).$;
+    let button: any = null;
+    if ($) {
+      $('.window-app').each(function(this: HTMLElement) {
+        const currentApp = $(this).data('app');
+        if (currentApp === app) {
+          button = $(this).find('.ai-pf2e-portrait-button');
+        }
+      });
+    }
+
+    this.generatingIconItemIds.add(actor.id);
+
+    if (button && button.length) {
+      button.addClass('generating');
+      button.css('opacity', '0.5');
+      button.css('pointer-events', 'none');
+      const originalHtml = button.html();
+      button.html('<i class="fas fa-spinner fa-spin"></i>生成中...');
+      button.data('originalHtml', originalHtml);
+    }
+
+    try {
+      ui.notifications?.info('正在分析怪物特征并生成立绘提示词...');
+      const portraitPrompt = await this.generatePortraitPromptFromActor(actor);
+      if (!portraitPrompt) {
+        throw new Error('无法生成立绘提示词');
+      }
+
+      ui.notifications?.info('正在生成立绘...');
+      const generatedIcon = await iconService.generatePortrait(actor.name, portraitPrompt);
+
+      if (!generatedIcon) {
+        throw new Error('立绘生成失败');
+      }
+
+      await actor.update({ img: generatedIcon.url });
+      ui.notifications?.info(`立绘生成成功！已应用到 ${actor.name}`);
+
+      if (button && button.length) {
+        const originalHtml = button.data('originalHtml') || '<i class="fas fa-portrait"></i>AI立绘';
+        button.html(originalHtml);
+        button.removeClass('generating');
+        button.css('opacity', '1');
+        button.css('pointer-events', 'auto');
+      }
+
+      if (app.render) {
+        app.render(false);
+      }
+    } catch (error: any) {
+      console.error(`${MODULE_ID} | 立绘生成失败:`, error);
+      ui.notifications?.error(`立绘生成失败: ${error.message}`);
+
+      if (button && button.length) {
+        const originalHtml = button.data('originalHtml') || '<i class="fas fa-portrait"></i>AI立绘';
+        button.html(originalHtml);
+        button.removeClass('generating');
+        button.css('opacity', '1');
+        button.css('pointer-events', 'auto');
+      }
+    } finally {
+      this.generatingIconItemIds.delete(actor.id);
+    }
+  }
+
+  /**
+   * 从 NPC Actor 数据生成立绘提示词
+   */
+  private async generatePortraitPromptFromActor(actor: any): Promise<string | null> {
+    try {
+      const name = actor.name || 'Unknown Creature';
+      const description = (actor.system?.details?.publicNotes || actor.system?.details?.privateNotes || '').replace(/<[^>]*>/g, ' ').trim();
+      const level = actor.system?.details?.level?.value ?? '';
+      const creatureTraits = actor.system?.traits?.value || [];
+      const rarity = actor.system?.traits?.rarity || 'common';
+      const size = actor.system?.traits?.size?.value || 'med';
+
+      const sizeMap: Record<string, string> = {
+        tiny: 'tiny', sm: 'small', med: 'medium', lg: 'large', huge: 'huge', grg: 'gargantuan'
+      };
+      const sizeLabel = sizeMap[size] || 'medium';
+
+      const abilities: string[] = [];
+      if (actor.items) {
+        const itemsArr = actor.items instanceof Map ? Array.from(actor.items.values()) : (Array.isArray(actor.items) ? actor.items : []);
+        for (const item of itemsArr.slice(0, 6)) {
+          if (item.type === 'melee' || item.type === 'ranged') {
+            abilities.push(`${item.name} (${item.type})`);
+          }
+        }
+      }
+
+      const messages = [
+        {
+          role: 'system' as const,
+          content: `You are an expert character art prompt engineer specializing in Pathfinder 2nd Edition (PF2e) illustration style.
+
+Your task: generate a concise, vivid English prompt for an AI image generator to create a FULL-BODY CHARACTER PORTRAIT of a PF2e creature/monster.
+
+Key requirements:
+1. OUTPUT IN ENGLISH ONLY
+2. Describe the creature's full body from head to toe in a dynamic or characteristic pose
+3. Emphasize the Pathfinder 2e / Paizo official art style: semi-realistic painterly fantasy illustration, rich color palette, detailed anatomy, dramatic lighting, visible textures on skin/scales/armor/fur
+4. Specify a SOLID COLOR BACKGROUND (choose a color that contrasts with and complements the creature — e.g. dark slate for fiery creatures, warm amber for undead, muted teal for aquatic beings)
+5. Include creature-specific visual details: body proportions, distinguishing features (horns, wings, tails, multiple limbs, unusual anatomy), equipment/weapons, magical auras or effects
+6. Keep to 60-80 words maximum
+7. Do NOT include any text, labels, watermarks, or UI elements in the description
+
+Return ONLY the prompt text, no other content.`
+        },
+        {
+          role: 'user' as const,
+          content: `Creature name: ${name}
+Level: ${level}
+Size: ${sizeLabel}
+Rarity: ${rarity}
+Creature traits: ${creatureTraits.join(', ') || 'none'}
+Notable attacks/abilities: ${abilities.join(', ') || 'none'}
+Description: ${description.substring(0, 600) || 'No description available'}
+
+Generate the portrait prompt:`
+        }
+      ];
+
+      const usePlayerKey = !getGame()?.user?.isGM;
+      const response = await this.callAIAPI(messages, { usePlayerKey });
+
+      if (!response?.choices?.length) {
+        throw new Error('AI服务返回空响应');
+      }
+
+      const prompt = response.choices[0].message?.content?.trim();
+      if (!prompt) {
+        throw new Error('无法提取立绘提示词');
+      }
+
+      console.log(`${MODULE_ID} | 生成的立绘提示词:`, prompt);
+      return prompt;
+    } catch (error: any) {
+      console.error(`${MODULE_ID} | 生成立绘提示词失败:`, error);
       throw error;
     }
   }
@@ -7816,6 +8100,16 @@ function registerSettings() {
       restricted: true
     });
 
+    // 遗名之穹规则修正配置管理器
+    game.settings.registerMenu(MODULE_ID, 'vaultRulesConfigManager', {
+      name: '遗名之穹规则修正',
+      label: '打开规则修正配置',
+      hint: '配置属性伤害异常和更好的属性系统',
+      icon: 'fas fa-shield-halved',
+      type: VaultRulesConfigManager,
+      restricted: true
+    });
+
     // ========================================
     // 系统总开关（主配置界面显示）
     // ========================================
@@ -7889,6 +8183,25 @@ function registerSettings() {
       default: [],
     });
 
+    // 怪物抽取系统开关
+    game.settings.register(MODULE_ID, 'monsterDrawEnabled', {
+      name: '怪物抽取系统',
+      hint: '启用后工具栏将显示怪物抽取器和怪物改造工作台按钮（需要重新加载页面生效）',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+    });
+
+    // 怪物改造模板数据（JSON 存储）
+    game.settings.register(MODULE_ID, 'monsterModTemplates', {
+      name: '怪物改造模板数据',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: [],
+    });
+
     // 地图构建系统开关
     game.settings.register(MODULE_ID, 'mapBuilderEnabled', {
       name: game.i18n.localize("ai-pf2e-assistant.settings.mapBuilderEnabled.name"),
@@ -7907,7 +8220,93 @@ function registerSettings() {
       type: Array,
       default: [],
     });
-    
+
+    // 遗名之穹规则修正系统开关
+    game.settings.register(MODULE_ID, 'vaultRulesEnabled', {
+      name: '遗名之穹规则修正',
+      hint: '启用后将加载属性伤害异常和更好的属性系统（需要重新加载页面生效）',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: false,
+    });
+
+    // ========================================
+    // 遗名之穹规则修正设置（隐藏，通过配置管理器访问）
+    // ========================================
+
+    game.settings.register(MODULE_ID, 'vaultAnomalyEnabled', {
+      name: '属性伤害异常开关',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: false,
+    });
+
+    game.settings.register(MODULE_ID, 'vaultAnomalyTypes', {
+      name: '启用的伤害类型',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: [],
+    });
+
+    game.settings.register(MODULE_ID, 'vaultAnomalyMultiplier', {
+      name: '异常值倍率',
+      scope: 'world',
+      config: false,
+      type: Number,
+      default: 4,
+    });
+
+    game.settings.register(MODULE_ID, 'vaultAnomalyMaxOverride', {
+      name: '异常槽最大值覆盖',
+      scope: 'world',
+      config: false,
+      type: Number,
+      default: 0,
+    });
+
+    game.settings.register(MODULE_ID, 'vaultAnomalyMacros', {
+      name: '异常结算宏配置',
+      scope: 'world',
+      config: false,
+      type: Object,
+      default: {},
+    });
+
+    game.settings.register(MODULE_ID, 'vaultBetterAttributesEnabled', {
+      name: '更好的属性开关',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: false,
+    });
+
+    game.settings.register(MODULE_ID, 'vaultBetterDexEnabled', {
+      name: '敏捷重击加值',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: true,
+    });
+
+    game.settings.register(MODULE_ID, 'vaultBetterIntEnabled', {
+      name: '智力重击加值',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: true,
+    });
+
+    game.settings.register(MODULE_ID, 'vaultBetterChaEnabled', {
+      name: '魅力豁免加值',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: true,
+    });
+
     // ========================================
     // API设置（隐藏，通过API配置管理器访问）
     // ========================================
@@ -8344,6 +8743,17 @@ class TerminologyImporterDialog extends FormApplication {
 }
 
 // 初始化钩子 - 只尝试注册设置，不做其他操作
+Hooks.once('babele.init', (babele: any) => {
+  if (typeof (globalThis as any).Babele !== 'undefined') {
+    babele.register({
+      module: MODULE_ID,
+      lang: 'cn',
+      dir: 'packs/translations',
+    });
+    Logger.debug('Babele translations registered for roguelike packs');
+  }
+});
+
 Hooks.once('init', function() {
   Logger.debug('Initializing AI PF2e Assistant');
   
@@ -8428,6 +8838,22 @@ Hooks.once('ready', function() {
   }).catch(err => {
     Logger.error('Failed to integrate Tactical Manual:', err);
   });
+
+  // 集成遗名之穹规则修正系统
+  try {
+    const isVaultRulesEnabled = (game as any).settings?.get(MODULE_ID, 'vaultRulesEnabled') === true;
+    if (isVaultRulesEnabled) {
+      Logger.debug('Initializing Vault Rules system...');
+      import('./vault-rules/index').then(({ initVaultRules }) => {
+        initVaultRules();
+        Logger.debug('Vault Rules system initialized');
+      }).catch(err => {
+        Logger.error('Failed to initialize Vault Rules:', err);
+      });
+    }
+  } catch (e) {
+    Logger.warn('Vault rules not enabled or failed to initialize:', e);
+  }
   
   // 设置 API
   const game = getGame();

@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 require('dotenv').config();
+const { buildAllPacks } = require('./build-packs');
 
 // 源目录和目标目录
 const distDir = path.join(__dirname, '../dist');
@@ -46,9 +47,14 @@ async function build() {
       process.exit(1);
     }
     
-    // 清空目标目录，确保不会有旧文件残留
+    // 清空目标目录（跳过被锁定的文件）
     console.log(chalk.blue('Cleaning target directory...'));
-    await fs.emptyDir(targetDir);
+    try {
+      await fs.emptyDir(targetDir);
+    } catch (err) {
+      console.log(chalk.yellow('  Warning: Could not fully clean target directory (files may be locked by Foundry)'));
+      console.log(chalk.yellow('  Proceeding with overwrite mode...'));
+    }
     
     // 复制构建文件到目标目录
     console.log(chalk.blue('Copying built JS files...'));
@@ -92,6 +98,9 @@ async function build() {
     console.log(chalk.blue('Copying static files...'));
     await fs.copy(staticDir, targetDir);
     console.log(chalk.green('  - Copied all static files'));
+    
+    // 构建合集包 (JSON → LevelDB)
+    await buildAllPacks(targetDir);
     
     console.log(chalk.green('Build completed successfully!'));
     console.log(chalk.yellow(`Files copied to ${targetDir}`));

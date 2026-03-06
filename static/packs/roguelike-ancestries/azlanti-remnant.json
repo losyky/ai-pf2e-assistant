@@ -1,0 +1,53 @@
+{
+    "_id": "RLAzlantiRemn001",
+    "img": "modules/ai-pf2e-assistant/icons/roguelike/remnant.svg",
+    "name": "Remnant",
+    "system": {
+        "additionalLanguages": {
+            "count": 1,
+            "custom": "",
+            "value": ["draconic", "elven", "dwarven", "sylvan", "undercommon", "celestial", "infernal"]
+        },
+        "boosts": {
+            "0": {
+                "value": ["str", "dex", "con", "int", "wis", "cha"]
+            },
+            "1": {
+                "value": ["str", "dex", "con", "int", "wis", "cha"]
+            },
+            "2": {
+                "value": []
+            }
+        },
+        "description": {
+            "value": "<p><em>A balanced humanoid ancestry with broad potential. You gain two free attribute boosts, representing outstanding versatility and adaptability.</em></p><p><strong>HP</strong>: 8</p><p><strong>Size</strong>: Medium</p><p><strong>Speed</strong>: 25 feet</p><p><strong>Languages</strong>: Common + 1 additional</p><p><strong>Vision</strong>: Normal</p>"
+        },
+        "flaws": {
+            "0": {
+                "value": []
+            }
+        },
+        "hands": 2,
+        "hp": 8,
+        "items": {},
+        "languages": {
+            "custom": "",
+            "value": ["common"]
+        },
+        "publication": {
+            "license": "MIT",
+            "remaster": true,
+            "title": "AI PF2e Assistant — Roguelike Templates"
+        },
+        "reach": 5,
+        "rules": [],
+        "size": "med",
+        "speed": 25,
+        "traits": {
+            "rarity": "rare",
+            "value": ["humanoid"]
+        },
+        "vision": "normal"
+    },
+    "type": "ancestry"
+}

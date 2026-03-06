@@ -1083,8 +1083,10 @@ export class ShrineSynthesisService {
     const systemPrompt = `你是一个专业的Pathfinder 2e专长设计师。你的角色是**纯粹的创意设计师**，只负责输出创意内容。
 
 **🌏 语言要求（重要）**：
-- **专长名称必须使用中文**
+- **专长名称使用"中文 英文"双语格式**
 - 所有描述内容必须使用中文
+- 所有结构标签使用中文（需求、触发、频率、效果、特殊）
+- 动作组件特征翻译为中文（concentrate→专注, manipulate→交互）
 
 ---
 
@@ -1472,7 +1474,7 @@ ${JSON.stringify(feat, null, 2)}
       console.log('[生成阶段] 有设计方案，使用精简提示词');
       systemPrompt = `你是一个专业的Pathfinder 2e专长生成师。你的角色是**实现者**，严格基于设计方案生成专长数据。
 
-**🌏 语言要求**：专长名称和描述必须使用中文。
+**🌏 语言要求**：专长名称使用"中文 英文"双语格式，描述必须使用中文。所有结构标签（需求、触发、频率、效果等）使用中文，动作组件特征翻译为中文（concentrate→专注, manipulate→交互）。UUID显示文本使用双语格式{中文 English}。
 
 ## 你的任务
 
@@ -1500,8 +1502,12 @@ ${knowledgeStandards}${rulesKnowledgeSection}
       systemPrompt = `你是一个专业的Pathfinder 2e专长生成师。你需要从头创作完整的专长内容。
 
 **🌏 语言要求（最高优先级）**：
-- **专长名称（name字段）必须使用中文，绝对不要使用英文**
+- **专长名称（name字段）使用"中文 英文"双语格式**，如"诱人表演 Alluring Performance"
 - 所有描述内容（description.value）必须使用中文
+- 所有结构标签必须使用中文（需求、触发、频率、效果、特殊、启动、豁免）
+- ❌ 禁止使用英文标签（Requirements, Trigger, Frequency, Effect, Activate）
+- 动作组件特征翻译为中文（concentrate→专注, manipulate→交互, envision→想象, command→命令）
+- UUID引用显示文本使用双语格式：{恶心 Sickened 1}
 
 ---
 

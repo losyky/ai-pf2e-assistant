@@ -1,0 +1,106 @@
+{
+    "_id": "RLVaultChanter001",
+    "img": "modules/ai-pf2e-assistant/icons/roguelike/chanter.svg",
+    "name": "Chanter",
+    "system": {
+        "ancestryFeatLevels": {
+            "value": [1, 5, 9, 13, 17]
+        },
+        "attacks": {
+            "advanced": 0,
+            "martial": 0,
+            "other": {
+                "name": "",
+                "rank": 0
+            },
+            "simple": 1,
+            "unarmed": 1
+        },
+        "classFeatLevels": {
+            "value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        },
+        "defenses": {
+            "heavy": 0,
+            "light": 0,
+            "medium": 0,
+            "unarmored": 1
+        },
+        "description": {
+            "value": "<p><em>A magical combat specialist who gains full spellcasting ability with a spellbook. Proficient in simple weapons and unarmored defense, with a strong Will save. Spellcasting tradition is determined by your chosen key attribute.</em></p><p>Choose <strong>Intelligence</strong>, <strong>Wisdom</strong>, or <strong>Charisma</strong> as your key attribute.</p><p><strong>HP</strong>: 6 + Constitution modifier per level.</p><p>You gain Wizard Spellcasting, which provides a spellbook and standard prepared spell slots.</p>"
+        },
+        "generalFeatLevels": {
+            "value": [3, 7, 11, 15, 19]
+        },
+        "hp": 6,
+        "items": {
+            "rl001": {
+                "img": "icons/sundries/books/book-eye-purple.webp",
+                "level": 1,
+                "name": "Wizard Spellcasting",
+                "uuid": "Compendium.pf2e.classfeatures.Item.Wizard Spellcasting"
+            }
+        },
+        "keyAbility": {
+            "value": ["int", "wis", "cha"]
+        },
+        "perception": 1,
+        "publication": {
+            "license": "MIT",
+            "remaster": true,
+            "title": "AI PF2e Assistant — Roguelike Templates"
+        },
+        "rules": [
+            {
+                "adjustName": false,
+                "choices": [
+                    {
+                        "label": "PF2E.Skill.Arcana",
+                        "value": "arcana"
+                    },
+                    {
+                        "label": "PF2E.Skill.Religion",
+                        "value": "religion"
+                    },
+                    {
+                        "label": "PF2E.Skill.Nature",
+                        "value": "nature"
+                    },
+                    {
+                        "label": "PF2E.Skill.Occultism",
+                        "value": "occultism"
+                    }
+                ],
+                "flag": "vaultChanterSkill",
+                "key": "ChoiceSet",
+                "prompt": "PF2E.SpecificRule.Prompt.Skill"
+            },
+            {
+                "key": "ActiveEffectLike",
+                "mode": "upgrade",
+                "path": "system.skills.{item|flags.system.rulesSelections.vaultChanterSkill}.rank",
+                "value": 1
+            }
+        ],
+        "savingThrows": {
+            "fortitude": 1,
+            "reflex": 1,
+            "will": 2
+        },
+        "skillFeatLevels": {
+            "value": [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+        },
+        "skillIncreaseLevels": {
+            "value": [3, 5, 7, 9, 11, 13, 15, 17, 19]
+        },
+        "spellcasting": 0,
+        "trainedSkills": {
+            "additional": 4,
+            "value": []
+        },
+        "traits": {
+            "rarity": "common",
+            "value": []
+        }
+    },
+    "type": "class"
+}

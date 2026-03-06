@@ -1,0 +1,107 @@
+<form class="vault-rules-config-manager">
+  <h2><i class="fas fa-shield-halved"></i> 遗名之穹规则修正配置</h2>
+
+  <div class="info-box">
+    <p><i class="fas fa-info-circle"></i> 配置遗名之穹规则修正系统。包括属性伤害异常和更好的属性两个子系统。</p>
+  </div>
+
+  <!-- 属性伤害异常 -->
+  <h3><i class="fas fa-bolt"></i> 属性伤害异常</h3>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="anomalyEnabled" {{#if anomaly.enabled}}checked{{/if}}>
+      启用属性伤害异常系统
+    </label>
+    <span class="hint">启用后，受到的伤害将按类型累积异常值，满槽后触发异常效果并进入免疫期</span>
+  </div>
+
+  <div class="form-group">
+    <label for="anomalyMultiplier">异常值倍率</label>
+    <input type="number" name="anomalyMultiplier" id="anomalyMultiplier" value="{{anomaly.multiplier}}" min="1" max="20" step="0.5">
+    <span class="hint">受到的实际伤害 × 此倍率 = 累积到对应类型异常槽的值（默认 4 倍）</span>
+  </div>
+
+  <div class="form-group">
+    <label for="anomalyMaxOverride">异常槽最大值覆盖</label>
+    <input type="number" name="anomalyMaxOverride" id="anomalyMaxOverride" value="{{anomaly.maxOverride}}" min="0" step="1">
+    <span class="hint">设为 0 则使用角色最大生命值作为异常槽上限，设为其他值则统一使用该值</span>
+  </div>
+
+  <div class="form-group">
+    <label>启用的伤害类型</label>
+    <div class="roguelike-tag-input vault-damage-type-tags">
+      {{#each anomaly.enabledTypeLabels}}
+        <span class="roguelike-tag">{{this.label}} <i class="fas fa-times vault-remove-damage-tag" data-tag="{{this.value}}"></i></span>
+      {{/each}}
+      <input type="text" placeholder="输入伤害类型名称后按回车添加..." class="vault-damage-tag-input" list="vault-damage-types-datalist" autocomplete="off" />
+    </div>
+    <span class="hint">输入或从列表选择需要追踪异常值的伤害类型。支持系统内置和自定义类型</span>
+  </div>
+
+  <datalist id="vault-damage-types-datalist">
+    {{#each availableDamageTypes}}
+      <option value="{{this.label}}">{{this.label}} ({{this.value}})</option>
+    {{/each}}
+  </datalist>
+
+  <div class="form-group">
+    <label>异常结算宏配置</label>
+    <div class="macro-config-list">
+      {{#each anomaly.macroConfigs}}
+      <div class="macro-config-row">
+        <span class="macro-type-label">{{this.label}}</span>
+        <input type="text" name="anomalyMacro_{{this.key}}" value="{{this.macroName}}" placeholder="留空则不执行宏">
+      </div>
+      {{/each}}
+    </div>
+    <span class="hint">为每种已启用的伤害类型配置满槽结算时执行的宏名称。宏将以触发异常的角色为目标执行</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 更好的属性 -->
+  <h3><i class="fas fa-star"></i> 更好的属性</h3>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="betterAttributesEnabled" {{#if betterAttributes.enabled}}checked{{/if}}>
+      启用更好的属性系统
+    </label>
+    <span class="hint">启用后，角色的敏捷、智力和魅力属性将获得额外效果（仅限玩家角色）</span>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="betterDexEnabled" {{#if betterAttributes.dexEnabled}}checked{{/if}}>
+      更有伤害的敏捷
+    </label>
+    <span class="hint">武器打击重击时，结果视为获得敏捷调整值一半（向下取整）的无名加值，降低重击门槛</span>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="betterIntEnabled" {{#if betterAttributes.intEnabled}}checked{{/if}}>
+      更有伤害的智力
+    </label>
+    <span class="hint">法术打击重击时，结果视为获得智力调整值一半（向下取整）的无名加值，降低重击门槛</span>
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-label">
+      <input type="checkbox" name="betterChaEnabled" {{#if betterAttributes.chaEnabled}}checked{{/if}}>
+      更好的魅力
+    </label>
+    <span class="hint">投掷豁免的大失败判定时，结果视为获得魅力调整值一半（向下取整）的无名加值，降低大失败几率</span>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="button-group">
+    <button type="button" name="close" class="secondary">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+    <button type="submit" class="primary">
+      <i class="fas fa-save"></i> 保存配置
+    </button>
+  </div>
+</form>

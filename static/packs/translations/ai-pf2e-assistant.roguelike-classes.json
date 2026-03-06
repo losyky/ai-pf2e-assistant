@@ -1,0 +1,13 @@
+{
+    "label": "肉鸽职业 Roguelike Classes",
+    "entries": {
+        "Warrior": {
+            "name": "战者",
+            "description": "<p><em>以肉体力量见长的物理战斗专家。精通所有武器和护甲类型，拥有强力的强韧和反射豁免。无内置施法能力——任何魔法力量仅通过兼职变体专长获得，法术位极为有限（每环至多1个）。</em></p><p>选择<strong>力量</strong>、<strong>敏捷</strong>或<strong>体质</strong>作为关键属性。</p><p><strong>HP</strong>：每级10 + 体质调整值。</p>"
+        },
+        "Chanter": {
+            "name": "咏者",
+            "description": "<p><em>以魔法力量见长的施法专家，默认获得法师施法与魔法书。精通简易武器和无甲防御，拥有强力的意志豁免。施法传统由所选关键属性决定。</em></p><p>选择<strong>智力</strong>、<strong>感知</strong>或<strong>魅力</strong>作为关键属性。</p><p><strong>HP</strong>：每级6 + 体质调整值。</p><p>你获得法师施法，提供魔法书和标准准备式法术位。</p>"
+        }
+    }
+}

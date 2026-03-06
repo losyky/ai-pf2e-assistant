@@ -142,8 +142,10 @@ export const TECHNICAL_REQUIREMENTS = `
 以下是数据格式的技术要求，请在生成时参考：
 
 **中文标签规范**：
-- 使用：<strong>需求</strong>、<strong>触发</strong>、<strong>频率</strong>、<strong>特殊</strong>
+- 使用中文标签：<strong>启动</strong>、<strong>需求</strong>、<strong>触发</strong>、<strong>频率</strong>、<strong>效果</strong>、<strong>特殊</strong>、<strong>豁免</strong>、<strong>制作需求</strong>、<strong>潜伏期</strong>、<strong>最大持续时间</strong>
+- ❌ 禁止使用英文标签：Activate, Requirements, Trigger, Frequency, Effect, Special, Saving Throw
 - 示例：<p><strong>需求</strong> 你持有一件武器</p>
+- 示例：<p><strong>启动</strong> <span class="action-glyph">1</span> 交互</p>
 
 **中文术语标准**：
 - 动作：打击、协助、移动、快步、行走（直接使用中文，不要加UUID）
@@ -152,11 +154,42 @@ export const TECHNICAL_REQUIREMENTS = `
 - 伤害：火焰、寒冷、电击、酸液、音波、钝击、挥砍、穿刺
 - 距离：使用"尺"（5尺、10尺、30尺）
 - 时间：轮、分钟、小时、天
+- 检定结果：大成功、成功、失败、大失败
+
+**动作组件特征翻译（括号内的 trait 必须翻译为中文）**：
+- concentrate → 专注
+- manipulate → 交互
+- envision → 想象
+- command → 命令
+- interact → 交互
+- strike → 打击
+- move → 移动
+- verbal → 言语
+- somatic → 姿势
+- material → 材料
+- flourish → 华丽
+- press → 压制
+- attack → 攻击
+- open → 开放
+- auditory → 听觉
+- visual → 视觉
+- emotion → 情绪
+- mental → 心灵
+- linguistic → 语言
+- 示例：<p><strong>启动</strong> <span class="action-glyph">2</span> 专注，交互</p>
+- ❌ 错误：<p><strong>Activate</strong> <span class="action-glyph">2</span> (concentrate, manipulate)</p>
+
+**UUID 显示文本格式（双语）**：
+- 引用状态/条件时使用：@UUID[...]{中文 English N}
+- 示例：@UUID[Compendium.pf2e.conditionitems.Item.fesd1n5eVhpCSS18]{恶心 Sickened 1}
+- 示例：@UUID[Compendium.pf2e.conditionitems.Item.TBSHQspnbcqxsmjL]{恐惧 Frightened 2}
+- 示例：@UUID[Compendium.pf2e.conditionitems.Item.dfCMdR4wnpbYNTix]{震慑 Stunned 1}
 
 **描述格式**：
 - 使用<p>标签分段
 - 重要规则用<strong>加粗
 - 使用HTML格式，确保清晰易读
+- <h5>标签用于结构标题（不翻译内容）
 
 **嵌入式引用**（可选使用）：
 - 区域：@Template[type:burst|distance:20]
@@ -587,15 +620,35 @@ export const FEAT_KNOWLEDGE_UNIFIED_GUIDE = `
 - ✅ 标准顺序是指【如果需要，按这个顺序】，不是【必须全部包含】
 - ✅ 大部分专长只需要1-2个元素（通常只有效果）
 
-**错误 7：使用英文术语**
-- ❌ 使用Requirements、Trigger、Frequency → 必须使用中文
-- ✅ 使用中文术语（需求、触发、频率）
-- ✅ 即使在Function Calling返回JSON时，HTML内容也必须全部中文
+**错误 7：使用英文标签和术语（非常常见的问题）**
+- ❌ 使用 Activate、Requirements、Trigger、Frequency、Effect、Special → 必须使用中文
+- ❌ 写 <strong>Activate</strong> → 必须写 <strong>启动</strong>
+- ❌ 写 <strong>Activate—能力名</strong> → 必须写 <strong>启动—能力名</strong>
+- ❌ 括号内写英文特征 (concentrate, manipulate) → 必须翻译为中文 专注，交互
+- ✅ 使用中文标签（启动、需求、触发、频率、效果、特殊、豁免）
+- ✅ 括号内的动作组件特征翻译为中文
+- ✅ 即使在Function Calling返回JSON时，HTML内容标签也必须全部中文
+
+**错误示例（❌ 不要这样写）**：
+<p><strong>Activate</strong> <span class="action-glyph">2</span> (concentrate, manipulate)</p>
+<p><strong>Frequency</strong> once per day</p>
+<hr />
+<p><strong>Effect</strong> 你释放火焰...</p>
+
+**正确示例（✅ 应该这样写）**：
+<p><strong>启动</strong> <span class="action-glyph">2</span> 专注，交互</p>
+<p><strong>频率</strong> 每天一次</p>
+<hr />
+<p><strong>效果</strong> 你释放火焰...</p>
 
 **错误 8：过度冗长**
 - ❌ 写大段的背景故事或设计理念 → description只写游戏规则
 - ✅ 专注于玩家需要知道的效果、数值、持续时间
 - ✅ 一个简单专长可能只需要一句话
+
+**错误 9：UUID显示文本不使用双语格式**
+- ❌ @UUID[...]{Sickened 1} 或 @UUID[...]{恶心1}
+- ✅ @UUID[...]{恶心 Sickened 1}（中文名 + 英文名 + 数值）
 
 ---
 
@@ -610,6 +663,43 @@ export const FEAT_KNOWLEDGE_UNIFIED_GUIDE = `
 | 特殊 | ~20% | 仅当有额外说明 |
 
 **结论**：大约70%的专长只需要写效果部分，不要过度使用格式标签！
+
+---
+
+## 6. PF2e官方中文格式参考示例
+
+以下是PF2e官方中文翻译的标准格式，请严格参照：
+
+### 装备启动能力示例
+<p><strong>启动</strong> <span class="action-glyph">2</span> 交互</p>
+<p>这种微微闪烁着的粉末能快速引起渊铀毒素的症状。</p>
+<hr />
+<p><strong>豁免</strong> @Check[fortitude|dc:27]</p>
+<p><strong>潜伏期</strong> 1 分钟</p>
+<p><strong>最大持续时间</strong> 6 分钟</p>
+<p><strong>阶段1</strong> @Damage[8d6[poison]]伤害并@UUID[Compendium.pf2e.conditionitems.Item.fesd1n5eVhpCSS18]{恶心 Sickened 1} (1 分钟)</p>
+
+### 反应动作示例
+<p><strong>启动</strong> <span class="action-glyph">R</span> 命令</p>
+<p><strong>触发</strong> 你在保持平衡的特技检定中失败或大失败并且会坠落</p>
+<hr />
+<p><strong>效果</strong> 重骰特技检定，并取较好的结果。</p>
+
+### 专长频率示例
+<p><strong>频率</strong> 每天一次</p>
+<hr />
+<p>你能以优雅的表演吸引周围人的注意。尝试做一个@Check[performance]检定...</p>
+
+### 多个启动能力示例
+<p><strong>启动</strong> <span class="action-glyph">R</span> 想象</p>
+<p><strong>触发</strong> 一个敌人对你用法术的检定失败</p>
+<hr />
+<p><strong>效果</strong> 你获得相当于该法术环级两倍的临时HP，直到你的下一个回合。</p>
+<hr />
+<p><strong>启动</strong> <span class="action-glyph">2</span> 指令，交互</p>
+<p><strong>频率</strong> 每天一次</p>
+<hr />
+<p><strong>效果</strong> 你获得一个奥术戏法的效果。</p>
 `.trim();
 
 /**

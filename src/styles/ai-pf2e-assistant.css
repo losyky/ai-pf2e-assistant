@@ -1812,3 +1812,1065 @@ ol.banlist-category-items {
 #compendium-browser .banlist-batch-add-btn i {
   font-size: 0.8rem !important;
 }
+
+/* ======================================== */
+/* Monster Draw System                      */
+/* ======================================== */
+
+/* Config Form */
+.monster-draw-config-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 8px;
+}
+
+.monster-draw-config-form {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.monster-form-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.monster-form-group {
+  margin-bottom: 8px;
+}
+
+.monster-form-group label {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.monster-form-group input[type="number"],
+.monster-form-group input[type="text"] {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.15);
+  color: inherit;
+}
+
+.monster-form-row .monster-form-group {
+  flex: 1;
+}
+
+.monster-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 0.85rem;
+}
+
+.monster-checkbox-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.monster-pack-list {
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 4px;
+  border: 1px solid #444;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.1);
+}
+
+.monster-tag-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.15);
+  min-height: 32px;
+}
+
+.monster-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  background: rgba(100,150,200,0.2);
+  border: 1px solid rgba(100,150,200,0.4);
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.monster-tag .remove-tag {
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 0.7rem;
+}
+
+.monster-tag .remove-tag:hover {
+  opacity: 1;
+  color: #c62828;
+}
+
+.monster-tag-text-input {
+  flex: 1;
+  min-width: 120px;
+  border: none !important;
+  background: transparent !important;
+  outline: none;
+  font-size: 0.85rem;
+  color: inherit;
+}
+
+.monster-draw-config-actions {
+  padding-top: 8px;
+  border-top: 1px solid #444;
+}
+
+.monster-start-draw-btn {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Draw App */
+.monster-draw-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 8px;
+}
+
+.monster-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.monster-round-info,
+.monster-select-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.monster-items-grid {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 4px;
+}
+
+.monster-card {
+  border: 2px solid #555;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: rgba(0,0,0,0.1);
+}
+
+.monster-card:hover {
+  border-color: #888;
+  background: rgba(0,0,0,0.2);
+}
+
+.monster-card.selected {
+  border-color: #4caf50;
+  background: rgba(76,175,80,0.1);
+}
+
+.monster-card.rarity-common { border-left: 4px solid #aaa; }
+.monster-card.rarity-uncommon { border-left: 4px solid #e67e22; }
+.monster-card.rarity-rare { border-left: 4px solid #3498db; }
+.monster-card.rarity-unique { border-left: 4px solid #9b59b6; }
+
+.monster-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monster-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #555;
+}
+
+.monster-card-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.monster-card-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monster-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+.monster-level-badge {
+  background: rgba(100,100,200,0.2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.monster-size-badge {
+  background: rgba(100,200,100,0.15);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.monster-rarity-badge {
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  text-transform: capitalize;
+}
+
+.monster-rarity-badge.rarity-common { background: rgba(150,150,150,0.2); }
+.monster-rarity-badge.rarity-uncommon { background: rgba(230,126,34,0.2); color: #e67e22; }
+.monster-rarity-badge.rarity-rare { background: rgba(52,152,219,0.2); color: #3498db; }
+.monster-rarity-badge.rarity-unique { background: rgba(155,89,182,0.2); color: #9b59b6; }
+
+.monster-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.monster-card-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 3px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.monster-card-actions button:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
+}
+
+.monster-check-icon {
+  color: #4caf50;
+  font-size: 1.1rem;
+}
+
+.monster-card-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.monster-trait-tag {
+  display: inline-block;
+  padding: 1px 5px;
+  background: rgba(100,150,200,0.15);
+  border: 1px solid rgba(100,150,200,0.3);
+  border-radius: 3px;
+  font-size: 0.72rem;
+}
+
+.monster-card-description {
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 3px;
+  font-size: 0.85rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.monster-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #444;
+}
+
+.monster-actions button {
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.monster-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Summary */
+.monster-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.monster-summary-header {
+  text-align: center;
+}
+
+.monster-summary-header i {
+  font-size: 2rem;
+  color: #ffd700;
+  margin-bottom: 4px;
+}
+
+.monster-summary-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.monster-summary-hint {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  text-align: center;
+}
+
+.monster-summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.monster-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: grab;
+}
+
+.monster-summary-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.monster-summary-item img {
+  border-radius: 3px;
+  border: 1px solid #555;
+}
+
+.monster-summary-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monster-summary-name {
+  font-weight: 600;
+}
+
+.monster-summary-level {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.monster-drag-handle {
+  opacity: 0.3;
+  cursor: grab;
+}
+
+/* ======================================== */
+/* Monster Modifier System                  */
+/* ======================================== */
+
+.monster-modifier-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.monster-input-view,
+.monster-results-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 8px;
+}
+
+/* Drop Zone */
+.monster-drop-zone {
+  border: 2px dashed #555;
+  border-radius: 6px;
+  padding: 12px;
+  min-height: 120px;
+  transition: all 0.2s;
+}
+
+.monster-drop-zone.drag-over {
+  border-color: #4caf50;
+  background: rgba(76,175,80,0.08);
+}
+
+.monster-drop-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+}
+
+.monster-drop-empty p {
+  opacity: 0.6;
+  font-size: 0.9rem;
+}
+
+.monster-drop-hint {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  padding: 6px 0;
+}
+
+.monster-drop-hint a {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.monster-dropped-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.monster-dropped-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 4px;
+  border: 1px solid #444;
+}
+
+.monster-dropped-item img {
+  border-radius: 3px;
+  border: 1px solid #555;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+}
+
+.monster-dropped-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.monster-dropped-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monster-dropped-meta {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monster-remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.monster-remove-btn:hover {
+  opacity: 1;
+  color: #c62828;
+}
+
+/* Template Section */
+.monster-template-section {
+  margin-top: 8px;
+}
+
+.monster-template-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.monster-template-header label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.monster-template-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 4px 6px;
+}
+
+.monster-template-header button:hover {
+  opacity: 1;
+}
+
+.monster-template-section select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.15);
+  color: inherit;
+}
+
+.monster-no-templates {
+  padding: 8px;
+  text-align: center;
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+.monster-no-templates a {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.monster-modifier-actions {
+  padding-top: 8px;
+  border-top: 1px solid #444;
+}
+
+.monster-start-modify-btn {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Results */
+.monster-results-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monster-results-header h3 {
+  margin: 0;
+}
+
+.monster-back-to-input-btn {
+  background: none;
+  border: 1px solid #555;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+}
+
+.monster-results-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.monster-result-card {
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 8px;
+  background: rgba(0,0,0,0.1);
+}
+
+.monster-result-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monster-result-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #555;
+}
+
+.monster-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.monster-result-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.monster-result-comparison {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 0.78rem;
+}
+
+.monster-compare-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.compare-label {
+  opacity: 0.6;
+  font-weight: 600;
+}
+
+.compare-original {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.compare-modified {
+  font-weight: 600;
+  color: #4caf50;
+}
+
+.monster-result-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.monster-result-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  opacity: 0.7;
+  border-radius: 3px;
+}
+
+.monster-result-actions button:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
+}
+
+.monster-result-json {
+  margin-top: 6px;
+  max-height: 300px;
+  overflow: auto;
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.monster-result-json pre {
+  margin: 0;
+  font-size: 0.72rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.monster-results-actions {
+  padding-top: 8px;
+  border-top: 1px solid #444;
+  display: flex;
+  justify-content: center;
+}
+
+.monster-results-actions button {
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+/* ======================================== */
+/* Monster Mod Template Manager             */
+/* ======================================== */
+
+.monster-mod-template-manager-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.template-list-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.template-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.template-list-header h3 {
+  margin: 0;
+}
+
+.template-new-btn {
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.template-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.template-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.1);
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+.template-list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.template-list-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.template-list-desc {
+  display: block;
+  font-size: 0.78rem;
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.template-list-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 1px 5px;
+  background: rgba(100,100,200,0.2);
+  border-radius: 3px;
+  margin-top: 2px;
+}
+
+.template-list-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.template-list-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  opacity: 0.6;
+  border-radius: 3px;
+}
+
+.template-list-actions button:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
+}
+
+.template-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  text-align: center;
+}
+
+/* Template Editor */
+.template-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.template-editor-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.template-editor-header h3 {
+  margin: 0;
+}
+
+.template-back-btn {
+  background: none;
+  border: 1px solid #555;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+}
+
+.template-editor-form {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.template-form-group {
+  margin-bottom: 8px;
+}
+
+.template-form-group label {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.template-form-group input[type="text"],
+.template-form-group input[type="number"],
+.template-form-group textarea {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.15);
+  color: inherit;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.template-form-row {
+  display: flex;
+  gap: 8px;
+}
+
+.template-form-row .template-form-group {
+  flex: 1;
+}
+
+.template-editor-actions {
+  padding-top: 8px;
+  border-top: 1px solid #444;
+}
+
+.template-save-btn {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Template list header with multiple buttons */
+.template-list-header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.template-list-header-actions button {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: none;
+}
+
+.template-list-header-actions button:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Template type badges */
+.template-type-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  border-radius: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.template-type-ai {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.template-type-recipe {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.template-list-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Recipe section in editor */
+.template-recipe-section {
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.1);
+}
+
+.template-recipe-header {
+  margin-bottom: 6px;
+}
+
+.template-recipe-header label {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.template-recipe-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.template-recipe-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.recipe-rule-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid #555;
+  border-radius: 12px;
+}
+
+.template-recipe-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.template-recipe-actions button {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: none;
+}
+
+.template-recipe-actions button:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.template-recipe-empty {
+  text-align: center;
+  padding: 4px 0;
+}
+
+.template-recipe-empty button,
+.template-generate-recipe-btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: none;
+}
+
+.template-recipe-empty button:hover,
+.template-generate-recipe-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Monster template mode hint */
+.monster-template-mode-hint {
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+.monster-template-mode-hint.recipe-mode {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}

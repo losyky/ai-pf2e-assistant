@@ -139,63 +139,16 @@ export class MapDropHandler {
       return;
     }
 
-    const totalWidth = template.gridCols * MAP_CELL_SIZE;
-    const totalHeight = template.gridRows * MAP_CELL_SIZE;
-
-    Logger.debug(`Placing template at (${dropX}, ${dropY}), size ${totalWidth}x${totalHeight}`);
+    Logger.debug(`Placing template at (${dropX}, ${dropY}), size ${template.gridCols * MAP_CELL_SIZE}x${template.gridRows * MAP_CELL_SIZE}`);
     ui.notifications.info(`正在放置地图模板「${template.name}」...`);
 
     try {
       const guideService = MapGuideImageService.getInstance();
       const guidePath = await guideService.uploadGuideImage(template);
 
-      const tileData = {
-        x: dropX,
-        y: dropY,
-        width: totalWidth,
-        height: totalHeight,
-        texture: { src: guidePath },
-        flags: {
-          [MODULE_ID]: {
-            mapTemplateId: template.id,
-            isMapTile: true,
-            isGenerating: true,
-          }
-        }
-      };
+      const tileId = await MapDropHandler._createTileAndWalls(template, dropX, dropY, guidePath, true);
 
-      const tiles = await scene.createEmbeddedDocuments('Tile', [tileData]);
-      const tileId = tiles[0]?.id;
-      if (!tileId) throw new Error('创建图块失败');
-
-      const wallDocs = template.walls.map(w => {
-        const cfg = WALL_TYPE_CONFIG[w.wallType || 'normal'].fvtt;
-        const doc: Record<string, any> = {
-          c: [
-            dropX + w.x1 * MAP_CELL_SIZE,
-            dropY + w.y1 * MAP_CELL_SIZE,
-            dropX + w.x2 * MAP_CELL_SIZE,
-            dropY + w.y2 * MAP_CELL_SIZE,
-          ],
-          move: cfg.move ?? 20,
-          sense: cfg.sense ?? 20,
-          door: cfg.door ?? 0,
-          flags: {
-            [MODULE_ID]: {
-              mapTemplateId: template.id,
-              mapTileId: tileId,
-            }
-          }
-        };
-        if (cfg.ds !== undefined) doc.ds = cfg.ds;
-        return doc;
-      });
-
-      if (wallDocs.length > 0) {
-        await scene.createEmbeddedDocuments('Wall', wallDocs);
-      }
-
-      ui.notifications.info(`已放置 ${wallDocs.length} 面墙壁，开始生成地图图片...`);
+      ui.notifications.info(`已放置 ${template.walls.length} 面墙壁，开始生成地图图片...`);
 
       MapDropHandler._generateMapImage(template, tileId, dropX, dropY).catch(err => {
         console.error(`${MODULE_ID} | 地图图像生成失败:`, err);
@@ -206,6 +159,96 @@ export class MapDropHandler {
       console.error(`${MODULE_ID} | 地图模板放置失败:`, err);
       ui.notifications.error(`放置失败: ${err.message}`);
     }
+  }
+
+  static async placeWithExistingImage(templateId: string, imagePath: string): Promise<void> {
+    const templateService = MapTemplateService.getInstance();
+    const template = templateService.getById(templateId);
+    if (!template) {
+      ui.notifications.error('找不到模板数据');
+      return;
+    }
+    if (!canvas?.scene) {
+      ui.notifications.error('没有活动场景');
+      return;
+    }
+
+    const preview = new MapPlacementPreview(template);
+    const pos = await preview.start();
+    if (!pos) {
+      ui.notifications.info('已取消放置');
+      return;
+    }
+
+    try {
+      await MapDropHandler._createTileAndWalls(template, pos.x, pos.y, imagePath, false);
+      ui.notifications.info(`已放置地图「${template.name}」(${template.walls.length} 面墙壁)`);
+    } catch (err: any) {
+      console.error(`${MODULE_ID} | 地图放置失败:`, err);
+      ui.notifications.error(`放置失败: ${err.message}`);
+    }
+  }
+
+  private static async _createTileAndWalls(
+    template: MapTemplate,
+    dropX: number,
+    dropY: number,
+    imagePath: string,
+    isGenerating: boolean,
+  ): Promise<string> {
+    const scene = canvas?.scene;
+    if (!scene) throw new Error('没有活动场景');
+
+    const totalWidth = template.gridCols * MAP_CELL_SIZE;
+    const totalHeight = template.gridRows * MAP_CELL_SIZE;
+
+    const tileData = {
+      x: dropX,
+      y: dropY,
+      width: totalWidth,
+      height: totalHeight,
+      texture: { src: imagePath },
+      flags: {
+        [MODULE_ID]: {
+          mapTemplateId: template.id,
+          isMapTile: true,
+          isGenerating,
+        }
+      }
+    };
+
+    const tiles = await scene.createEmbeddedDocuments('Tile', [tileData]);
+    const tileId = tiles[0]?.id;
+    if (!tileId) throw new Error('创建图块失败');
+
+    const wallDocs = template.walls.map(w => {
+      const cfg = WALL_TYPE_CONFIG[w.wallType || 'normal'].fvtt;
+      const doc: Record<string, any> = {
+        c: [
+          dropX + w.x1 * MAP_CELL_SIZE,
+          dropY + w.y1 * MAP_CELL_SIZE,
+          dropX + w.x2 * MAP_CELL_SIZE,
+          dropY + w.y2 * MAP_CELL_SIZE,
+        ],
+        move: cfg.move ?? 20,
+        sense: cfg.sense ?? 20,
+        door: cfg.door ?? 0,
+        flags: {
+          [MODULE_ID]: {
+            mapTemplateId: template.id,
+            mapTileId: tileId,
+          }
+        }
+      };
+      if (cfg.ds !== undefined) doc.ds = cfg.ds;
+      return doc;
+    });
+
+    if (wallDocs.length > 0) {
+      await scene.createEmbeddedDocuments('Wall', wallDocs);
+    }
+
+    return tileId;
   }
 
   private static _clientToCanvas(clientX: number, clientY: number): { x: number; y: number } {

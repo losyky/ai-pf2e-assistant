@@ -57,5 +57,27 @@
       "path": "lang/cn.json"
     }
   ],
-  "packs": []
+  "packs": [
+    {
+      "name": "roguelike-classes",
+      "label": "Roguelike Classes",
+      "path": "packs/roguelike-classes",
+      "type": "Item",
+      "system": "pf2e"
+    },
+    {
+      "name": "roguelike-ancestries",
+      "label": "Roguelike Ancestries",
+      "path": "packs/roguelike-ancestries",
+      "type": "Item",
+      "system": "pf2e"
+    },
+    {
+      "name": "roguelike-backgrounds",
+      "label": "Roguelike Backgrounds",
+      "path": "packs/roguelike-backgrounds",
+      "type": "Item",
+      "system": "pf2e"
+    }
+  ]
 } 

@@ -1,0 +1,117 @@
+<form class="monster-draw-config-container" autocomplete="off">
+  <div class="monster-draw-config-form">
+    <h3 style="margin:0 0 8px 0;"><i class="fas fa-dragon"></i> 怪物抽取配置</h3>
+
+    <div class="monster-form-row">
+      <div class="monster-form-group">
+        <label>总抽取轮数</label>
+        <input type="number" name="totalDraws" value="{{totalDraws}}" min="1" max="20" />
+      </div>
+      <div class="monster-form-group">
+        <label>每轮展示数量</label>
+        <input type="number" name="monstersPerDraw" value="{{monstersPerDraw}}" min="1" max="20" />
+      </div>
+      <div class="monster-form-group">
+        <label>每轮可选数量</label>
+        <input type="number" name="selectablePerDraw" value="{{selectablePerDraw}}" min="1" max="20" />
+      </div>
+    </div>
+
+    <div class="monster-form-row">
+      <div class="monster-form-group">
+        <label>最低等级</label>
+        <input type="number" name="levelMin" value="{{levelMin}}" min="-1" max="25" />
+      </div>
+      <div class="monster-form-group">
+        <label>最高等级</label>
+        <input type="number" name="levelMax" value="{{levelMax}}" min="-1" max="25" />
+      </div>
+    </div>
+
+    <div class="monster-form-group">
+      <label>稀有度 <span style="font-size:0.75rem;opacity:0.6;">（不勾选则包含所有）</span></label>
+      <div class="monster-checkbox-group">
+        {{#each rarityOptions}}
+          <label>
+            <input type="checkbox" name="rarity" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+            {{this.label}}
+          </label>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="monster-form-group">
+      <label>体型 <span style="font-size:0.75rem;opacity:0.6;">（不勾选则包含所有）</span></label>
+      <div class="monster-checkbox-group">
+        {{#each sizeOptions}}
+          <label>
+            <input type="checkbox" name="size" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+            {{this.label}}
+          </label>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="monster-form-group">
+      <label>必须包含的特征</label>
+      <div class="monster-tag-input" data-field="requiredTraits">
+        {{#each requiredTraitLabels}}
+          <span class="monster-tag">{{this.label}} <i class="fas fa-times remove-tag" data-tag="{{this.value}}"></i></span>
+        {{/each}}
+        <input type="text" placeholder="输入特征名称后按回车添加..." class="monster-tag-text-input" data-field="requiredTraits" list="monster-traits-datalist" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="monster-form-group">
+      <label>必须排除的特征</label>
+      <div class="monster-tag-input" data-field="excludedTraits">
+        {{#each excludedTraitLabels}}
+          <span class="monster-tag">{{this.label}} <i class="fas fa-times remove-tag" data-tag="{{this.value}}"></i></span>
+        {{/each}}
+        <input type="text" placeholder="输入特征名称后按回车排除..." class="monster-tag-text-input" data-field="excludedTraits" list="monster-traits-datalist" autocomplete="off" />
+      </div>
+    </div>
+
+    <datalist id="monster-traits-datalist">
+      {{#each availableTraits}}
+        <option value="{{this.label}}">{{this.label}} ({{this.value}})</option>
+      {{/each}}
+    </datalist>
+
+    {{#if hasPacks}}
+    <div class="monster-form-group">
+      <label>怪物来源 <span style="font-size:0.75rem;opacity:0.6;">（不勾选则包含所有）</span></label>
+      <div class="monster-checkbox-group monster-pack-list">
+        {{#each packOptions}}
+          <label>
+            <input type="checkbox" name="sourcePack" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />
+            {{this.label}}
+          </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <div class="monster-checkbox-group" style="margin-top: 4px;">
+      <label>
+        <input type="checkbox" name="allowDuplicates" {{#if allowDuplicates}}checked{{/if}} />
+        允许重复抽取
+      </label>
+    </div>
+
+    <div class="monster-form-group">
+      <label>自定义窗口标题（可选）</label>
+      <input type="text" name="customTitle" value="{{customTitle}}" placeholder="留空使用默认标题" />
+    </div>
+  </div>
+
+  <div class="monster-draw-config-actions">
+    <button class="monster-start-draw-btn" type="button" {{#if isLoading}}disabled{{/if}}>
+      {{#if isLoading}}
+        <i class="fas fa-spinner fa-spin"></i> 构建怪物池中...
+      {{else}}
+        <i class="fas fa-dragon"></i> 开始抽取
+      {{/if}}
+    </button>
+  </div>
+</form>

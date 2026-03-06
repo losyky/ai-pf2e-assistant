@@ -1,0 +1,21 @@
+{
+    "label": "肉鸽背景 Roguelike Backgrounds",
+    "entries": {
+        "Guardian": {
+            "name": "守卫",
+            "description": "<p>你曾是一名训练有素的守护者，精通阵列战术和重型武装。</p><p>选择两次属性提升。一次必须提升<strong>力量</strong>或<strong>体质</strong>，另一次为自由属性提升。</p><p>你受训于运动技能和战术学识技能。</p>"
+        },
+        "Scholar": {
+            "name": "学者",
+            "description": "<p>你曾是一名专注的研究者，钻研奥术公式和古代铭文。</p><p>选择两次属性提升。一次必须提升<strong>智力</strong>或<strong>感知</strong>，另一次为自由属性提升。</p><p>你受训于奥术技能和学院学识技能。</p>"
+        },
+        "Warden": {
+            "name": "巡林",
+            "description": "<p>你曾是一名荒野守护者，与自然的韵律相通。</p><p>选择两次属性提升。一次必须提升<strong>敏捷</strong>或<strong>感知</strong>，另一次为自由属性提升。</p><p>你受训于自然技能和草药学识技能。</p>"
+        },
+        "Attendant": {
+            "name": "侍者",
+            "description": "<p>你曾是一名神殿仆从，精通神圣仪式和治愈之术。</p><p>选择两次属性提升。一次必须提升<strong>感知</strong>或<strong>魅力</strong>，另一次为自由属性提升。</p><p>你受训于宗教技能和抄录学识技能。</p>"
+        }
+    }
+}

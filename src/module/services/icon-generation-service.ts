@@ -129,6 +129,58 @@ export class IconGenerationService {
   }
 
   /**
+   * 为 NPC 生成全身立绘（PF2e 风格，纯色背景）
+   */
+  public async generatePortrait(name: string, portraitPrompt: string): Promise<GeneratedIcon | null> {
+    try {
+      await this.ensureCustomDirectory('pf2e-portraits');
+
+      let fullPrompt = portraitPrompt.trim();
+      fullPrompt += ', Pathfinder 2e official art style, Paizo illustration style, full body character portrait, solid color background, high detail, painterly fantasy illustration, no text, no labels, no watermarks';
+
+      const portraitOptions: IconGenerationOptions = {
+        name,
+        description: fullPrompt,
+        type: 'npc',
+        size: '1024x1024',
+        iconPrompt: fullPrompt
+      };
+
+      const imageUrl = await this.callDalleAPI(fullPrompt, portraitOptions);
+
+      const timestamp = Date.now();
+      const sanitizedName = name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_');
+      const filename = `portrait_${sanitizedName}_${timestamp}.png`;
+      const relativePath = `pf2e-portraits/${filename}`;
+
+      const response = await fetch(imageUrl);
+      if (!response.ok) throw new Error(`下载图片失败: ${response.status}`);
+      const imageBlob = await response.blob();
+      const imageBuffer = await imageBlob.arrayBuffer();
+
+      const file = new File([imageBuffer], filename, { type: 'image/png' });
+      const uploadResult = await (FilePicker as any).upload('data', 'pf2e-portraits', file);
+
+      if (!uploadResult?.path) {
+        throw new Error('文件上传返回的路径为空');
+      }
+
+      return {
+        filename,
+        path: uploadResult.path,
+        url: `/${relativePath}`,
+        prompt: fullPrompt
+      };
+    } catch (error: any) {
+      console.error('Portrait generation failed:', error);
+      if (ui?.notifications) {
+        ui.notifications.warn(`立绘生成失败: ${error.message}`);
+      }
+      return null;
+    }
+  }
+
+  /**
    * 生成图标提示词
    */
   private generatePrompt(options: IconGenerationOptions): string {

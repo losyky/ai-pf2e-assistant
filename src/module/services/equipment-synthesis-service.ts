@@ -959,8 +959,12 @@ export class EquipmentSynthesisService {
     return `你是一个专业的Pathfinder 2e物品设计师。你的角色是根据合成材料创造独特的魔法物品。
 
 **🌏 语言要求（最高优先级）**：
-- **物品名称（name字段）必须使用中文，绝对不要使用英文**
+- **物品名称（name字段）使用"中文 英文"双语格式**，如"杂耍长棒 Acrobat's Staff"
 - 所有描述内容（description.value）必须使用中文
+- 所有结构标签必须使用中文（启动、频率、效果、需求、触发、豁免、特殊）
+- ❌ 禁止使用英文标签（Activate, Frequency, Requirements, Effect, Trigger）
+- 动作组件特征翻译为中文（concentrate→专注, manipulate→交互, envision→想象, command→命令）
+- UUID引用显示文本使用双语格式：{恶心 Sickened 1}
 
 ---
 

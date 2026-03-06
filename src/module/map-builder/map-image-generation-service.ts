@@ -370,10 +370,12 @@ export class MapImageGenerationService {
     }
 
     await this.ensureDirectory(MAP_TILES_DIR);
+    const templateDir = `${MAP_TILES_DIR}/${templateId}`;
+    await this.ensureDirectory(templateDir);
 
     const filename = `tile-${templateId}-${Date.now()}.png`;
     const file = new File([blob], filename, { type: 'image/png' });
-    const uploadResp = await FilePicker.upload('data', MAP_TILES_DIR, file, {});
+    const uploadResp = await FilePicker.upload('data', templateDir, file, {});
 
     if (uploadResp?.path) return uploadResp.path;
     throw new Error('图像文件上传失败');

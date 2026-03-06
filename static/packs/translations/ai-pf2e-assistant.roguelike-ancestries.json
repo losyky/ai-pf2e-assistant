@@ -1,0 +1,13 @@
+{
+    "label": "肉鸽族裔 Roguelike Ancestries",
+    "entries": {
+        "Remnant": {
+            "name": "遗裔",
+            "description": "<p><em>均衡型人形族裔，拥有广泛的先天潜力。获得两次自由属性提升，代表出色的多面性和适应力。</em></p><p><strong>HP</strong>：8</p><p><strong>体型</strong>：中型</p><p><strong>速度</strong>：25尺</p><p><strong>语言</strong>：通用语 + 1门额外语言</p><p><strong>视觉</strong>：正常</p>"
+        },
+        "Altered": {
+            "name": "改造体",
+            "description": "<p><em>被远古魔法永久改造的人形族裔。速度较慢但更加坚韧，拥有暗视能力，体质提升，但魅力降低。</em></p><p><strong>HP</strong>：10</p><p><strong>体型</strong>：中型</p><p><strong>速度</strong>：20尺</p><p><strong>属性提升</strong>：体质 + 1次自由</p><p><strong>属性缺陷</strong>：魅力</p><p><strong>视觉</strong>：暗视</p>"
+        }
+    }
+}

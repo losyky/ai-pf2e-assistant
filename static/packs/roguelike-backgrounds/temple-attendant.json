@@ -1,0 +1,34 @@
+{
+    "_id": "RLTempleAttend1",
+    "img": "systems/pf2e/icons/default-icons/background.svg",
+    "name": "Attendant",
+    "system": {
+        "boosts": {
+            "0": {
+                "value": ["wis", "cha"]
+            },
+            "1": {
+                "value": ["str", "dex", "con", "int", "wis", "cha"]
+            }
+        },
+        "description": {
+            "value": "<p>You were once a temple servant, trained in sacred rites and the art of healing.</p><p>Choose two attribute boosts. One must be to <strong>Wisdom</strong> or <strong>Charisma</strong>, and one is a free attribute boost.</p><p>You're trained in the Religion skill and the Scribing Lore skill.</p>"
+        },
+        "items": {},
+        "publication": {
+            "license": "MIT",
+            "remaster": true,
+            "title": "AI PF2e Assistant — Roguelike Templates"
+        },
+        "rules": [],
+        "trainedSkills": {
+            "lore": ["Scribing Lore"],
+            "value": ["religion"]
+        },
+        "traits": {
+            "rarity": "rare",
+            "value": []
+        }
+    },
+    "type": "background"
+}

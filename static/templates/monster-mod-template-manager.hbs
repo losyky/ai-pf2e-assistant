@@ -1,0 +1,171 @@
+<div class="monster-mod-template-manager-container">
+  {{#if isEditing}}
+    <div class="template-editor">
+      <div class="template-editor-header">
+        <button class="template-back-btn" type="button">
+          <i class="fas fa-arrow-left"></i> 返回列表
+        </button>
+        <h3><i class="fas fa-edit"></i> 编辑模板</h3>
+        <span class="template-type-badge template-type-{{editingTemplate.templateType}}">
+          {{editingTemplate.typeLabel}}
+        </span>
+      </div>
+
+      <div class="template-editor-form">
+        <div class="template-form-group">
+          <label>模板名称</label>
+          <input type="text" name="templateName" value="{{editingTemplate.name}}" placeholder="例如：不死化改造" />
+        </div>
+
+        <div class="template-form-group">
+          <label>模板描述</label>
+          <textarea name="templateDescription" rows="2" placeholder="简要描述这个改造模板的效果">{{editingTemplate.description}}</textarea>
+        </div>
+
+        <div class="template-form-group">
+          <label>
+            改造指令
+            <span style="font-size:0.75rem;opacity:0.6;">
+              {{#if editingTemplate.isRecipe}}
+                （描述改造需求，用于 AI 生成配方）
+              {{else}}
+                （每次改造时发送给 AI 的详细要求）
+              {{/if}}
+            </span>
+          </label>
+          <textarea name="promptInstructions" rows="6" placeholder="详细描述如何改造怪物。例如：&#10;将这个怪物改造为不死生物版本。&#10;- 增加不死生物特征&#10;- 添加负能量抗性和正能量弱点&#10;- 调整攻击为负能量伤害&#10;- 添加「亡灵凝视」能力">{{editingTemplate.promptInstructions}}</textarea>
+        </div>
+
+        <div class="template-form-row">
+          <div class="template-form-group">
+            <label>等级调整</label>
+            <input type="number" name="levelAdjustment" value="{{editingTemplate.levelAdjustment}}" min="-10" max="10" />
+            <span style="font-size:0.75rem;opacity:0.6;">正数提升等级，负数降低</span>
+          </div>
+        </div>
+
+        <div class="template-form-group">
+          <label>添加特征 <span style="font-size:0.75rem;opacity:0.6;">（逗号分隔）</span></label>
+          <input type="text" name="traitsAdd" value="{{editingTraitsAdd}}" placeholder="例如：undead, negative" />
+        </div>
+
+        <div class="template-form-group">
+          <label>移除特征 <span style="font-size:0.75rem;opacity:0.6;">（逗号分隔）</span></label>
+          <input type="text" name="traitsRemove" value="{{editingTraitsRemove}}" placeholder="例如：living, positive" />
+        </div>
+
+        {{!-- Recipe Section --}}
+        <div class="template-recipe-section">
+          <div class="template-recipe-header">
+            <label><i class="fas fa-cogs"></i> 改造配方（规则模板）</label>
+          </div>
+
+          {{#if hasRecipe}}
+            <div class="template-recipe-preview">
+              <div class="template-recipe-summary">
+                {{#each recipeSummary}}
+                  <span class="recipe-rule-tag">{{this}}</span>
+                {{/each}}
+              </div>
+              <div class="template-recipe-actions">
+                <button class="template-view-recipe-json-btn" type="button" title="查看配方 JSON">
+                  <i class="fas fa-code"></i> 查看 JSON
+                </button>
+                <button class="template-generate-recipe-btn" type="button"
+                        {{#if isGeneratingRecipe}}disabled{{/if}}>
+                  {{#if isGeneratingRecipe}}
+                    <i class="fas fa-spinner fa-spin"></i> 生成中...
+                  {{else}}
+                    <i class="fas fa-sync"></i> 重新生成
+                  {{/if}}
+                </button>
+                <button class="template-clear-recipe-btn" type="button" title="清除配方，切换为 AI 实时模式">
+                  <i class="fas fa-times"></i> 清除配方
+                </button>
+              </div>
+            </div>
+          {{else}}
+            <div class="template-recipe-empty">
+              <p style="margin:0 0 6px;opacity:0.7;font-size:0.85rem;">
+                将改造指令转换为可复用的结构化配方，无需每次调用 AI
+              </p>
+              <button class="template-generate-recipe-btn" type="button"
+                      {{#if isGeneratingRecipe}}disabled{{/if}}>
+                {{#if isGeneratingRecipe}}
+                  <i class="fas fa-spinner fa-spin"></i> 正在生成配方...
+                {{else}}
+                  <i class="fas fa-magic"></i> 从指令生成配方
+                {{/if}}
+              </button>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="template-editor-actions">
+        <button class="template-save-btn" type="button">
+          <i class="fas fa-save"></i> 保存模板
+        </button>
+      </div>
+    </div>
+  {{else}}
+    <div class="template-list-view">
+      <div class="template-list-header">
+        <h3><i class="fas fa-flask"></i> 改造模板列表</h3>
+        <div class="template-list-header-actions">
+          <button class="template-new-btn" type="button" title="新建 AI 模板（每次改造调用 AI）">
+            <i class="fas fa-plus"></i> AI 模板
+          </button>
+          <button class="template-new-recipe-btn" type="button" title="新建规则模板（AI 生成配方后可复用）">
+            <i class="fas fa-cogs"></i> 规则模板
+          </button>
+        </div>
+      </div>
+
+      {{#if hasTemplates}}
+        <div class="template-list">
+          {{#each templates}}
+            <div class="template-list-item">
+              <div class="template-list-info">
+                <div class="template-list-name-row">
+                  <span class="template-list-name">{{this.name}}</span>
+                  <span class="template-type-badge template-type-{{this.templateType}}">
+                    {{this.typeLabel}}
+                  </span>
+                  {{#if this.levelAdjustmentDisplay}}
+                    <span class="template-list-badge">
+                      等级 {{this.levelAdjustmentDisplay}}
+                    </span>
+                  {{/if}}
+                </div>
+                {{#if this.description}}
+                  <span class="template-list-desc">{{this.description}}</span>
+                {{/if}}
+              </div>
+              <div class="template-list-actions">
+                <button class="template-edit-btn" type="button" data-id="{{this.id}}" title="编辑">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="template-duplicate-btn" type="button" data-id="{{this.id}}" title="复制">
+                  <i class="fas fa-copy"></i>
+                </button>
+                <button class="template-delete-btn" type="button" data-id="{{this.id}}" title="删除">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="template-empty-state">
+          <i class="fas fa-flask" style="font-size:2rem;opacity:0.3;"></i>
+          <p>暂无改造模板</p>
+          <p style="font-size:0.85rem;opacity:0.7;">
+            <strong>AI 模板</strong>：每次改造时实时调用 AI<br/>
+            <strong>规则模板</strong>：AI 生成配方后可无限复用
+          </p>
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+</div>

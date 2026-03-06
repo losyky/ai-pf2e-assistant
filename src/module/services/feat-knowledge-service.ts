@@ -199,13 +199,16 @@ export class FeatKnowledgeService {
       guidance += '- rarity为: common, uncommon, rare, unique\n\n';
     }
     
-    guidance += '**HTML格式要求**:\n';
-    guidance += '- Requirements: <p><strong>Requirements</strong> ...</p>\n';
-    guidance += '- Trigger: <p><strong>Trigger</strong> ...</p>\n';
-    guidance += '- 伤害引用: @Damage[2d6[fire]]\n';
+    guidance += '**HTML格式要求（中文标签）**:\n';
+    guidance += '- 需求: <p><strong>需求</strong> ...</p>\n';
+    guidance += '- 触发: <p><strong>触发</strong> ...</p>\n';
+    guidance += '- 频率: <p><strong>频率</strong> 每天一次</p>\n';
+    guidance += '- 效果: <p><strong>效果</strong> ...</p>\n';
+    guidance += '- 启动: <p><strong>启动</strong> <span class="action-glyph">1</span> 专注，交互</p>\n';
+    guidance += '- 伤害引用: @Damage[2d6[fire]]（方括号内用英文）\n';
     guidance += '- 检定引用: @Check[type:fortitude|dc:20]\n';
-    guidance += '- 职业DC引用: @Check[type:will|dc:resolve(@actor.attributes.classDC.value)]\n';
-    guidance += '- UUID引用: @UUID[Compendium.pf2e.conditionitems.Item.Name]\n\n';
+    guidance += '- 职业DC引用: @Check[type:will|dc:resolve(@actor.abilities.classDC.value)]\n';
+    guidance += '- UUID引用: @UUID[Compendium.pf2e.conditionitems.Item.ID]{中文 English}\n\n';
     
     return guidance;
   }
