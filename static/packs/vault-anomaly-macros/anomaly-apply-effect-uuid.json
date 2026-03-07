@@ -1,0 +1,16 @@
+{
+    "_id": "VaultAnomMacro004",
+    "name": "异常结算：施加效果（UUID）",
+    "type": "script",
+    "scope": "global",
+    "img": "icons/svg/aura.svg",
+    "command": "// ======================================\n// 异常结算样板宏：通过 UUID 施加效果\n// ======================================\n// 当异常值满槽时自动执行，通过效果物品的 UUID 对目标施加效果。\n// 使用方法：复制此宏到宏目录，将下方 EFFECT_UUID 替换为目标效果的 UUID，\n//          然后在遗名之穹配置中关联到对应的异常类型。\n// 传入参数：{ actor, token, speaker, damageType }\n//\n// UUID 获取方式：\n//   - 在合集包中右键点击物品 → 复制 UUID\n//   - 例如：Compendium.pf2e.conditionitems.Item.Giam1GHbXxOxYPqY\n//   - 或世界内物品：Item.xxxxxxxxxxxxx\n// ======================================\n\n// ===== 用户配置区域 =====\nconst EFFECT_UUID = \"Compendium.pf2e.conditionitems.Item.Giam1GHbXxOxYPqY\";  // 要施加的效果物品 UUID\n// ===== 配置结束 =====\n\nif (!actor) {\n  ui.notifications.warn(\"异常结算宏：未找到目标角色\");\n  return;\n}\n\ntry {\n  // 通过 UUID 获取效果物品\n  const effectItem = await fromUuid(EFFECT_UUID);\n  if (!effectItem) {\n    ui.notifications.error(`异常结算宏：无法找到 UUID 对应的物品: ${EFFECT_UUID}`);\n    return;\n  }\n\n  // 将效果物品转为可嵌入的数据对象\n  const effectData = effectItem.toObject();\n\n  // 在角色身上创建该效果\n  await actor.createEmbeddedDocuments(\"Item\", [effectData]);\n\n  // 获取伤害类型的本地化名称\n  const typeLabel = CONFIG?.PF2E?.damageTypes?.[damageType]\n    ? game.i18n.localize(CONFIG.PF2E.damageTypes[damageType])\n    : damageType;\n\n  // 发送聊天消息\n  const effectName = effectItem.name || \"未知效果\";\n  const effectImg = effectItem.img || \"icons/svg/aura.svg\";\n  const content = `\n    <div style=\"padding: 8px; border-left: 4px solid #0d6efd; background: #f0f6ff; border-radius: 4px;\">\n      <p style=\"margin: 0 0 6px; font-weight: bold; color: #0d6efd;\">\n        <i class=\"fas fa-magic\"></i> 异常结算：施加效果\n      </p>\n      <p style=\"margin: 0;\">\n        <strong>${actor.name}</strong> 的 <strong>${typeLabel}</strong> 异常值已满！\n      </p>\n      <p style=\"margin: 4px 0 0; display: flex; align-items: center; gap: 6px;\">\n        <img src=\"${effectImg}\" style=\"width: 24px; height: 24px; border: none;\" />\n        获得效果：<strong>${effectName}</strong>\n      </p>\n    </div>\n  `;\n  await ChatMessage.create({ speaker, content });\n\n} catch (err) {\n  console.error(\"异常结算宏执行失败:\", err);\n  ui.notifications.error(\"异常结算宏执行失败，请查看控制台\");\n}",
+    "author": "AIPf2eBuilder000",
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+        "default": 0
+    },
+    "flags": {}
+}
+

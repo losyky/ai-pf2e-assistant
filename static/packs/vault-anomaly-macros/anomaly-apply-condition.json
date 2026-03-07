@@ -1,0 +1,16 @@
+{
+    "_id": "VaultAnomMacro003",
+    "name": "异常结算：施加状态效果",
+    "type": "script",
+    "scope": "global",
+    "img": "icons/svg/daze.svg",
+    "command": "// ======================================\n// 异常结算样板宏：施加状态效果\n// ======================================\n// 当异常值满槽时自动执行，对目标施加指定的状态效果。\n// 使用方法：复制此宏到宏目录，修改下方配置，然后在遗名之穹配置中关联。\n// 传入参数：{ actor, token, speaker, damageType }\n// ======================================\n\n// ===== 用户配置区域 =====\nconst CONDITION_SLUG = \"stunned\";   // 状态效果标识符\n//   常用状态：stunned（震慑）、frightened（恐惧）、sickened（恶心）、\n//   clumsy（笨拙）、enfeebled（力竭）、drained（吸取）、\n//   slowed（减速）、stupefied（愚钝）、blinded（目盲）、\n//   deafened（耳聋）、fatigued（疲乏）、paralyzed（麻痹）、\n//   prone（倒地）、off-guard（措手不及）\nconst CONDITION_VALUE = 1;          // 状态等级（如 stunned 1、frightened 2）；部分状态无等级则忽略此值\n// ===== 配置结束 =====\n\nif (!actor) {\n  ui.notifications.warn(\"异常结算宏：未找到目标角色\");\n  return;\n}\n\ntry {\n  // 获取伤害类型的本地化名称\n  const typeLabel = CONFIG?.PF2E?.damageTypes?.[damageType]\n    ? game.i18n.localize(CONFIG.PF2E.damageTypes[damageType])\n    : damageType;\n\n  // 尝试使用 PF2e 系统的 increaseCondition 方法\n  if (typeof actor.increaseCondition === \"function\") {\n    const existing = actor.getCondition?.(CONDITION_SLUG);\n    if (existing) {\n      // 如果已有此状态，增加其等级\n      const currentValue = existing.value ?? 0;\n      const targetValue = Math.max(currentValue, CONDITION_VALUE);\n      if (targetValue > currentValue) {\n        for (let i = currentValue; i < targetValue; i++) {\n          await actor.increaseCondition(CONDITION_SLUG);\n        }\n      }\n    } else {\n      // 首次施加状态\n      await actor.increaseCondition(CONDITION_SLUG, { value: CONDITION_VALUE });\n    }\n  } else {\n    // Fallback：通过合集获取状态效果物品\n    const conditionItem = game.pf2e?.ConditionManager?.getCondition(CONDITION_SLUG);\n    if (conditionItem) {\n      const itemData = conditionItem.toObject();\n      if (itemData.system?.value?.isValued) {\n        itemData.system.value.value = CONDITION_VALUE;\n      }\n      await actor.createEmbeddedDocuments(\"Item\", [itemData]);\n    } else {\n      ui.notifications.warn(`异常结算宏：无法找到状态效果 \"${CONDITION_SLUG}\"`);\n      return;\n    }\n  }\n\n  // 获取状态的本地化名称\n  const conditionLabel = game.pf2e?.ConditionManager?.getCondition(CONDITION_SLUG)?.name ?? CONDITION_SLUG;\n\n  // 发送聊天消息\n  const valueText = CONDITION_VALUE > 0 ? ` ${CONDITION_VALUE}` : \"\";\n  const content = `\n    <div style=\"padding: 8px; border-left: 4px solid #6f42c1; background: #f8f0ff; border-radius: 4px;\">\n      <p style=\"margin: 0 0 6px; font-weight: bold; color: #6f42c1;\">\n        <i class=\"fas fa-dizzy\"></i> 异常结算：状态效果\n      </p>\n      <p style=\"margin: 0;\">\n        <strong>${actor.name}</strong> 的 <strong>${typeLabel}</strong> 异常值已满！\n      </p>\n      <p style=\"margin: 4px 0 0;\">\n        获得状态效果：<strong>${conditionLabel}${valueText}</strong>\n      </p>\n    </div>\n  `;\n  await ChatMessage.create({ speaker, content });\n\n} catch (err) {\n  console.error(\"异常结算宏执行失败:\", err);\n  ui.notifications.error(\"异常结算宏执行失败，请查看控制台\");\n}",
+    "author": "AIPf2eBuilder000",
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+        "default": 0
+    },
+    "flags": {}
+}
+

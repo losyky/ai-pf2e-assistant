@@ -8251,20 +8251,12 @@ function registerSettings() {
       default: [],
     });
 
-    game.settings.register(MODULE_ID, 'vaultAnomalyMultiplier', {
-      name: '异常值倍率',
+    game.settings.register(MODULE_ID, 'vaultAnomalyMultipliers', {
+      name: '异常值倍率（按类型）',
       scope: 'world',
       config: false,
-      type: Number,
-      default: 4,
-    });
-
-    game.settings.register(MODULE_ID, 'vaultAnomalyMaxOverride', {
-      name: '异常槽最大值覆盖',
-      scope: 'world',
-      config: false,
-      type: Number,
-      default: 0,
+      type: Object,
+      default: {},
     });
 
     game.settings.register(MODULE_ID, 'vaultAnomalyMacros', {
@@ -8856,9 +8848,9 @@ Hooks.once('ready', function() {
   }
   
   // 设置 API
-  const game = getGame();
-  if (game && game.modules && typeof game.modules.get === 'function') {
-    const mod = game.modules.get(MODULE_ID);
+  const gameRef = getGame();
+  if (gameRef && gameRef.modules && typeof gameRef.modules.get === 'function') {
+    const mod = gameRef.modules.get(MODULE_ID);
     if (mod) {
       // 导入神龛宏API
       import('./api/shrine-macro-api').then(({ ShrineMacroAPI }) => {

@@ -346,6 +346,142 @@
   color: #495057;
 }
 
+/* 异常倍率与宏配置 - 扁平化单行布局 */
+.config-manager .vault-anomaly-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px;
+  margin-bottom: 5px;
+  padding: 4px 0;
+}
+
+.config-manager .vault-anomaly-row-label {
+  display: inline !important;
+  min-width: 50px;
+  font-weight: 600;
+  color: #495057;
+  flex-shrink: 0;
+  font-size: 0.9em;
+}
+
+.config-manager .vault-anomaly-row-mult {
+  display: inline !important;
+  color: #6c757d;
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+
+.config-manager .vault-multiplier-input {
+  width: 52px !important;
+  min-width: 52px !important;
+  max-width: 52px !important;
+  padding: 3px 4px !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 3px !important;
+  background: white !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  flex-shrink: 0;
+  line-height: 1.4 !important;
+  height: auto !important;
+}
+
+.config-manager .vault-multiplier-input:focus {
+  outline: none !important;
+  border-color: #4361ee !important;
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.15) !important;
+}
+
+.config-manager .macro-drop-zone {
+  flex: 1;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px dashed #ced4da;
+  border-radius: 3px;
+  background: #f8f9fa;
+  min-height: 28px;
+  transition: all 0.2s;
+  cursor: default;
+  overflow: hidden;
+}
+
+.config-manager .macro-drop-zone:hover {
+  border-color: #4361ee;
+  background: #e7f3ff;
+}
+
+.config-manager .macro-drop-zone.drag-over {
+  border-color: #4361ee;
+  background: #dbe7ff;
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.config-manager .macro-resolved-name {
+  flex: 1;
+  font-size: 0.85em;
+  color: #2b2d42;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.config-manager .macro-resolved-name i {
+  color: #4361ee;
+  margin-right: 3px;
+}
+
+.config-manager .macro-drop-placeholder {
+  flex: 1;
+  font-size: 0.8em;
+  color: #adb5bd;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.config-manager .macro-drop-placeholder i {
+  margin-right: 3px;
+}
+
+.config-manager .clear-macro-btn {
+  padding: 1px 4px !important;
+  background: none !important;
+  color: #c62828 !important;
+  opacity: 0.6;
+  border: none !important;
+  cursor: pointer;
+  font-size: 0.75em;
+  min-width: auto !important;
+  flex-shrink: 0;
+}
+
+.config-manager .clear-macro-btn:hover {
+  opacity: 1;
+  background: rgba(198, 40, 40, 0.1) !important;
+}
+
+/* 停用区域 */
+.config-manager .vault-disabled-section {
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+}
+
+.config-manager .vault-tag-disabled {
+  display: inline-block;
+  padding: 1px 8px;
+  background: #ffc107;
+  color: #856404;
+  border-radius: 10px;
+  font-size: 0.75em;
+  font-weight: 600;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
 /* 响应式布局 */
 @media (max-width: 600px) {
   .config-manager {

@@ -17,22 +17,10 @@
   </div>
 
   <div class="form-group">
-    <label for="anomalyMultiplier">异常值倍率</label>
-    <input type="number" name="anomalyMultiplier" id="anomalyMultiplier" value="{{anomaly.multiplier}}" min="1" max="20" step="0.5">
-    <span class="hint">受到的实际伤害 × 此倍率 = 累积到对应类型异常槽的值（默认 4 倍）</span>
-  </div>
-
-  <div class="form-group">
-    <label for="anomalyMaxOverride">异常槽最大值覆盖</label>
-    <input type="number" name="anomalyMaxOverride" id="anomalyMaxOverride" value="{{anomaly.maxOverride}}" min="0" step="1">
-    <span class="hint">设为 0 则使用角色最大生命值作为异常槽上限，设为其他值则统一使用该值</span>
-  </div>
-
-  <div class="form-group">
     <label>启用的伤害类型</label>
     <div class="roguelike-tag-input vault-damage-type-tags">
       {{#each anomaly.enabledTypeLabels}}
-        <span class="roguelike-tag">{{this.label}} <i class="fas fa-times vault-remove-damage-tag" data-tag="{{this.value}}"></i></span>
+        <span class="roguelike-tag">{{this.label}} <button type="button" class="vault-remove-damage-tag" data-tag="{{this.value}}" title="移除 {{this.label}}"><i class="fas fa-times"></i></button></span>
       {{/each}}
       <input type="text" placeholder="输入伤害类型名称后按回车添加..." class="vault-damage-tag-input" list="vault-damage-types-datalist" autocomplete="off" />
     </div>
@@ -46,50 +34,66 @@
   </datalist>
 
   <div class="form-group">
-    <label>异常结算宏配置</label>
+    <label>异常倍率与结算宏配置</label>
     <div class="macro-config-list">
       {{#each anomaly.macroConfigs}}
-      <div class="macro-config-row">
-        <span class="macro-type-label">{{this.label}}</span>
-        <input type="text" name="anomalyMacro_{{this.key}}" value="{{this.macroName}}" placeholder="留空则不执行宏">
+      <div class="vault-anomaly-row">
+        <span class="vault-anomaly-row-label">{{this.label}}</span>
+        <span class="vault-anomaly-row-mult">×</span>
+        <input type="number" name="anomalyMultiplier_{{this.key}}" value="{{this.multiplier}}" min="0.5" max="20" step="0.5" class="vault-multiplier-input" title="异常值累积倍率（默认 4）">
+        <div class="macro-drop-zone" data-damage-type="{{this.key}}">
+          <input type="hidden" name="anomalyMacro_{{this.key}}" value="{{this.macroUuid}}">
+          {{#if this.macroName}}
+            <span class="macro-resolved-name" title="{{this.macroUuid}}"><i class="fas fa-scroll"></i> {{this.macroName}}</span>
+            <button type="button" class="clear-macro-btn" data-key="{{this.key}}" title="清除宏关联">
+              <i class="fas fa-times"></i>
+            </button>
+          {{else}}
+            <span class="macro-drop-placeholder"><i class="fas fa-hand-point-down"></i> 拖入宏</span>
+          {{/if}}
+        </div>
       </div>
       {{/each}}
     </div>
-    <span class="hint">为每种已启用的伤害类型配置满槽结算时执行的宏名称。宏将以触发异常的角色为目标执行</span>
+    <span class="hint">为每种伤害类型配置累积倍率（伤害 × 倍率 = 异常值）和满槽结算宏。将宏拖入对应位置即可关联</span>
   </div>
 
   <div class="divider"></div>
 
-  <!-- 更好的属性 -->
-  <h3><i class="fas fa-star"></i> 更好的属性</h3>
+  <!-- 更好的属性 (暂时停用) -->
+  <h3><i class="fas fa-star"></i> 更好的属性 <span class="vault-tag-disabled">暂时停用</span></h3>
 
-  <div class="form-group">
+  <div class="info-box warning">
+    <p><i class="fas fa-exclamation-triangle"></i> 此功能目前暂时停用以修复已知问题，下方设置已禁用且不会生效。</p>
+  </div>
+
+  <div class="form-group vault-disabled-section">
     <label class="checkbox-label">
-      <input type="checkbox" name="betterAttributesEnabled" {{#if betterAttributes.enabled}}checked{{/if}}>
+      <input type="checkbox" name="betterAttributesEnabled" disabled>
       启用更好的属性系统
     </label>
     <span class="hint">启用后，角色的敏捷、智力和魅力属性将获得额外效果（仅限玩家角色）</span>
   </div>
 
-  <div class="form-group">
+  <div class="form-group vault-disabled-section">
     <label class="checkbox-label">
-      <input type="checkbox" name="betterDexEnabled" {{#if betterAttributes.dexEnabled}}checked{{/if}}>
+      <input type="checkbox" name="betterDexEnabled" disabled>
       更有伤害的敏捷
     </label>
     <span class="hint">武器打击重击时，结果视为获得敏捷调整值一半（向下取整）的无名加值，降低重击门槛</span>
   </div>
 
-  <div class="form-group">
+  <div class="form-group vault-disabled-section">
     <label class="checkbox-label">
-      <input type="checkbox" name="betterIntEnabled" {{#if betterAttributes.intEnabled}}checked{{/if}}>
+      <input type="checkbox" name="betterIntEnabled" disabled>
       更有伤害的智力
     </label>
     <span class="hint">法术打击重击时，结果视为获得智力调整值一半（向下取整）的无名加值，降低重击门槛</span>
   </div>
 
-  <div class="form-group">
+  <div class="form-group vault-disabled-section">
     <label class="checkbox-label">
-      <input type="checkbox" name="betterChaEnabled" {{#if betterAttributes.chaEnabled}}checked{{/if}}>
+      <input type="checkbox" name="betterChaEnabled" disabled>
       更好的魅力
     </label>
     <span class="hint">投掷豁免的大失败判定时，结果视为获得魅力调整值一半（向下取整）的无名加值，降低大失败几率</span>

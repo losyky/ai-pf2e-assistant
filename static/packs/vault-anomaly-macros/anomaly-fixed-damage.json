@@ -1,0 +1,15 @@
+{
+    "_id": "VaultAnomMacro001",
+    "name": "异常结算：固定伤害",
+    "type": "script",
+    "scope": "global",
+    "img": "icons/svg/explosion.svg",
+    "command": "// ======================================\n// 异常结算样板宏：固定伤害\n// ======================================\n// 当异常值满槽时自动执行，对目标造成固定数值或骰子公式的伤害。\n// 使用 PF2e 系统原生的 DamageRoll + applyDamage 方法结算。\n// 使用方法：复制此宏到宏目录，修改下方配置，然后在遗名之穹配置中关联。\n// 传入参数：{ actor, token, speaker, damageType }\n// ======================================\n\n// ===== 用户配置区域 =====\nconst DAMAGE_FORMULA = \"2d6\";       // 伤害公式，支持固定值（如 \"10\"）或骰子（如 \"2d6+4\"）\nconst DAMAGE_TYPE = damageType;     // 伤害类型，默认使用触发的异常类型\n// ===== 配置结束 =====\n\nif (!actor) {\n  ui.notifications.warn(\"异常结算宏：未找到目标角色\");\n  return;\n}\n\ntry {\n  // 获取伤害类型的本地化名称\n  const typeLabel = CONFIG?.PF2E?.damageTypes?.[DAMAGE_TYPE]\n    ? game.i18n.localize(CONFIG.PF2E.damageTypes[DAMAGE_TYPE])\n    : DAMAGE_TYPE;\n\n  // 使用 PF2e 原生 DamageRoll 构建带伤害类型的骰子\n  const DamageRollClass = CONFIG.Dice.rolls.find(r => r.name === \"DamageRoll\");\n  if (DamageRollClass) {\n    // PF2e DamageRoll 使用 {公式[类型]} 语法\n    const formula = `{${DAMAGE_FORMULA}[${DAMAGE_TYPE}]}`;\n    const roll = new DamageRollClass(formula);\n    await roll.evaluate();\n\n    // 发送伤害骰子消息到聊天\n    await roll.toMessage({\n      speaker,\n      flavor: `<strong>异常结算</strong>：${actor.name} 的 ${typeLabel} 异常值已满！`\n    });\n\n    // 使用系统原生 applyDamage 结算（自动处理抗力/弱点/护盾等）\n    const tokenDoc = token?.document ?? token;\n    await actor.applyDamage({ damage: roll, token: tokenDoc });\n  } else {\n    // Fallback：非 PF2e 系统或 DamageRoll 不可用\n    const roll = await new Roll(DAMAGE_FORMULA).evaluate();\n    const totalDamage = roll.total;\n    const currentHp = actor.system?.attributes?.hp?.value ?? 0;\n    const newHp = Math.max(0, currentHp - totalDamage);\n    await actor.update({ \"system.attributes.hp.value\": newHp });\n\n    const content = `\n      <div style=\"padding: 6px; border-left: 3px solid #e63946; background: #fff5f5; border-radius: 3px;\">\n        <p style=\"margin: 0; font-size: 0.9em;\"><strong>异常结算</strong>：${actor.name} 受到 ${roll.formula} = ${totalDamage} 点 ${typeLabel} 伤害。</p>\n      </div>\n    `;\n    await ChatMessage.create({ speaker, content });\n  }\n\n} catch (err) {\n  console.error(\"异常结算宏执行失败:\", err);\n  ui.notifications.error(\"异常结算宏执行失败，请查看控制台\");\n}",
+    "author": "AIPf2eBuilder000",
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+        "default": 0
+    },
+    "flags": {}
+}

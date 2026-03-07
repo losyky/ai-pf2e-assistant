@@ -78,6 +78,12 @@
       "path": "packs/roguelike-backgrounds",
       "type": "Item",
       "system": "pf2e"
+    },
+    {
+      "name": "vault-anomaly-macros",
+      "label": "异常结算样板宏",
+      "path": "packs/vault-anomaly-macros",
+      "type": "Macro"
     }
   ]
 } 

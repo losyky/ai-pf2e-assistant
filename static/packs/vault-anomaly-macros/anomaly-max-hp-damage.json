@@ -1,0 +1,15 @@
+{
+    "_id": "VaultAnomMacro002",
+    "name": "异常结算：最大生命值比例伤害",
+    "type": "script",
+    "scope": "global",
+    "img": "icons/svg/blood.svg",
+    "command": "// ======================================\n// 异常结算样板宏：最大生命值比例伤害\n// ======================================\n// 当异常值满槽时自动执行，对目标造成其最大生命值十分之一的伤害。\n// 使用 PF2e 系统原生的 DamageRoll + applyDamage 方法结算。\n// 使用方法：复制此宏到宏目录，修改下方配置，然后在遗名之穹配置中关联。\n// 传入参数：{ actor, token, speaker, damageType }\n// ======================================\n\n// ===== 用户配置区域 =====\nconst HP_FRACTION = 0.1;            // 最大生命值的比例（0.1 = 十分之一，0.25 = 四分之一）\nconst DAMAGE_TYPE = damageType;     // 伤害类型，默认使用触发的异常类型\nconst ROUND_MODE = \"floor\";         // 取整方式：\"floor\"（向下取整）、\"ceil\"（向上取整）、\"round\"（四舍五入）\n// ===== 配置结束 =====\n\nif (!actor) {\n  ui.notifications.warn(\"异常结算宏：未找到目标角色\");\n  return;\n}\n\ntry {\n  const maxHp = actor.system?.attributes?.hp?.max ?? 0;\n  if (maxHp <= 0) {\n    ui.notifications.warn(\"异常结算宏：目标角色最大生命值无效\");\n    return;\n  }\n\n  // 计算比例伤害\n  let totalDamage;\n  if (ROUND_MODE === \"ceil\") {\n    totalDamage = Math.ceil(maxHp * HP_FRACTION);\n  } else if (ROUND_MODE === \"round\") {\n    totalDamage = Math.round(maxHp * HP_FRACTION);\n  } else {\n    totalDamage = Math.floor(maxHp * HP_FRACTION);\n  }\n  totalDamage = Math.max(1, totalDamage); // 至少造成 1 点伤害\n\n  // 获取伤害类型的本地化名称\n  const typeLabel = CONFIG?.PF2E?.damageTypes?.[DAMAGE_TYPE]\n    ? game.i18n.localize(CONFIG.PF2E.damageTypes[DAMAGE_TYPE])\n    : DAMAGE_TYPE;\n  const percentLabel = `${Math.round(HP_FRACTION * 100)}%`;\n\n  // 使用 PF2e 原生 DamageRoll 构建带伤害类型的骰子\n  const DamageRollClass = CONFIG.Dice.rolls.find(r => r.name === \"DamageRoll\");\n  if (DamageRollClass) {\n    // 使用固定数值作为伤害公式\n    const formula = `{${totalDamage}[${DAMAGE_TYPE}]}`;\n    const roll = new DamageRollClass(formula);\n    await roll.evaluate();\n\n    // 发送伤害骰子消息到聊天\n    await roll.toMessage({\n      speaker,\n      flavor: `<strong>异常结算</strong>：${actor.name} 的 ${typeLabel} 异常值已满！<br>最大 HP ${percentLabel}（${maxHp} × ${HP_FRACTION} = ${totalDamage}）`\n    });\n\n    // 使用系统原生 applyDamage 结算\n    const tokenDoc = token?.document ?? token;\n    await actor.applyDamage({ damage: roll, token: tokenDoc });\n  } else {\n    // Fallback：非 PF2e 系统\n    const currentHp = actor.system?.attributes?.hp?.value ?? 0;\n    const newHp = Math.max(0, currentHp - totalDamage);\n    await actor.update({ \"system.attributes.hp.value\": newHp });\n\n    const content = `\n      <div style=\"padding: 6px; border-left: 3px solid #d63384; background: #fdf2f8; border-radius: 3px;\">\n        <p style=\"margin: 0; font-size: 0.9em;\"><strong>异常结算</strong>：${actor.name} 受到最大 HP ${percentLabel}（${totalDamage}）点 ${typeLabel} 伤害。</p>\n      </div>\n    `;\n    await ChatMessage.create({ speaker, content });\n  }\n\n} catch (err) {\n  console.error(\"异常结算宏执行失败:\", err);\n  ui.notifications.error(\"异常结算宏执行失败，请查看控制台\");\n}",
+    "author": "AIPf2eBuilder000",
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+        "default": 0
+    },
+    "flags": {}
+}

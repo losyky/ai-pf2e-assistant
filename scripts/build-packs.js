@@ -4,25 +4,34 @@ const chalk = require('chalk');
 const { ClassicLevel } = require('classic-level');
 
 const PACKS_SOURCE_DIR = path.join(__dirname, '../static/packs');
-const PACK_NAMES = ['roguelike-classes', 'roguelike-ancestries', 'roguelike-backgrounds'];
+const PACK_NAMES = ['roguelike-classes', 'roguelike-ancestries', 'roguelike-backgrounds', 'vault-anomaly-macros'];
 
 const MODULE_ID = 'ai-pf2e-assistant';
 
+// Pack type mapping for LevelDB key prefix and compendium source
+const PACK_TYPE_MAP = {
+  'roguelike-classes': { keyPrefix: 'items', docType: 'Item' },
+  'roguelike-ancestries': { keyPrefix: 'items', docType: 'Item' },
+  'roguelike-backgrounds': { keyPrefix: 'items', docType: 'Item' },
+  'vault-anomaly-macros': { keyPrefix: 'macros', docType: 'Macro' }
+};
+
 function addFoundryMetadata(data, packName) {
-  const key = `!items!${data._id}`;
+  const typeInfo = PACK_TYPE_MAP[packName] || { keyPrefix: 'items', docType: 'Item' };
+  const key = `!${typeInfo.keyPrefix}!${data._id}`;
   const now = Date.now();
-  return {
+
+  const doc = {
     folder: data.folder ?? null,
     name: data.name,
     type: data.type,
     _id: data._id,
     img: data.img,
-    system: data.system,
     sort: data.sort ?? 0,
     ownership: data.ownership ?? { default: 0 },
     flags: data.flags ?? {},
     _stats: data._stats ?? {
-      compendiumSource: `Compendium.${MODULE_ID}.${packName}.Item.${data._id}`,
+      compendiumSource: `Compendium.${MODULE_ID}.${packName}.${typeInfo.docType}.${data._id}`,
       duplicateSource: null,
       coreVersion: '13.344',
       systemId: 'pf2e',
@@ -33,6 +42,18 @@ function addFoundryMetadata(data, packName) {
     },
     _key: key
   };
+
+  // Item documents have a system field; Macro documents have command/scope/author
+  if (data.system !== undefined) {
+    doc.system = data.system;
+  }
+  if (data.command !== undefined) {
+    doc.command = data.command;
+    doc.scope = data.scope || 'global';
+    doc.author = data.author || 'AIPf2eBuilder000';
+  }
+
+  return doc;
 }
 
 async function buildPack(packName, outputDir) {
@@ -76,8 +97,7 @@ async function buildPack(packName, outputDir) {
     }
 
     const doc = addFoundryMetadata(data, packName);
-    const key = `!items!${data._id}`;
-    await db.put(key, JSON.stringify(doc));
+    await db.put(doc._key, JSON.stringify(doc));
     console.log(chalk.green(`    + ${data.name} (${data._id})`));
   }
 

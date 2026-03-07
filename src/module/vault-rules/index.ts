@@ -1,13 +1,15 @@
 /**
  * 遗名之穹规则修正 - 入口模块
  *
- * 包含两个子系统：
- * 1. 属性伤害异常 (Anomaly Tracker)
- * 2. 更好的属性 (Better Attributes)
+ * 包含三个子系统：
+ * 1. 属性伤害异常 (Anomaly Tracker) - 核心追踪逻辑
+ * 2. 异常值显示 (Anomaly Display) - PIXI 环形进度条
+ * 3. 更好的属性 (Better Attributes) - 暂停
  */
 
 import { MODULE_ID } from '../constants';
 import { registerAnomalyHooks } from './anomaly-tracker';
+import { registerAnomalyDisplay } from './anomaly-display';
 import { registerBetterAttributes } from './better-attributes';
 
 declare const game: Game;
@@ -23,7 +25,10 @@ export function initVaultRules(): void {
     console.log(`${MODULE_ID} | Initializing Vault Rules system...`);
 
     registerAnomalyHooks();
-    registerBetterAttributes();
+    registerAnomalyDisplay();
+
+    // Better Attributes temporarily disabled to prevent known bugs
+    // registerBetterAttributes();
 
     console.log(`${MODULE_ID} | Vault Rules system initialized`);
   } catch (err) {
@@ -31,5 +36,6 @@ export function initVaultRules(): void {
   }
 }
 
-export { registerAnomalyHooks, registerBetterAttributes };
-export { DAMAGE_TYPE_LABELS } from './anomaly-tracker';
+export { registerAnomalyHooks, registerAnomalyDisplay, registerBetterAttributes };
+export { DAMAGE_TYPE_LABELS, processAnomalyDamage } from './anomaly-tracker';
+export type { AnomalySlotData, AnomalySlotEntry } from './anomaly-tracker';
