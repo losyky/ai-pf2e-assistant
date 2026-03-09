@@ -69,6 +69,9 @@ export const EQUIPMENT_CATEGORIES: Record<string, string> = {
 };
 
 const TAB_NAMES = ['feat', 'spell', 'equipment', 'action'] as const;
+
+/** 合法的装备文档类型集合 */
+const EQUIPMENT_TYPE_SET = new Set(Object.keys(EQUIPMENT_CATEGORIES));
 type TabName = typeof TAB_NAMES[number];
 
 export class RoguelikeDrawService {
@@ -76,6 +79,13 @@ export class RoguelikeDrawService {
   private static getCompendiumBrowser(): any {
     return (game as any).pf2e?.compendiumBrowser;
   }
+
+  /**
+   * UUID → 物品文档类型 (weapon/armor/shield/equipment/consumable/...) 的映射缓存。
+   * PF2e CompendiumBrowser 的 tab.indexData 不一定包含 Foundry 标准的 `type` 字段，
+   * 因此需要从原始 pack index 中提取并缓存。
+   */
+  private static equipmentTypeMap: Map<string, string> = new Map();
 
   static async initTabs(contentTypes: string[]): Promise<void> {
     const browser = this.getCompendiumBrowser();
@@ -94,6 +104,111 @@ export class RoguelikeDrawService {
         await tab.init();
       }
     }
+
+    // 若需要使用 equipment tab，构建 UUID→type 缓存
+    if (validTypes.includes('equipment') && this.equipmentTypeMap.size === 0) {
+      await this.buildEquipmentTypeMap();
+    }
+  }
+
+  /**
+   * 从 indexData 的 options 中提取装备类型。
+   * PF2e v13-dev 将 type 编码在 options Set 中，格式为 "type:weapon"、"type:armor" 等。
+   */
+  private static extractTypeFromOptions(options: Set<string> | string[]): string | null {
+    const optionsArray = Array.isArray(options) ? options : Array.from(options);
+    for (const opt of optionsArray) {
+      if (opt.startsWith('type:') && !opt.includes(':category:') && !opt.includes(':group:')) {
+        const type = opt.substring(5); // 去掉 "type:" 前缀
+        if (EQUIPMENT_TYPE_SET.has(type)) {
+          return type;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * 从 indexData 的 options 中提取专长分类。
+   * PF2e v13-dev 将 category 编码在 options Set 中，格式为 "category:general"、"category:skill" 等。
+   */
+  private static extractCategoryFromOptions(options: Set<string> | string[]): string | null {
+    const optionsArray = Array.isArray(options) ? options : Array.from(options);
+    for (const opt of optionsArray) {
+      if (opt.startsWith('category:')) {
+        return opt.substring(9); // 去掉 "category:" 前缀
+      }
+    }
+    return null;
+  }
+
+  /**
+   * 从 Foundry 原始 pack index 构建 UUID→type 映射。
+   * 仅在首次需要时执行一次，后续复用缓存。
+   */
+  private static async buildEquipmentTypeMap(): Promise<void> {
+    const browser = this.getCompendiumBrowser();
+    if (!browser) return;
+
+    const tab = browser.tabs.equipment;
+    if (!tab?.isInitialized || !tab.indexData) return;
+
+    console.log('[RoguelikeDrawService] 开始构建装备类型映射...');
+
+    // 策略1：检查 indexData 是否直接包含 type 字段（旧版本 PF2e）
+    let foundDirectType = false;
+    for (const entry of tab.indexData) {
+      if (entry.type && EQUIPMENT_TYPE_SET.has(entry.type)) {
+        foundDirectType = true;
+        break;
+      }
+    }
+
+    if (foundDirectType) {
+      // indexData 本身已包含 type，直接建立映射
+      for (const e of tab.indexData) {
+        if (e.type) this.equipmentTypeMap.set(e.uuid, e.type);
+      }
+      console.log(`[RoguelikeDrawService] ✓ 从 indexData.type 构建装备类型映射: ${this.equipmentTypeMap.size} 条`);
+      return;
+    }
+
+    // 策略2：从 indexData 的 options 中提取 type（新版本 PF2e v13-dev）
+    let foundInOptions = false;
+    for (const entry of tab.indexData) {
+      if (entry.options) {
+        const type = this.extractTypeFromOptions(entry.options);
+        if (type) {
+          this.equipmentTypeMap.set(entry.uuid, type);
+          foundInOptions = true;
+        }
+      }
+    }
+
+    if (foundInOptions) {
+      console.log(`[RoguelikeDrawService] ✓ 从 indexData.options 提取装备类型映射: ${this.equipmentTypeMap.size} 条`);
+      return;
+    }
+
+    // 策略3：回退到原始 pack index（最后手段）
+    console.log('[RoguelikeDrawService] indexData 不含 type 信息，回退到 pack index...');
+    const g = game as any;
+    if (!g.packs) return;
+
+    for (const pack of g.packs) {
+      if (pack.documentName !== 'Item') continue;
+      try {
+        const index = await pack.getIndex();
+        for (const entry of index) {
+          if (EQUIPMENT_TYPE_SET.has(entry.type)) {
+            this.equipmentTypeMap.set(entry.uuid, entry.type);
+          }
+        }
+      } catch {
+        // 忽略无法访问的 pack
+      }
+    }
+    console.log(`[RoguelikeDrawService] ✓ 从 pack index 构建装备类型映射: ${this.equipmentTypeMap.size} 条`);
   }
 
   /**
@@ -101,7 +216,10 @@ export class RoguelikeDrawService {
    */
   static buildItemPool(config: RoguelikeDrawConfig): DrawPoolItem[] {
     const browser = this.getCompendiumBrowser();
-    if (!browser) return [];
+    if (!browser) {
+      console.error('[RoguelikeDrawService] CompendiumBrowser 不可用');
+      return [];
+    }
 
     const contentTypes = config.contentTypes || ['feat'];
     const featCategories = config.featCategories && config.featCategories.length > 0
@@ -116,23 +234,48 @@ export class RoguelikeDrawService {
     const excludedTraits = config.excludedTraits || [];
     const rarityFilter = config.rarityFilter || [];
 
+    // 调试：输出配置信息
+    console.log('[RoguelikeDrawService] buildItemPool 配置:', {
+      contentTypes,
+      equipmentCategories: equipmentCategories ? Array.from(equipmentCategories) : null,
+      levelRange: { min: levelMin, max: levelMax },
+      equipmentTypeMapSize: this.equipmentTypeMap.size
+    });
+
     // 构建 banlist 排除集合
     const bannedUuids = this.resolveBannedUuids(config.banListIds || []);
 
     const pool: DrawPoolItem[] = [];
+    let equipmentFilteredCount = 0; // 调试：记录被装备分类过滤掉的数量
+    let totalEquipmentCount = 0; // 调试：记录总装备数量
 
     for (const tabName of contentTypes) {
       const tab = browser.tabs[tabName];
-      if (!tab || !tab.isInitialized || !tab.indexData) continue;
+      if (!tab || !tab.isInitialized || !tab.indexData) {
+        console.warn(`[RoguelikeDrawService] Tab ${tabName} 不可用或未初始化`);
+        continue;
+      }
+
+      console.log(`[RoguelikeDrawService] 处理 ${tabName} tab，共 ${tab.indexData.length} 条数据`);
 
       for (const entry of tab.indexData) {
+        // 统计装备数量
+        if (tabName === 'equipment') {
+          totalEquipmentCount++;
+        }
+
         // Ban list 过滤
         if (bannedUuids.has(entry.uuid)) continue;
 
         const entryLevel = this.getEntryLevel(entry, tabName);
         const entryRarity = entry.rarity || 'common';
         const entryTraits: string[] = entry.traits || [];
-        const entryCategory: string = entry.category || '';
+        
+        // 获取 category：直接字段 → options 提取 → 空字符串
+        let entryCategory: string = entry.category || '';
+        if (!entryCategory && entry.options) {
+          entryCategory = this.extractCategoryFromOptions(entry.options) || '';
+        }
 
         // feat 子分类过滤
         if (tabName === 'feat' && featCategories !== null) {
@@ -140,9 +283,36 @@ export class RoguelikeDrawService {
         }
 
         // equipment 子分类过滤（按 item type）
+        // 注意：PF2e v13-dev 将 type 编码在 options 中，格式为 "type:weapon"
         if (tabName === 'equipment' && equipmentCategories !== null) {
-          const entryType = entry.type || '';
-          if (!equipmentCategories.has(entryType)) continue;
+          // 多层 fallback：直接字段 → options 提取 → 映射表 → 空字符串
+          let entryType = entry.type || '';
+          
+          if (!entryType && entry.options) {
+            entryType = this.extractTypeFromOptions(entry.options) || '';
+          }
+          
+          if (!entryType) {
+            entryType = this.equipmentTypeMap.get(entry.uuid) || '';
+          }
+          
+          // 调试：记录前5个装备的类型信息
+          if (totalEquipmentCount <= 5) {
+            console.log(`[RoguelikeDrawService] 装备 #${totalEquipmentCount}:`, {
+              name: entry.name,
+              'entry.type': entry.type,
+              'entry.options': entry.options ? Array.from(entry.options).filter((o: string) => o.startsWith('type:')) : undefined,
+              '从options提取': entry.options ? this.extractTypeFromOptions(entry.options) : null,
+              '从映射表获取': this.equipmentTypeMap.get(entry.uuid),
+              '最终类型': entryType,
+              '是否匹配': equipmentCategories.has(entryType)
+            });
+          }
+          
+          if (!equipmentCategories.has(entryType)) {
+            equipmentFilteredCount++;
+            continue;
+          }
         }
 
         if (!this.matchesFilter(entryTraits, entryRarity, entryLevel, levelMin, levelMax, requiredTraits, excludedTraits, rarityFilter)) {
@@ -159,6 +329,40 @@ export class RoguelikeDrawService {
           category: entryCategory,
           sourceTab: tabName,
         });
+      }
+    }
+
+    // 调试日志：输出最终统计信息
+    console.log('[RoguelikeDrawService] buildItemPool 完成:', {
+      物品池大小: pool.length,
+      总装备数量: totalEquipmentCount,
+      被装备分类过滤掉: equipmentFilteredCount
+    });
+
+    // 调试日志：如果使用了装备分类过滤且物品池为空，输出诊断信息
+    if (contentTypes.includes('equipment') && equipmentCategories !== null && pool.length === 0) {
+      console.error('[RoguelikeDrawService] ❌ 装备物品池为空！诊断信息:', {
+        请求的分类: Array.from(equipmentCategories),
+        总装备数量: totalEquipmentCount,
+        被过滤掉的数量: equipmentFilteredCount,
+        类型映射表大小: this.equipmentTypeMap.size,
+        '提示': '如果类型映射表为空，说明 indexData 不含 type 字段且 pack index 加载失败'
+      });
+      
+      // 输出前10个装备条目的实际结构供调试
+      const tab = browser.tabs.equipment;
+      if (tab?.indexData && tab.indexData.length > 0) {
+        console.error('[RoguelikeDrawService] 前10个装备条目的实际结构:', 
+          tab.indexData.slice(0, 10).map((e: any) => ({
+            name: e.name,
+            uuid: e.uuid,
+            'entry.type': e.type,
+            '从映射表获取的type': this.equipmentTypeMap.get(e.uuid),
+            category: e.category,
+            level: e.level,
+            '所有字段': Object.keys(e).join(', ')
+          }))
+        );
       }
     }
 

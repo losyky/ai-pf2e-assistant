@@ -6,6 +6,7 @@ import { Logger } from '../utils/logger';
 declare const game: any;
 declare const ui: any;
 declare const FilePicker: any;
+declare const foundry: any;
 
 export class MapImageGenerationService {
   private static instance: MapImageGenerationService;
@@ -209,22 +210,54 @@ export class MapImageGenerationService {
     };
 
     Logger.debug(`Gemini imageConfig: size=${imageSize}, aspectRatio=${aspectRatio}`);
+    Logger.debug(`Gemini API URL: ${apiConfig.apiUrl}`);
 
-    const response = await fetch(apiConfig.apiUrl.replace(/\/+$/, ''), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiConfig.apiKey}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
+    // 使用 AbortController 实现超时控制（5分钟超时）
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 300000); // 5分钟
 
-    if (!response.ok) {
-      const errText = await response.text().catch(() => '');
-      throw new Error(`Gemini API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
+    try {
+      const response = await fetch(apiConfig.apiUrl.replace(/\/+$/, ''), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiConfig.apiKey}`,
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errText = await response.text().catch(() => '');
+        Logger.error(`Gemini API 错误响应 (${response.status}):`, errText.substring(0, 500));
+        throw new Error(`Gemini API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
+      }
+
+      // 检查响应头，如果内容很大，分块读取
+      const contentLength = response.headers.get('content-length');
+      Logger.debug(`Gemini API 响应大小: ${contentLength || '未知'} 字节`);
+
+      const responseData = await response.json();
+      Logger.debug('Gemini API 响应数据结构:', JSON.stringify(responseData).substring(0, 500));
+      
+      return this.extractImageUrl(responseData);
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      
+      if (err.name === 'AbortError') {
+        Logger.error('Gemini API 请求超时（5分钟）');
+        throw new Error('图像生成超时，请稍后重试或使用较小的地图尺寸');
+      }
+      
+      if (err.message.includes('Failed to fetch') || err.message.includes('ERR_CONNECTION_RESET')) {
+        Logger.error('Gemini API 连接失败，可能是响应过大导致连接重置');
+        throw new Error('图像生成失败：网络连接中断。这可能是因为生成的图像过大，请尝试使用较小的地图尺寸或联系 API 提供商');
+      }
+      
+      throw err;
     }
-
-    return this.extractImageUrl(await response.json());
   }
 
   // ----------------------------------------------------------------
@@ -320,37 +353,75 @@ export class MapImageGenerationService {
   // ----------------------------------------------------------------
 
   private extractImageUrl(data: any): string {
+    Logger.debug('尝试从 API 响应中提取图像 URL...');
+    
+    // Gemini API 响应格式：candidates[0].content.parts[x].inlineData
     if (data.candidates?.[0]?.content?.parts) {
+      Logger.debug('检测到 Gemini candidates 格式');
       for (const part of data.candidates[0].content.parts) {
         if (part.inlineData?.data) {
           const mime = part.inlineData.mimeType || 'image/png';
+          Logger.info('成功从 Gemini inlineData 中提取图像');
           return `data:${mime};base64,${part.inlineData.data}`;
         }
       }
     }
 
+    // OpenAI-style data[0] 格式
     if (data.data?.[0]) {
+      Logger.debug('检测到 OpenAI data[] 格式');
       const first = data.data[0];
-      if (first.url) return first.url;
-      if (first.b64_json) return `data:image/png;base64,${first.b64_json}`;
-      if (typeof first === 'string') return first;
+      if (first.url) {
+        Logger.info('成功从 data[0].url 中提取图像 URL');
+        return first.url;
+      }
+      if (first.b64_json) {
+        Logger.info('成功从 data[0].b64_json 中提取图像');
+        return `data:image/png;base64,${first.b64_json}`;
+      }
+      if (typeof first === 'string') {
+        Logger.info('成功从 data[0] 字符串中提取图像 URL');
+        return first;
+      }
     }
 
+    // Chat completions 格式
     if (data.choices?.[0]?.message?.content) {
+      Logger.debug('检测到 Chat completions 格式');
       const msgContent = data.choices[0].message.content;
-      if (typeof msgContent === 'string' && msgContent.startsWith('data:')) return msgContent;
+      if (typeof msgContent === 'string' && msgContent.startsWith('data:')) {
+        Logger.info('成功从 choices[0].message.content 字符串中提取图像');
+        return msgContent;
+      }
       if (Array.isArray(msgContent)) {
         for (const block of msgContent) {
-          if (block.type === 'image_url') return block.image_url?.url;
-          if (block.image_url) return block.image_url;
+          if (block.type === 'image_url') {
+            Logger.info('成功从 choices[0].message.content 数组中提取图像 URL');
+            return block.image_url?.url;
+          }
+          if (block.image_url) {
+            Logger.info('成功从 choices[0].message.content 数组中提取图像 URL');
+            return block.image_url;
+          }
         }
       }
     }
 
-    if (data.url) return data.url;
-    if (data.image_url) return data.image_url;
-    if (data.output?.[0]) return data.output[0];
+    // 直接 URL 字段
+    if (data.url) {
+      Logger.info('成功从 url 字段中提取图像 URL');
+      return data.url;
+    }
+    if (data.image_url) {
+      Logger.info('成功从 image_url 字段中提取图像 URL');
+      return data.image_url;
+    }
+    if (data.output?.[0]) {
+      Logger.info('成功从 output[0] 中提取图像 URL');
+      return data.output[0];
+    }
 
+    Logger.error('无法从 API 响应中提取图像，响应结构:', JSON.stringify(data).substring(0, 500));
     throw new Error(`无法从 API 响应中提取图像: ${JSON.stringify(data).substring(0, 300)}`);
   }
 
@@ -375,7 +446,10 @@ export class MapImageGenerationService {
 
     const filename = `tile-${templateId}-${Date.now()}.png`;
     const file = new File([blob], filename, { type: 'image/png' });
-    const uploadResp = await FilePicker.upload('data', templateDir, file, {});
+    
+    // 兼容 Foundry VTT v13+ 的 FilePicker 命名空间
+    const FP = (foundry?.applications?.apps?.FilePicker?.implementation) || FilePicker;
+    const uploadResp = await FP.upload('data', templateDir, file, {});
 
     if (uploadResp?.path) return uploadResp.path;
     throw new Error('图像文件上传失败');
@@ -423,10 +497,12 @@ export class MapImageGenerationService {
   }
 
   private async ensureDirectory(dir: string): Promise<void> {
+    // 兼容 Foundry VTT v13+ 的 FilePicker 命名空间
+    const FP = (foundry?.applications?.apps?.FilePicker?.implementation) || FilePicker;
     try {
-      await FilePicker.browse('data', dir);
+      await FP.browse('data', dir);
     } catch {
-      await FilePicker.createDirectory('data', dir);
+      await FP.createDirectory('data', dir);
     }
   }
 }

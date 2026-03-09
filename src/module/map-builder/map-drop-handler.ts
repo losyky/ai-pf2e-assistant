@@ -310,6 +310,14 @@ export class MapDropHandler {
       const genService = MapImageGenerationService.getInstance();
       const imagePath = await genService.generateMapImage(template, styleConfig);
 
+      // 验证 Tile 是否仍然存在
+      const tile = scene.tiles.get(tileId);
+      if (!tile) {
+        Logger.warn(`Tile ${tileId} 不存在，可能已被删除。跳过更新。`);
+        ui.notifications.warn('地图图块已被删除，无法应用生成的图像。');
+        return;
+      }
+
       await scene.updateEmbeddedDocuments('Tile', [{
         _id: tileId,
         'texture.src': imagePath,
@@ -318,12 +326,22 @@ export class MapDropHandler {
 
       ui.notifications.info('地图图片生成完成！');
     } catch (err: any) {
+      Logger.error('地图图像生成失败:', err);
       ui.notifications.error(`AI 图像生成失败: ${err.message}`);
-      await scene.updateEmbeddedDocuments('Tile', [{
-        _id: tileId,
-        [`flags.${MODULE_ID}.isGenerating`]: false,
-        [`flags.${MODULE_ID}.generateError`]: err.message,
-      }]);
+      
+      // 验证 Tile 是否仍然存在再更新错误状态
+      const tile = scene.tiles.get(tileId);
+      if (tile) {
+        try {
+          await scene.updateEmbeddedDocuments('Tile', [{
+            _id: tileId,
+            [`flags.${MODULE_ID}.isGenerating`]: false,
+            [`flags.${MODULE_ID}.generateError`]: err.message,
+          }]);
+        } catch (updateErr: any) {
+          Logger.error('更新 Tile 错误状态失败:', updateErr);
+        }
+      }
     }
   }
 }

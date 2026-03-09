@@ -10,6 +10,7 @@ import {
 import { MapTemplate, WALL_TYPE_CONFIG } from './types';
 
 declare const FilePicker: any;
+declare const foundry: any;
 
 export class MapGuideImageService {
   private static instance: MapGuideImageService;
@@ -116,15 +117,19 @@ export class MapGuideImageService {
     const filename = `guide-${template.id}.png`;
     const file = new File([blob], filename, { type: 'image/png' });
 
-    const response = await FilePicker.upload('data', MAP_GUIDES_DIR, file, {});
+    // 兼容 Foundry VTT v13+ 的 FilePicker 命名空间
+    const FP = (foundry?.applications?.apps?.FilePicker?.implementation) || FilePicker;
+    const response = await FP.upload('data', MAP_GUIDES_DIR, file, {});
     return response.path;
   }
 
   private async ensureDirectory(dir: string): Promise<void> {
+    // 兼容 Foundry VTT v13+ 的 FilePicker 命名空间
+    const FP = (foundry?.applications?.apps?.FilePicker?.implementation) || FilePicker;
     try {
-      await FilePicker.browse('data', dir);
+      await FP.browse('data', dir);
     } catch {
-      await FilePicker.createDirectory('data', dir);
+      await FP.createDirectory('data', dir);
     }
   }
 }
