@@ -58,6 +58,8 @@ export interface MapStyleConfig {
   negativePrompt: string;
   imageModel: string;
   styleReferenceImage?: string;
+  /** 有风格参考图时是否仍使用地图风格提示词；默认 true；设为 false 则仅用参考图风格 */
+  useStylePromptWhenHasRefImage?: boolean;
 }
 
 export interface MapDropData {

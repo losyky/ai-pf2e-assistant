@@ -4,10 +4,15 @@ import {
   MAP_COLOR_IMPASSABLE,
   MAP_COLOR_WALL,
   MAP_COLOR_WALL_AI,
+  MAP_COLOR_AI_WALL,
+  MAP_COLOR_AI_DOOR,
+  MAP_COLOR_AI_ETHEREAL,
+  MAP_COLOR_AI_INVISIBLE,
+  MAP_COLOR_AI_WINDOW,
   MAP_WALL_LINE_WIDTH,
   MAP_GUIDES_DIR,
 } from '../constants';
-import { MapTemplate, WALL_TYPE_CONFIG } from './types';
+import { MapTemplate, MapWallType, WALL_TYPE_CONFIG } from './types';
 
 declare const FilePicker: any;
 declare const foundry: any;
@@ -92,13 +97,64 @@ export class MapGuideImageService {
   }
 
   /**
-   * Render guide image for AI: all walls drawn in uniform gray so the AI
-   * focuses on structure rather than individual wall colors.
+   * 根据墙类型返回 AI 结构图使用的颜色（与提示词「替换」一一对应）。
+   */
+  private getAILineColor(wallType?: MapWallType): string {
+    switch (wallType) {
+      case 'door':
+      case 'secret-door':
+        return MAP_COLOR_AI_DOOR;
+      case 'ethereal':
+        return MAP_COLOR_AI_ETHEREAL;
+      case 'invisible':
+        return MAP_COLOR_AI_INVISIBLE;
+      case 'window':
+        return MAP_COLOR_AI_WINDOW;
+      case 'normal':
+      default:
+        return MAP_COLOR_AI_WALL;
+    }
+  }
+
+  /**
+   * Render guide image for AI: each wall type has a distinct color for "替换" prompt.
+   * Red=墙壁, Green=门/暗门, Cyan=幽灵墙(传送门), Orange=隐形墙, Blue=窗户.
    */
   renderForAI(template: MapTemplate): HTMLCanvasElement {
-    const w = template.gridCols * MAP_CELL_SIZE;
-    const h = template.gridRows * MAP_CELL_SIZE;
-    return this.renderToCanvas(template, w, h, MAP_COLOR_WALL_AI, false);
+    const cols = template.gridCols;
+    const rows = template.gridRows;
+    const w = cols * MAP_CELL_SIZE;
+    const h = rows * MAP_CELL_SIZE;
+    const cellW = w / cols;
+    const cellH = h / rows;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        ctx.fillStyle = template.cells[r]?.[c] ? MAP_COLOR_PASSABLE : MAP_COLOR_IMPASSABLE;
+        ctx.fillRect(c * cellW, r * cellH, cellW, cellH);
+      }
+    }
+
+    const scaleFactor = Math.min(w / (cols * MAP_CELL_SIZE), h / (rows * MAP_CELL_SIZE));
+    const baseLineWidth = MAP_WALL_LINE_WIDTH * Math.max(scaleFactor, 1);
+    ctx.lineCap = 'round';
+    ctx.setLineDash([]);
+
+    for (const wall of template.walls) {
+      ctx.strokeStyle = this.getAILineColor(wall.wallType);
+      ctx.lineWidth = baseLineWidth;
+      ctx.beginPath();
+      ctx.moveTo(wall.x1 * cellW, wall.y1 * cellH);
+      ctx.lineTo(wall.x2 * cellW, wall.y2 * cellH);
+      ctx.stroke();
+    }
+
+    return canvas;
   }
 
   toBase64(template: MapTemplate): string {

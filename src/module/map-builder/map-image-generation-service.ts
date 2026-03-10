@@ -1,5 +1,5 @@
 import { MODULE_ID, MAP_CELL_SIZE, MAP_TILES_DIR, getPresetForTemplate } from '../constants';
-import { MapTemplate, MapStyleConfig } from './types';
+import { MapTemplate, MapStyleConfig, MapWallType } from './types';
 import { MapGuideImageService } from './map-guide-image-service';
 import { Logger } from '../utils/logger';
 
@@ -33,17 +33,15 @@ export class MapImageGenerationService {
       || (game.settings.get(MODULE_ID, 'imageModel') as string)
       || 'gpt-image-1';
 
-    // Gemini models don't handle style reference images well (structure bleeds through),
-    // so only load style ref for non-Gemini models.
+    // 风格参考图：所有接口都支持发送（Gemini 原生 API 支持最多 14 张图片）
     let styleRefBase64: string | null = null;
-    const isGemini = imageModel.startsWith('gemini');
-    if (styleConfig.styleReferenceImage && !isGemini) {
+    if (styleConfig.styleReferenceImage) {
       styleRefBase64 = await this.fileToBase64(styleConfig.styleReferenceImage);
       if (!styleRefBase64) {
-        Logger.warn('Failed to load style reference image:', styleConfig.styleReferenceImage);
+        Logger.warn('加载风格参考图失败:', styleConfig.styleReferenceImage);
+      } else {
+        Logger.debug('地图生成: 风格参考图已加载，将作为第二张图片发送');
       }
-    } else if (styleConfig.styleReferenceImage && isGemini) {
-      Logger.info('Style reference image skipped for Gemini model — not supported. Use the style prompt text instead.');
     }
 
     const pixelW = template.gridCols * MAP_CELL_SIZE;
@@ -59,48 +57,85 @@ export class MapImageGenerationService {
   // Prompt building
   // ----------------------------------------------------------------
 
-  private buildPrompt(styleConfig: MapStyleConfig, hasStyleRef: boolean, pixelW: number, pixelH: number, template: MapTemplate): string {
-    const parts: string[] = [
-      'Transform this color-coded map schematic into a realistic, detailed top-down battle map tile for a tabletop RPG.',
-    ];
+  /**
+   * 分析模板中实际使用的墙体类型
+   */
+  private analyzeWallTypes(template: MapTemplate): Set<MapWallType> {
+    const usedTypes = new Set<MapWallType>();
+    for (const wall of template.walls) {
+      usedTypes.add(wall.wallType || 'normal');
+    }
+    return usedTypes;
+  }
 
-    const desc = [template.name, template.description].filter(Boolean).join(' — ');
-    if (desc) {
-      parts.push('', `Map context: "${desc}". Use this to guide the thematic details, furniture, and environmental storytelling of the scene.`);
+  private buildPrompt(styleConfig: MapStyleConfig, hasStyleRef: boolean, pixelW: number, pixelH: number, template: MapTemplate): string {
+    const parts: string[] = [];
+
+    // 用「第一张图/第二张图」明确指代，便于多模态模型对应；括号内说明用途
+    const structLabel = '第一张图（结构图）';
+    const styleLabel = hasStyleRef ? '第二张图（风格参考图）' : '';
+
+    // 动态生成替换规则：只包含模板中实际存在的墙体类型
+    const usedWallTypes = this.analyzeWallTypes(template);
+    const wallReplaceRules: string[] = [];
+    
+    if (usedWallTypes.has('normal')) {
+      wallReplaceRules.push('红线替换为墙壁');
+    }
+    if (usedWallTypes.has('door') || usedWallTypes.has('secret-door')) {
+      wallReplaceRules.push('绿线替换为门（或暗门）');
+    }
+    if (usedWallTypes.has('ethereal')) {
+      wallReplaceRules.push('青线替换为幽灵墙/传送门（半透明或魔法边界效果）');
+    }
+    if (usedWallTypes.has('invisible')) {
+      wallReplaceRules.push('橙线替换为隐形墙');
+    }
+    if (usedWallTypes.has('window')) {
+      wallReplaceRules.push('蓝线替换为窗户');
+    }
+    
+    // 区域规则始终包含（灰色=可通行，黑色=不可通过）
+    const areaRules = [
+      '黑色区域替换为不可通过区域',
+      '灰色区域替换为可通行区域',
+    ];
+    
+    const replaceRules = [...wallReplaceRules, ...areaRules].join('，');
+
+    if (hasStyleRef) {
+      parts.push(
+        `[Image 1 = layout/structure, Image 2 = style reference.]`,
+        `按照${styleLabel}的绘图风格，以及${structLabel}的地图结构，绘制一张 TRPG 俯视战斗地图。`,
+        `在${structLabel}中：${replaceRules}。`,
+        `请严格保持${structLabel}的布局与结构，仅用${styleLabel}的风格进行绘制；${styleLabel}的房间形状与布局请完全忽略。`,
+      );
+    } else {
+      parts.push(
+        `按照${structLabel}的地图结构，绘制一张 TRPG 俯视战斗地图。`,
+        `在${structLabel}中：${replaceRules}。`,
+      );
     }
 
     parts.push(
       '',
-      'The attached image is a STRUCTURAL BLUEPRINT — it is NOT an artistic reference. You must REPAINT this exact layout:',
-      '- Every GRAY pixel (#CCCCCC) → paint realistic floor texture with optional furniture, debris, or environmental details',
-      '- Every BLACK pixel (#111111) → keep as PURE BLACK with absolutely zero content (void / empty space)',
-      '- Every DARK GRAY line (#888888) → replace with a real wall texture (stone, brick, wood) at that exact position',
-      '',
-      'CRITICAL CONSTRAINTS:',
-      '1. This is a pixel-perfect REPAINT of the blueprint. The shape of every room, corridor, and void area must match the schematic EXACTLY.',
-      '2. The boundary between gray (floor) and black (void) is the most important constraint — do NOT shift it even by a single grid cell.',
-      '3. Walls must sit precisely on the dark gray lines. Do not add or remove walls.',
-      '4. The output must look like a hand-painted battle map viewed from directly above, with ZERO schematic colors remaining.',
-      '5. Black void areas must be featureless pure black — no rocks, no shadows, no texture bleeding into void.',
+      '约束：',
+      `1. 必须严格保持${structLabel}的房间、走廊与不可通行区域形状，不得偏移。`,
+      `2. 各色线精确落在${structLabel}对应位置：红=实墙，绿=门/暗门，青=幽灵墙/传送门，橙=隐形墙，蓝=窗户。`,
+      '3. 输出为俯视战斗地图，图中不得残留结构图的颜色（灰、黑、红、绿、青、橙、蓝）。',
+      '4. 黑色不可通过区域保持纯黑，无纹理或杂物。',
     );
 
-    if (hasStyleRef) {
-      parts.push(
-        '',
-        'Use the artistic style (color palette, textures, shading, brush style) you studied from the style reference in the previous message.',
-        'IMPORTANT: Apply ONLY the visual style from that reference — its room shapes, wall positions, and spatial layout are COMPLETELY IRRELEVANT. The structure comes ONLY from this blueprint.'
-      );
-    }
-
-    if (styleConfig.stylePrompt) {
-      parts.push('', `Visual style: ${styleConfig.stylePrompt}`);
+    const useStylePrompt = hasStyleRef ? styleConfig.useStylePromptWhenHasRefImage !== false : true;
+    if (useStylePrompt && styleConfig.stylePrompt) {
+      parts.push('', `视觉风格补充：${styleConfig.stylePrompt}`);
     }
 
     if (styleConfig.negativePrompt) {
-      parts.push(`Avoid: ${styleConfig.negativePrompt}`);
+      parts.push('', `避免出现：${styleConfig.negativePrompt}`);
     }
 
-    parts.push('', `Output: ${pixelW}×${pixelH} pixel top-down map tile.`);
+    parts.push('', `输出尺寸：${pixelW}×${pixelH} 像素，俯视图。`);
     return parts.join('\n');
   }
 
@@ -116,11 +151,21 @@ export class MapImageGenerationService {
     apiConfig: { apiUrl: string; apiKey: string },
     template: MapTemplate,
   ): Promise<string> {
+    const apiUrl = apiConfig.apiUrl.replace(/\/+$/, '');
+    const isChatCompletions = /\/chat\/completions|\/v1\/chat/i.test(apiUrl);
+    const isFalEdit = /fal.*(edit|nano-banana)/i.test(apiUrl);
+
+    if (isFalEdit) {
+      return this.callFalEdit(prompt, guideBase64, styleRefBase64, apiConfig, template);
+    }
     if (imageModel.startsWith('gpt-image')) {
       return this.callGPTImageEdit(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
-    if (imageModel.startsWith('gemini')) {
+    if (imageModel.startsWith('gemini') && !isChatCompletions) {
       return this.callGeminiAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
+    }
+    if (isChatCompletions) {
+      return this.callChatCompletionsWithImages(prompt, guideBase64, styleRefBase64, imageModel, apiConfig);
     }
     return this.callOpenAICompatible(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
   }
@@ -171,26 +216,90 @@ export class MapImageGenerationService {
   }
 
   // ----------------------------------------------------------------
+  // Fal.ai 风格 Edit API（prompt + image_urls 数组，支持多图/风格参考）
+  // 文档: https://fal.ai/models/fal-ai/nano-banana-2/edit/api
+  // 中转如 ssopen 若代理该接口，URL 会包含 fal 与 edit/nano-banana
+  // ----------------------------------------------------------------
+  private async callFalEdit(
+    prompt: string,
+    guideBase64: string,
+    styleRefBase64: string | null,
+    apiConfig: { apiUrl: string; apiKey: string },
+    template: MapTemplate,
+  ): Promise<string> {
+    const guideDataUri = `data:image/png;base64,${guideBase64}`;
+    const imageUrls: string[] = [guideDataUri];
+    if (styleRefBase64) {
+      imageUrls.push(`data:image/png;base64,${styleRefBase64}`);
+      Logger.debug('Map gen: Fal edit sending 2 images — image_urls[0]=structure, image_urls[1]=style');
+    }
+    const preset = getPresetForTemplate(template.gridCols, template.gridRows);
+    const resolution = (preset?.geminiImageSize ?? '2K') as string;
+    const aspectRatio = preset?.geminiAspectRatio ?? '1:1';
+
+    const body: Record<string, unknown> = {
+      prompt,
+      image_urls: imageUrls,
+      num_images: 1,
+      resolution: resolution,
+      aspect_ratio: aspectRatio,
+      output_format: 'png',
+    };
+
+    const response = await fetch(apiConfig.apiUrl.replace(/\/+$/, ''), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiConfig.apiKey}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      throw new Error(`Fal edit API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
+    }
+
+    const data = await response.json();
+    const url = data?.images?.[0]?.url ?? data?.data?.images?.[0]?.url;
+    if (url) {
+      Logger.info('成功从 Fal edit 响应 images[0].url 提取图像');
+      return url;
+    }
+    return this.extractImageUrl(data);
+  }
+
+  // ----------------------------------------------------------------
   // Gemini API — multi-turn when style reference is present
   // ----------------------------------------------------------------
 
   private async callGeminiAPI(
     prompt: string,
     guideBase64: string,
-    _styleRefBase64: string | null,
-    _imageModel: string,
+    styleRefBase64: string | null,
+    imageModel: string,
     apiConfig: { apiUrl: string; apiKey: string },
     template: MapTemplate,
   ): Promise<string> {
-    // Gemini: single turn, guide image first (editing paradigm).
-    // Style reference is intentionally not used for Gemini — it overrides
-    // the layout structure. Style is controlled via text prompt only.
+    // Gemini 支持多图输入（最多 14 张），按顺序发送结构图和风格参考图
+    // 提示词中已明确指示每张图片的用途，模型会正确理解
+    const parts: any[] = [
+      { inlineData: { mimeType: 'image/png', data: guideBase64 } },
+    ];
+    
+    // 如果有风格参考图，添加到 parts 数组中
+    if (styleRefBase64) {
+      parts.push({ inlineData: { mimeType: 'image/png', data: styleRefBase64 } });
+      Logger.debug('Gemini API: 发送 2 张图片 - 结构图 + 风格参考图');
+    } else {
+      Logger.debug('Gemini API: 发送 1 张图片 - 仅结构图');
+    }
+    
+    parts.push({ text: prompt });
+    
     const contents = [{
       role: 'user',
-      parts: [
-        { inlineData: { mimeType: 'image/png', data: guideBase64 } },
-        { text: prompt },
-      ],
+      parts,
     }];
 
     // Look up the matching Gemini preset for aspect ratio and image size
@@ -209,7 +318,7 @@ export class MapImageGenerationService {
       },
     };
 
-    Logger.debug(`Gemini imageConfig: size=${imageSize}, aspectRatio=${aspectRatio}`);
+    Logger.debug(`Gemini 请求配置: model=${imageModel}, size=${imageSize}, aspectRatio=${aspectRatio}, images=${styleRefBase64 ? 2 : 1}`);
     Logger.debug(`Gemini API URL: ${apiConfig.apiUrl}`);
 
     // 使用 AbortController 实现超时控制（5分钟超时）
@@ -315,15 +424,16 @@ export class MapImageGenerationService {
     imageModel: string,
     apiConfig: { apiUrl: string; apiKey: string }
   ): Promise<string> {
+    // 文字在前、图在后：多数「创作图」接口先读指令再解析图片，第一张=结构图，第二张=风格参考图
     const content: any[] = [
       { type: 'text', text: prompt },
       { type: 'image_url', image_url: { url: `data:image/png;base64,${guideBase64}` } },
     ];
     if (styleRefBase64) {
-      content.push({
-        type: 'image_url',
-        image_url: { url: `data:image/png;base64,${styleRefBase64}` },
-      });
+      content.push({ type: 'image_url', image_url: { url: `data:image/png;base64,${styleRefBase64}` } });
+      Logger.debug('Map gen: Chat sending prompt + 2 images (structure, then style reference)');
+    } else {
+      Logger.debug('Map gen: Chat sending prompt + 1 image (structure only)');
     }
 
     const requestBody = {
@@ -354,7 +464,14 @@ export class MapImageGenerationService {
 
   private extractImageUrl(data: any): string {
     Logger.debug('尝试从 API 响应中提取图像 URL...');
-    
+
+    // Fal.ai edit 响应格式：images[0].url 或 data.images[0].url
+    const falUrl = data?.images?.[0]?.url ?? data?.data?.images?.[0]?.url;
+    if (falUrl) {
+      Logger.info('成功从 Fal edit images[0].url 提取图像');
+      return falUrl;
+    }
+
     // Gemini API 响应格式：candidates[0].content.parts[x].inlineData
     if (data.candidates?.[0]?.content?.parts) {
       Logger.debug('检测到 Gemini candidates 格式');

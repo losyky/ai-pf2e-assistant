@@ -3,6 +3,10 @@
     <label>地图风格提示词</label>
     <textarea name="stylePrompt" rows="4" placeholder="描述地图的视觉风格，如：dark dungeon, stone walls, torch-lit corridors, medieval fantasy, top-down view">{{stylePrompt}}</textarea>
     <p class="notes">用于引导 AI 生成地图图片的风格描述。建议包含：材质、光照、视角、风格等关键词。</p>
+    <label class="checkbox" style="margin-top:6px">
+      <input type="checkbox" name="useStylePromptWhenHasRefImage" {{#if useStylePromptWhenHasRefImage}}checked{{/if}} />
+      有风格参考图时仍使用上述地图风格提示词（不勾选则仅用参考图风格）
+    </label>
   </div>
 
   <div class="form-group">

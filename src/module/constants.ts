@@ -17,6 +17,14 @@ export const MAP_COLOR_PASSABLE = '#CCCCCC';
 export const MAP_COLOR_IMPASSABLE = '#111111';
 export const MAP_COLOR_WALL = '#FF0000';
 export const MAP_COLOR_WALL_AI = '#888888';
+/** 用于 AI 结构图：不同墙类型对应不同颜色，与中文「替换」提示词一致
+ *  使用高对比度纯色，避免颜色混淆，提升 AI 模型识别准确度
+ */
+export const MAP_COLOR_AI_WALL = '#FF0000';       // 纯红 → 墙壁
+export const MAP_COLOR_AI_DOOR = '#00FF00';       // 纯绿 → 门/暗门（提升对比度）
+export const MAP_COLOR_AI_ETHEREAL = '#00FFFF';   // 纯青 → 幽灵墙/传送门（提升对比度）
+export const MAP_COLOR_AI_INVISIBLE = '#FF8800';  // 橙色 → 隐形墙（保持）
+export const MAP_COLOR_AI_WINDOW = '#0000FF';     // 纯蓝 → 窗户（提升对比度）
 export const MAP_WALL_LINE_WIDTH = 4;
 
 /**

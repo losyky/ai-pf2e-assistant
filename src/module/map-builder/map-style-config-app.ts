@@ -30,6 +30,7 @@ export class MapStyleConfigApp extends FormApplication {
       imageModel: config.imageModel,
       styleReferenceImage: config.styleReferenceImage || '',
       hasRefImage: !!config.styleReferenceImage,
+      useStylePromptWhenHasRefImage: config.useStylePromptWhenHasRefImage !== false,
     };
   }
 
@@ -77,6 +78,7 @@ export class MapStyleConfigApp extends FormApplication {
       negativePrompt: formData.negativePrompt || '',
       imageModel: formData.imageModel || '',
       styleReferenceImage: formData.styleReferenceImage || '',
+      useStylePromptWhenHasRefImage: formData.useStylePromptWhenHasRefImage === 'on' || formData.useStylePromptWhenHasRefImage === true,
     };
 
     await scene.setFlag(MODULE_ID, 'mapStyle', config);
@@ -104,6 +106,6 @@ export class MapStyleConfigApp extends FormApplication {
         if (config) return config;
       }
     } catch { /* ignore */ }
-    return { stylePrompt: '', negativePrompt: '', imageModel: '', styleReferenceImage: '' };
+    return { stylePrompt: '', negativePrompt: '', imageModel: '', styleReferenceImage: '', useStylePromptWhenHasRefImage: true };
   }
 }
