@@ -60,6 +60,8 @@ export interface MapStyleConfig {
   styleReferenceImage?: string;
   /** 有风格参考图时是否仍使用地图风格提示词；默认 true；设为 false 则仅用参考图风格 */
   useStylePromptWhenHasRefImage?: boolean;
+  /** 提示词语言：'zh' 中文，'en' 英文；默认 'zh' */
+  promptLanguage?: 'zh' | 'en';
 }
 
 export interface MapDropData {

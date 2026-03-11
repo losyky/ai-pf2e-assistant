@@ -2,7 +2,7 @@
 
 ## 问题描述
 
-在使用肉鸽系统宏时，添加 `equipmentCategories` 参数后无法找到任何物品，导致"物品池为空"错误：
+在使用Roguelike系统宏时，添加 `equipmentCategories` 参数后无法找到任何物品，导致"物品池为空"错误：
 
 ```javascript
 game.modules.get('ai-pf2e-assistant').api.roguelike.draw({

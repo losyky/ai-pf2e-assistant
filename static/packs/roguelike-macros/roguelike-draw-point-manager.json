@@ -1,0 +1,15 @@
+{
+    "_id": "RLDrawPointMgr01",
+    "name": "Roguelike 抽取点数管理器",
+    "type": "script",
+    "scope": "global",
+    "img": "icons/svg/dice-target.svg",
+    "command": "// ======================================\n// Roguelike 抽取点数管理器\n// ======================================\n// 打开抽取点数管理面板，GM可以管理通用点数和特定宏点数。\n// 需要先在模块设置 → Roguelike 配置中启用抽取点数系统。\n// ======================================\n\nconst mod = game.modules.get('ai-pf2e-assistant');\nif (!mod?.api?.roguelikeDrawPoints?.openManager) {\n  ui.notifications.warn('Roguelike 抽取点数管理器不可用，请确认模块已启用');\n} else {\n  mod.api.roguelikeDrawPoints.openManager();\n}",
+    "author": "AIPf2eBuilder000",
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+        "default": 0
+    },
+    "flags": {}
+}

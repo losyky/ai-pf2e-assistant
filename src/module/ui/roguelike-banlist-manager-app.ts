@@ -1,4 +1,5 @@
 import { RoguelikeBanList, RoguelikeBanListItem } from '../services/roguelike-draw-service';
+import { RoguelikeDrawPointService } from '../services/roguelike-draw-point-service';
 
 const MODULE_ID = 'ai-pf2e-assistant';
 const SETTING_KEY = 'roguelikeBanlists';
@@ -25,10 +26,10 @@ export class RoguelikeBanlistManagerApp extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'roguelike-banlist-manager',
-      title: (game as any).i18n?.localize('AIPF2E.Roguelike.banlist.managerTitle') || 'Roguelike Ban List',
+      title: (game as any).i18n?.localize('AIPF2E.Roguelike.configTitle') || 'Roguelike Configuration',
       template: 'modules/ai-pf2e-assistant/templates/roguelike-banlist-manager-app.hbs',
       width: 520,
-      height: 600,
+      height: 650,
       resizable: true,
       classes: ['ai-pf2e-assistant-container', 'roguelike-banlist-manager', 'pf2e'],
       closeOnSubmit: false,
@@ -66,16 +67,31 @@ export class RoguelikeBanlistManagerApp extends FormApplication {
       }));
     }
 
+    let drawPointEnabled = false;
+    try {
+      drawPointEnabled = (game as any).settings.get(MODULE_ID, 'roguelikeDrawPointEnabled') === true;
+    } catch { /* not registered yet */ }
+
     return {
       banlists,
       editingList,
       isEditing: !!editingList,
       categories,
+      drawPointEnabled,
     };
   }
 
   override activateListeners(html: JQuery): void {
     super.activateListeners(html);
+
+    // 抽取点数系统开关
+    html.find('.rdp-toggle-input').on('change', async (ev) => {
+      const checked = (ev.currentTarget as HTMLInputElement).checked;
+      await (game as any).settings.set(MODULE_ID, 'roguelikeDrawPointEnabled', checked);
+      (globalThis as any).ui?.notifications?.info(
+        checked ? '已启用抽取点数系统' : '已关闭抽取点数系统'
+      );
+    });
 
     html.find('.banlist-new-btn').on('click', () => this.createBanList());
 

@@ -52,6 +52,15 @@
     <p class="notes">留空将使用模块全局图像 API 配置中的模型。Gemini 系列推荐使用 Nano Banana 2 或 Nano Banana Pro。</p>
   </div>
 
+  <div class="form-group">
+    <label>提示词语言</label>
+    <select name="promptLanguage">
+      <option value="zh" {{#if (eq promptLanguage "zh")}}selected{{/if}}>🇨🇳 中文 (Chinese)</option>
+      <option value="en" {{#if (eq promptLanguage "en")}}selected{{/if}}>🇬🇧 英文 (English)</option>
+    </select>
+    <p class="notes">选择 AI 地图生成时使用的提示词语言。中文提示词更详细，英文提示词更简洁。建议：Gemini/GPT 等国际模型使用英文，国产模型使用中文。</p>
+  </div>
+
   <footer class="sheet-footer">
     <button type="submit"><i class="fas fa-save"></i> 保存配置</button>
   </footer>

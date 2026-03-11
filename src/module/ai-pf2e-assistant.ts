@@ -913,7 +913,7 @@ export class AIPF2eAssistant {
       })();
 
       if (!shrineEnabled && !roguelikeEnabled) {
-        Logger.debug('神龛系统和肉鸽系统均未启用，跳过');
+        Logger.debug('神龛系统和Roguelike系统均未启用，跳过');
         return;
       }
       
@@ -991,7 +991,7 @@ export class AIPF2eAssistant {
           });
         }
 
-        // 储存箱按钮：神龛或肉鸽启用时均显示
+        // 储存箱按钮：神龛或Roguelike启用时均显示
         const storageButton = $(`
           <button type="button" class="feat-storage-button" data-tooltip="${game.i18n.localize('ai-pf2e-assistant.buttons.featStorageTooltip')}">
             <i class="fa-solid fa-fw fa-box-archive"></i>${game.i18n.localize('ai-pf2e-assistant.buttons.storage')}
@@ -1057,7 +1057,7 @@ export class AIPF2eAssistant {
       })();
       
       if (!shrineEnabled && !roguelikeEnabled) {
-        Logger.debug('神龛系统和肉鸽系统均未启用，跳过');
+        Logger.debug('神龛系统和Roguelike系统均未启用，跳过');
         return;
       }
       
@@ -1136,7 +1136,7 @@ export class AIPF2eAssistant {
           });
         }
         
-        // 储存箱按钮：神龛或肉鸽启用时均显示（只在第一个传统上添加）
+        // 储存箱按钮：神龛或Roguelike启用时均显示（只在第一个传统上添加）
         if (index === 0) {
           const storageButton = $(`
             <a class="spell-storage-button item-control" data-tooltip="${game.i18n.localize('ai-pf2e-assistant.buttons.spellStorageTooltip')}" style="margin-left: 0.25rem;">
@@ -1180,7 +1180,7 @@ export class AIPF2eAssistant {
         catch { return true; }
       })();
       if (!shrineEnabled && !roguelikeEnabled) {
-        Logger.debug('神龛系统和肉鸽系统均未启用，跳过');
+        Logger.debug('神龛系统和Roguelike系统均未启用，跳过');
         return;
       }
 
@@ -1246,7 +1246,7 @@ export class AIPF2eAssistant {
         target.append(synthesisButton);
       }
 
-      // 储存箱按钮：神龛或肉鸽启用时均显示
+      // 储存箱按钮：神龛或Roguelike启用时均显示
       const equipmentStorageButton = $(`
         <a class="equipment-storage-button item-control" data-tooltip="物品储存箱" style="margin-left: 0.25rem;">
           <i class="fa-solid fa-box-archive"></i>
@@ -8090,12 +8090,12 @@ function registerSettings() {
       restricted: true
     });
 
-    // Roguelike 屏蔽列表管理器
+    // Roguelike 配置管理器（屏蔽列表 + 抽取点数）
     game.settings.registerMenu(MODULE_ID, 'roguelikeBanlistManager', {
-      name: 'Roguelike 屏蔽列表',
-      label: '管理屏蔽列表',
-      hint: '管理 Roguelike 抽取系统的物品屏蔽列表',
-      icon: 'fas fa-ban',
+      name: 'Roguelike 配置',
+      label: '打开 Roguelike 配置',
+      hint: '管理 Roguelike 抽取系统的屏蔽列表和抽取点数限制',
+      icon: 'fas fa-dice-d20',
       type: RoguelikeBanlistManagerApp,
       restricted: true
     });
@@ -8177,6 +8177,24 @@ function registerSettings() {
     // Roguelike 屏蔽列表数据（JSON 存储）
     game.settings.register(MODULE_ID, 'roguelikeBanlists', {
       name: 'Roguelike 屏蔽列表数据',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: [],
+    });
+
+    // Roguelike 抽取点数系统开关（隐藏，通过配置管理器切换）
+    game.settings.register(MODULE_ID, 'roguelikeDrawPointEnabled', {
+      name: 'Roguelike 抽取点数系统',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: false,
+    });
+
+    // Roguelike 追踪宏列表（JSON 存储）
+    game.settings.register(MODULE_ID, 'roguelikeTrackedMacros', {
+      name: 'Roguelike 追踪宏数据',
       scope: 'world',
       config: false,
       type: Array,
@@ -8875,6 +8893,16 @@ Hooks.once('ready', function() {
           Logger.debug('Roguelike macro API exposed successfully');
         }).catch(err => {
           Logger.error('Failed to load roguelike macro API:', err);
+        });
+
+        // 导入 Roguelike 抽取点数管理器API
+        import('./applications/roguelike-draw-point-manager').then(({ RoguelikeDrawPointManager }) => {
+          (mod.api as any).roguelikeDrawPoints = {
+            openManager: () => RoguelikeDrawPointManager.show()
+          };
+          Logger.debug('Roguelike draw point manager API exposed successfully');
+        }).catch(err => {
+          Logger.error('Failed to load roguelike draw point manager:', err);
         });
 
       }).catch(err => {

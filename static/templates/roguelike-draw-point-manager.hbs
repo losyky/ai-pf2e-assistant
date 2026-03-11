@@ -1,0 +1,220 @@
+<div class="roguelike-draw-point-manager">
+  <div class="rdpm-header">
+    <h2><i class="fas fa-dice-d20"></i> {{localize "AIPF2E.RoguelikeDrawPoint.title"}}</h2>
+    <p class="rdpm-description">{{localize "AIPF2E.RoguelikeDrawPoint.description"}}</p>
+  </div>
+
+  {{!-- Tab 切换 --}}
+  <nav class="rdpm-tabs">
+    <a class="rdpm-tab {{#if (eq activeTab 'general')}}active{{/if}}" data-tab="general">
+      <i class="fas fa-coins"></i> {{localize "AIPF2E.RoguelikeDrawPoint.generalTab"}}
+    </a>
+    <a class="rdpm-tab {{#if (eq activeTab 'macro')}}active{{/if}}" data-tab="macro">
+      <i class="fas fa-scroll"></i> {{localize "AIPF2E.RoguelikeDrawPoint.macroTab"}}
+    </a>
+  </nav>
+
+  <div class="rdpm-content">
+
+    {{!-- ===== 通用点数 Tab ===== --}}
+    {{#if (eq activeTab 'general')}}
+    <div class="rdpm-tab-content rdpm-general-tab">
+
+      {{!-- 玩家视图 --}}
+      {{#unless isGM}}
+      <div class="rdpm-player-view">
+        <div class="rdpm-info-box">
+          <p><i class="fas fa-info-circle"></i> {{localize "AIPF2E.RoguelikeDrawPoint.playerGeneralHint"}}</p>
+          {{#if selectedActor}}
+          <p><i class="fas fa-coins"></i> {{localize "AIPF2E.RoguelikeDrawPoint.yourPoints"}}: <strong>{{currentGeneralPoints}}</strong></p>
+          {{else}}
+          <p><i class="fas fa-user-slash"></i> {{localize "AIPF2E.RoguelikeDrawPoint.noActor"}}</p>
+          {{/if}}
+        </div>
+      </div>
+      {{/unless}}
+
+      {{#if isGM}}
+      <div class="rdpm-general-controls">
+        <div class="rdpm-single-management">
+          <h4>{{localize "AIPF2E.RoguelikeDrawPoint.singleActorManagement"}}</h4>
+          <div class="form-group">
+            <label>{{localize "AIPF2E.RoguelikeDrawPoint.selectActor"}}:</label>
+            <select class="rdpm-target-actor">
+              <option value="">-- {{localize "AIPF2E.RoguelikeDrawPoint.selectActor"}} --</option>
+              {{#each actors}}
+              <option value="{{this.id}}">{{this.name}} ({{localize "AIPF2E.RoguelikeDrawPoint.current"}}: {{this.generalPoints}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{localize "AIPF2E.RoguelikeDrawPoint.points"}}:</label>
+            <input type="number" class="rdpm-point-input" min="0" value="1" />
+          </div>
+          <div class="rdpm-button-group">
+            <button type="button" class="rdpm-set-general-btn">
+              <i class="fas fa-edit"></i> {{localize "AIPF2E.RoguelikeDrawPoint.setPoints"}}
+            </button>
+            <button type="button" class="rdpm-add-general-btn">
+              <i class="fas fa-plus"></i> {{localize "AIPF2E.RoguelikeDrawPoint.addPoints"}}
+            </button>
+          </div>
+        </div>
+
+        <div class="rdpm-batch-general">
+          <h4>{{localize "AIPF2E.RoguelikeDrawPoint.batchManagement"}}</h4>
+          <div class="form-group">
+            <label>{{localize "AIPF2E.RoguelikeDrawPoint.distributePoints"}}:</label>
+            <input type="number" class="rdpm-batch-input" min="0" value="5" />
+          </div>
+          <div class="rdpm-button-group">
+            <button type="button" class="rdpm-distribute-general-btn">
+              <i class="fas fa-gift"></i> {{localize "AIPF2E.RoguelikeDrawPoint.distributeToAll"}}
+            </button>
+            <button type="button" class="rdpm-reset-general-btn">
+              <i class="fas fa-undo"></i> {{localize "AIPF2E.RoguelikeDrawPoint.resetAll"}}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {{!-- 角色点数列表 --}}
+      <div class="rdpm-actor-list">
+        <h4>{{localize "AIPF2E.RoguelikeDrawPoint.actorList"}}</h4>
+        <div class="rdpm-actor-rows">
+          {{#each actors}}
+          <div class="rdpm-actor-row">
+            <img src="{{this.img}}" class="rdpm-actor-img" alt="{{this.name}}" />
+            <span class="rdpm-actor-name">{{this.name}}</span>
+            <span class="rdpm-actor-points">{{this.generalPoints}} {{localize "AIPF2E.RoguelikeDrawPoint.pointUnit"}}</span>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{!-- ===== 宏点数 Tab ===== --}}
+    {{#if (eq activeTab 'macro')}}
+    <div class="rdpm-tab-content rdpm-macro-tab">
+
+      {{#unless isGM}}
+      <div class="rdpm-player-view">
+        <div class="rdpm-info-box">
+          <p><i class="fas fa-info-circle"></i> {{localize "AIPF2E.RoguelikeDrawPoint.playerMacroHint"}}</p>
+        </div>
+      </div>
+      {{/unless}}
+
+      {{#if isGM}}
+      {{!-- 追踪宏列表 --}}
+      <div class="rdpm-tracked-macros">
+        <h4>{{localize "AIPF2E.RoguelikeDrawPoint.trackedMacros"}}</h4>
+
+        <div class="rdpm-macro-drop-zone">
+          <i class="fas fa-arrows-alt"></i>
+          <span>{{localize "AIPF2E.RoguelikeDrawPoint.dropMacroHint"}}</span>
+        </div>
+
+        {{#if trackedMacros.length}}
+        <ol class="rdpm-tracked-macro-list">
+          {{#each trackedMacros}}
+          <li class="rdpm-tracked-macro-row {{#if (eq this.uuid ../selectedMacroUuid)}}selected{{/if}}" data-uuid="{{this.uuid}}">
+            <img src="{{this.img}}" class="rdpm-macro-img" alt="{{this.name}}" />
+            <a class="rdpm-select-tracked-macro rdpm-macro-name">{{this.name}}</a>
+            <a class="rdpm-remove-tracked-macro" data-uuid="{{this.uuid}}" data-tooltip="{{localize "AIPF2E.RoguelikeDrawPoint.removeMacro"}}">
+              <i class="fas fa-times"></i>
+            </a>
+          </li>
+          {{/each}}
+        </ol>
+        {{else}}
+        <div class="rdpm-empty-state">
+          <i class="fas fa-inbox"></i>
+          <p>{{localize "AIPF2E.RoguelikeDrawPoint.noTrackedMacros"}}</p>
+        </div>
+        {{/if}}
+      </div>
+
+      {{!-- 选中宏的点数管理 --}}
+      {{#if selectedMacro}}
+      <div class="rdpm-selected-macro-panel">
+        <div class="rdpm-selected-macro-header">
+          <img src="{{selectedMacro.img}}" class="rdpm-macro-img-large" alt="{{selectedMacro.name}}" />
+          <h4>{{selectedMacro.name}}</h4>
+        </div>
+
+        <div class="rdpm-macro-controls">
+          <div class="rdpm-single-management">
+            <div class="form-group">
+              <label>{{localize "AIPF2E.RoguelikeDrawPoint.selectActor"}}:</label>
+              <select class="rdpm-target-actor">
+                <option value="">-- {{localize "AIPF2E.RoguelikeDrawPoint.selectActor"}} --</option>
+                {{#each actors}}
+                <option value="{{this.id}}">{{this.name}} ({{localize "AIPF2E.RoguelikeDrawPoint.current"}}: {{this.selectedMacroPoints}})</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>{{localize "AIPF2E.RoguelikeDrawPoint.points"}}:</label>
+              <input type="number" class="rdpm-point-input" min="0" value="1" />
+            </div>
+            <div class="rdpm-button-group">
+              <button type="button" class="rdpm-set-macro-btn">
+                <i class="fas fa-edit"></i> {{localize "AIPF2E.RoguelikeDrawPoint.setPoints"}}
+              </button>
+              <button type="button" class="rdpm-add-macro-btn">
+                <i class="fas fa-plus"></i> {{localize "AIPF2E.RoguelikeDrawPoint.addPoints"}}
+              </button>
+            </div>
+          </div>
+
+          <div class="rdpm-batch-macro">
+            <div class="form-group">
+              <label>{{localize "AIPF2E.RoguelikeDrawPoint.distributePoints"}}:</label>
+              <input type="number" class="rdpm-batch-input" min="0" value="5" />
+            </div>
+            <div class="rdpm-button-group">
+              <button type="button" class="rdpm-distribute-macro-btn">
+                <i class="fas fa-gift"></i> {{localize "AIPF2E.RoguelikeDrawPoint.distributeToAll"}}
+              </button>
+              <button type="button" class="rdpm-reset-macro-btn">
+                <i class="fas fa-undo"></i> {{localize "AIPF2E.RoguelikeDrawPoint.resetAll"}}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {{!-- 角色宏点数列表 --}}
+        <div class="rdpm-actor-list">
+          <h4>{{localize "AIPF2E.RoguelikeDrawPoint.actorMacroPointList"}}</h4>
+          <div class="rdpm-actor-rows">
+            {{#each actors}}
+            <div class="rdpm-actor-row">
+              <img src="{{this.img}}" class="rdpm-actor-img" alt="{{this.name}}" />
+              <span class="rdpm-actor-name">{{this.name}}</span>
+              <span class="rdpm-actor-points">{{this.selectedMacroPoints}} {{localize "AIPF2E.RoguelikeDrawPoint.pointUnit"}}</span>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+      {{else}}
+      {{#if trackedMacros.length}}
+      <div class="rdpm-info-box">
+        <p><i class="fas fa-hand-pointer"></i> {{localize "AIPF2E.RoguelikeDrawPoint.selectMacroHint"}}</p>
+      </div>
+      {{/if}}
+      {{/if}}
+      {{/if}}
+    </div>
+    {{/if}}
+  </div>
+
+  <div class="rdpm-footer">
+    <button type="button" class="close-btn">
+      <i class="fas fa-times"></i> {{localize "AIPF2E.RoguelikeDrawPoint.close"}}
+    </button>
+  </div>
+</div>

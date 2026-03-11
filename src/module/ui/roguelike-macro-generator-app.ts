@@ -261,6 +261,9 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
     const s = this.formState;
     const lines: string[] = [];
 
+    // macroUuid 使用 this.uuid 让宏自引用，用于点数系统追踪
+    lines.push('  macroUuid: this.uuid,');
+
     if (s.useToken) {
       lines.push('  actor: canvas.tokens.controlled[0]?.actor,');
     }

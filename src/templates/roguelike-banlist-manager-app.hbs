@@ -1,5 +1,23 @@
 <form class="banlist-manager-container" autocomplete="off">
 
+  {{!-- ───── 抽取点数系统开关 ───── --}}
+  {{#unless isEditing}}
+  <div class="rdp-toggle-section">
+    <div class="rdp-toggle-row">
+      <div class="rdp-toggle-info">
+        <h3><i class="fas fa-dice-d20"></i> {{localize "AIPF2E.RoguelikeDrawPoint.toggleTitle"}}</h3>
+        <p class="rdp-toggle-hint">{{localize "AIPF2E.RoguelikeDrawPoint.toggleHint"}}</p>
+      </div>
+      <label class="rdp-toggle-switch">
+        <input type="checkbox" class="rdp-toggle-input" {{#if drawPointEnabled}}checked{{/if}} />
+        <span class="rdp-toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <hr class="rdp-divider" />
+  {{/unless}}
+
   {{!-- ───── 列表总览 ───── --}}
   {{#unless isEditing}}
   <div class="banlist-overview">

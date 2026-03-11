@@ -1,0 +1,524 @@
+/* Roguelike 抽取点数管理器 */
+.roguelike-draw-point-manager-app {
+  max-width: 660px !important;
+}
+
+.roguelike-draw-point-manager {
+  padding: 16px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+}
+
+.rdpm-header {
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #3a3a5e;
+}
+
+.rdpm-header h2 {
+  color: #e0e0e0;
+  margin: 0 0 6px 0;
+  font-size: 1.3em;
+}
+
+.rdpm-description {
+  color: #9090b0;
+  margin: 0;
+  font-size: 0.85em;
+  font-style: italic;
+}
+
+/* Tab 导航 */
+.rdpm-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #3a3a5e;
+}
+
+.rdpm-tab {
+  flex: 1;
+  padding: 10px 16px;
+  text-align: center;
+  cursor: pointer;
+  color: #9090b0;
+  background: transparent;
+  border: none;
+  font-size: 0.95em;
+  font-weight: bold;
+  transition: all 0.2s;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.rdpm-tab:hover {
+  color: #c0c0e0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.rdpm-tab.active {
+  color: #7c6df0;
+  border-bottom-color: #7c6df0;
+}
+
+/* 内容区域 */
+.rdpm-content {
+  min-height: 200px;
+}
+
+.rdpm-tab-content {
+  animation: rdpmFadeIn 0.2s ease;
+}
+
+@keyframes rdpmFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 控制面板 */
+.rdpm-general-controls,
+.rdpm-macro-controls {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.rdpm-single-management,
+.rdpm-batch-general,
+.rdpm-batch-macro {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rdpm-single-management:last-child,
+.rdpm-batch-general:last-child,
+.rdpm-batch-macro:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.rdpm-single-management h4,
+.rdpm-batch-general h4,
+.rdpm-batch-macro h4 {
+  color: #c0c0e0;
+  margin: 0 0 10px 0;
+  font-size: 0.9em;
+}
+
+.rdpm-general-controls .form-group,
+.rdpm-macro-controls .form-group {
+  margin-bottom: 10px;
+}
+
+.rdpm-general-controls label,
+.rdpm-macro-controls label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+  color: #b0b0d0;
+  font-size: 0.85em;
+}
+
+.rdpm-target-actor,
+.rdpm-point-input,
+.rdpm-batch-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #4a4a6e;
+  border-radius: 4px;
+  background: #2a2a4e;
+  color: #e0e0e0;
+  font-size: 0.9em;
+}
+
+.rdpm-target-actor:focus,
+.rdpm-point-input:focus,
+.rdpm-batch-input:focus {
+  border-color: #7c6df0;
+  outline: none;
+}
+
+/* 按钮组 */
+.rdpm-button-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rdpm-button-group button {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: bold;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #fff;
+}
+
+.rdpm-set-general-btn,
+.rdpm-add-general-btn,
+.rdpm-set-macro-btn,
+.rdpm-add-macro-btn {
+  background: #5b52c9;
+}
+
+.rdpm-set-general-btn:hover,
+.rdpm-add-general-btn:hover,
+.rdpm-set-macro-btn:hover,
+.rdpm-add-macro-btn:hover {
+  background: #7c6df0;
+}
+
+.rdpm-distribute-general-btn,
+.rdpm-distribute-macro-btn {
+  background: #2d8659;
+}
+
+.rdpm-distribute-general-btn:hover,
+.rdpm-distribute-macro-btn:hover {
+  background: #38a56e;
+}
+
+.rdpm-reset-general-btn,
+.rdpm-reset-macro-btn {
+  background: #c9414d;
+}
+
+.rdpm-reset-general-btn:hover,
+.rdpm-reset-macro-btn:hover {
+  background: #e04e5b;
+}
+
+/* 角色列表 */
+.rdpm-actor-list {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 14px;
+}
+
+.rdpm-actor-list h4 {
+  color: #c0c0e0;
+  margin: 0 0 10px 0;
+  font-size: 0.9em;
+}
+
+.rdpm-actor-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rdpm-actor-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.rdpm-actor-row:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rdpm-actor-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #4a4a6e;
+}
+
+.rdpm-actor-name {
+  flex: 1;
+  font-weight: bold;
+  color: #d0d0e0;
+  font-size: 0.9em;
+}
+
+.rdpm-actor-points {
+  color: #7c6df0;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 追踪宏区域 */
+.rdpm-tracked-macros {
+  margin-bottom: 14px;
+}
+
+.rdpm-tracked-macros h4 {
+  color: #c0c0e0;
+  margin: 0 0 10px 0;
+  font-size: 0.9em;
+}
+
+.rdpm-macro-drop-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 2px dashed #4a4a6e;
+  border-radius: 8px;
+  color: #7070a0;
+  font-size: 0.85em;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+
+.rdpm-macro-drop-zone.drag-over {
+  border-color: #7c6df0;
+  background: rgba(124, 109, 240, 0.1);
+  color: #7c6df0;
+}
+
+.rdpm-tracked-macro-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rdpm-tracked-macro-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rdpm-tracked-macro-row:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rdpm-tracked-macro-row.selected {
+  border-color: #7c6df0;
+  background: rgba(124, 109, 240, 0.12);
+}
+
+.rdpm-macro-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.rdpm-macro-name {
+  flex: 1;
+  font-weight: bold;
+  color: #d0d0e0;
+  font-size: 0.9em;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.rdpm-macro-name:hover {
+  color: #7c6df0;
+}
+
+.rdpm-remove-tracked-macro {
+  color: #c9414d;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+
+.rdpm-remove-tracked-macro:hover {
+  background: rgba(201, 65, 77, 0.2);
+  color: #e04e5b;
+}
+
+/* 选中宏面板 */
+.rdpm-selected-macro-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 14px;
+  border: 1px solid rgba(124, 109, 240, 0.2);
+}
+
+.rdpm-selected-macro-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rdpm-macro-img-large {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #4a4a6e;
+}
+
+.rdpm-selected-macro-header h4 {
+  margin: 0;
+  color: #7c6df0;
+  font-size: 1em;
+}
+
+/* 空状态 */
+.rdpm-empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #7070a0;
+}
+
+.rdpm-empty-state i {
+  font-size: 2em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* 信息框 */
+.rdpm-info-box {
+  background: rgba(124, 109, 240, 0.08);
+  border: 1px solid rgba(124, 109, 240, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.rdpm-info-box p {
+  margin: 0 0 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b0b0d0;
+  font-size: 0.88em;
+}
+
+.rdpm-info-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* 玩家视图 */
+.rdpm-player-view {
+  padding: 10px 0;
+}
+
+/* 页脚 */
+.rdpm-footer {
+  text-align: center;
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid #3a3a5e;
+}
+
+.rdpm-footer .close-btn {
+  background: #4a4a6e;
+  color: #e0e0e0;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s;
+}
+
+.rdpm-footer .close-btn:hover {
+  background: #5a5a7e;
+}
+
+/* ===== 配置面板中的抽取点数开关 ===== */
+.rdp-toggle-section {
+  padding: 8px 0 4px;
+}
+
+.rdp-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rdp-toggle-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 1em;
+}
+
+.rdp-toggle-hint {
+  color: #888;
+  font-size: 0.8em;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.rdp-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.rdp-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.rdp-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #555;
+  border-radius: 26px;
+  transition: 0.3s;
+}
+
+.rdp-toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.rdp-toggle-switch input:checked + .rdp-toggle-slider {
+  background-color: #5b52c9;
+}
+
+.rdp-toggle-switch input:checked + .rdp-toggle-slider::before {
+  transform: translateX(22px);
+}
+
+.rdp-divider {
+  border: none;
+  border-top: 1px solid #444;
+  margin: 8px 0 4px;
+}

@@ -69,6 +69,19 @@ export class MapImageGenerationService {
   }
 
   private buildPrompt(styleConfig: MapStyleConfig, hasStyleRef: boolean, pixelW: number, pixelH: number, template: MapTemplate): string {
+    const language = styleConfig.promptLanguage || 'zh';
+    
+    if (language === 'en') {
+      return this.buildPromptEN(styleConfig, hasStyleRef, pixelW, pixelH, template);
+    } else {
+      return this.buildPromptZH(styleConfig, hasStyleRef, pixelW, pixelH, template);
+    }
+  }
+
+  /**
+   * 构建中文提示词
+   */
+  private buildPromptZH(styleConfig: MapStyleConfig, hasStyleRef: boolean, pixelW: number, pixelH: number, template: MapTemplate): string {
     const parts: string[] = [];
 
     // 用「第一张图/第二张图」明确指代，便于多模态模型对应；括号内说明用途
@@ -108,7 +121,7 @@ export class MapImageGenerationService {
         `[Image 1 = layout/structure, Image 2 = style reference.]`,
         `按照${styleLabel}的绘图风格，以及${structLabel}的地图结构，绘制一张 TRPG 俯视战斗地图。`,
         `在${structLabel}中：${replaceRules}。`,
-        `请严格保持${structLabel}的布局与结构，仅用${styleLabel}的风格进行绘制；${styleLabel}的房间形状与布局请完全忽略。`,
+        `${styleLabel}的场景布局请完全忽略，仅用${styleLabel}的地图元素与绘画风格进行绘制。`,
       );
     } else {
       parts.push(
@@ -120,10 +133,8 @@ export class MapImageGenerationService {
     parts.push(
       '',
       '约束：',
-      `1. 必须严格保持${structLabel}的房间、走廊与不可通行区域形状，不得偏移。`,
-      `2. 各色线精确落在${structLabel}对应位置：红=实墙，绿=门/暗门，青=幽灵墙/传送门，橙=隐形墙，蓝=窗户。`,
-      '3. 输出为俯视战斗地图，图中不得残留结构图的颜色（灰、黑、红、绿、青、橙、蓝）。',
-      '4. 黑色不可通过区域保持纯黑，无纹理或杂物。',
+      '1. 输出为俯视战斗地图，图中不得残留结构图的彩色线条。',
+      '2. 黑色不可通过区域保持纯黑，无纹理或杂物。',
     );
 
     const useStylePrompt = hasStyleRef ? styleConfig.useStylePromptWhenHasRefImage !== false : true;
@@ -136,6 +147,78 @@ export class MapImageGenerationService {
     }
 
     parts.push('', `输出尺寸：${pixelW}×${pixelH} 像素，俯视图。`);
+    return parts.join('\n');
+  }
+
+  /**
+   * 构建英文提示词
+   */
+  private buildPromptEN(styleConfig: MapStyleConfig, hasStyleRef: boolean, pixelW: number, pixelH: number, template: MapTemplate): string {
+    const parts: string[] = [];
+
+    // Clear labels for multi-image input
+    const structLabel = 'Image 1 (structure map)';
+    const styleLabel = hasStyleRef ? 'Image 2 (style reference)' : '';
+
+    // Dynamic replacement rules: only include wall types present in the template
+    const usedWallTypes = this.analyzeWallTypes(template);
+    const wallReplaceRules: string[] = [];
+    
+    if (usedWallTypes.has('normal')) {
+      wallReplaceRules.push('red lines → walls');
+    }
+    if (usedWallTypes.has('door') || usedWallTypes.has('secret-door')) {
+      wallReplaceRules.push('green lines → doors (or secret doors)');
+    }
+    if (usedWallTypes.has('ethereal')) {
+      wallReplaceRules.push('cyan lines → ethereal walls/portals (translucent or magical boundaries)');
+    }
+    if (usedWallTypes.has('invisible')) {
+      wallReplaceRules.push('orange lines → invisible walls');
+    }
+    if (usedWallTypes.has('window')) {
+      wallReplaceRules.push('blue lines → windows');
+    }
+    
+    // Area rules always included (gray = passable, black = impassable)
+    const areaRules = [
+      'black areas → impassable terrain',
+      'gray areas → passable terrain',
+    ];
+    
+    const replaceRules = [...wallReplaceRules, ...areaRules].join(', ');
+
+    if (hasStyleRef) {
+      parts.push(
+        `[${structLabel} = layout/structure, ${styleLabel} = style reference.]`,
+        `Generate a top-down TRPG battle map following the layout from ${structLabel} and the art style from ${styleLabel}.`,
+        `In ${structLabel}: ${replaceRules}.`,
+        `Strictly preserve the layout structure from ${structLabel}. Use only the visual style and map elements from ${styleLabel}, completely ignore its room layout.`,
+      );
+    } else {
+      parts.push(
+        `Generate a top-down TRPG battle map following the layout from ${structLabel}.`,
+        `In ${structLabel}: ${replaceRules}.`,
+      );
+    }
+
+    parts.push(
+      '',
+      'Constraints:',
+      '1. Output must be a top-down battle map with no colored guide lines remaining.',
+      '2. Black impassable areas must stay pure black with no textures or objects.',
+    );
+
+    const useStylePrompt = hasStyleRef ? styleConfig.useStylePromptWhenHasRefImage !== false : true;
+    if (useStylePrompt && styleConfig.stylePrompt) {
+      parts.push('', `Visual style: ${styleConfig.stylePrompt}`);
+    }
+
+    if (styleConfig.negativePrompt) {
+      parts.push('', `Avoid: ${styleConfig.negativePrompt}`);
+    }
+
+    parts.push('', `Output size: ${pixelW}×${pixelH} pixels, top-down view.`);
     return parts.join('\n');
   }
 

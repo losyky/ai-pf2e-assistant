@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const { ClassicLevel } = require('classic-level');
 
 const PACKS_SOURCE_DIR = path.join(__dirname, '../static/packs');
-const PACK_NAMES = ['roguelike-classes', 'roguelike-ancestries', 'roguelike-backgrounds', 'vault-anomaly-macros'];
+const PACK_NAMES = ['roguelike-classes', 'roguelike-ancestries', 'roguelike-backgrounds', 'roguelike-macros', 'vault-anomaly-macros'];
 
 const MODULE_ID = 'ai-pf2e-assistant';
 
@@ -13,6 +13,7 @@ const PACK_TYPE_MAP = {
   'roguelike-classes': { keyPrefix: 'items', docType: 'Item' },
   'roguelike-ancestries': { keyPrefix: 'items', docType: 'Item' },
   'roguelike-backgrounds': { keyPrefix: 'items', docType: 'Item' },
+  'roguelike-macros': { keyPrefix: 'macros', docType: 'Macro' },
   'vault-anomaly-macros': { keyPrefix: 'macros', docType: 'Macro' }
 };
 

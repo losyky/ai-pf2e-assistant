@@ -35,7 +35,8 @@
     "styles/ai-pf2e-assistant.css",
     "styles/feat-storage-sheet.css",
     "styles/tactical-manual.css",
-    "styles/map-builder.css"
+    "styles/map-builder.css",
+    "styles/roguelike-draw-point-manager.css"
   ],
   "socket": false,
   "url": "",
@@ -78,6 +79,12 @@
       "path": "packs/roguelike-backgrounds",
       "type": "Item",
       "system": "pf2e"
+    },
+    {
+      "name": "roguelike-macros",
+      "label": "Roguelike 工具宏",
+      "path": "packs/roguelike-macros",
+      "type": "Macro"
     },
     {
       "name": "vault-anomaly-macros",

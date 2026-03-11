@@ -858,6 +858,35 @@
           "description": "A temple servant trained in sacred rites and the art of healing."
         }
       }
+    },
+    "RoguelikeDrawPoint": {
+      "title": "Roguelike Draw Point Manager",
+      "description": "Manage general draw points and macro-specific points for characters",
+      "generalTab": "General Points",
+      "macroTab": "Macro Points",
+      "playerGeneralHint": "General draw points are managed by the GM and can be used for various draws in the roguelike draw system",
+      "yourPoints": "Your Points",
+      "noActor": "No actor found",
+      "singleActorManagement": "Single Actor Management",
+      "selectActor": "Select Actor",
+      "current": "Current",
+      "points": "Points",
+      "setPoints": "Set Points",
+      "addPoints": "Add Points",
+      "batchManagement": "Batch Management",
+      "distributePoints": "Distribute Points",
+      "distributeToAll": "Distribute to All",
+      "resetAll": "Reset All",
+      "actorList": "Actor Point List",
+      "pointUnit": "pt",
+      "playerMacroHint": "Macro-specific points are managed by the GM, each macro can have its own independent point pool",
+      "trackedMacros": "Tracked Macros",
+      "dropMacroHint": "Drag and drop a macro here to add tracking",
+      "removeMacro": "Remove Macro",
+      "noTrackedMacros": "No tracked macros",
+      "actorMacroPointList": "Actor Macro Point List",
+      "selectMacroHint": "Click on a macro name in the list above to select it for management",
+      "close": "Close"
     }
   }
 } 

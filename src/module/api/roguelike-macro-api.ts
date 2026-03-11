@@ -1,5 +1,6 @@
 import { RoguelikeDrawService, RoguelikeDrawConfig } from '../services/roguelike-draw-service';
 import { RoguelikeDrawApp } from '../ui/roguelike-draw-app';
+import { RoguelikeDrawPointService } from '../services/roguelike-draw-point-service';
 
 /**
  * Roguelike 抽取宏 API
@@ -116,6 +117,13 @@ export class RoguelikeMacroAPI {
       return null;
     }
 
+    // 点数系统检查
+    const pointCheck = RoguelikeDrawPointService.canDraw(actor, config.macroUuid);
+    if (!pointCheck.canDraw) {
+      (globalThis as any).ui?.notifications?.warn(pointCheck.reason || '抽取点数不足');
+      return null;
+    }
+
     const resolvedConfig: RoguelikeDrawConfig = {
       ...config,
       actor,
@@ -132,6 +140,7 @@ export class RoguelikeMacroAPI {
       banListIds: config.banListIds ?? [],
       allowDuplicates: config.allowDuplicates ?? false,
       title: config.title,
+      macroUuid: config.macroUuid,
     };
 
     if (resolvedConfig.selectablePerDraw! > resolvedConfig.itemsPerDraw!) {
@@ -153,6 +162,15 @@ export class RoguelikeMacroAPI {
       resolvedConfig.itemsPerDraw = pool.length;
       if (resolvedConfig.selectablePerDraw! > resolvedConfig.itemsPerDraw) {
         resolvedConfig.selectablePerDraw = resolvedConfig.itemsPerDraw;
+      }
+    }
+
+    // 消耗点数（在确认抽取可以进行后才扣除）
+    if (pointCheck.pointType !== 'unlimited') {
+      const consumed = await RoguelikeDrawPointService.consumeDrawPoint(actor, config.macroUuid);
+      if (!consumed) {
+        (globalThis as any).ui?.notifications?.warn('抽取点数扣除失败');
+        return null;
       }
     }
 

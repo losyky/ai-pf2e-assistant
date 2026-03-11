@@ -30,6 +30,8 @@ export interface RoguelikeDrawConfig {
   /** 应用的 banlist ID 列表（来自模块设置中的 roguelikeBanlists） */
   banListIds?: string[];
   title?: string;
+  /** 触发本次抽取的宏UUID，用于点数系统追踪 */
+  macroUuid?: string;
 }
 
 export interface DrawPoolItem {

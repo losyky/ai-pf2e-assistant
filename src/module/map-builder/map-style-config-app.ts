@@ -31,6 +31,7 @@ export class MapStyleConfigApp extends FormApplication {
       styleReferenceImage: config.styleReferenceImage || '',
       hasRefImage: !!config.styleReferenceImage,
       useStylePromptWhenHasRefImage: config.useStylePromptWhenHasRefImage !== false,
+      promptLanguage: config.promptLanguage || 'zh',
     };
   }
 
@@ -79,6 +80,7 @@ export class MapStyleConfigApp extends FormApplication {
       imageModel: formData.imageModel || '',
       styleReferenceImage: formData.styleReferenceImage || '',
       useStylePromptWhenHasRefImage: formData.useStylePromptWhenHasRefImage === 'on' || formData.useStylePromptWhenHasRefImage === true,
+      promptLanguage: formData.promptLanguage || 'zh',
     };
 
     await scene.setFlag(MODULE_ID, 'mapStyle', config);
@@ -106,6 +108,6 @@ export class MapStyleConfigApp extends FormApplication {
         if (config) return config;
       }
     } catch { /* ignore */ }
-    return { stylePrompt: '', negativePrompt: '', imageModel: '', styleReferenceImage: '', useStylePromptWhenHasRefImage: true };
+    return { stylePrompt: '', negativePrompt: '', imageModel: '', styleReferenceImage: '', useStylePromptWhenHasRefImage: true, promptLanguage: 'zh' };
   }
 }

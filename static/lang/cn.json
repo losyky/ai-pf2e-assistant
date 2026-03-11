@@ -948,6 +948,35 @@
           "description": "神殿仆从，精通神圣仪式和治愈之术。"
         }
       }
+    },
+    "RoguelikeDrawPoint": {
+      "title": "Roguelike抽取点数管理器",
+      "description": "管理角色的通用抽取点数和宏专属点数",
+      "generalTab": "通用点数",
+      "macroTab": "宏点数",
+      "playerGeneralHint": "通用抽取点数由GM管理，可用于Roguelike抽取系统的各类抽取",
+      "yourPoints": "您的点数",
+      "noActor": "未找到角色",
+      "singleActorManagement": "单个角色管理",
+      "selectActor": "选择角色",
+      "current": "当前",
+      "points": "点数",
+      "setPoints": "设置点数",
+      "addPoints": "增加点数",
+      "batchManagement": "批量管理",
+      "distributePoints": "发放点数",
+      "distributeToAll": "发放给所有人",
+      "resetAll": "重置所有",
+      "actorList": "角色点数列表",
+      "pointUnit": "点",
+      "playerMacroHint": "宏专属点数由GM管理，每个宏可以有独立的点数池",
+      "trackedMacros": "追踪宏列表",
+      "dropMacroHint": "拖拽宏到此处以添加追踪",
+      "removeMacro": "移除宏",
+      "noTrackedMacros": "暂无追踪宏",
+      "actorMacroPointList": "角色宏点数列表",
+      "selectMacroHint": "点击上方列表中的宏名称来选择要管理的宏",
+      "close": "关闭"
     }
   }
 } 
