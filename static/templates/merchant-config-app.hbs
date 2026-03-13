@@ -1,0 +1,208 @@
+<form class="merchant-config-container" autocomplete="off">
+  <div class="merchant-config-layout">
+
+    {{!-- 左侧：商人类型列表 --}}
+    <div class="merchant-type-list">
+      <div class="merchant-list-header">
+        <h3><i class="fas fa-store"></i> 商人类型</h3>
+        <button type="button" class="merchant-add-type-btn" title="添加新类型">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+      <div class="merchant-list-items">
+        {{#each merchantTypes}}
+          <div class="merchant-type-item {{#if (eq this.id ../selectedId)}}active{{/if}}" data-id="{{this.id}}">
+            <i class="fas fa-store"></i>
+            <span class="merchant-type-name">{{this.name}}</span>
+          </div>
+        {{/each}}
+        {{#unless merchantTypes.length}}
+          <p class="merchant-empty-hint">暂无商人类型，点击 + 添加</p>
+        {{/unless}}
+      </div>
+    </div>
+
+    {{!-- 右侧：选中类型的配置编辑 --}}
+    <div class="merchant-type-editor">
+      {{#if hasSelected}}
+        <div class="merchant-editor-header">
+          <h3><i class="fas fa-edit"></i> 编辑：{{selected.name}}</h3>
+          <div class="merchant-editor-actions">
+            <button type="button" class="merchant-duplicate-type-btn" title="复制">
+              <i class="fas fa-copy"></i>
+            </button>
+            <button type="button" class="merchant-delete-type-btn" title="删除">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="merchant-editor-body">
+          {{!-- 基础信息 --}}
+          <div class="merchant-form-group">
+            <label>类型名称</label>
+            <input type="text" name="typeName" value="{{selected.name}}" placeholder="如：武器商人" />
+          </div>
+          <div class="merchant-form-group">
+            <label>描述</label>
+            <input type="text" name="typeDescription" value="{{selected.description}}" placeholder="可选描述" />
+          </div>
+
+          <hr />
+
+          {{!-- 内容类型 --}}
+          <div class="merchant-form-group">
+            <label>内容类型</label>
+            <div class="merchant-checkbox-group">
+              {{#each contentTypeOptions}}
+                <label>
+                  <input type="checkbox" name="contentType" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+                  {{this.label}}
+                </label>
+              {{/each}}
+            </div>
+          </div>
+
+          {{!-- 专长子分类 --}}
+          {{#if showFeatCategories}}
+          <div class="merchant-form-group">
+            <label>专长子分类 <span class="merchant-hint">（不勾选则包含所有）</span></label>
+            <div class="merchant-checkbox-group merchant-sub-categories">
+              {{#each featCategoryOptions}}
+                <label>
+                  <input type="checkbox" name="featCategory" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+                  {{this.label}}
+                </label>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          {{!-- 装备子分类 --}}
+          {{#if showEquipmentCategories}}
+          <div class="merchant-form-group">
+            <label>装备子分类 <span class="merchant-hint">（不勾选则包含所有）</span></label>
+            <div class="merchant-checkbox-group merchant-sub-categories">
+              {{#each equipmentCategoryOptions}}
+                <label>
+                  <input type="checkbox" name="equipmentCategory" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+                  {{this.label}}
+                </label>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          <hr />
+
+          {{!-- 等级范围 --}}
+          <div class="merchant-form-row">
+            <div class="merchant-form-group">
+              <label>最低等级</label>
+              <input type="number" name="levelMin" value="{{selected.levelRange.min}}" min="0" max="25" />
+            </div>
+            <div class="merchant-form-group">
+              <label>最高等级</label>
+              <input type="number" name="levelMax" value="{{selected.levelRange.max}}" min="0" max="25" />
+            </div>
+          </div>
+
+          {{!-- 商品数量 --}}
+          <div class="merchant-form-row">
+            <div class="merchant-form-group">
+              <label>最少商品数</label>
+              <input type="number" name="itemCountMin" value="{{selected.itemCount.min}}" min="1" max="100" />
+            </div>
+            <div class="merchant-form-group">
+              <label>最多商品数</label>
+              <input type="number" name="itemCountMax" value="{{selected.itemCount.max}}" min="1" max="100" />
+            </div>
+          </div>
+
+          {{!-- 价格倍率 --}}
+          <div class="merchant-form-group">
+            <label>价格倍率</label>
+            <input type="number" name="priceMultiplier" value="{{selected.priceMultiplier}}" min="0.1" max="10" step="0.1" />
+          </div>
+
+          <hr />
+
+          {{!-- 稀有度 --}}
+          <div class="merchant-form-group">
+            <label>稀有度 <span class="merchant-hint">（不勾选则包含所有）</span></label>
+            <div class="merchant-checkbox-group">
+              {{#each rarityOptions}}
+                <label>
+                  <input type="checkbox" name="rarity" value="{{this.value}}" {{#if this.checked}}checked{{/if}} />
+                  {{this.label}}
+                </label>
+              {{/each}}
+            </div>
+          </div>
+
+          {{!-- 必须包含特征 --}}
+          <div class="merchant-form-group">
+            <label>必须包含的特征</label>
+            <div class="merchant-tag-input" data-field="requiredTraits">
+              {{#each requiredTraitLabels}}
+                <span class="merchant-tag">{{this.label}} <i class="fas fa-times remove-tag" data-tag="{{this.value}}"></i></span>
+              {{/each}}
+              <input type="text" placeholder="输入后按回车添加..." class="merchant-tag-text-input" data-field="requiredTraits" list="merchant-traits-datalist" autocomplete="off" />
+            </div>
+          </div>
+
+          {{!-- 必须排除特征 --}}
+          <div class="merchant-form-group">
+            <label>必须排除的特征</label>
+            <div class="merchant-tag-input" data-field="excludedTraits">
+              {{#each excludedTraitLabels}}
+                <span class="merchant-tag">{{this.label}} <i class="fas fa-times remove-tag" data-tag="{{this.value}}"></i></span>
+              {{/each}}
+              <input type="text" placeholder="输入后按回车排除..." class="merchant-tag-text-input" data-field="excludedTraits" list="merchant-traits-datalist" autocomplete="off" />
+            </div>
+          </div>
+
+          <datalist id="merchant-traits-datalist">
+            {{#each availableTraits}}
+              <option value="{{this.label}}">{{this.label}} ({{this.value}})</option>
+            {{/each}}
+          </datalist>
+
+          {{!-- 屏蔽列表 --}}
+          {{#if hasBanlists}}
+          <div class="merchant-form-group">
+            <label>应用屏蔽列表</label>
+            <div class="merchant-checkbox-group">
+              {{#each banlistOptions}}
+                <label>
+                  <input type="checkbox" name="banList" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />
+                  {{this.name}} <span class="merchant-hint">({{this.itemCount}} 项)</span>
+                </label>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          <hr />
+
+          {{!-- 卷轴设置 --}}
+          <div class="merchant-form-group">
+            <label>卷轴名称前缀</label>
+            <input type="text" name="scrollPrefix" value="{{selected.scrollPrefix}}" placeholder="学习卷轴：" />
+          </div>
+          <div class="merchant-form-group">
+            <label>卷轴图标路径 <span class="merchant-hint">（留空使用默认图标）</span></label>
+            <input type="text" name="scrollImg" value="{{selected.scrollImg}}" placeholder="icons/sundries/scrolls/scroll-runed-brown-purple.webp" />
+          </div>
+        </div>
+
+      {{else}}
+        <div class="merchant-no-selection">
+          <i class="fas fa-arrow-left"></i>
+          <p>从左侧选择一个商人类型进行编辑，或点击 + 创建新类型</p>
+        </div>
+      {{/if}}
+    </div>
+
+  </div>
+</form>

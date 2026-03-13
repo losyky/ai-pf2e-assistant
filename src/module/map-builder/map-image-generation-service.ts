@@ -238,14 +238,16 @@ export class MapImageGenerationService {
     const isChatCompletions = /\/chat\/completions|\/v1\/chat/i.test(apiUrl);
     const isFalEdit = /fal.*(edit|nano-banana)/i.test(apiUrl);
 
-    if (isFalEdit) {
-      return this.callFalEdit(prompt, guideBase64, styleRefBase64, apiConfig, template);
+    // 优先根据模型名判断API格式，而不是URL
+    if (imageModel.startsWith('gemini') && !isChatCompletions) {
+      return this.callGeminiAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
     if (imageModel.startsWith('gpt-image')) {
       return this.callGPTImageEdit(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
-    if (imageModel.startsWith('gemini') && !isChatCompletions) {
-      return this.callGeminiAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
+    // 只有在URL明确包含fal且模型不是gemini时，才使用Fal Edit格式
+    if (isFalEdit && !imageModel.startsWith('gemini')) {
+      return this.callFalEdit(prompt, guideBase64, styleRefBase64, apiConfig, template);
     }
     if (isChatCompletions) {
       return this.callChatCompletionsWithImages(prompt, guideBase64, styleRefBase64, imageModel, apiConfig);

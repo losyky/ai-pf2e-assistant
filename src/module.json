@@ -35,7 +35,8 @@
     "styles/ai-pf2e-assistant.css",
     "styles/feat-storage-sheet.css",
     "styles/tactical-manual.css",
-    "styles/config-managers.css"
+    "styles/config-managers.css",
+    "styles/merchant.css"
   ],
   "socket": false,
   "url": "",

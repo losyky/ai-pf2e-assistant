@@ -36,7 +36,8 @@
     "styles/feat-storage-sheet.css",
     "styles/tactical-manual.css",
     "styles/map-builder.css",
-    "styles/roguelike-draw-point-manager.css"
+    "styles/roguelike-draw-point-manager.css",
+    "styles/merchant.css"
   ],
   "socket": false,
   "url": "",

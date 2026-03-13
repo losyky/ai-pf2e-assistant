@@ -505,9 +505,9 @@ export class IconGenerationService {
         size: adjustedSize,
         n: 1
       };
-    } else if (isGeminiModel && isSSOpenAPI) {
-      // Gemini 原生格式（ssopen.top API）
-      // 参考: https://5lcqqpm068.apifox.cn/
+    } else if (isGeminiModel) {
+      // Gemini 原生格式（谷歌官方格式，适用于所有第三方API）
+      // 参考: https://ai.google.dev/gemini-api/docs/imagen
       const [width, height] = adjustedSize.split('x').map(n => parseInt(n));
       const resolution = width >= 2048 ? '2K' : (width >= 1024 ? '1K' : '1K');
       
@@ -664,17 +664,18 @@ export class IconGenerationService {
             return `data:image/png;base64,${result.b64_json}`;
           }
         }
-      } else if (isGeminiModel && isSSOpenAPI) {
-        // Gemini 原生格式响应
+      } else if (isGeminiModel) {
+        // Gemini 原生格式响应（谷歌官方格式）
         // 响应格式: { candidates: [{ content: { parts: [{ inlineData: { mimeType, data } }] } }] }
         if (data.candidates && Array.isArray(data.candidates) && data.candidates.length > 0) {
           const candidate = data.candidates[0];
           if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
-            const part = candidate.content.parts[0];
-            if (part.inlineData && part.inlineData.data) {
-              // 返回 base64 格式的图片
-              const mimeType = part.inlineData.mimeType || 'image/png';
-              return `data:${mimeType};base64,${part.inlineData.data}`;
+            for (const part of candidate.content.parts) {
+              if (part.inlineData && part.inlineData.data) {
+                // 返回 base64 格式的图片
+                const mimeType = part.inlineData.mimeType || 'image/png';
+                return `data:${mimeType};base64,${part.inlineData.data}`;
+              }
             }
           }
         }

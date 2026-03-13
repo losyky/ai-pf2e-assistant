@@ -20,6 +20,7 @@ import { TerminologyConfigManager } from './ui/config-managers/terminology-confi
 import { BalanceConfigManager } from './ui/config-managers/balance-config-manager';
 import { RoguelikeBanlistManagerApp } from './ui/roguelike-banlist-manager-app';
 import { VaultRulesConfigManager } from './ui/config-managers/vault-rules-config-manager';
+import { MerchantConfigApp } from './ui/merchant-config-app';
 import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler, MapTileGalleryApp } from './map-builder';
 // 不直接导入game对象，而是在需要时使用全局访问
 // import { Hooks, ui, game } from '../foundry-imports';
@@ -603,6 +604,27 @@ export class AIPF2eAssistant {
       };
     }
 
+    const isMerchantEnabled = (() => {
+      try { return (game as any).settings?.get(MODULE_ID, 'merchantEnabled') !== false; }
+      catch { return true; }
+    })();
+
+    if (isMerchantEnabled) {
+      aiTools['ai-merchant-generator'] = {
+        name: 'ai-merchant-generator',
+        title: game.i18n.localize('AIPF2E.tools.merchantGenerator'),
+        icon: 'fas fa-store',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 商人生成器按钮被点击`);
+          import('./api/merchant-macro-api').then(({ MerchantMacroAPI }) => {
+            MerchantMacroAPI.openGenerator();
+          });
+        }
+      };
+    }
+
     const isMapBuilderEnabled = (() => {
       try { return (game as any).settings?.get(MODULE_ID, 'mapBuilderEnabled') === true; }
       catch { return false; }
@@ -779,6 +801,25 @@ export class AIPF2eAssistant {
             }
           }
         );
+      }
+
+      const isMerchantOn = (() => {
+        try { return game.settings?.get(MODULE_ID, 'merchantEnabled') !== false; }
+        catch { return true; }
+      })();
+      if (isMerchantOn) {
+        aiTools.push({
+          name: 'ai-merchant-generator',
+          title: game.i18n.localize('AIPF2E.tools.merchantGenerator'),
+          icon: 'fas fa-store',
+          button: true,
+          visible: true,
+          onClick: () => {
+            import('./api/merchant-macro-api').then(({ MerchantMacroAPI }) => {
+              MerchantMacroAPI.openGenerator();
+            });
+          }
+        });
       }
 
       const isMapOn = (() => {
@@ -8110,6 +8151,16 @@ function registerSettings() {
       restricted: true
     });
 
+    // 商人系统配置管理器
+    game.settings.registerMenu(MODULE_ID, 'merchantConfigManager', {
+      name: '商人系统配置',
+      label: '打开商人配置',
+      hint: '管理商人类型模板，配置不同商人的货物筛选条件',
+      icon: 'fas fa-store',
+      type: MerchantConfigApp,
+      restricted: true
+    });
+
     // ========================================
     // 系统总开关（主配置界面显示）
     // ========================================
@@ -8195,6 +8246,25 @@ function registerSettings() {
     // Roguelike 追踪宏列表（JSON 存储）
     game.settings.register(MODULE_ID, 'roguelikeTrackedMacros', {
       name: 'Roguelike 追踪宏数据',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: [],
+    });
+
+    // 商人系统开关
+    game.settings.register(MODULE_ID, 'merchantEnabled', {
+      name: '商人系统',
+      hint: '启用后工具栏将显示商人生成器按钮（需要重新加载页面生效）',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+    });
+
+    // 商人类型配置数据（JSON 存储）
+    game.settings.register(MODULE_ID, 'merchantTypes', {
+      name: '商人类型配置数据',
       scope: 'world',
       config: false,
       type: Array,
@@ -8893,6 +8963,14 @@ Hooks.once('ready', function() {
           Logger.debug('Roguelike macro API exposed successfully');
         }).catch(err => {
           Logger.error('Failed to load roguelike macro API:', err);
+        });
+
+        // 导入商人宏API
+        import('./api/merchant-macro-api').then(({ MerchantMacroAPI }) => {
+          (mod.api as any).merchant = MerchantMacroAPI;
+          Logger.debug('Merchant macro API exposed successfully');
+        }).catch(err => {
+          Logger.error('Failed to load merchant macro API:', err);
         });
 
         // 导入 Roguelike 抽取点数管理器API

@@ -313,7 +313,8 @@
       "mapTileGallery": "已生成图块库",
       "monsterDraw": "怪物抽取器",
       "monsterModifier": "怪物改造工作台",
-      "portraitGeneration": "AI立绘生成"
+      "portraitGeneration": "AI立绘生成",
+      "merchantGenerator": "商人生成器"
     },
     "Portrait": {
       "title": "AI立绘生成",

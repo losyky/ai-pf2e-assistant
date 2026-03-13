@@ -230,7 +230,8 @@
       "mapTileGallery": "Generated Tile Gallery",
       "monsterDraw": "Monster Draw",
       "monsterModifier": "Monster Modifier",
-      "portraitGeneration": "AI Portrait"
+      "portraitGeneration": "AI Portrait",
+      "merchantGenerator": "Merchant Generator"
     },
     "Portrait": {
       "title": "AI Portrait Generation",

@@ -1,0 +1,401 @@
+/* =============================================
+ * 商人模块样式
+ * ============================================= */
+
+/* === 商人配置管理器 === */
+
+.merchant-config-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: #1a1a1a;
+}
+
+.merchant-config-layout {
+  display: flex;
+  height: 100%;
+  gap: 0;
+}
+
+/* 左侧商人类型列表 */
+.merchant-type-list {
+  width: 200px;
+  min-width: 180px;
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.merchant-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.merchant-list-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #2e7d32;
+}
+
+.merchant-add-type-btn {
+  background: none;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 3px 8px;
+  color: #2e7d32;
+  font-size: 0.85rem;
+}
+
+.merchant-add-type-btn:hover {
+  background: rgba(46, 125, 50, 0.1);
+}
+
+.merchant-list-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.merchant-type-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  border-left: 3px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.merchant-type-item:hover {
+  background: rgba(46, 125, 50, 0.06);
+}
+
+.merchant-type-item.active {
+  background: rgba(46, 125, 50, 0.1);
+  border-left-color: #2e7d32;
+  font-weight: bold;
+}
+
+.merchant-type-item i {
+  color: #2e7d32;
+  font-size: 0.8rem;
+}
+
+.merchant-empty-hint {
+  font-size: 0.78rem;
+  color: #999;
+  padding: 12px 10px;
+  text-align: center;
+}
+
+/* 右侧编辑区域 */
+.merchant-type-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.merchant-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.merchant-editor-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #2e7d32;
+}
+
+.merchant-editor-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.merchant-editor-actions button {
+  background: none;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 3px 8px;
+  font-size: 0.78rem;
+  color: #555;
+}
+
+.merchant-editor-actions button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.merchant-delete-type-btn:hover {
+  color: #c62828 !important;
+  border-color: rgba(198, 40, 40, 0.3) !important;
+}
+
+.merchant-editor-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.merchant-editor-body hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 2px 0;
+}
+
+.merchant-no-selection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  gap: 8px;
+}
+
+.merchant-no-selection i {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+/* === 通用表单样式（配置器 + 生成器共用） === */
+
+.merchant-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.merchant-form-group > label {
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: #2e7d32;
+}
+
+.merchant-hint {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  font-weight: normal;
+}
+
+.merchant-form-group input[type="number"],
+.merchant-form-group input[type="text"],
+.merchant-form-group select {
+  padding: 5px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.65);
+  color: #1a1a1a;
+  font-size: 0.85rem;
+}
+
+.merchant-form-group input[type="number"]:focus,
+.merchant-form-group input[type="text"]:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 1px rgba(46, 125, 50, 0.3);
+}
+
+.merchant-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.merchant-form-row .merchant-form-group {
+  flex: 1;
+}
+
+.merchant-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.merchant-checkbox-group label {
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: #333;
+}
+
+.merchant-checkbox-group label:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.merchant-sub-categories {
+  padding-left: 8px;
+}
+
+/* 特征标签输入 */
+.merchant-tag-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.65);
+  min-height: 34px;
+  align-items: center;
+}
+
+.merchant-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  font-size: 0.78rem;
+  color: #2e7d32;
+}
+
+.merchant-tag .remove-tag {
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 0.7rem;
+  color: #c62828;
+}
+
+.merchant-tag .remove-tag:hover {
+  opacity: 1;
+}
+
+.merchant-tag-input input {
+  flex: 1;
+  min-width: 80px;
+  border: none !important;
+  background: transparent !important;
+  padding: 2px 4px !important;
+  font-size: 0.82rem;
+  color: #1a1a1a !important;
+}
+
+/* === 商人生成器 === */
+
+.merchant-generator-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 12px;
+  gap: 12px;
+  color: #1a1a1a;
+}
+
+.merchant-generator-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.merchant-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.merchant-mode-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: normal;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.merchant-open-config-btn {
+  margin-left: auto;
+  background: none;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  color: #2e7d32;
+}
+
+.merchant-open-config-btn:hover {
+  background: rgba(46, 125, 50, 0.1);
+}
+
+/* 代码预览 */
+.merchant-code-preview {
+  background: #263238;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 200px;
+  overflow-y: auto;
+  color: #a5d6a7;
+}
+
+/* 操作按钮 */
+.merchant-generator-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.merchant-generator-actions button {
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.6);
+  color: #1a1a1a;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.merchant-generator-actions button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.merchant-generate-btn {
+  background: #2e7d32 !important;
+  color: white !important;
+  border-color: #1b5e20 !important;
+}
+
+.merchant-generate-btn:hover {
+  background: #388e3c !important;
+}
+
+.merchant-create-macro-btn {
+  background: #1565c0 !important;
+  color: white !important;
+  border-color: #0d47a1 !important;
+}
+
+.merchant-create-macro-btn:hover {
+  background: #1976d2 !important;
+}
