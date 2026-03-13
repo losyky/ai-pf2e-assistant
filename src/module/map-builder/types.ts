@@ -31,6 +31,8 @@ export const WALL_TYPE_CONFIG: Record<MapWallType, {
   'window':      { label: '窗户',     editorColor: '#66CCFF', editorDash: [8, 3],   fvtt: { move: 20, sense: 10, door: 0 } },
 };
 
+export type MapRotation = 0 | 90 | 180 | 270;
+
 export interface MapTemplate {
   id: string;
   name: string;
@@ -40,6 +42,7 @@ export interface MapTemplate {
   cellSize: number;
   cells: boolean[][];
   walls: MapWallSegment[];
+  rotation?: MapRotation;
 }
 
 export interface MapSizePreset {

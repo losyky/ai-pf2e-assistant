@@ -1,5 +1,5 @@
 import { MODULE_ID, MAP_CELL_SIZE, MAP_TILES_DIR, getPresetForTemplate } from '../constants';
-import { MapTemplate, MapStyleConfig, MapWallType } from './types';
+import { MapTemplate, MapStyleConfig, MapWallType, MapRotation } from './types';
 import { MapGuideImageService } from './map-guide-image-service';
 import { Logger } from '../utils/logger';
 
@@ -20,7 +20,11 @@ export class MapImageGenerationService {
     return MapImageGenerationService.instance;
   }
 
-  async generateMapImage(template: MapTemplate, styleConfig: MapStyleConfig): Promise<string> {
+  async generateMapImage(
+    template: MapTemplate,
+    styleConfig: MapStyleConfig,
+    rotation: MapRotation = 0
+  ): Promise<string> {
     const guideService = MapGuideImageService.getInstance();
     const guideBase64 = guideService.toBase64(template);
 
@@ -48,9 +52,9 @@ export class MapImageGenerationService {
     const pixelH = template.gridRows * MAP_CELL_SIZE;
     const prompt = this.buildPrompt(styleConfig, !!styleRefBase64, pixelW, pixelH, template);
 
-    Logger.debug('Generating map image with model:', imageModel, `size: ${pixelW}x${pixelH}`);
+    Logger.debug('Generating map image with model:', imageModel, `size: ${pixelW}x${pixelH}, rotation: ${rotation}`);
     const imageUrl = await this.callImageAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
-    return await this.downloadAndSave(imageUrl, template.id);
+    return await this.downloadAndSave(imageUrl, template.id, rotation);
   }
 
   // ----------------------------------------------------------------
@@ -236,6 +240,7 @@ export class MapImageGenerationService {
   ): Promise<string> {
     const apiUrl = apiConfig.apiUrl.replace(/\/+$/, '');
     const isChatCompletions = /\/chat\/completions|\/v1\/chat/i.test(apiUrl);
+    // Fal.ai 原版使用 image_urls 字段（注意是复数）
     const isFalEdit = /fal.*(edit|nano-banana)/i.test(apiUrl);
 
     // 优先根据模型名判断API格式，而不是URL
@@ -245,13 +250,14 @@ export class MapImageGenerationService {
     if (imageModel.startsWith('gpt-image')) {
       return this.callGPTImageEdit(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
-    // 只有在URL明确包含fal且模型不是gemini时，才使用Fal Edit格式
+    // Fal Edit 格式（仅限 fal.ai 原版，使用 image_urls 字段）
     if (isFalEdit && !imageModel.startsWith('gemini')) {
       return this.callFalEdit(prompt, guideBase64, styleRefBase64, apiConfig, template);
     }
     if (isChatCompletions) {
       return this.callChatCompletionsWithImages(prompt, guideBase64, styleRefBase64, imageModel, apiConfig);
     }
+    // OpenAI 兼容格式（包括灵芽等中转服务，它们使用 image 数组字段）
     return this.callOpenAICompatible(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
   }
 
@@ -474,15 +480,31 @@ export class MapImageGenerationService {
       return this.callChatCompletionsWithImages(prompt, guideBase64, styleRefBase64, imageModel, apiConfig);
     }
 
+    // 检测是否为 Nano-banana 格式（灵芽等服务商）
+    // Nano-banana 要求 image 字段为数组格式
+    const isNanoBanana = /nano-banana|lingyaai/i.test(apiUrl) || /nano-banana/i.test(imageModel);
+    
     const requestBody: any = {
       model: imageModel,
       prompt,
       n: 1,
       size: `${pixelW}x${pixelH}`,
     };
-    requestBody.image = `data:image/png;base64,${guideBase64}`;
-    if (styleRefBase64) {
-      requestBody.style_reference = `data:image/png;base64,${styleRefBase64}`;
+    
+    if (isNanoBanana) {
+      // Nano-banana 格式：image 字段为数组
+      const imageUrls: string[] = [`data:image/png;base64,${guideBase64}`];
+      if (styleRefBase64) {
+        imageUrls.push(`data:image/png;base64,${styleRefBase64}`);
+      }
+      requestBody.image = imageUrls;
+      Logger.debug('使用 Nano-banana 格式发送图像数组，图片数量:', imageUrls.length);
+    } else {
+      // 标准 OpenAI 格式：image 字段为单个字符串
+      requestBody.image = `data:image/png;base64,${guideBase64}`;
+      if (styleRefBase64) {
+        requestBody.style_reference = `data:image/png;base64,${styleRefBase64}`;
+      }
     }
 
     const response = await fetch(apiUrl, {
@@ -631,7 +653,7 @@ export class MapImageGenerationService {
   // Helpers
   // ----------------------------------------------------------------
 
-  private async downloadAndSave(imageUrl: string, templateId: string): Promise<string> {
+  private async downloadAndSave(imageUrl: string, templateId: string, rotation: MapRotation = 0): Promise<string> {
     let blob: Blob;
 
     if (imageUrl.startsWith('data:')) {
@@ -646,7 +668,8 @@ export class MapImageGenerationService {
     const templateDir = `${MAP_TILES_DIR}/${templateId}`;
     await this.ensureDirectory(templateDir);
 
-    const filename = `tile-${templateId}-${Date.now()}.png`;
+    const rotationSuffix = rotation !== 0 ? `-r${rotation}` : '';
+    const filename = `tile-${templateId}-${Date.now()}${rotationSuffix}.png`;
     const file = new File([blob], filename, { type: 'image/png' });
     
     // 兼容 Foundry VTT v13+ 的 FilePicker 命名空间

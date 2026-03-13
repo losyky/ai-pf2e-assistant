@@ -1,6 +1,7 @@
 import { MODULE_ID, MAP_TILES_DIR } from '../constants';
 import { MapTemplateService } from './map-template-service';
 import { MapDropHandler } from './map-drop-handler';
+import { MapRotation } from './types';
 import { Logger } from '../utils/logger';
 
 declare const Application: any;
@@ -16,6 +17,7 @@ interface TileFileInfo {
   templateId: string;
   timestamp: number;
   timeLabel: string;
+  rotation: MapRotation;
 }
 
 interface TileGroup {
@@ -81,7 +83,8 @@ export class MapTileGalleryApp extends Application {
       ev.stopPropagation();
       const templateId = ev.currentTarget.dataset.templateId;
       const path = ev.currentTarget.dataset.path;
-      if (templateId && path) this._onPlace(templateId, path);
+      const rotation = parseInt(ev.currentTarget.dataset.rotation || '0', 10) as MapRotation;
+      if (templateId && path) this._onPlace(templateId, path, rotation);
     });
 
     html.find('.tile-btn[data-action="delete"]').on('click', (ev: any) => {
@@ -93,17 +96,18 @@ export class MapTileGalleryApp extends Application {
     html.find('.tile-item').on('click', (ev: any) => {
       const templateId = ev.currentTarget.dataset.templateId;
       const path = ev.currentTarget.dataset.path;
-      if (templateId && path) this._onPlace(templateId, path);
+      const rotation = parseInt(ev.currentTarget.dataset.rotation || '0', 10) as MapRotation;
+      if (templateId && path) this._onPlace(templateId, path, rotation);
     });
   }
 
-  private async _onPlace(templateId: string, imagePath: string): Promise<void> {
+  private async _onPlace(templateId: string, imagePath: string, rotation?: MapRotation): Promise<void> {
     if (!canvas?.scene) {
       ui.notifications.warn('请先打开一个场景');
       return;
     }
     this.close();
-    await MapDropHandler.placeWithExistingImage(templateId, imagePath);
+    await MapDropHandler.placeWithExistingImage(templateId, imagePath, rotation);
   }
 
   private _onDelete(path: string): void {
@@ -200,6 +204,22 @@ export class MapTileGalleryApp extends Application {
     const filename = filePath.split('/').pop() || '';
     if (!filename.endsWith('.png') && !filename.endsWith('.webp')) return null;
 
+    const matchWithRotation = filename.match(/^tile-([a-zA-Z0-9]+)-(\d{10,})-r(\d+)\.(?:png|webp)$/);
+    if (matchWithRotation) {
+      const templateId = matchWithRotation[1];
+      const timestamp = parseInt(matchWithRotation[2], 10);
+      const rotation = parseInt(matchWithRotation[3], 10) as MapRotation;
+
+      return {
+        path: filePath,
+        filename,
+        templateId,
+        timestamp,
+        timeLabel: this._formatTimestamp(timestamp),
+        rotation,
+      };
+    }
+
     const match = filename.match(/^tile-([a-zA-Z0-9]+)-(\d{10,})\.(?:png|webp)$/);
     if (!match) return null;
 
@@ -212,6 +232,7 @@ export class MapTileGalleryApp extends Application {
       templateId,
       timestamp,
       timeLabel: this._formatTimestamp(timestamp),
+      rotation: 0,
     };
   }
 

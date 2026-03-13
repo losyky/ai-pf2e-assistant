@@ -15,14 +15,14 @@
     {{/unless}}
     <div class="tile-grid">
       {{#each this.tiles}}
-      <div class="tile-item" data-template-id="{{this.templateId}}" data-path="{{this.path}}" title="{{this.filename}}">
+      <div class="tile-item" data-template-id="{{this.templateId}}" data-path="{{this.path}}" data-rotation="{{this.rotation}}" title="{{this.filename}}">
         <div class="tile-preview">
           <img src="{{this.path}}" alt="{{this.filename}}" loading="lazy" />
         </div>
         <div class="tile-overlay">
           <span class="tile-time">{{this.timeLabel}}</span>
           <div class="tile-btns">
-            <button class="tile-btn" data-action="place" data-template-id="{{this.templateId}}" data-path="{{this.path}}" title="放置到场景">
+            <button class="tile-btn" data-action="place" data-template-id="{{this.templateId}}" data-path="{{this.path}}" data-rotation="{{this.rotation}}" title="放置到场景">
               <i class="fas fa-crosshairs"></i>
             </button>
             <button class="tile-btn danger" data-action="delete" data-path="{{this.path}}" title="删除此图块">

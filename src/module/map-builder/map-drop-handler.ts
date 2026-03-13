@@ -1,9 +1,10 @@
 import { MODULE_ID, MAP_CELL_SIZE } from '../constants';
-import { MapDropData, MapTemplate, MapStyleConfig, WALL_TYPE_CONFIG } from './types';
+import { MapDropData, MapTemplate, MapStyleConfig, WALL_TYPE_CONFIG, MapRotation } from './types';
 import { MapTemplateService } from './map-template-service';
 import { MapGuideImageService } from './map-guide-image-service';
 import { MapImageGenerationService } from './map-image-generation-service';
-import { MapPlacementPreview } from './map-placement-preview';
+import { MapPlacementPreview, PlacementResult } from './map-placement-preview';
+import { MapRotationHelper } from './map-rotation-helper';
 import { Logger } from '../utils/logger';
 
 declare const game: any;
@@ -70,7 +71,7 @@ export class MapDropHandler {
     MapDropHandler.handleDrop(data as MapDropData, event);
   }
 
-  static async startPlacement(templateId: string): Promise<void> {
+  static async startPlacement(templateId: string, defaultRotation?: MapRotation): Promise<void> {
     const templateService = MapTemplateService.getInstance();
     const template = templateService.getById(templateId);
     if (!template) {
@@ -82,15 +83,15 @@ export class MapDropHandler {
       return;
     }
 
-    const preview = new MapPlacementPreview(template);
-    const pos = await preview.start();
-    if (!pos) {
+    const preview = new MapPlacementPreview(template, defaultRotation);
+    const result = await preview.start();
+    if (!result) {
       ui.notifications.info('已取消放置');
       return;
     }
 
     const data: MapDropData = { type: 'MapTemplate', templateId };
-    return MapDropHandler.handleDropAt(data, pos.x, pos.y);
+    return MapDropHandler.handleDropAtWithRotation(data, result.x, result.y, result.rotation);
   }
 
   static async placeAtCenter(templateId: string): Promise<void> {
@@ -126,6 +127,15 @@ export class MapDropHandler {
   }
 
   static async handleDropAt(data: MapDropData, dropX: number, dropY: number): Promise<void> {
+    return MapDropHandler.handleDropAtWithRotation(data, dropX, dropY, 0);
+  }
+
+  static async handleDropAtWithRotation(
+    data: MapDropData,
+    dropX: number,
+    dropY: number,
+    rotation: MapRotation
+  ): Promise<void> {
     const templateService = MapTemplateService.getInstance();
     const template = templateService.getById(data.templateId);
     if (!template) {
@@ -139,18 +149,20 @@ export class MapDropHandler {
       return;
     }
 
-    Logger.debug(`Placing template at (${dropX}, ${dropY}), size ${template.gridCols * MAP_CELL_SIZE}x${template.gridRows * MAP_CELL_SIZE}`);
-    ui.notifications.info(`正在放置地图模板「${template.name}」...`);
+    const rotatedTemplate = MapRotationHelper.rotateTemplate(template, rotation);
+
+    Logger.debug(`Placing template at (${dropX}, ${dropY}), rotation ${rotation}, size ${rotatedTemplate.gridCols * MAP_CELL_SIZE}x${rotatedTemplate.gridRows * MAP_CELL_SIZE}`);
+    ui.notifications.info(`正在放置地图模板「${template.name}」(朝向: ${MapRotationHelper.getRotationLabel(rotation)})...`);
 
     try {
       const guideService = MapGuideImageService.getInstance();
-      const guidePath = await guideService.uploadGuideImage(template);
+      const guidePath = await guideService.uploadGuideImage(rotatedTemplate);
 
-      const tileId = await MapDropHandler._createTileAndWalls(template, dropX, dropY, guidePath, true);
+      const tileId = await MapDropHandler._createTileAndWalls(rotatedTemplate, dropX, dropY, guidePath, true);
 
-      ui.notifications.info(`已放置 ${template.walls.length} 面墙壁，开始生成地图图片...`);
+      ui.notifications.info(`已放置 ${rotatedTemplate.walls.length} 面墙壁，开始生成地图图片...`);
 
-      MapDropHandler._generateMapImage(template, tileId, dropX, dropY).catch(err => {
+      MapDropHandler._generateMapImage(rotatedTemplate, tileId, dropX, dropY, rotation).catch(err => {
         console.error(`${MODULE_ID} | 地图图像生成失败:`, err);
         ui.notifications.error(`地图图像生成失败: ${err.message}`);
       });
@@ -161,7 +173,11 @@ export class MapDropHandler {
     }
   }
 
-  static async placeWithExistingImage(templateId: string, imagePath: string): Promise<void> {
+  static async placeWithExistingImage(
+    templateId: string,
+    imagePath: string,
+    defaultRotation?: MapRotation
+  ): Promise<void> {
     const templateService = MapTemplateService.getInstance();
     const template = templateService.getById(templateId);
     if (!template) {
@@ -173,16 +189,17 @@ export class MapDropHandler {
       return;
     }
 
-    const preview = new MapPlacementPreview(template);
-    const pos = await preview.start();
-    if (!pos) {
+    const preview = new MapPlacementPreview(template, defaultRotation);
+    const result = await preview.start();
+    if (!result) {
       ui.notifications.info('已取消放置');
       return;
     }
 
     try {
-      await MapDropHandler._createTileAndWalls(template, pos.x, pos.y, imagePath, false);
-      ui.notifications.info(`已放置地图「${template.name}」(${template.walls.length} 面墙壁)`);
+      const rotatedTemplate = MapRotationHelper.rotateTemplate(template, result.rotation);
+      await MapDropHandler._createTileAndWalls(rotatedTemplate, result.x, result.y, imagePath, false);
+      ui.notifications.info(`已放置地图「${template.name}」(${rotatedTemplate.walls.length} 面墙壁, 朝向: ${MapRotationHelper.getRotationLabel(result.rotation)})`);
     } catch (err: any) {
       console.error(`${MODULE_ID} | 地图放置失败:`, err);
       ui.notifications.error(`放置失败: ${err.message}`);
@@ -290,7 +307,8 @@ export class MapDropHandler {
     template: MapTemplate,
     tileId: string,
     _dropX: number,
-    _dropY: number
+    _dropY: number,
+    rotation: MapRotation = 0
   ): Promise<void> {
     const scene = canvas?.scene;
     if (!scene) return;
@@ -308,7 +326,7 @@ export class MapDropHandler {
 
     try {
       const genService = MapImageGenerationService.getInstance();
-      const imagePath = await genService.generateMapImage(template, styleConfig);
+      const imagePath = await genService.generateMapImage(template, styleConfig, rotation);
 
       // 验证 Tile 是否仍然存在
       const tile = scene.tiles.get(tileId);

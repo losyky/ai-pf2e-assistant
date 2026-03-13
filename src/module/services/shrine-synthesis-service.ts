@@ -713,7 +713,8 @@ export class ShrineSynthesisService {
     if (config.actorData) {
       prompt += '【角色信息】\n';
       if (config.actorData.level) prompt += `等级: ${config.actorData.level}\n`;
-      if (config.actorData.class) prompt += `职业: ${config.actorData.class}\n`;
+      // ⚠️ 临时禁用：职业信息容易造成过度专注
+      // if (config.actorData.class) prompt += `职业: ${config.actorData.class}\n`;
       
       // 检查是否包含完整角色信息
       try {
@@ -780,9 +781,10 @@ export class ShrineSynthesisService {
       prompt += effectiveLevelNote;
     }
     prompt += `- 专长类别: ${this.getCategoryDisplayName(config.category)}\n`;
-    if (config.className) {
-      prompt += `- 关联职业: ${config.className}\n`;
-    }
+    // ⚠️ 临时禁用：关联职业信息容易造成过度专注
+    // if (config.className) {
+    //   prompt += `- 关联职业: ${config.className}\n`;
+    // }
     prompt += '\n';
 
 
@@ -827,18 +829,19 @@ export class ShrineSynthesisService {
     
     console.log('ℹ️ PF2e官方标准参考将在System Prompt中添加');
 
+    // ⚠️ 临时禁用：职业专长示例容易造成过度专注
     // 如果是职业专长，尝试获取官方专长示例供参考
-    if (className && config.category === 'class') {
-      try {
-        const featExamples = await this.getClassFeatExamples(className, config.level, config.category);
-        if (featExamples) {
-          prompt += featExamples;
-          console.log(`✓ 已添加${className}职业${config.level}级专长参考示例`);
-        }
-      } catch (error) {
-        console.warn('获取专长示例失败:', error);
-      }
-    }
+    // if (className && config.category === 'class') {
+    //   try {
+    //     const featExamples = await this.getClassFeatExamples(className, config.level, config.category);
+    //     if (featExamples) {
+    //       prompt += featExamples;
+    //       console.log(`✓ 已添加${className}职业${config.level}级专长参考示例`);
+    //     }
+    //   } catch (error) {
+    //     console.warn('获取专长示例失败:', error);
+    //   }
+    // }
 
     // 输出最终的合成提示词到控制台
     console.log('=== 神龛合成提示词 ===');
@@ -914,13 +917,14 @@ export class ShrineSynthesisService {
     // 设计阶段只需要职业设计指南（如有），不需要完整的格式规范
     let knowledgeStandards = '';
     try {
-      if (className) {
-        const classGuide = this.featKnowledgeService.getClassDesignGuide(className);
-        if (classGuide) {
-          knowledgeStandards = `\n\n【${className.toUpperCase()}职业专长设计参考】\n\n${classGuide}\n`;
-          console.log(`✓ 已添加${className.toUpperCase()}职业设计指南到设计智能体`);
-        }
-      }
+      // ⚠️ 临时禁用：职业设计指南容易造成过度专注
+      // if (className) {
+      //   const classGuide = this.featKnowledgeService.getClassDesignGuide(className);
+      //   if (classGuide) {
+      //     knowledgeStandards = `\n\n【${className.toUpperCase()}职业专长设计参考】\n\n${classGuide}\n`;
+      //     console.log(`✓ 已添加${className.toUpperCase()}职业设计指南到设计智能体`);
+      //   }
+      // }
       if (!knowledgeStandards) {
         console.log('ℹ️ 设计阶段：无职业特定指导（通用设计模式）');
       }
@@ -1116,6 +1120,15 @@ export class ShrineSynthesisService {
 
 ---
 
+**🎯 设计原则：简洁优于复杂**
+
+- **专注核心机制**：一个专长应该有一个清晰的核心机制，不要堆砌多个不相关的效果
+- **避免过度设计**：不要试图在一个专长中实现太多想法
+- **保持可读性**：机制框架应该简洁明了，易于理解和实现
+- **材料引导而非限制**：材料提供灵感和方向，但不要强行融入所有材料元素
+
+---
+
 ${FEAT_DESIGN_GUIDANCE}
 
 ${PREREQUISITES_PRINCIPLE}${divinityGuidance}${offeringGuidance}
@@ -1139,11 +1152,17 @@ ${knowledgeStandards}${mechanicsKnowledgeSection}
 按照"构件定义→交互逻辑→效果说明"的结构，用文字描述机制如何工作。不要包含具体数值。
 ---`;
 
-    const userPrompt = `请为以下神龛合成需求设计一个${level}级的${category}专长${className ? `（${className}职业）` : ''}：
+    // ⚠️ 临时禁用：职业信息容易造成过度专注
+    // const userPrompt = `请为以下神龛合成需求设计一个${level}级的${category}专长${className ? `（${className}职业）` : ''}：
+    const userPrompt = `请为以下神龛合成需求设计一个${level}级的${category}专长：
 
 ${prompt}
 
-请严格按照神龛的【合成指导】和材料指引进行设计，主题风格由这些材料决定，不要添加任何预设的风格倾向。`;
+**设计要求**：
+1. 请严格按照神龛的【合成指导】和材料指引进行设计
+2. 主题风格由这些材料决定，不要添加任何预设的风格倾向
+3. ⚠️ **保持简洁**：专注于一个核心机制，不要堆砌多个效果
+4. ⚠️ **避免过度设计**：机制框架应该简单明了，易于实现`;
 
     // 输出设计阶段的提示词到控制台
     console.log('=== 神龛专长设计提示词 ===');
@@ -1485,7 +1504,10 @@ ${JSON.stringify(feat, null, 2)}
 3. **编写description.value**：完整的HTML格式规则描述，包含所有细节
 4. **确定技术字段**：actionType、actions、traits、frequency等
 
-**关键原则**：你是实现者，不是设计者。不要偏离设计方案的机制框架。
+**关键原则**：
+- 你是实现者，不是设计者。不要偏离设计方案的机制框架
+- **保持简洁**：不要添加设计方案中没有的额外效果或机制
+- **忠实转换**：将机制框架的文字描述直接转化为规则文本，不要过度扩展
 
 ${DESCRIPTION_PRINCIPLE}
 
@@ -1520,6 +1542,22 @@ ${knowledgeStandards}${rulesKnowledgeSection}
 
 ---
 
+**🎯 核心设计原则：简洁、专注、实用**
+
+**避免常见问题**：
+- ❌ **机制堆砌**：不要在一个专长中塞入多个不相关的效果
+- ❌ **过度修改**：不要试图"改进"或"优化"材料内容，忠实呈现即可
+- ❌ **复杂化**：不要添加不必要的条件、限制或额外效果
+- ❌ **模板套用**：不要机械地套用固定格式，根据实际需要选择元素
+
+**正确做法**：
+- ✅ **单一核心**：专长应该有一个清晰的核心效果
+- ✅ **直接表达**：用最简洁的方式描述效果，不要绕弯子
+- ✅ **材料引导**：让材料的主题自然呈现，不要强行融合所有元素
+- ✅ **适度设计**：效果应该实用且易于理解，不要过度创新
+
+---
+
 ${FEAT_DESIGN_GUIDANCE}
 
 ${PREREQUISITES_PRINCIPLE}
@@ -1549,12 +1587,14 @@ ${TECHNICAL_REQUIREMENTS}
         userPrompt += `等效等级（数值强度）：${effectiveLevel}级\n`;
       }
       userPrompt += `类别：${category}\n`;
-      if (className) {
-        userPrompt += `职业：${className}\n`;
-        userPrompt += `特征要求：必须包含"${className.toLowerCase()}"（不包含"class"）\n`;
-      } else {
-        userPrompt += `特征要求：根据专长类型确定（${category === 'general' ? 'general' : category === 'skill' ? 'skill' : 'combat, 等'}）\n`;
-      }
+      // ⚠️ 临时禁用：职业信息容易造成过度专注
+      // if (className) {
+      //   userPrompt += `职业：${className}\n`;
+      //   userPrompt += `特征要求：必须包含"${className.toLowerCase()}"（不包含"class"）\n`;
+      // } else {
+      //   userPrompt += `特征要求：根据专长类型确定（${category === 'general' ? 'general' : category === 'skill' ? 'skill' : 'combat, 等'}）\n`;
+      // }
+      userPrompt += `特征要求：根据专长类型确定（${category === 'general' ? 'general' : category === 'skill' ? 'skill' : 'combat, 等'}）\n`;
       userPrompt += `\n【设计理念】：\n${designPlan.designRationale}\n`;
       userPrompt += `\n【机制框架】：\n${designPlan.mechanicsFramework}\n`;
       userPrompt += `\n---\n\n`;
@@ -1562,25 +1602,31 @@ ${TECHNICAL_REQUIREMENTS}
       userPrompt += `**关键要求**：\n`;
       userPrompt += `1. 专长名称必须是"${designPlan.name}"（中文）\n`;
       userPrompt += `2. 等级必须是${level}\n`;
+      userPrompt += `⚠️ **重要**：只实现机制框架中描述的内容，不要添加额外效果或复杂化机制\n`;
       if (effectiveLevel !== level) {
         userPrompt += `3. 数值强度（伤害、治疗、加值等）应按${effectiveLevel}级专长设计\n`;
-        userPrompt += `4. 这是${category}专长${className ? `（${className}职业）` : ''}\n`;
-        if (className) {
-          userPrompt += `5. 这是${className}职业专长，traits必须包含"${className.toLowerCase()}"但不包含"class"\n`;
-          userPrompt += `6. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
-        } else {
-          userPrompt += `5. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
-        }
+        // ⚠️ 临时禁用：职业信息容易造成过度专注
+        // userPrompt += `4. 这是${category}专长${className ? `（${className}职业）` : ''}\n`;
+        userPrompt += `4. 这是${category}专长\n`;
+        // if (className) {
+        //   userPrompt += `5. 这是${className}职业专长，traits必须包含"${className.toLowerCase()}"但不包含"class"\n`;
+        //   userPrompt += `6. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
+        // } else {
+        userPrompt += `5. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
+        // }
       } else {
-        userPrompt += `3. 这是${category}专长${className ? `（${className}职业）` : ''}\n`;
-        if (className) {
-          userPrompt += `4. 这是${className}职业专长，traits必须包含"${className.toLowerCase()}"但不包含"class"\n`;
-          userPrompt += `5. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
-        } else {
-          userPrompt += `4. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
-        }
+        // ⚠️ 临时禁用：职业信息容易造成过度专注
+        // userPrompt += `3. 这是${category}专长${className ? `（${className}职业）` : ''}\n`;
+        userPrompt += `3. 这是${category}专长\n`;
+        // if (className) {
+        //   userPrompt += `4. 这是${className}职业专长，traits必须包含"${className.toLowerCase()}"但不包含"class"\n`;
+        //   userPrompt += `5. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
+        // } else {
+        userPrompt += `4. 根据机制框架的文字描述，编写详细的description.value，包含具体数值和规则细节\n`;
+        // }
       }
-      const nextNum = effectiveLevel !== level ? (className ? 7 : 6) : (className ? 6 : 5);
+      // const nextNum = effectiveLevel !== level ? (className ? 7 : 6) : (className ? 6 : 5);
+      const nextNum = effectiveLevel !== level ? 6 : 5;
       userPrompt += `${nextNum}. 机制框架是交互逻辑的描述，你需要将它转化为游戏规则文本\n`;
       userPrompt += `${nextNum + 1}. 动作类型（actionType）、动作数量（actions）、特征（traits）等技术细节由你根据机制框架确定\n`;
       userPrompt += `${nextNum + 2}. **注意**：不需要在返回的数据中包含 category 字段，category 会由系统自动设置\n\n`;
