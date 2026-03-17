@@ -201,17 +201,32 @@ export class MerchantConfigApp extends FormApplication {
 
   private resolveTraitSlug(input: string): string {
     const lower = input.toLowerCase();
+    
+    // 精确匹配 value
     for (const t of this.availableTraits) {
-      if (t.value === lower) return t.value;
-    }
-    for (const t of this.availableTraits) {
-      if (t.label.toLowerCase() === lower) return t.value;
-    }
-    for (const t of this.availableTraits) {
-      if (t.label.toLowerCase().includes(lower) || lower.includes(t.label.toLowerCase())) {
+      if (t.value === lower) {
+        console.log(`[MerchantConfig] 特质转换（精确value）: "${input}" → "${t.value}"`);
         return t.value;
       }
     }
+    
+    // 精确匹配 label
+    for (const t of this.availableTraits) {
+      if (t.label.toLowerCase() === lower) {
+        console.log(`[MerchantConfig] 特质转换（精确label）: "${input}" → "${t.value}" (label: "${t.label}")`);
+        return t.value;
+      }
+    }
+    
+    // 模糊匹配
+    for (const t of this.availableTraits) {
+      if (t.label.toLowerCase().includes(lower) || lower.includes(t.label.toLowerCase())) {
+        console.log(`[MerchantConfig] 特质转换（模糊匹配）: "${input}" → "${t.value}" (label: "${t.label}")`);
+        return t.value;
+      }
+    }
+    
+    console.warn(`[MerchantConfig] ⚠️ 特质转换失败，使用原始输入: "${input}" (availableTraits数量: ${this.availableTraits.length})`);
     return lower;
   }
 

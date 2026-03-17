@@ -145,6 +145,21 @@ export class RoguelikeDrawService {
   }
 
   /**
+   * 从 indexData 的 options 中提取特质列表。
+   * PF2e v13-dev 将 traits 编码在 options Set 中，格式为 "trait:fire"、"trait:healing" 等。
+   */
+  private static extractTraitsFromOptions(options: Set<string> | string[]): string[] {
+    const optionsArray = Array.isArray(options) ? options : Array.from(options);
+    const traits: string[] = [];
+    for (const opt of optionsArray) {
+      if (opt.startsWith('trait:')) {
+        traits.push(opt.substring(6)); // 去掉 "trait:" 前缀
+      }
+    }
+    return traits;
+  }
+
+  /**
    * 从 Foundry 原始 pack index 构建 UUID→type 映射。
    * 仅在首次需要时执行一次，后续复用缓存。
    */
@@ -239,8 +254,12 @@ export class RoguelikeDrawService {
     // 调试：输出配置信息
     console.log('[RoguelikeDrawService] buildItemPool 配置:', {
       contentTypes,
+      featCategories: featCategories ? Array.from(featCategories) : null,
       equipmentCategories: equipmentCategories ? Array.from(equipmentCategories) : null,
       levelRange: { min: levelMin, max: levelMax },
+      requiredTraits,
+      excludedTraits,
+      rarityFilter,
       equipmentTypeMapSize: this.equipmentTypeMap.size
     });
 
@@ -250,6 +269,8 @@ export class RoguelikeDrawService {
     const pool: DrawPoolItem[] = [];
     let equipmentFilteredCount = 0; // 调试：记录被装备分类过滤掉的数量
     let totalEquipmentCount = 0; // 调试：记录总装备数量
+    let traitFilteredCount = 0; // 调试：记录被特质过滤掉的数量
+    let totalProcessedCount = 0; // 调试：记录总处理数量
 
     for (const tabName of contentTypes) {
       const tab = browser.tabs[tabName];
@@ -261,6 +282,8 @@ export class RoguelikeDrawService {
       console.log(`[RoguelikeDrawService] 处理 ${tabName} tab，共 ${tab.indexData.length} 条数据`);
 
       for (const entry of tab.indexData) {
+        totalProcessedCount++;
+        
         // 统计装备数量
         if (tabName === 'equipment') {
           totalEquipmentCount++;
@@ -271,7 +294,12 @@ export class RoguelikeDrawService {
 
         const entryLevel = this.getEntryLevel(entry, tabName);
         const entryRarity = entry.rarity || 'common';
-        const entryTraits: string[] = entry.traits || [];
+        
+        // 获取 traits：直接字段 → options 提取 → 空数组
+        let entryTraits: string[] = entry.traits || [];
+        if (entryTraits.length === 0 && entry.options) {
+          entryTraits = this.extractTraitsFromOptions(entry.options);
+        }
         
         // 获取 category：直接字段 → options 提取 → 空字符串
         let entryCategory: string = entry.category || '';
@@ -317,7 +345,25 @@ export class RoguelikeDrawService {
           }
         }
 
-        if (!this.matchesFilter(entryTraits, entryRarity, entryLevel, levelMin, levelMax, requiredTraits, excludedTraits, rarityFilter)) {
+        const filterResult = this.matchesFilter(entryTraits, entryRarity, entryLevel, levelMin, levelMax, requiredTraits, excludedTraits, rarityFilter);
+        
+        // 调试：输出前5个被特质过滤掉的物品
+        if (!filterResult && requiredTraits.length > 0 && traitFilteredCount < 5) {
+          console.log(`[RoguelikeDrawService] 特质过滤示例 #${traitFilteredCount + 1}:`, {
+            name: entry.name,
+            entryTraits,
+            requiredTraits,
+            '是否匹配': requiredTraits.map(t => ({
+              required: t,
+              found: entryTraits.includes(t)
+            }))
+          });
+        }
+        
+        if (!filterResult) {
+          if (requiredTraits.length > 0) {
+            traitFilteredCount++;
+          }
           continue;
         }
 
@@ -337,8 +383,10 @@ export class RoguelikeDrawService {
     // 调试日志：输出最终统计信息
     console.log('[RoguelikeDrawService] buildItemPool 完成:', {
       物品池大小: pool.length,
+      总处理数量: totalProcessedCount,
       总装备数量: totalEquipmentCount,
-      被装备分类过滤掉: equipmentFilteredCount
+      被装备分类过滤掉: equipmentFilteredCount,
+      被特质过滤掉: traitFilteredCount
     });
 
     // 调试日志：如果使用了装备分类过滤且物品池为空，输出诊断信息
@@ -417,12 +465,23 @@ export class RoguelikeDrawService {
   ): boolean {
     if (level < levelMin || level > levelMax) return false;
 
+    // 将特质数组转换为小写，用于不区分大小写的匹配
+    const traitsLower = traits.map(t => t.toLowerCase());
+
     for (const t of requiredTraits) {
-      if (!traits.includes(t)) return false;
+      const tLower = t.toLowerCase();
+      // 使用不区分大小写的匹配
+      if (!traitsLower.includes(tLower)) {
+        return false;
+      }
     }
 
     for (const t of excludedTraits) {
-      if (traits.includes(t)) return false;
+      const tLower = t.toLowerCase();
+      // 使用不区分大小写的匹配
+      if (traitsLower.includes(tLower)) {
+        return false;
+      }
     }
 
     if (rarityFilter.length > 0) {

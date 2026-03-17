@@ -129,12 +129,23 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
     for (const tabName of this.formState.contentTypes) {
       try {
         const traits = await RoguelikeDrawService.getAvailableTraits(tabName);
+        console.log(`[RoguelikeMacroGenerator] 加载 ${tabName} 特质: ${traits.length} 个`);
+        
+        // 输出前5个特质示例
+        if (traits.length > 0) {
+          console.log(`[RoguelikeMacroGenerator] ${tabName} 特质示例:`, 
+            traits.slice(0, 5).map(t => `"${t.label}" → "${t.value}"`).join(', ')
+          );
+        }
+        
         for (const t of traits) {
           if (!merged.has(t.value)) {
             merged.set(t.value, t.label);
           }
         }
-      } catch { /* ignore */ }
+      } catch (err) {
+        console.error(`[RoguelikeMacroGenerator] 加载 ${tabName} 特质失败:`, err);
+      }
     }
 
     this.availableTraits = Array.from(merged.entries())
@@ -142,6 +153,8 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
       .sort((a, b) => a.label.localeCompare(b.label));
 
     this.traitLabelMap = merged;
+    
+    console.log(`[RoguelikeMacroGenerator] 特质加载完成，共 ${this.availableTraits.length} 个特质`);
   }
 
   override activateListeners(html: JQuery): void {
@@ -198,17 +211,32 @@ export class RoguelikeMacroGeneratorApp extends FormApplication {
 
   private resolveTraitSlug(input: string): string {
     const lower = input.toLowerCase();
+    
+    // 精确匹配 value
     for (const t of this.availableTraits) {
-      if (t.value === lower) return t.value;
-    }
-    for (const t of this.availableTraits) {
-      if (t.label.toLowerCase() === lower) return t.value;
-    }
-    for (const t of this.availableTraits) {
-      if (t.label.toLowerCase().includes(lower) || lower.includes(t.label.toLowerCase())) {
+      if (t.value === lower) {
+        console.log(`[RoguelikeMacroGenerator] 特质转换（精确value）: "${input}" → "${t.value}"`);
         return t.value;
       }
     }
+    
+    // 精确匹配 label
+    for (const t of this.availableTraits) {
+      if (t.label.toLowerCase() === lower) {
+        console.log(`[RoguelikeMacroGenerator] 特质转换（精确label）: "${input}" → "${t.value}" (label: "${t.label}")`);
+        return t.value;
+      }
+    }
+    
+    // 模糊匹配
+    for (const t of this.availableTraits) {
+      if (t.label.toLowerCase().includes(lower) || lower.includes(t.label.toLowerCase())) {
+        console.log(`[RoguelikeMacroGenerator] 特质转换（模糊匹配）: "${input}" → "${t.value}" (label: "${t.label}")`);
+        return t.value;
+      }
+    }
+    
+    console.warn(`[RoguelikeMacroGenerator] ⚠️ 特质转换失败，使用原始输入: "${input}" (availableTraits数量: ${this.availableTraits.length})`);
     return lower;
   }
 
