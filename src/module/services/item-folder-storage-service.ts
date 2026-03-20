@@ -23,6 +23,15 @@ export class ItemFolderStorageService {
   }
 
   /**
+   * 获取或创建变体专长文件夹
+   * @param archetypeName 变体名称
+   * @returns 变体文件夹
+   */
+  static async getOrCreateArchetypeFolder(archetypeName: string): Promise<Folder | null> {
+    return this.getOrCreateFolder(archetypeName, 'Item');
+  }
+
+  /**
    * 获取或创建文件夹
    * @param folderName 文件夹名称
    * @param type 文件夹类型
@@ -67,7 +76,7 @@ export class ItemFolderStorageService {
     } else if (folderName.endsWith('物品')) {
       return '#f5a623'; // 橙色 - 物品
     }
-    return '#999999'; // 默认灰色
+    return '#8e44ad'; // 紫色 - 变体/默认
   }
 
   /**

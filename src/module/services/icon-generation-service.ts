@@ -289,13 +289,7 @@ export class IconGenerationService {
     const imageModel = game.settings.get(MODULE_ID, 'imageModel') || 'flux-pro';
     const iconSize = game.settings.get(MODULE_ID, 'iconSize') || '1024x1024';
 
-    // 检查是否使用第三方API（如302.AI）
-    const isThirdPartyApi = customApiUrl && (
-      customApiUrl.includes('302.ai') || 
-      customApiUrl.includes('apifox.cn') ||
-      customApiUrl.includes('ssopen.top') ||
-      !customApiUrl.includes('openai.com')
-    );
+    const isThirdPartyApi = customApiUrl && !customApiUrl.includes('openai.com');
 
     if (isThirdPartyApi) {
       return this.callThirdPartyImageAPI(prompt, options);
@@ -342,7 +336,7 @@ export class IconGenerationService {
         
         // 如果是CORS错误，提供更具体的错误信息
         if (response.status === 0 || response.type === 'opaque') {
-          throw new Error('CORS错误：请配置支持CORS的第三方API代理服务，如 302.AI');
+          throw new Error('CORS错误：请配置支持CORS的第三方API代理服务');
         }
         
         // 检查响应是否是HTML（通常是错误页面）
@@ -386,14 +380,14 @@ export class IconGenerationService {
     } catch (error: any) {
       // 检查是否是网络错误（通常是CORS）
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('网络请求失败，可能是CORS限制。建议使用第三方API服务如 302.AI 来解决此问题。');
+        throw new Error('网络请求失败，可能是CORS限制。建议使用第三方API代理服务来解决此问题。');
       }
       throw error;
     }
   }
 
   /**
-   * 调用第三方图片生成API（如302.AI）
+   * 调用第三方图片生成API
    */
   private async callThirdPartyImageAPI(prompt: string, options: IconGenerationOptions): Promise<string> {
     const apiConfig = this.getAPIConfig();
@@ -403,8 +397,7 @@ export class IconGenerationService {
     // 对于怪物图标，强制使用1024x1024尺寸
     const iconSize = options.size || game.settings.get(MODULE_ID, 'iconSize') || '1024x1024';
 
-    // 检查是否是SSOPEN API
-    const isSSOpenAPI = customApiUrl && (customApiUrl.includes('ssopen.top') || customApiUrl.includes('ssopen.vip'));
+    const isSSOpenAPI = false;
     
     // 模型分类
     const isFluxModel = imageModel.startsWith('flux-');
@@ -506,9 +499,7 @@ export class IconGenerationService {
         n: 1
       };
     } else if (isGeminiModel) {
-      // Gemini 原生格式（谷歌官方格式，适用于所有第三方API）
-      // 参考: https://ai.google.dev/gemini-api/docs/imagen
-      const [width, height] = adjustedSize.split('x').map(n => parseInt(n));
+      const [width] = adjustedSize.split('x').map((n: string) => parseInt(n));
       const resolution = width >= 2048 ? '2K' : (width >= 1024 ? '1K' : '1K');
       
       requestBody = {
@@ -531,38 +522,23 @@ export class IconGenerationService {
         n: 1
       };
 
-      // 根据模型类型设置特定参数
       if (isFluxModel) {
-        // Flux 模型使用 aspect_ratio 而不是 size (特别是 ssopen.top API)
-        if (isSSOpenAPI) {
-          // ssopen.top 的 Flux API 要求使用 aspect_ratio（必需参数）
+        requestBody.size = adjustedSize;
+        requestBody.num_outputs = 1;
+        if (imageModel === 'flux-pro') {
           requestBody.aspect_ratio = this.getSizeToAspectRatio(adjustedSize);
-          // 不添加 size 参数
-        } else {
-          // 其他 API 可能使用 size
-          requestBody.size = adjustedSize;
-          requestBody.num_outputs = 1;
-          if (imageModel === 'flux-pro') {
-            requestBody.aspect_ratio = this.getSizeToAspectRatio(adjustedSize);
-          }
         }
       } else if (isDalleModel) {
-        // DALL-E 特有参数
         requestBody.size = adjustedSize;
-        if (!isSSOpenAPI) {
-          requestBody.response_format = 'url';
-        }
+        requestBody.response_format = 'url';
         if (imageModel === 'dall-e-3') {
           requestBody.quality = 'standard';
           requestBody.style = 'natural';
         }
       } else if (isGPTImageModel) {
-        // GPT-Image 特有参数
         requestBody.size = adjustedSize;
         requestBody.quality = 'standard';
-        if (!isSSOpenAPI) {
-          requestBody.response_format = 'url';
-        }
+        requestBody.response_format = 'url';
       } else {
         // 默认添加 size 参数
         requestBody.size = adjustedSize;
@@ -681,7 +657,7 @@ export class IconGenerationService {
         }
       }
       
-      // 处理302.AI的异步任务响应
+      // 处理异步任务响应
       if (data.id && !data.data) {
         // 这是一个异步任务，需要轮询结果
         return await this.pollTaskResult(data.id);
@@ -765,23 +741,21 @@ export class IconGenerationService {
   }
 
   /**
-   * 轮询任务结果（用于302.AI等异步API）
+   * 轮询任务结果（用于异步API）
    */
   private async pollTaskResult(taskId: string, maxAttempts: number = 30): Promise<string> {
     const apiConfig = this.getAPIConfig();
     const apiKey = apiConfig.apiKey;
     const customApiUrl = apiConfig.apiUrl;
     
-    // 构建查询URL - 适配不同的API服务
     let fetchUrl: string;
     
-    if (customApiUrl.includes('302.ai')) {
-      // 302.AI 格式
-      const baseUrl = customApiUrl.replace(/\/v1\/.*$/, ''); // 移除v1及之后的路径
-      fetchUrl = `${baseUrl}/302/task/${taskId}/fetch`;
+    if (customApiUrl.match(/\/\d+\//)) {
+      const baseUrl = customApiUrl.replace(/\/v\d+\/.*$/, '');
+      const apiPrefix = customApiUrl.match(/\/(\d+)\//)?.[1] || 'api';
+      fetchUrl = `${baseUrl}/${apiPrefix}/task/${taskId}/fetch`;
     } else {
-      // 通用格式，假设有类似的任务查询端点
-      const baseUrl = customApiUrl.replace(/\/[^/]*$/, ''); // 移除最后一个路径段
+      const baseUrl = customApiUrl.replace(/\/[^/]*$/, '');
       fetchUrl = `${baseUrl}/task/${taskId}`;
     }
     
@@ -1075,7 +1049,7 @@ export class IconGenerationService {
    */
   private getSuggestedModels(currentModel: string): string {
     const suggestions: { [key: string]: string } = {
-      'gemini-3-pro-image-preview': '建议尝试: flux-pro, gpt-image-1, dall-e-3。如使用 ssopen.top API，Gemini 模型需要 auto 或 mj 分组的令牌',
+      'gemini-3-pro-image-preview': '建议尝试: flux-pro, gpt-image-1, dall-e-3',
       'gemini-2.5-flash-image-preview': '建议尝试: flux-pro, gpt-image-1, dall-e-3',
       'midjourney': '建议尝试: flux-pro, ideogram-v3, dall-e-3',
       'stable-diffusion-xl': '建议尝试: flux-pro, dall-e-3, stable-diffusion-3',
@@ -1103,14 +1077,13 @@ export class IconGenerationService {
           if (data.status === 'succeeded' && data.output && Array.isArray(data.output) && data.output.length > 0) {
             return data.output[0];
           } else if (data.status === 'failed') {
-            throw new Error('Replicate 任务失败');
+            throw new Error('图像生成任务失败');
           }
         }
         
-        // 等待3秒后重试
         await new Promise(resolve => setTimeout(resolve, 3000));
       } catch (error) {
-        console.warn(`Replicate 轮询尝试 ${attempt + 1} 失败:`, error);
+        console.warn(`轮询尝试 ${attempt + 1} 失败:`, error);
         if (attempt === maxAttempts - 1) {
           throw error;
         }
@@ -1118,7 +1091,7 @@ export class IconGenerationService {
       }
     }
     
-    throw new Error('Replicate 任务超时');
+    throw new Error('图像生成任务超时');
   }
 }
 

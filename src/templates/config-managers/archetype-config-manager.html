@@ -1,0 +1,48 @@
+<form class="archetype-config-manager">
+  <h2><i class="fas fa-layer-group"></i> 变体生成器配置</h2>
+  
+  <div class="info-box">
+    <p><i class="fas fa-info-circle"></i> 配置变体生成系统使用的AI模型。变体生成分为两个阶段：设计蓝图和一次性生成所有专长。</p>
+  </div>
+
+  <!-- 模型配置 -->
+  <h3>AI 模型配置</h3>
+  <div class="info-box warning">
+    <p><i class="fas fa-lightbulb"></i> <strong>模型推荐：</strong>设计模型推荐使用创造力强的模型（如 grok-beta、claude-sonnet-4），生成模型推荐使用 Function Calling 支持好的模型（如 gpt-4o）</p>
+  </div>
+
+  <div class="form-group">
+    <label for="designModel">设计阶段模型</label>
+    <input type="text" name="designModel" id="designModel" value="{{models.design}}" 
+           placeholder="gpt-4o">
+    <span class="hint">用于设计变体蓝图（画风、机制、专长方向）的AI模型（推荐: grok-beta 创造力强，gpt-4o 平衡性好）</span>
+  </div>
+
+  <div class="form-group">
+    <label for="generateModel">生成阶段模型</label>
+    <input type="text" name="generateModel" id="generateModel" value="{{models.generate}}" 
+           placeholder="gpt-4o">
+    <span class="hint">用于一次性生成所有专长完整数据的AI模型（推荐: gpt-4o Function Calling支持好）</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="info-box">
+    <p><i class="fas fa-magic"></i> <strong>生成流程：</strong></p>
+    <ol>
+      <li><strong>阶段1 - 设计蓝图：</strong>AI设计变体整体方案（名称、画风、机制、所有专长的设计方向）</li>
+      <li><strong>阶段2 - 一次性生成：</strong>AI在同一上下文中生成所有专长的完整JSON数据，确保画风和机制一体性</li>
+      <li><strong>阶段3 - 格式化存储：</strong>自动校验、修复数据，存入变体文件夹</li>
+    </ol>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="button-group">
+    <button type="button" name="close" class="secondary">
+      <i class="fas fa-times"></i> 关闭
+    </button>
+    <button type="submit" class="primary">
+      <i class="fas fa-save"></i> 保存配置
+    </button>
+  </div>
+</form>

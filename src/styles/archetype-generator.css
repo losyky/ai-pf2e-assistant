@@ -1,0 +1,342 @@
+/* Archetype Generator Styles */
+
+.archetype-generator-app {
+  padding: 0.75rem;
+}
+
+.archetype-generator-app .tab-panel {
+  margin-bottom: 0.5rem;
+}
+
+.archetype-generator-app .tab-panel h3 {
+  margin: 0 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #8e44ad;
+  color: #8e44ad;
+  font-size: 1rem;
+}
+
+.archetype-generator-app .required {
+  color: #e74c3c;
+}
+
+/* Form layout */
+.archetype-generator-app .form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.archetype-generator-app .form-group.half {
+  flex: 1;
+}
+
+.archetype-generator-app .form-group {
+  margin-bottom: 0.75rem;
+}
+
+.archetype-generator-app label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.archetype-generator-app textarea,
+.archetype-generator-app input[type="text"] {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+}
+
+.archetype-generator-app select {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+/* Range slider */
+.archetype-generator-app .range-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.archetype-generator-app .range-control input[type="range"] {
+  flex: 1;
+}
+
+.archetype-generator-app .range-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #8e44ad;
+}
+
+/* Buttons */
+.archetype-generator-app button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  background: #f0f0f0;
+}
+
+.archetype-generator-app button:hover {
+  background: #e0e0e0;
+}
+
+.archetype-generator-app button.generate {
+  background-color: #8e44ad;
+  color: white;
+  border-color: #7d3c98;
+  width: 100%;
+}
+
+.archetype-generator-app button.generate:hover {
+  background-color: #7d3c98;
+}
+
+.archetype-generator-app button.generate:disabled {
+  background-color: #b39ddb;
+  cursor: not-allowed;
+}
+
+.archetype-generator-app .buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.archetype-generator-app .buttons button {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Blueprint preview */
+.archetype-generator-app .blueprint-content {
+  background: #f9f4fc;
+  border: 1px solid #d4b8e0;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.archetype-generator-app .blueprint-content .blueprint-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #8e44ad;
+  margin-bottom: 0.5rem;
+}
+
+.archetype-generator-app .blueprint-content .blueprint-style {
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.archetype-generator-app .blueprint-content .blueprint-mechanism {
+  background: #ede7f6;
+  border-left: 3px solid #8e44ad;
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0 4px 4px 0;
+}
+
+.archetype-generator-app .blueprint-content .blueprint-mechanism-title {
+  font-weight: bold;
+  color: #6a1b9a;
+}
+
+.archetype-generator-app .blueprint-content .blueprint-feat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.archetype-generator-app .blueprint-content .blueprint-feat-item {
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed #d4b8e0;
+}
+
+.archetype-generator-app .blueprint-content .blueprint-feat-item:last-child {
+  border-bottom: none;
+}
+
+.archetype-generator-app .blueprint-content .feat-header {
+  font-weight: bold;
+  color: #4a148c;
+}
+
+.archetype-generator-app .blueprint-content .feat-level {
+  display: inline-block;
+  background: #8e44ad;
+  color: white;
+  padding: 0 0.4rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  margin-right: 0.3rem;
+}
+
+.archetype-generator-app .blueprint-content .feat-dedication {
+  display: inline-block;
+  background: #e74c3c;
+  color: white;
+  padding: 0 0.4rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  margin-right: 0.3rem;
+}
+
+.archetype-generator-app .blueprint-content .feat-concept {
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+}
+
+/* Progress bar */
+.archetype-generator-app .progress-container {
+  padding: 1rem 0;
+}
+
+.archetype-generator-app .progress-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.archetype-generator-app .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8e44ad, #ab47bc);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.archetype-generator-app .progress-text {
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* Result section */
+.archetype-generator-app .result-summary {
+  background: #f3e5f5;
+  border: 1px solid #ce93d8;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.archetype-generator-app .result-summary h4 {
+  margin: 0 0 0.3rem 0;
+  color: #6a1b9a;
+}
+
+.archetype-generator-app .feat-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.archetype-generator-app .feat-card {
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.archetype-generator-app .feat-card:hover {
+  border-color: #8e44ad;
+  box-shadow: 0 1px 4px rgba(142, 68, 173, 0.2);
+}
+
+.archetype-generator-app .feat-card.expanded {
+  border-color: #8e44ad;
+}
+
+.archetype-generator-app .feat-card .feat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.archetype-generator-app .feat-card .feat-card-level {
+  background: #8e44ad;
+  color: white;
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.archetype-generator-app .feat-card .feat-card-name {
+  font-weight: bold;
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.archetype-generator-app .feat-card .feat-card-traits {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  margin-top: 0.3rem;
+}
+
+.archetype-generator-app .feat-card .trait-tag {
+  background: #e8e8e8;
+  padding: 0 0.3rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  color: #555;
+}
+
+.archetype-generator-app .feat-card .trait-tag.archetype {
+  background: #e1bee7;
+  color: #6a1b9a;
+}
+
+.archetype-generator-app .feat-card .trait-tag.dedication {
+  background: #ffcdd2;
+  color: #b71c1c;
+}
+
+.archetype-generator-app .feat-card .feat-card-description {
+  display: none;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+.archetype-generator-app .feat-card.expanded .feat-card-description {
+  display: block;
+}
+
+.archetype-generator-app .placeholder {
+  color: #999;
+  text-align: center;
+  font-style: italic;
+}

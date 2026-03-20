@@ -1,0 +1,128 @@
+<div class="ai-pf2e-assistant-container archetype-generator-app">
+  <form class="archetype-generator-form">
+
+    <!-- 输入区 -->
+    <div class="tab-panel archetype-input-section" {{#if showBlueprint}}style="display:none"{{/if}} {{#if showResult}}style="display:none"{{/if}}>
+      <h3><i class="fas fa-drafting-compass"></i> 变体设计</h3>
+
+      <div class="form-group">
+        <label for="archetype-prompt">核心主题 <span class="required">*</span></label>
+        <textarea id="archetype-prompt" name="prompt" placeholder="描述变体的核心主题，如：操控暗影的刺客、与自然共生的守卫者..." rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="archetype-style">画风描述（可选）</label>
+        <input type="text" id="archetype-style" name="style" placeholder="如：黑暗、优雅、自然、狂野...">
+      </div>
+
+      <div class="form-group">
+        <label for="archetype-mechanism">自定义机制（可选）</label>
+        <textarea id="archetype-mechanism" name="mechanism" placeholder="如果有特定的机制想法，在此描述..." rows="2"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="archetype-feat-count">专长数量（含入门）</label>
+          <div class="range-control">
+            <input type="range" id="archetype-feat-count" name="featCount" min="3" max="8" value="5">
+            <span id="feat-count-display" class="range-value">5</span>
+          </div>
+        </div>
+
+        <div class="form-group half">
+          <label for="archetype-mechanism-depth">机制深度</label>
+          <select id="archetype-mechanism-depth" name="mechanismDepth">
+            <option value="none">无独有机制</option>
+            <option value="light">轻度</option>
+            <option value="moderate" selected>中度</option>
+            <option value="heavy">重度</option>
+            <option value="extreme">极端</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="archetype-level-start">起始等级</label>
+          <select id="archetype-level-start" name="levelStart">
+            <option value="2" selected>2级</option>
+            <option value="4">4级</option>
+            <option value="6">6级</option>
+          </select>
+        </div>
+
+        <div class="form-group half">
+          <label for="archetype-level-end">最高等级</label>
+          <select id="archetype-level-end" name="levelEnd">
+            <option value="8">8级</option>
+            <option value="10">10级</option>
+            <option value="12" selected>12级</option>
+            <option value="14">14级</option>
+            <option value="16">16级</option>
+            <option value="18">18级</option>
+            <option value="20">20级</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="archetype-class-name">关联职业（可选）</label>
+        <input type="text" id="archetype-class-name" name="className" placeholder="如：战士、法师...">
+      </div>
+
+      <div class="form-group">
+        <button type="button" id="btn-design" class="generate">
+          <i class="fas fa-lightbulb"></i> 设计变体蓝图
+        </button>
+      </div>
+    </div>
+
+    <!-- 蓝图预览区 -->
+    <div class="tab-panel archetype-blueprint-section" style="display:none">
+      <h3><i class="fas fa-map"></i> 变体蓝图预览</h3>
+
+      <div id="blueprint-content" class="blueprint-content">
+        <p class="placeholder">正在设计中...</p>
+      </div>
+
+      <div class="form-group buttons">
+        <button type="button" id="btn-confirm-blueprint" class="generate">
+          <i class="fas fa-check"></i> 确认并生成专长
+        </button>
+        <button type="button" id="btn-redesign">
+          <i class="fas fa-redo"></i> 重新设计
+        </button>
+        <button type="button" id="btn-back-to-input">
+          <i class="fas fa-arrow-left"></i> 返回修改
+        </button>
+      </div>
+    </div>
+
+    <!-- 生成进度区 -->
+    <div class="tab-panel archetype-progress-section" style="display:none">
+      <h3><i class="fas fa-spinner fa-spin"></i> 正在生成</h3>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+        </div>
+        <p id="progress-text" class="progress-text">准备中...</p>
+      </div>
+    </div>
+
+    <!-- 结果区 -->
+    <div class="tab-panel archetype-result-section" style="display:none">
+      <h3><i class="fas fa-scroll"></i> 生成结果</h3>
+
+      <div id="result-summary" class="result-summary"></div>
+
+      <div id="feat-cards" class="feat-cards"></div>
+
+      <div class="form-group buttons">
+        <button type="button" id="btn-new-archetype">
+          <i class="fas fa-plus"></i> 生成新变体
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

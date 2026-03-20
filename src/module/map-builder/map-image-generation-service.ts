@@ -37,7 +37,6 @@ export class MapImageGenerationService {
       || (game.settings.get(MODULE_ID, 'imageModel') as string)
       || 'gpt-image-1';
 
-    // 风格参考图：所有接口都支持发送（Gemini 原生 API 支持最多 14 张图片）
     let styleRefBase64: string | null = null;
     if (styleConfig.styleReferenceImage) {
       styleRefBase64 = await this.fileToBase64(styleConfig.styleReferenceImage);
@@ -52,8 +51,17 @@ export class MapImageGenerationService {
     const pixelH = template.gridRows * MAP_CELL_SIZE;
     const prompt = this.buildPrompt(styleConfig, !!styleRefBase64, pixelW, pixelH, template);
 
-    Logger.debug('Generating map image with model:', imageModel, `size: ${pixelW}x${pixelH}, rotation: ${rotation}`);
+    Logger.info(`开始生成地图图像 - 模型: ${imageModel}, 尺寸: ${pixelW}x${pixelH}, 旋转: ${rotation}`);
+    Logger.debug('API 配置:', { apiUrl: apiConfig.apiUrl, hasApiKey: !!apiConfig.apiKey });
+    
     const imageUrl = await this.callImageAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
+    
+    Logger.info('API 返回的图像 URL:', imageUrl);
+    
+    if (!imageUrl || typeof imageUrl !== 'string') {
+      throw new Error(`API 返回了无效的图像 URL: ${JSON.stringify(imageUrl)}`);
+    }
+    
     return await this.downloadAndSave(imageUrl, template.id, rotation);
   }
 
@@ -97,7 +105,7 @@ export class MapImageGenerationService {
     const wallReplaceRules: string[] = [];
     
     if (usedWallTypes.has('normal')) {
-      wallReplaceRules.push('红线替换为墙壁');
+      wallReplaceRules.push('红线替换为边界');
     }
     if (usedWallTypes.has('door') || usedWallTypes.has('secret-door')) {
       wallReplaceRules.push('绿线替换为门（或暗门）');
@@ -169,7 +177,7 @@ export class MapImageGenerationService {
     const wallReplaceRules: string[] = [];
     
     if (usedWallTypes.has('normal')) {
-      wallReplaceRules.push('red lines → walls');
+      wallReplaceRules.push('red lines → boundaries');
     }
     if (usedWallTypes.has('door') || usedWallTypes.has('secret-door')) {
       wallReplaceRules.push('green lines → doors (or secret doors)');
@@ -239,30 +247,40 @@ export class MapImageGenerationService {
     template: MapTemplate,
   ): Promise<string> {
     const apiUrl = apiConfig.apiUrl.replace(/\/+$/, '');
-    const isChatCompletions = /\/chat\/completions|\/v1\/chat/i.test(apiUrl);
-    // Fal.ai 原版使用 image_urls 字段（注意是复数）
-    const isFalEdit = /fal.*(edit|nano-banana)/i.test(apiUrl);
+    const isChatCompletions = /\/chat/i.test(apiUrl);
+    
+    const isNanoBanana = /nano-banana/i.test(imageModel);
+    const isFalEdit = /edit/i.test(apiUrl) && !isNanoBanana;
 
-    // 优先根据模型名判断API格式，而不是URL
+    Logger.info(`API 路由决策 - 模型: ${imageModel}`);
+    Logger.debug(`路由检测结果: isNanoBanana=${isNanoBanana}, isFalEdit=${isFalEdit}, isChatCompletions=${isChatCompletions}`);
+
     if (imageModel.startsWith('gemini') && !isChatCompletions) {
+      Logger.info('使用原生多模态 API 格式');
       return this.callGeminiAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
     if (imageModel.startsWith('gpt-image')) {
+      Logger.info('使用图像编辑 API 格式');
       return this.callGPTImageEdit(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
-    // Fal Edit 格式（仅限 fal.ai 原版，使用 image_urls 字段）
+    if (isNanoBanana) {
+      Logger.info('使用图像生成 API 格式（aspect_ratio）');
+      return this.callNanoBananaAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
+    }
     if (isFalEdit && !imageModel.startsWith('gemini')) {
+      Logger.info('使用图像编辑 API 格式（image_urls）');
       return this.callFalEdit(prompt, guideBase64, styleRefBase64, apiConfig, template);
     }
     if (isChatCompletions) {
+      Logger.info('使用对话补全 API 格式');
       return this.callChatCompletionsWithImages(prompt, guideBase64, styleRefBase64, imageModel, apiConfig);
     }
-    // OpenAI 兼容格式（包括灵芽等中转服务，它们使用 image 数组字段）
+    Logger.info('使用标准兼容 API 格式');
     return this.callOpenAICompatible(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
   }
 
   // ----------------------------------------------------------------
-  // GPT-Image edit endpoint (multipart/form-data)
+  // Image edit endpoint (multipart/form-data)
   // ----------------------------------------------------------------
 
   private async callGPTImageEdit(
@@ -286,10 +304,8 @@ export class MapImageGenerationService {
     formData.append('size', `${pixelW}x${pixelH}`);
 
     let editUrl = apiConfig.apiUrl.replace(/\/+$/, '');
-    if (editUrl.endsWith('/generations')) {
-      editUrl = editUrl.replace('/generations', '/edits');
-    } else if (!editUrl.endsWith('/edits')) {
-      editUrl = editUrl.replace(/\/[^/]*$/, '/edits');
+    if (!editUrl.match(/\/edits?\/?$/)) {
+      editUrl = editUrl.replace(/\/[^/]*$/, '') + '/edits';
     }
 
     const response = await fetch(editUrl, {
@@ -300,16 +316,14 @@ export class MapImageGenerationService {
 
     if (!response.ok) {
       const errText = await response.text().catch(() => '');
-      throw new Error(`GPT-Image edit 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
+      throw new Error(`图像编辑 API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
     }
 
     return this.extractImageUrl(await response.json());
   }
 
   // ----------------------------------------------------------------
-  // Fal.ai 风格 Edit API（prompt + image_urls 数组，支持多图/风格参考）
-  // 文档: https://fal.ai/models/fal-ai/nano-banana-2/edit/api
-  // 中转如 ssopen 若代理该接口，URL 会包含 fal 与 edit/nano-banana
+  // Image edit API (image_urls array format)
   // ----------------------------------------------------------------
   private async callFalEdit(
     prompt: string,
@@ -322,7 +336,7 @@ export class MapImageGenerationService {
     const imageUrls: string[] = [guideDataUri];
     if (styleRefBase64) {
       imageUrls.push(`data:image/png;base64,${styleRefBase64}`);
-      Logger.debug('Map gen: Fal edit sending 2 images — image_urls[0]=structure, image_urls[1]=style');
+      Logger.debug('发送 2 张图片 — image_urls[0]=structure, image_urls[1]=style');
     }
     const preset = getPresetForTemplate(template.gridCols, template.gridRows);
     const resolution = (preset?.geminiImageSize ?? '2K') as string;
@@ -348,20 +362,20 @@ export class MapImageGenerationService {
 
     if (!response.ok) {
       const errText = await response.text().catch(() => '');
-      throw new Error(`Fal edit API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
+      throw new Error(`图像编辑 API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
     }
 
     const data = await response.json();
     const url = data?.images?.[0]?.url ?? data?.data?.images?.[0]?.url;
     if (url) {
-      Logger.info('成功从 Fal edit 响应 images[0].url 提取图像');
+      Logger.info('成功从响应 images[0].url 提取图像');
       return url;
     }
     return this.extractImageUrl(data);
   }
 
   // ----------------------------------------------------------------
-  // Gemini API — multi-turn when style reference is present
+  // Native multimodal API
   // ----------------------------------------------------------------
 
   private async callGeminiAPI(
@@ -372,18 +386,15 @@ export class MapImageGenerationService {
     apiConfig: { apiUrl: string; apiKey: string },
     template: MapTemplate,
   ): Promise<string> {
-    // Gemini 支持多图输入（最多 14 张），按顺序发送结构图和风格参考图
-    // 提示词中已明确指示每张图片的用途，模型会正确理解
     const parts: any[] = [
       { inlineData: { mimeType: 'image/png', data: guideBase64 } },
     ];
     
-    // 如果有风格参考图，添加到 parts 数组中
     if (styleRefBase64) {
       parts.push({ inlineData: { mimeType: 'image/png', data: styleRefBase64 } });
-      Logger.debug('Gemini API: 发送 2 张图片 - 结构图 + 风格参考图');
+      Logger.debug('发送 2 张图片 - 结构图 + 风格参考图');
     } else {
-      Logger.debug('Gemini API: 发送 1 张图片 - 仅结构图');
+      Logger.debug('发送 1 张图片 - 仅结构图');
     }
     
     parts.push({ text: prompt });
@@ -393,7 +404,6 @@ export class MapImageGenerationService {
       parts,
     }];
 
-    // Look up the matching Gemini preset for aspect ratio and image size
     const preset = getPresetForTemplate(template.gridCols, template.gridRows);
     const imageSize = preset?.geminiImageSize ?? '2K';
     const aspectRatio = preset?.geminiAspectRatio ?? '1:1';
@@ -409,12 +419,10 @@ export class MapImageGenerationService {
       },
     };
 
-    Logger.debug(`Gemini 请求配置: model=${imageModel}, size=${imageSize}, aspectRatio=${aspectRatio}, images=${styleRefBase64 ? 2 : 1}`);
-    Logger.debug(`Gemini API URL: ${apiConfig.apiUrl}`);
+    Logger.debug(`请求配置: model=${imageModel}, size=${imageSize}, aspectRatio=${aspectRatio}, images=${styleRefBase64 ? 2 : 1}`);
 
-    // 使用 AbortController 实现超时控制（5分钟超时）
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 300000); // 5分钟
+    const timeoutId = setTimeout(() => controller.abort(), 300000);
 
     try {
       const response = await fetch(apiConfig.apiUrl.replace(/\/+$/, ''), {
@@ -431,29 +439,28 @@ export class MapImageGenerationService {
 
       if (!response.ok) {
         const errText = await response.text().catch(() => '');
-        Logger.error(`Gemini API 错误响应 (${response.status}):`, errText.substring(0, 500));
-        throw new Error(`Gemini API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
+        Logger.error(`API 错误响应 (${response.status}):`, errText.substring(0, 500));
+        throw new Error(`API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
       }
 
-      // 检查响应头，如果内容很大，分块读取
       const contentLength = response.headers.get('content-length');
-      Logger.debug(`Gemini API 响应大小: ${contentLength || '未知'} 字节`);
+      Logger.debug(`API 响应大小: ${contentLength || '未知'} 字节`);
 
       const responseData = await response.json();
-      Logger.debug('Gemini API 响应数据结构:', JSON.stringify(responseData).substring(0, 500));
+      Logger.debug('API 响应数据结构:', JSON.stringify(responseData).substring(0, 500));
       
       return this.extractImageUrl(responseData);
     } catch (err: any) {
       clearTimeout(timeoutId);
       
       if (err.name === 'AbortError') {
-        Logger.error('Gemini API 请求超时（5分钟）');
+        Logger.error('API 请求超时');
         throw new Error('图像生成超时，请稍后重试或使用较小的地图尺寸');
       }
       
       if (err.message.includes('Failed to fetch') || err.message.includes('ERR_CONNECTION_RESET')) {
-        Logger.error('Gemini API 连接失败，可能是响应过大导致连接重置');
-        throw new Error('图像生成失败：网络连接中断。这可能是因为生成的图像过大，请尝试使用较小的地图尺寸或联系 API 提供商');
+        Logger.error('API 连接失败，可能是响应过大导致连接重置');
+        throw new Error('图像生成失败：网络连接中断。这可能是因为生成的图像过大，请尝试使用较小的地图尺寸');
       }
       
       throw err;
@@ -461,7 +468,7 @@ export class MapImageGenerationService {
   }
 
   // ----------------------------------------------------------------
-  // OpenAI-compatible API
+  // Standard compatible API
   // ----------------------------------------------------------------
 
   private async callOpenAICompatible(
@@ -476,35 +483,20 @@ export class MapImageGenerationService {
     const pixelW = template.gridCols * MAP_CELL_SIZE;
     const pixelH = template.gridRows * MAP_CELL_SIZE;
 
-    if (apiUrl.includes('/chat/completions') || apiUrl.includes('/v1/chat')) {
+    if (apiUrl.match(/\/chat/i)) {
       return this.callChatCompletionsWithImages(prompt, guideBase64, styleRefBase64, imageModel, apiConfig);
     }
-
-    // 检测是否为 Nano-banana 格式（灵芽等服务商）
-    // Nano-banana 要求 image 字段为数组格式
-    const isNanoBanana = /nano-banana|lingyaai/i.test(apiUrl) || /nano-banana/i.test(imageModel);
     
     const requestBody: any = {
       model: imageModel,
       prompt,
       n: 1,
       size: `${pixelW}x${pixelH}`,
+      image: `data:image/png;base64,${guideBase64}`,
     };
     
-    if (isNanoBanana) {
-      // Nano-banana 格式：image 字段为数组
-      const imageUrls: string[] = [`data:image/png;base64,${guideBase64}`];
-      if (styleRefBase64) {
-        imageUrls.push(`data:image/png;base64,${styleRefBase64}`);
-      }
-      requestBody.image = imageUrls;
-      Logger.debug('使用 Nano-banana 格式发送图像数组，图片数量:', imageUrls.length);
-    } else {
-      // 标准 OpenAI 格式：image 字段为单个字符串
-      requestBody.image = `data:image/png;base64,${guideBase64}`;
-      if (styleRefBase64) {
-        requestBody.style_reference = `data:image/png;base64,${styleRefBase64}`;
-      }
+    if (styleRefBase64) {
+      requestBody.style_reference = `data:image/png;base64,${styleRefBase64}`;
     }
 
     const response = await fetch(apiUrl, {
@@ -524,6 +516,127 @@ export class MapImageGenerationService {
     return this.extractImageUrl(await response.json());
   }
 
+  // ----------------------------------------------------------------
+  // Image generation API (aspect_ratio format)
+  // ----------------------------------------------------------------
+  
+  private mapToNanoBananaAspectRatio(geminiRatio: string): string {
+    const supportedRatios = ['1:1', '4:3', '3:4', '16:9', '9:16', '2:3', '3:2', '4:5', '5:4', '21:9'];
+    
+    if (supportedRatios.includes(geminiRatio)) {
+      return geminiRatio;
+    }
+    
+    const ratioMap: Record<string, string> = {
+      '4:1': '21:9',
+      '1:4': '9:16',
+    };
+    
+    const mapped = ratioMap[geminiRatio];
+    if (mapped) {
+      Logger.debug(`将不支持的比例 ${geminiRatio} 映射为 ${mapped}`);
+      return mapped;
+    }
+    
+    Logger.warn(`未知的比例 ${geminiRatio}，使用 auto`);
+    return 'auto';
+  }
+  
+  private async callNanoBananaAPI(
+    prompt: string,
+    guideBase64: string,
+    styleRefBase64: string | null,
+    imageModel: string,
+    apiConfig: { apiUrl: string; apiKey: string },
+    template: MapTemplate,
+  ): Promise<string> {
+    const preset = getPresetForTemplate(template.gridCols, template.gridRows);
+    const geminiRatio = preset?.geminiAspectRatio ?? '1:1';
+    const aspectRatio = this.mapToNanoBananaAspectRatio(geminiRatio);
+    
+    const imageUrls: string[] = [`data:image/png;base64,${guideBase64}`];
+    if (styleRefBase64) {
+      imageUrls.push(`data:image/png;base64,${styleRefBase64}`);
+      Logger.debug('发送 2 张图片 - 结构图 + 风格参考图');
+    } else {
+      Logger.debug('发送 1 张图片 - 仅结构图');
+    }
+    
+    const requestBody: any = {
+      model: imageModel,
+      prompt,
+      aspect_ratio: aspectRatio,
+      image: imageUrls,
+      response_format: 'b64_json',
+    };
+    
+    if (imageModel.includes('pro') || imageModel.includes('-2')) {
+      const imageSize = preset?.geminiImageSize ?? '2K';
+      requestBody.image_size = imageSize;
+      Logger.debug(`使用 image_size=${imageSize}`);
+    }
+    
+    let apiUrl = apiConfig.apiUrl.replace(/\/+$/, '');
+    
+    if (!apiUrl.match(/\/images\/generations?\/?$/)) {
+      const baseUrl = apiUrl.replace(/\/(chat|completions?|edits?).*$/i, '');
+      apiUrl = baseUrl.match(/\/v\d+$/i) ? baseUrl : `${baseUrl}/v1`;
+      apiUrl = `${apiUrl}/images/generations`;
+      Logger.debug(`自动调整端点为图像生成接口`);
+    }
+    
+    Logger.info(`API 调用开始 - 模型: ${imageModel}, 比例: ${aspectRatio}, 图片数: ${imageUrls.length}`);
+    Logger.debug(`请求体:`, JSON.stringify({
+      ...requestBody,
+      image: imageUrls.map((url, i) => `[图片${i+1}: ${url.substring(0, 50)}...]`)
+    }));
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiConfig.apiKey}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      Logger.debug(`API 响应状态: ${response.status}`);
+
+      if (!response.ok) {
+        const errText = await response.text().catch(() => '');
+        Logger.error(`API 错误响应 (${response.status}):`, errText.substring(0, 500));
+        throw new Error(`API 调用失败 (${response.status}): ${errText.substring(0, 300)}`);
+      }
+
+      const data = await response.json();
+      Logger.info('API 完整响应:', JSON.stringify(data));
+      
+      if (data.error) {
+        Logger.error('API 返回错误:', data.error);
+        throw new Error(`API 返回错误: ${JSON.stringify(data.error)}`);
+      }
+      
+      const imageUrl = this.extractImageUrl(data);
+      Logger.info('成功获取图像数据:', imageUrl.substring(0, 100));
+      
+      if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('data:')) {
+        Logger.error('返回的图像数据格式无效:', imageUrl);
+        throw new Error(`返回的图像数据格式无效: ${imageUrl}`);
+      }
+      
+      return imageUrl;
+    } catch (error: any) {
+      Logger.error('API 调用异常:', error);
+      Logger.error('异常详情:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack?.substring(0, 300),
+      });
+      throw error;
+    }
+  }
+
   private async callChatCompletionsWithImages(
     prompt: string,
     guideBase64: string,
@@ -531,16 +644,15 @@ export class MapImageGenerationService {
     imageModel: string,
     apiConfig: { apiUrl: string; apiKey: string }
   ): Promise<string> {
-    // 文字在前、图在后：多数「创作图」接口先读指令再解析图片，第一张=结构图，第二张=风格参考图
     const content: any[] = [
       { type: 'text', text: prompt },
       { type: 'image_url', image_url: { url: `data:image/png;base64,${guideBase64}` } },
     ];
     if (styleRefBase64) {
       content.push({ type: 'image_url', image_url: { url: `data:image/png;base64,${styleRefBase64}` } });
-      Logger.debug('Map gen: Chat sending prompt + 2 images (structure, then style reference)');
+      Logger.debug('发送提示词 + 2 张图片（结构图 + 风格参考图）');
     } else {
-      Logger.debug('Map gen: Chat sending prompt + 1 image (structure only)');
+      Logger.debug('发送提示词 + 1 张图片（仅结构图）');
     }
 
     const requestBody = {
@@ -570,30 +682,27 @@ export class MapImageGenerationService {
   // ----------------------------------------------------------------
 
   private extractImageUrl(data: any): string {
-    Logger.debug('尝试从 API 响应中提取图像 URL...');
+    Logger.debug('尝试从 API 响应中提取图像数据...');
 
-    // Fal.ai edit 响应格式：images[0].url 或 data.images[0].url
-    const falUrl = data?.images?.[0]?.url ?? data?.data?.images?.[0]?.url;
-    if (falUrl) {
-      Logger.info('成功从 Fal edit images[0].url 提取图像');
-      return falUrl;
+    const imagesUrl = data?.images?.[0]?.url ?? data?.data?.images?.[0]?.url;
+    if (imagesUrl) {
+      Logger.info('成功从 images[0].url 提取图像');
+      return imagesUrl;
     }
 
-    // Gemini API 响应格式：candidates[0].content.parts[x].inlineData
     if (data.candidates?.[0]?.content?.parts) {
-      Logger.debug('检测到 Gemini candidates 格式');
+      Logger.debug('检测到 candidates 格式');
       for (const part of data.candidates[0].content.parts) {
         if (part.inlineData?.data) {
           const mime = part.inlineData.mimeType || 'image/png';
-          Logger.info('成功从 Gemini inlineData 中提取图像');
+          Logger.info('成功从 inlineData 中提取图像');
           return `data:${mime};base64,${part.inlineData.data}`;
         }
       }
     }
 
-    // OpenAI-style data[0] 格式
     if (data.data?.[0]) {
-      Logger.debug('检测到 OpenAI data[] 格式');
+      Logger.debug('检测到 data[] 格式');
       const first = data.data[0];
       if (first.url) {
         Logger.info('成功从 data[0].url 中提取图像 URL');
@@ -609,9 +718,8 @@ export class MapImageGenerationService {
       }
     }
 
-    // Chat completions 格式
     if (data.choices?.[0]?.message?.content) {
-      Logger.debug('检测到 Chat completions 格式');
+      Logger.debug('检测到 choices 格式');
       const msgContent = data.choices[0].message.content;
       if (typeof msgContent === 'string' && msgContent.startsWith('data:')) {
         Logger.info('成功从 choices[0].message.content 字符串中提取图像');
@@ -631,7 +739,6 @@ export class MapImageGenerationService {
       }
     }
 
-    // 直接 URL 字段
     if (data.url) {
       Logger.info('成功从 url 字段中提取图像 URL');
       return data.url;
@@ -654,30 +761,100 @@ export class MapImageGenerationService {
   // ----------------------------------------------------------------
 
   private async downloadAndSave(imageUrl: string, templateId: string, rotation: MapRotation = 0): Promise<string> {
+    Logger.debug('开始下载并保存地图图像，URL:', imageUrl.substring(0, 100));
     let blob: Blob;
 
-    if (imageUrl.startsWith('data:')) {
-      blob = this.dataUrlToBlob(imageUrl);
-    } else {
-      const resp = await fetch(imageUrl);
-      if (!resp.ok) throw new Error(`下载图像失败: ${resp.status}`);
-      blob = await resp.blob();
+    try {
+      if (imageUrl.startsWith('data:')) {
+        Logger.debug('图像为 data URL，直接转换为 Blob');
+        blob = this.dataUrlToBlob(imageUrl);
+      } else {
+        Logger.debug('图像为远程 URL，使用 img + canvas 方法下载...');
+        blob = await this.downloadImageViaCanvas(imageUrl);
+        Logger.debug(`成功通过 canvas 下载图像，Blob 大小: ${blob.size} 字节, 类型: ${blob.type}`);
+      }
+
+      await this.ensureDirectory(MAP_TILES_DIR);
+      const templateDir = `${MAP_TILES_DIR}/${templateId}`;
+      await this.ensureDirectory(templateDir);
+
+      const rotationSuffix = rotation !== 0 ? `-r${rotation}` : '';
+      const filename = `tile-${templateId}-${Date.now()}${rotationSuffix}.png`;
+      const file = new File([blob], filename, { type: 'image/png' });
+      
+      Logger.debug(`准备上传文件: ${filename} 到目录: ${templateDir}`);
+      
+      // 兼容 Foundry VTT v13+ 的 FilePicker 命名空间
+      const FP = (foundry?.applications?.apps?.FilePicker?.implementation) || FilePicker;
+      const uploadResp = await FP.upload('data', templateDir, file, {});
+
+      if (uploadResp?.path) {
+        Logger.info(`地图图像已成功保存: ${uploadResp.path}`);
+        return uploadResp.path;
+      }
+      throw new Error('图像文件上传失败：FilePicker 未返回路径');
+    } catch (error: any) {
+      Logger.error('下载并保存地图图像时出错:', error);
+      Logger.error('错误详情:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack?.substring(0, 300),
+      });
+      throw new Error(`地图图像保存失败: ${error.message}`);
     }
+  }
 
-    await this.ensureDirectory(MAP_TILES_DIR);
-    const templateDir = `${MAP_TILES_DIR}/${templateId}`;
-    await this.ensureDirectory(templateDir);
-
-    const rotationSuffix = rotation !== 0 ? `-r${rotation}` : '';
-    const filename = `tile-${templateId}-${Date.now()}${rotationSuffix}.png`;
-    const file = new File([blob], filename, { type: 'image/png' });
-    
-    // 兼容 Foundry VTT v13+ 的 FilePicker 命名空间
-    const FP = (foundry?.applications?.apps?.FilePicker?.implementation) || FilePicker;
-    const uploadResp = await FP.upload('data', templateDir, file, {});
-
-    if (uploadResp?.path) return uploadResp.path;
-    throw new Error('图像文件上传失败');
+  private async downloadImageViaCanvas(imageUrl: string): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('无法创建 canvas context'));
+            return;
+          }
+          
+          ctx.drawImage(img, 0, 0);
+          
+          canvas.toBlob((blob) => {
+            if (blob) {
+              Logger.debug(`Canvas 转换成功，图像尺寸: ${img.width}x${img.height}`);
+              resolve(blob);
+            } else {
+              reject(new Error('Canvas toBlob 失败'));
+            }
+          }, 'image/png');
+        } catch (error) {
+          Logger.error('Canvas 处理图像时出错:', error);
+          reject(error);
+        }
+      };
+      
+      img.onerror = (error) => {
+        Logger.error('图像加载失败:', error);
+        Logger.debug('尝试使用 fetch 作为备用方案...');
+        fetch(imageUrl)
+          .then(resp => {
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            return resp.blob();
+          })
+          .then(resolve)
+          .catch(reject);
+      };
+      
+      const urlWithTimestamp = imageUrl.includes('?') 
+        ? `${imageUrl}&_t=${Date.now()}` 
+        : `${imageUrl}?_t=${Date.now()}`;
+      
+      img.src = urlWithTimestamp;
+    });
   }
 
   private getAPIConfig(): { apiUrl: string; apiKey: string } {

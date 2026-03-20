@@ -15,12 +15,14 @@ import { IconGenerationService } from './services/icon-generation-service';
 import { PF2eMechanicsKnowledgeService } from './services/pf2e-mechanics-knowledge';
 import { APIConfigManager } from './ui/config-managers/api-config-manager';
 import { ShrineConfigManager } from './ui/config-managers/shrine-config-manager';
+import { ArchetypeConfigManager } from './ui/config-managers/archetype-config-manager';
 import { IconConfigManager } from './ui/config-managers/icon-config-manager';
 import { TerminologyConfigManager } from './ui/config-managers/terminology-config-manager';
 import { BalanceConfigManager } from './ui/config-managers/balance-config-manager';
 import { RoguelikeBanlistManagerApp } from './ui/roguelike-banlist-manager-app';
 import { VaultRulesConfigManager } from './ui/config-managers/vault-rules-config-manager';
 import { MerchantConfigApp } from './ui/merchant-config-app';
+import { ArchetypeGeneratorApp } from './ui/archetype-generator-app';
 import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler, MapTileGalleryApp } from './map-builder';
 // 不直接导入game对象，而是在需要时使用全局访问
 // import { Hooks, ui, game } from '../foundry-imports';
@@ -552,6 +554,17 @@ export class AIPF2eAssistant {
           this.openFragmentGenerator();
         }
       };
+      aiTools['ai-archetype-generator'] = {
+        name: 'ai-archetype-generator',
+        title: '变体生成器',
+        icon: 'fas fa-layer-group',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 变体生成器按钮被点击`);
+          this.openArchetypeGenerator();
+        }
+      };
     }
 
     if (isRoguelikeEnabled) {
@@ -751,6 +764,17 @@ export class AIPF2eAssistant {
             onClick: () => {
               console.log(`${MODULE_ID} | 词条碎片生成器按钮被点击`);
               this.openFragmentGenerator();
+            }
+          },
+          {
+            name: 'ai-archetype-generator',
+            title: '变体生成器',
+            icon: 'fas fa-layer-group',
+            button: true,
+            visible: true,
+            onClick: () => {
+              console.log(`${MODULE_ID} | 变体生成器按钮被点击`);
+              this.openArchetypeGenerator();
             }
           }
         );
@@ -4395,6 +4419,27 @@ ${JSON.stringify(structureData, null, 2)}
     } catch (error) {
       console.error(`${MODULE_ID} | 打开专长生成器失败:`, error);
       ui.notifications.error('打开专长生成器失败，请查看控制台错误信息');
+    }
+  }
+
+  /**
+   * 打开变体生成器应用
+   */
+  openArchetypeGenerator(): void {
+    try {
+      const app = new ArchetypeGeneratorApp();
+
+      app.setAIService({
+        callService: this.createCompatibleCallService(),
+        getServiceName: () => 'AI Assistant',
+        getAvailableModels: () => Object.values(AIModel)
+      });
+
+      (app as any).render(true);
+      console.log(`${MODULE_ID} | 变体生成器已打开`);
+    } catch (error) {
+      console.error(`${MODULE_ID} | 打开变体生成器失败:`, error);
+      ui.notifications.error('打开变体生成器失败，请查看控制台错误信息');
     }
   }
 
@@ -8100,6 +8145,16 @@ function registerSettings() {
       type: ShrineConfigManager,
       restricted: true
     });
+
+    // 变体生成器配置管理器
+    game.settings.registerMenu(MODULE_ID, 'archetypeConfigManager', {
+      name: '变体生成器配置',
+      label: '打开变体配置',
+      hint: '管理变体生成系统的模型设置',
+      icon: 'fas fa-layer-group',
+      type: ArchetypeConfigManager,
+      restricted: true
+    });
     
     // 图标配置管理器
     game.settings.registerMenu(MODULE_ID, 'iconConfigManager', {
@@ -8691,6 +8746,26 @@ function registerSettings() {
       config: false, // 隐藏，通过神龛配置管理器访问
       type: Boolean,
       default: true
+    });
+
+    // 变体生成器 - 设计模型
+    game.settings.register(MODULE_ID, 'archetypeDesignModel', {
+      name: '变体设计模型',
+      hint: '用于变体蓝图设计阶段的AI模型',
+      scope: 'world',
+      config: false,
+      type: String,
+      default: 'gpt-4o'
+    });
+
+    // 变体生成器 - 生成模型
+    game.settings.register(MODULE_ID, 'archetypeGenerateModel', {
+      name: '变体生成模型',
+      hint: '用于一次性生成所有专长的AI模型',
+      scope: 'world',
+      config: false,
+      type: String,
+      default: 'gpt-4o'
     });
 
     // 平衡关键词数据设置
