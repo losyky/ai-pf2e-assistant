@@ -955,6 +955,7 @@ export class IconGenerationService {
 
   /**
    * 清理旧图标（可选功能）
+   * 注意：由于 Foundry VTT 不支持通过 API 删除文件，此方法仅列出需要删除的文件
    */
   public async cleanupOldIcons(daysOld: number = 30): Promise<void> {
     try {
@@ -965,24 +966,30 @@ export class IconGenerationService {
       const files = browse.files || [];
       
       const cutoffTime = Date.now() - (daysOld * 24 * 60 * 60 * 1000);
+      const filesToDelete: string[] = [];
       
       for (const filePath of files) {
         try {
-          // 从文件名中提取时间戳
           const filename = filePath.split('/').pop() || '';
           const timestampMatch = filename.match(/_(\d+)\.png$/);
           
           if (timestampMatch) {
             const timestamp = parseInt(timestampMatch[1]);
             if (timestamp < cutoffTime) {
-              // 删除旧文件
-              await (FilePicker as any).delete('data', filePath);
-              console.log(`Deleted old icon: ${filename}`);
+              filesToDelete.push(filePath);
             }
           }
         } catch (error) {
           console.warn(`Failed to process file ${filePath}:`, error);
         }
+      }
+      
+      if (filesToDelete.length > 0) {
+        console.log(`Found ${filesToDelete.length} old icons that should be manually deleted:`);
+        filesToDelete.forEach(f => console.log(`  - ${f}`));
+        console.warn('Foundry VTT does not support file deletion via API. Please delete these files manually from the server.');
+      } else {
+        console.log('No old icons found to cleanup.');
       }
     } catch (error: any) {
       console.warn('Failed to cleanup old icons:', error);

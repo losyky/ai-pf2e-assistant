@@ -6,7 +6,6 @@ import { Logger } from '../utils/logger';
 
 declare const Application: any;
 declare const foundry: any;
-declare const FilePicker: any;
 declare const ui: any;
 declare const Dialog: any;
 declare const canvas: any;
@@ -112,24 +111,22 @@ export class MapTileGalleryApp extends Application {
 
   private _onDelete(path: string): void {
     const filename = path.split('/').pop() || path;
+    const game = (globalThis as any).game;
+    const dataPath = game?.data?.files?.userData || 'Data';
+    const fullPath = `${dataPath}/${path}`;
+    
     Dialog.confirm({
       title: '删除图块',
-      content: `<p>确定要删除图块「${filename}」吗？此操作不可撤销。</p>`,
-      yes: async () => {
-        try {
-          const route = foundry.utils.getRoute?.('files') || '/files';
-          const resp = await fetch(route, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'delete', source: 'data', path }),
-          });
-          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-          Logger.debug('File deleted:', path);
-          ui.notifications.info('图块已删除');
-        } catch (err) {
-          Logger.warn('File deletion via API failed, path:', path, err);
-          ui.notifications.warn('自动删除失败，请手动从服务器文件系统中删除该文件。');
-        }
+      content: `
+        <p>确定要从列表中移除图块「${filename}」吗？</p>
+        <p style="color: #999; font-size: 0.9em; margin-top: 10px;">
+          <strong>注意：</strong>由于 Foundry VTT 限制，无法通过 API 自动删除服务器文件。<br>
+          如需彻底删除，请手动删除以下文件：<br>
+          <code style="user-select: all; background: #222; padding: 2px 6px; border-radius: 3px;">${fullPath}</code>
+        </p>
+      `,
+      yes: () => {
+        ui.notifications.info('图块已从列表中移除');
         this.tileData = null;
         this.render(false);
       },
@@ -139,8 +136,10 @@ export class MapTileGalleryApp extends Application {
   private async _loadTileData(): Promise<void> {
     const allTiles: TileFileInfo[] = [];
 
+    const FP = (foundry?.applications?.apps?.FilePicker?.implementation) || (globalThis as any).FilePicker;
+
     try {
-      const result = await FilePicker.browse('data', MAP_TILES_DIR);
+      const result = await FP.browse('data', MAP_TILES_DIR);
 
       for (const filePath of (result.files || [])) {
         const info = this._parseTileFile(filePath);
@@ -150,7 +149,7 @@ export class MapTileGalleryApp extends Application {
       const dirs: string[] = result.dirs || [];
       for (const dir of dirs) {
         try {
-          const subResult = await FilePicker.browse('data', dir);
+          const subResult = await FP.browse('data', dir);
           for (const filePath of (subResult.files || [])) {
             const info = this._parseTileFile(filePath);
             if (info) allTiles.push(info);
