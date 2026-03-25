@@ -29,14 +29,18 @@
     }
   ],
   "esmodules": [
-    "ai-pf2e-assistant.mjs"
+    "ai-pf2e-assistant.js"
   ],
   "styles": [
     "styles/ai-pf2e-assistant.css",
     "styles/feat-storage-sheet.css",
     "styles/tactical-manual.css",
     "styles/config-managers.css",
-    "styles/merchant.css"
+    "styles/merchant.css",
+    "styles/map-builder.css",
+    "styles/roguelike-draw-point-manager.css",
+    "styles/roguelike-collection-manager.css",
+    "styles/roguelike-sequential-manager.css"
   ],
   "socket": false,
   "url": "",
@@ -79,6 +83,12 @@
       "path": "packs/roguelike-backgrounds",
       "type": "Item",
       "system": "pf2e"
+    },
+    {
+      "name": "roguelike-macros",
+      "label": "Roguelike 实用宏",
+      "path": "packs/roguelike-macros",
+      "type": "Macro"
     },
     {
       "name": "vault-anomaly-macros",

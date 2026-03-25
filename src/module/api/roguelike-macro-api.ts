@@ -192,6 +192,109 @@ export class RoguelikeMacroAPI {
     const app = new RoguelikeMacroGeneratorApp();
     app.render(true);
   }
+
+  /**
+   * 打开 Roguelike 集合宏管理器（仅 GM）
+   */
+  static async openCollectionManager(): Promise<void> {
+    if (!(game as any).user?.isGM) {
+      (globalThis as any).ui?.notifications?.error('只有 GM 可以使用集合宏管理器');
+      return;
+    }
+
+    const { RoguelikeCollectionManagerApp } = await import('../ui/roguelike-collection-manager-app');
+    RoguelikeCollectionManagerApp.show();
+  }
+
+  /**
+   * 打开 Roguelike 连续抽取宏管理器（仅 GM）
+   */
+  static async openSequentialManager(): Promise<void> {
+    if (!(game as any).user?.isGM) {
+      (globalThis as any).ui?.notifications?.error('只有 GM 可以使用连续抽取宏管理器');
+      return;
+    }
+
+    const { RoguelikeSequentialManagerApp } = await import('../ui/roguelike-sequential-manager-app');
+    RoguelikeSequentialManagerApp.show();
+  }
+
+  /**
+   * 内部方法：执行集合宏
+   * @internal
+   */
+  static async _executeCollection(config: any, actor: any): Promise<void> {
+    const { RoguelikeCollectionSelectorApp } = await import('../ui/roguelike-collection-selector-app');
+    const { RoguelikeDrawPointService } = await import('../services/roguelike-draw-point-service');
+
+    // 点数检查
+    const macro = (game as any).macros?.getName(config.title);
+    const macroUuid = macro?.uuid;
+    const pointCheck = RoguelikeDrawPointService.canDraw(actor, macroUuid);
+    
+    if (!pointCheck.canDraw) {
+      (globalThis as any).ui?.notifications?.warn(pointCheck.reason || '抽取点数不足');
+      return;
+    }
+    
+    // 消耗点数
+    if (pointCheck.pointType !== 'unlimited') {
+      const consumed = await RoguelikeDrawPointService.consumeDrawPoint(actor, macroUuid);
+      if (!consumed) {
+        (globalThis as any).ui?.notifications?.warn('抽取点数扣除失败');
+        return;
+      }
+    }
+    
+    // 打开选择器
+    const app = new RoguelikeCollectionSelectorApp(config, actor);
+    app.render(true);
+  }
+
+  /**
+   * 内部方法：执行连续抽取宏
+   * @internal
+   */
+  static async _executeSequential(config: any, actor: any): Promise<void> {
+    const { RoguelikeSequentialDrawApp } = await import('../ui/roguelike-sequential-draw-app');
+    const { RoguelikeDrawPointService } = await import('../services/roguelike-draw-point-service');
+
+    // 点数检查
+    const macro = (game as any).macros?.getName(config.title);
+    const macroUuid = macro?.uuid;
+    const pointCheck = RoguelikeDrawPointService.canDraw(actor, macroUuid);
+    
+    if (!pointCheck.canDraw) {
+      (globalThis as any).ui?.notifications?.warn(pointCheck.reason || '抽取点数不足');
+      return;
+    }
+    
+    // 消耗点数
+    if (pointCheck.pointType !== 'unlimited') {
+      const consumed = await RoguelikeDrawPointService.consumeDrawPoint(actor, macroUuid);
+      if (!consumed) {
+        (globalThis as any).ui?.notifications?.warn('抽取点数扣除失败');
+        return;
+      }
+    }
+    
+    // 初始化并打开连续抽取
+    try {
+      const app = new RoguelikeSequentialDrawApp(config, actor);
+      await app.initialize();
+      app.render(true);
+    } catch (error: any) {
+      console.error('[Sequential] 初始化失败:', error);
+      (globalThis as any).ui?.notifications?.error('连续抽取初始化失败: ' + error.message);
+      
+      // 如果初始化失败，退还点数
+      if (pointCheck.pointType === 'macro') {
+        await RoguelikeDrawPointService.addMacroPoints(actor, macroUuid, 1);
+      } else if (pointCheck.pointType === 'general') {
+        await RoguelikeDrawPointService.addGeneralPoints(actor, 1);
+      }
+    }
+  }
 }
 
 export const ROGUELIKE_MACRO_EXAMPLES = {
@@ -238,4 +341,10 @@ game.modules.get('ai-pf2e-assistant').api.roguelike.draw({
 
   openGenerator: `// 打开宏生成器（仅GM）
 game.modules.get('ai-pf2e-assistant').api.roguelike.openGenerator();`,
+
+  openCollectionManager: `// 打开集合宏管理器（仅GM）
+game.modules.get('ai-pf2e-assistant').api.roguelike.openCollectionManager();`,
+
+  openSequentialManager: `// 打开连续抽取宏管理器（仅GM）
+game.modules.get('ai-pf2e-assistant').api.roguelike.openSequentialManager();`,
 };

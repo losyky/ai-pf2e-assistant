@@ -128,26 +128,50 @@ export class MapImageGenerationService {
     
     const replaceRules = [...wallReplaceRules, ...areaRules].join('，');
 
+    // 添加场景描述（如果有）
+    const sceneContext = template.description 
+      ? `场景类型：${template.description}` 
+      : '';
+
     if (hasStyleRef) {
       parts.push(
-        `[Image 1 = layout/structure, Image 2 = style reference.]`,
-        `按照${styleLabel}的绘图风格，以及${structLabel}的地图结构，绘制一张 TRPG 俯视战斗地图。`,
-        `在${structLabel}中：${replaceRules}。`,
-        `${styleLabel}的场景布局请完全忽略，仅用${styleLabel}的地图元素与绘画风格进行绘制。`,
+        `[Image 1 = structure template ONLY for layout, Image 2 = style reference ONLY for visual style.]`,
+        ``,
+        `任务：生成一张 TRPG 俯视战斗地图。`,
+      );
+      
+      if (sceneContext) {
+        parts.push(sceneContext);
+      }
+      
+      parts.push(
+        ``,
+        `【必须严格遵守的约束】：`,
+        `1. 房间布局、墙体位置、整体结构 → 完全复制${structLabel}，不可改变位置或形状`,
+        `2. 在${structLabel}中：${replaceRules}`,
+        `3. ${styleLabel}的任何房间布局、地图结构、场景排布 → 完全忽略，禁止参考`,
+        `4. ${styleLabel}仅用于提取：绘画风格、材质纹理、色彩基调、艺术手法`,
+        `5. 输出必须为俯视图，彩色引导线（红/绿/青/橙/蓝）不得残留`,
+        `6. 黑色不可通过区域保持纯黑，不添加纹理或杂物`,
       );
     } else {
       parts.push(
-        `按照${structLabel}的地图结构，绘制一张 TRPG 俯视战斗地图。`,
-        `在${structLabel}中：${replaceRules}。`,
+        `任务：按照${structLabel}的地图结构，绘制一张 TRPG 俯视战斗地图。`,
+      );
+      
+      if (sceneContext) {
+        parts.push(sceneContext);
+      }
+      
+      parts.push(
+        ``,
+        `【必须严格遵守的约束】：`,
+        `1. 房间布局、墙体位置、整体结构 → 完全复制${structLabel}`,
+        `2. 在${structLabel}中：${replaceRules}`,
+        `3. 输出必须为俯视图，彩色引导线（红/绿/青/橙/蓝）不得残留`,
+        `4. 黑色不可通过区域保持纯黑，不添加纹理或杂物`,
       );
     }
-
-    parts.push(
-      '',
-      '约束：',
-      '1. 输出为俯视战斗地图，图中不得残留结构图的彩色线条。',
-      '2. 黑色不可通过区域保持纯黑，无纹理或杂物。',
-    );
 
     const useStylePrompt = hasStyleRef ? styleConfig.useStylePromptWhenHasRefImage !== false : true;
     if (useStylePrompt && styleConfig.stylePrompt) {
@@ -200,26 +224,50 @@ export class MapImageGenerationService {
     
     const replaceRules = [...wallReplaceRules, ...areaRules].join(', ');
 
+    // Add scene context if description exists
+    const sceneContext = template.description 
+      ? `Scene type: ${template.description}` 
+      : '';
+
     if (hasStyleRef) {
       parts.push(
-        `[${structLabel} = layout/structure, ${styleLabel} = style reference.]`,
-        `Generate a top-down TRPG battle map following the layout from ${structLabel} and the art style from ${styleLabel}.`,
-        `In ${structLabel}: ${replaceRules}.`,
-        `Strictly preserve the layout structure from ${structLabel}. Use only the visual style and map elements from ${styleLabel}, completely ignore its room layout.`,
+        `[${structLabel} = structure template ONLY for layout, ${styleLabel} = style reference ONLY for visual style.]`,
+        ``,
+        `Task: Generate a top-down TRPG battle map.`,
+      );
+      
+      if (sceneContext) {
+        parts.push(sceneContext);
+      }
+      
+      parts.push(
+        ``,
+        `[STRICT CONSTRAINTS - MUST FOLLOW]:`,
+        `1. Room layout, wall positions, overall structure → EXACTLY copy from ${structLabel}, every wall and door position/shape UNCHANGED`,
+        `2. In ${structLabel}: ${replaceRules}`,
+        `3. ${styleLabel}'s room layout, map structure, scene arrangement → COMPLETELY IGNORE, DO NOT reference`,
+        `4. ${styleLabel} is ONLY used for extracting: art style, material textures, color palette, artistic techniques`,
+        `5. Output MUST be top-down view, colored guide lines (red/green/cyan/orange/blue) MUST NOT remain`,
+        `6. Black impassable areas stay pure black, NO textures or objects added`,
       );
     } else {
       parts.push(
-        `Generate a top-down TRPG battle map following the layout from ${structLabel}.`,
-        `In ${structLabel}: ${replaceRules}.`,
+        `Task: Generate a top-down TRPG battle map following the layout from ${structLabel}.`,
+      );
+      
+      if (sceneContext) {
+        parts.push(sceneContext);
+      }
+      
+      parts.push(
+        ``,
+        `[STRICT CONSTRAINTS - MUST FOLLOW]:`,
+        `1. Room layout, wall positions, overall structure → EXACTLY copy from ${structLabel}`,
+        `2. In ${structLabel}: ${replaceRules}`,
+        `3. Output MUST be top-down view, colored guide lines (red/green/cyan/orange/blue) MUST NOT remain`,
+        `4. Black impassable areas stay pure black, NO textures or objects added`,
       );
     }
-
-    parts.push(
-      '',
-      'Constraints:',
-      '1. Output must be a top-down battle map with no colored guide lines remaining.',
-      '2. Black impassable areas must stay pure black with no textures or objects.',
-    );
 
     const useStylePrompt = hasStyleRef ? styleConfig.useStylePromptWhenHasRefImage !== false : true;
     if (useStylePrompt && styleConfig.stylePrompt) {
@@ -252,30 +300,32 @@ export class MapImageGenerationService {
     const isNanoBanana = /nano-banana/i.test(imageModel);
     const isFalEdit = /edit/i.test(apiUrl) && !isNanoBanana;
 
-    Logger.info(`API 路由决策 - 模型: ${imageModel}`);
+    Logger.info(`API 路由决策 - 模型: ${imageModel}, API URL: ${apiUrl}`);
     Logger.debug(`路由检测结果: isNanoBanana=${isNanoBanana}, isFalEdit=${isFalEdit}, isChatCompletions=${isChatCompletions}`);
+    Logger.debug(`模型名检查: startsWith('gemini')=${imageModel.startsWith('gemini')}, startsWith('gpt-image')=${imageModel.startsWith('gpt-image')}`);
 
     if (imageModel.startsWith('gemini') && !isChatCompletions) {
-      Logger.info('使用原生多模态 API 格式');
+      Logger.info('✓ 使用原生 Gemini 多模态 API 格式');
       return this.callGeminiAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
     if (imageModel.startsWith('gpt-image')) {
-      Logger.info('使用图像编辑 API 格式');
+      Logger.info('✓ 使用图像编辑 API 格式');
       return this.callGPTImageEdit(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
     if (isNanoBanana) {
-      Logger.info('使用图像生成 API 格式（aspect_ratio）');
+      Logger.info('✓ 使用图像生成 API 格式（aspect_ratio）');
       return this.callNanoBananaAPI(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
     }
     if (isFalEdit && !imageModel.startsWith('gemini')) {
-      Logger.info('使用图像编辑 API 格式（image_urls）');
+      Logger.info('✓ 使用图像编辑 API 格式（image_urls）');
       return this.callFalEdit(prompt, guideBase64, styleRefBase64, apiConfig, template);
     }
     if (isChatCompletions) {
-      Logger.info('使用对话补全 API 格式');
+      Logger.info('✓ 使用对话补全 API 格式');
       return this.callChatCompletionsWithImages(prompt, guideBase64, styleRefBase64, imageModel, apiConfig);
     }
-    Logger.info('使用标准兼容 API 格式');
+    Logger.warn(`⚠️ 未匹配到专用路由，使用标准兼容 API 格式（可能导致错误）`);
+    Logger.warn(`请检查: imageModel="${imageModel}", apiUrl="${apiUrl}"`);
     return this.callOpenAICompatible(prompt, guideBase64, styleRefBase64, imageModel, apiConfig, template);
   }
 
@@ -378,6 +428,80 @@ export class MapImageGenerationService {
   // Native multimodal API
   // ----------------------------------------------------------------
 
+  /**
+   * 根据图像尺寸计算合适的超时时间
+   */
+  private calculateTimeout(imageSize: string): number {
+    const timeoutMap: Record<string, number> = {
+      '1K': 180000,   // 3分钟
+      '2K': 480000,   // 8分钟
+      '4K': 900000,   // 15分钟
+    };
+    return timeoutMap[imageSize] || 300000;
+  }
+
+  /**
+   * 显示进度通知
+   */
+  private showProgressNotification(message: string): void {
+    if (ui?.notifications) {
+      ui.notifications.info(message);
+    }
+  }
+
+  /**
+   * 带进度监控的 fetch 请求
+   */
+  private async fetchWithProgress(
+    url: string,
+    options: RequestInit,
+    timeout: number,
+    imageSize: string,
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    
+    // 合并 signal
+    const fetchOptions = { ...options, signal };
+    
+    // 启动超时计时器
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeout);
+
+    // 进度检查间隔（每30秒）
+    const progressInterval = 30000;
+    let elapsedTime = 0;
+    const progressTimerId = setInterval(() => {
+      elapsedTime += progressInterval;
+      const elapsedMinutes = Math.floor(elapsedTime / 60000);
+      const elapsedSeconds = Math.floor((elapsedTime % 60000) / 1000);
+      const timeoutMinutes = Math.floor(timeout / 60000);
+      
+      this.showProgressNotification(
+        `图像生成中... 已用时 ${elapsedMinutes}分${elapsedSeconds}秒 / 最大等待 ${timeoutMinutes}分钟 (${imageSize})`
+      );
+      
+      Logger.info(`[图像生成进度] 已等待: ${elapsedMinutes}:${elapsedSeconds.toString().padStart(2, '0')}`);
+    }, progressInterval);
+
+    try {
+      const response = await fetch(url, fetchOptions);
+      
+      // 清理定时器
+      clearTimeout(timeoutId);
+      clearInterval(progressTimerId);
+      
+      return response;
+    } catch (err: any) {
+      // 清理定时器
+      clearTimeout(timeoutId);
+      clearInterval(progressTimerId);
+      
+      throw err;
+    }
+  }
+
   private async callGeminiAPI(
     prompt: string,
     guideBase64: string,
@@ -408,6 +532,15 @@ export class MapImageGenerationService {
     const imageSize = preset?.geminiImageSize ?? '2K';
     const aspectRatio = preset?.geminiAspectRatio ?? '1:1';
 
+    // 对于 4K 图像，检查是否应该降低质量以避免连接重置
+    const pixelCount = template.gridCols * template.gridRows * MAP_CELL_SIZE * MAP_CELL_SIZE;
+    const isVeryLarge = pixelCount > 16777216; // > 4096x4096
+    
+    if (isVeryLarge) {
+      Logger.warn(`地图像素总数: ${pixelCount}，非常大，可能导致传输问题`);
+      this.showProgressNotification('⚠️ 检测到超大地图，传输可能需要更长时间或失败');
+    }
+
     const requestBody = {
       contents,
       generationConfig: {
@@ -419,23 +552,30 @@ export class MapImageGenerationService {
       },
     };
 
-    Logger.debug(`请求配置: model=${imageModel}, size=${imageSize}, aspectRatio=${aspectRatio}, images=${styleRefBase64 ? 2 : 1}`);
+    // 根据图像尺寸计算超时时间
+    const timeout = this.calculateTimeout(imageSize);
+    const timeoutMinutes = Math.floor(timeout / 60000);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 300000);
+    Logger.debug(`请求配置: model=${imageModel}, size=${imageSize}, aspectRatio=${aspectRatio}, images=${styleRefBase64 ? 2 : 1}`);
+    Logger.info(`图像尺寸: ${imageSize}, 超时时间: ${timeoutMinutes}分钟`);
+    
+    // 显示初始通知
+    this.showProgressNotification(`开始生成 ${imageSize} 地图图像，预计最多需要 ${timeoutMinutes} 分钟...`);
 
     try {
-      const response = await fetch(apiConfig.apiUrl.replace(/\/+$/, ''), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiConfig.apiKey}`,
+      const response = await this.fetchWithProgress(
+        apiConfig.apiUrl.replace(/\/+$/, ''),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiConfig.apiKey}`,
+          },
+          body: JSON.stringify(requestBody),
         },
-        body: JSON.stringify(requestBody),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+        timeout,
+        imageSize,
+      );
 
       if (!response.ok) {
         const errText = await response.text().catch(() => '');
@@ -444,22 +584,43 @@ export class MapImageGenerationService {
       }
 
       const contentLength = response.headers.get('content-length');
-      Logger.debug(`API 响应大小: ${contentLength || '未知'} 字节`);
+      const contentLengthMB = contentLength ? (parseInt(contentLength) / (1024 * 1024)).toFixed(2) : '未知';
+      Logger.debug(`API 响应大小: ${contentLength || '未知'} 字节 (${contentLengthMB} MB)`);
 
-      const responseData = await response.json();
-      Logger.debug('API 响应数据结构:', JSON.stringify(responseData).substring(0, 500));
+      this.showProgressNotification(`正在处理 API 响应数据 (${contentLengthMB} MB)...`);
+
+      // 对于大响应，使用流式读取避免内存问题
+      let responseData;
+      try {
+        // 先尝试读取为文本，避免 JSON 解析时的内存峰值
+        const responseText = await response.text();
+        Logger.debug(`响应文本长度: ${responseText.length} 字符`);
+        
+        // 分块解析 JSON
+        responseData = JSON.parse(responseText);
+        Logger.debug('API 响应数据结构:', JSON.stringify(responseData).substring(0, 500));
+      } catch (parseErr: any) {
+        Logger.error('JSON 解析失败:', parseErr);
+        throw new Error(`无法解析 API 响应数据: ${parseErr.message}`);
+      }
+      
+      this.showProgressNotification('图像生成成功！正在保存...');
       
       return this.extractImageUrl(responseData);
     } catch (err: any) {
-      clearTimeout(timeoutId);
-      
       if (err.name === 'AbortError') {
         Logger.error('API 请求超时');
-        throw new Error('图像生成超时，请稍后重试或使用较小的地图尺寸');
+        throw new Error(`图像生成超时（${timeoutMinutes}分钟），请稍后重试或使用较小的地图尺寸`);
       }
       
       if (err.message.includes('Failed to fetch') || err.message.includes('ERR_CONNECTION_RESET')) {
         Logger.error('API 连接失败，可能是响应过大导致连接重置');
+        
+        // 给出更具体的建议
+        if (imageSize === '4K') {
+          throw new Error('4K 图像生成失败：响应数据过大导致网络连接中断。\n\n建议解决方案：\n1. 将地图分成多个较小的区域分别生成\n2. 使用 2K 或 1K 尺寸的模板\n3. 联系 API 提供商确认是否支持大图直接下载 URL（而非 Base64）\n4. 尝试使用支持异步生成的 API 端点');
+        }
+        
         throw new Error('图像生成失败：网络连接中断。这可能是因为生成的图像过大，请尝试使用较小的地图尺寸');
       }
       
@@ -767,12 +928,19 @@ export class MapImageGenerationService {
     try {
       if (imageUrl.startsWith('data:')) {
         Logger.debug('图像为 data URL，直接转换为 Blob');
+        this.showProgressNotification('正在处理图像数据...');
         blob = this.dataUrlToBlob(imageUrl);
+        const blobSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
+        Logger.info(`图像数据大小: ${blobSizeMB} MB`);
       } else {
         Logger.debug('图像为远程 URL，使用 img + canvas 方法下载...');
+        this.showProgressNotification('正在下载远程图像...');
         blob = await this.downloadImageViaCanvas(imageUrl);
-        Logger.debug(`成功通过 canvas 下载图像，Blob 大小: ${blob.size} 字节, 类型: ${blob.type}`);
+        const blobSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
+        Logger.debug(`成功通过 canvas 下载图像，Blob 大小: ${blobSizeMB} MB, 类型: ${blob.type}`);
       }
+
+      this.showProgressNotification('正在保存图像文件...');
 
       await this.ensureDirectory(MAP_TILES_DIR);
       const templateDir = `${MAP_TILES_DIR}/${templateId}`;
@@ -790,6 +958,7 @@ export class MapImageGenerationService {
 
       if (uploadResp?.path) {
         Logger.info(`地图图像已成功保存: ${uploadResp.path}`);
+        this.showProgressNotification('地图图像保存成功！');
         return uploadResp.path;
       }
       throw new Error('图像文件上传失败：FilePicker 未返回路径');

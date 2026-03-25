@@ -1,0 +1,90 @@
+<div class="roguelike-sequential-manager">
+  <div class="rsm-header">
+    <h2><i class="fas fa-list-ol"></i> Roguelike 连续抽取宏配置</h2>
+    <p class="rsm-description">创建连续抽取宏，按顺序串行执行多个抽取宏</p>
+  </div>
+
+  <div class="rsm-content">
+    {{!-- 基础配置 --}}
+    <div class="rsm-basic-config">
+      <div class="form-group">
+        <label>连续抽取宏名称</label>
+        <input type="text" name="title" value="{{config.title}}" placeholder="输入连续抽取宏名称" />
+        <span class="hint">此名称将作为创建的宏的名称</span>
+      </div>
+    </div>
+
+    {{!-- 宏列表 --}}
+    <div class="rsm-macro-section">
+      <h4>抽取宏序列（按顺序执行）</h4>
+
+      <div class="sequential-macro-drop-zone">
+        <i class="fas fa-arrows-alt"></i>
+        <span>拖拽 Roguelike 抽取宏到此处添加</span>
+      </div>
+
+      {{#if config.macros.length}}
+      <ol class="rsm-macro-list">
+        {{#each config.macros}}
+        <li class="rsm-macro-row" data-index="{{@index}}">
+          <div class="rsm-macro-order">{{add @index 1}}</div>
+          <img src="{{this.img}}" class="rsm-macro-img" alt="{{this.name}}" />
+          <span class="rsm-macro-name">{{this.name}}</span>
+          <div class="rsm-macro-controls">
+            {{#unless (eq @index 0)}}
+            <button type="button" class="move-up-btn" data-index="{{@index}}" title="上移">
+              <i class="fas fa-chevron-up"></i>
+            </button>
+            {{/unless}}
+            {{#unless (eq @index (subtract ../config.macros.length 1))}}
+            <button type="button" class="move-down-btn" data-index="{{@index}}" title="下移">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            {{/unless}}
+            <button type="button" class="remove-macro-btn" data-index="{{@index}}" title="删除">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </li>
+        {{/each}}
+      </ol>
+      <span class="hint">宏将按照上述顺序依次执行</span>
+      {{else}}
+      <div class="rsm-empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>暂无抽取宏，请拖拽宏到上方区域添加</p>
+      </div>
+      {{/if}}
+    </div>
+
+    {{!-- Ban List 配置 --}}
+    <div class="rsm-banlist-section">
+      <h4>Ban List（可选）</h4>
+      <div class="rsm-banlist-checkboxes">
+        {{#if allBanLists.length}}
+          {{#each allBanLists}}
+          <label class="rsm-checkbox-label">
+            <input type="checkbox" class="banlist-checkbox" value="{{id}}" 
+                   {{#if (includes ../config.banListIds id)}}checked{{/if}} />
+            {{name}}
+          </label>
+          {{/each}}
+        {{else}}
+          <p class="hint">暂无可用的 Ban List，请先在 Ban List 管理器中创建。</p>
+        {{/if}}
+      </div>
+      <span class="hint">选中的 Ban List 将应用于序列中的所有抽取宏，且不会污染原宏的配置</span>
+    </div>
+  </div>
+
+  <div class="rsm-footer">
+    <div class="rsm-button-group">
+      <button type="button" class="create-sequential-macro-btn">
+        <i class="fas fa-save"></i> 创建连续抽取宏
+      </button>
+      <button type="button" class="test-sequential-btn">
+        <i class="fas fa-vial"></i> 测试连续抽取
+      </button>
+    </div>
+  </div>
+</div>

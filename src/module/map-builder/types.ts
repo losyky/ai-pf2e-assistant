@@ -33,6 +33,12 @@ export const WALL_TYPE_CONFIG: Record<MapWallType, {
 
 export type MapRotation = 0 | 90 | 180 | 270;
 
+export type RoomType =
+  | 'corridor' | 'entrance' | 'boss' | 'treasure' | 'trap'
+  | 'puzzle' | 'rest' | 'shop' | 'shrine' | 'empty' | 'custom';
+
+export type RoomRarity = 'common' | 'uncommon' | 'rare' | 'unique';
+
 export interface MapTemplate {
   id: string;
   name: string;
@@ -43,6 +49,9 @@ export interface MapTemplate {
   cells: boolean[][];
   walls: MapWallSegment[];
   rotation?: MapRotation;
+  roomType?: RoomType;
+  roomTags?: string[];
+  rarity?: RoomRarity;
 }
 
 export interface MapSizePreset {

@@ -1,4 +1,4 @@
-import { MODULE_ID, MAP_CELL_SIZE } from '../constants';
+import { MODULE_ID, MAP_CELL_SIZE, MAP_TILES_DIR } from '../constants';
 import { MapDropData, MapTemplate, MapStyleConfig, WALL_TYPE_CONFIG, MapRotation } from './types';
 import { MapTemplateService } from './map-template-service';
 import { MapGuideImageService } from './map-guide-image-service';
@@ -11,6 +11,7 @@ declare const game: any;
 declare const canvas: any;
 declare const ui: any;
 declare const Hooks: any;
+declare const foundry: any;
 
 export class MapDropHandler {
   private static registered = false;
@@ -173,10 +174,16 @@ export class MapDropHandler {
     }
   }
 
+  /**
+   * 放置已有图像（来自图库）。
+   * imageRotation 是该图像文件生成时使用的旋转角度（图像内容已是对应方向）。
+   * 放置预览以 imageRotation 为默认方向，用户可再次选择旋转。
+   * 图像文件不做物理旋转，通过 FVTT Tile 的 rotation 属性旋转显示。
+   */
   static async placeWithExistingImage(
     templateId: string,
     imagePath: string,
-    defaultRotation?: MapRotation
+    imageRotation: MapRotation = 0
   ): Promise<void> {
     const templateService = MapTemplateService.getInstance();
     const template = templateService.getById(templateId);
@@ -189,7 +196,8 @@ export class MapDropHandler {
       return;
     }
 
-    const preview = new MapPlacementPreview(template, defaultRotation);
+    // 传入原始模板，defaultRotation 设为图像已有的旋转角度，预览默认以此方向展示
+    const preview = new MapPlacementPreview(template, imageRotation);
     const result = await preview.start();
     if (!result) {
       ui.notifications.info('已取消放置');
@@ -197,15 +205,34 @@ export class MapDropHandler {
     }
 
     try {
-      const rotatedTemplate = MapRotationHelper.rotateTemplate(template, result.rotation);
-      await MapDropHandler._createTileAndWalls(rotatedTemplate, result.x, result.y, imagePath, false);
-      ui.notifications.info(`已放置地图「${template.name}」(${rotatedTemplate.walls.length} 面墙壁, 朝向: ${MapRotationHelper.getRotationLabel(result.rotation)})`);
+      const finalRotation = result.rotation;
+      // 墙体坐标用旋转后的模板
+      const rotatedTemplate = MapRotationHelper.rotateTemplate(template, finalRotation);
+
+      // 额外旋转 = 最终选择的角度 - 图像原始角度
+      // 这是需要叠加给 FVTT Tile.rotation 的角度（图像文件本身已旋转 imageRotation）
+      const tileRotation = ((finalRotation - imageRotation + 360) % 360) as MapRotation;
+
+      // 图像文件的尺寸（已旋转 imageRotation 后的实际像素）
+      const imageCols = (imageRotation === 90 || imageRotation === 270) ? template.gridRows : template.gridCols;
+      const imageRows = (imageRotation === 90 || imageRotation === 270) ? template.gridCols : template.gridRows;
+
+      await MapDropHandler._createTileAndWallsWithRotation(
+        rotatedTemplate, result.x, result.y, imagePath, false,
+        imageCols, imageRows, tileRotation
+      );
+      ui.notifications.info(`已放置地图「${template.name}」(${rotatedTemplate.walls.length} 面墙壁, 朝向: ${MapRotationHelper.getRotationLabel(finalRotation)})`);
     } catch (err: any) {
       console.error(`${MODULE_ID} | 地图放置失败:`, err);
       ui.notifications.error(`放置失败: ${err.message}`);
     }
   }
 
+  /**
+   * 创建图块和墙体（图像不旋转，Tile.rotation = 0，适用于新生成地图）。
+   * template 应已包含旋转后的 gridCols/gridRows/cells/walls。
+   * dropX/dropY 是图块左上角的世界坐标。
+   */
   private static async _createTileAndWalls(
     template: MapTemplate,
     dropX: number,
@@ -213,17 +240,57 @@ export class MapDropHandler {
     imagePath: string,
     isGenerating: boolean,
   ): Promise<string> {
+    return MapDropHandler._createTileAndWallsWithRotation(
+      template, dropX, dropY, imagePath, isGenerating,
+      template.gridCols, template.gridRows, 0
+    );
+  }
+
+  /**
+   * 创建图块和墙体，支持通过 FVTT Tile.rotation 旋转已有图像。
+   *
+   * @param template       已经按最终旋转方向处理过的模板（墙体坐标正确）
+   * @param dropX/dropY    旋转后内容的左上角世界坐标（供墙体坐标和用户视觉放置点使用）
+   * @param imagePath      图像文件路径（文件本身以 imageCols×imageRows 方向存储）
+   * @param imageCols      图像文件实际的列数（原始存储方向）
+   * @param imageRows      图像文件实际的行数（原始存储方向）
+   * @param tileRotation   FVTT Tile.rotation 旋转角度（0/90/180/270）
+   */
+  private static async _createTileAndWallsWithRotation(
+    template: MapTemplate,
+    dropX: number,
+    dropY: number,
+    imagePath: string,
+    isGenerating: boolean,
+    imageCols: number,
+    imageRows: number,
+    tileRotation: MapRotation,
+  ): Promise<string> {
     const scene = canvas?.scene;
     if (!scene) throw new Error('没有活动场景');
 
-    const totalWidth = template.gridCols * MAP_CELL_SIZE;
-    const totalHeight = template.gridRows * MAP_CELL_SIZE;
+    // 图像文件的实际像素尺寸（旋转前）
+    const imagePixelW = imageCols * MAP_CELL_SIZE;
+    const imagePixelH = imageRows * MAP_CELL_SIZE;
 
-    const tileData = {
-      x: dropX,
-      y: dropY,
-      width: totalWidth,
-      height: totalHeight,
+    // 旋转后内容的实际展示尺寸（供墙体坐标参考）
+    const contentPixelW = template.gridCols * MAP_CELL_SIZE;
+    const contentPixelH = template.gridRows * MAP_CELL_SIZE;
+
+    // FVTT Tile 的 x/y 是原始图像（旋转前）的左上角，旋转绕图像中心进行。
+    // 用户放置点 (dropX, dropY) 是旋转后内容的左上角，需换算到图像左上角。
+    // 旋转后内容中心 = (dropX + contentPixelW/2, dropY + contentPixelH/2)
+    // 图像中心   = (tileX + imagePixelW/2,   tileY + imagePixelH/2)
+    // 两者相同，故：tileX = dropX + (contentPixelW - imagePixelW)/2
+    const tileX = dropX + (contentPixelW - imagePixelW) / 2;
+    const tileY = dropY + (contentPixelH - imagePixelH) / 2;
+
+    const tileData: Record<string, any> = {
+      x: tileX,
+      y: tileY,
+      width: imagePixelW,
+      height: imagePixelH,
+      rotation: tileRotation,
       texture: { src: imagePath },
       flags: {
         [MODULE_ID]: {
@@ -238,6 +305,7 @@ export class MapDropHandler {
     const tileId = tiles[0]?.id;
     if (!tileId) throw new Error('创建图块失败');
 
+    // 墙体坐标从 dropX/dropY（旋转后内容左上角）出发，使用旋转后模板的坐标
     const wallDocs = template.walls.map(w => {
       const cfg = WALL_TYPE_CONFIG[w.wallType || 'normal'].fvtt;
       const doc: Record<string, any> = {

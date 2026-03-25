@@ -498,3 +498,127 @@
   }
 }
 
+/* 小型图标按钮 - 参考神龛系统的入口按钮样式 */
+.config-manager .btn-icon-sm {
+  padding: 2px 6px !important;
+  min-width: auto !important;
+  width: auto !important;
+  height: 24px !important;
+  background: none !important;
+  color: #c62828 !important;
+  opacity: 0.7;
+  border: none !important;
+  cursor: pointer;
+  font-size: 0.85em;
+  flex-shrink: 0;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s;
+}
+
+.config-manager .btn-icon-sm:hover {
+  opacity: 1;
+  background: rgba(198, 40, 40, 0.15) !important;
+  color: #d32f2f !important;
+  border-radius: 3px !important;
+}
+
+.config-manager .btn-icon-sm i {
+  font-size: 0.9em;
+  margin: 0;
+}
+
+/* Roguelike Collection Selector */
+.roguelike-collection-selector .collection-header {
+  padding: 15px;
+  background: #f8f9fa;
+  border-bottom: 2px solid #4361ee;
+}
+
+.roguelike-collection-selector .collection-header p {
+  margin: 5px 0;
+  color: #495057;
+}
+
+.roguelike-collection-selector .collection-macro-list {
+  padding: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.roguelike-collection-selector .collection-macro-card {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.roguelike-collection-selector .collection-macro-card:hover:not(.disabled) {
+  border-color: #4361ee;
+  box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+  transform: translateY(-2px);
+}
+
+.roguelike-collection-selector .collection-macro-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.roguelike-collection-selector .macro-img {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 6px;
+  margin-right: 12px;
+  object-fit: cover;
+}
+
+.roguelike-collection-selector .macro-info {
+  flex: 1;
+}
+
+.roguelike-collection-selector .macro-name {
+  margin: 0;
+  font-size: 1.1em;
+  color: #2b2d42;
+  font-weight: 600;
+}
+
+.roguelike-collection-selector .macro-unavailable {
+  color: #dc3545;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.roguelike-collection-selector .collection-macro-card i.fa-chevron-right {
+  color: #6c757d;
+  font-size: 1.2em;
+}
+
+.roguelike-collection-selector .collection-footer {
+  padding: 15px;
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  text-align: center;
+}
+
+.roguelike-collection-selector .collection-cancel-btn {
+  padding: 10px 20px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.2s;
+}
+
+.roguelike-collection-selector .collection-cancel-btn:hover {
+  background: #5a6268;
+}

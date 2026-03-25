@@ -1,0 +1,119 @@
+<div class="maze-config">
+  {{!-- Basic Parameters --}}
+  <fieldset>
+    <legend><i class="fas fa-cog"></i> 基本参数</legend>
+    <div class="form-group-row" style="display:flex;gap:8px;">
+      <div class="form-group" style="flex:1;">
+        <label>迷宫宽度 (格)</label>
+        <input type="number" name="mazeWidth" value="{{mazeWidth}}" min="2" max="20" />
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label>迷宫高度 (格)</label>
+        <input type="number" name="mazeHeight" value="{{mazeHeight}}" min="2" max="20" />
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label>入口数量</label>
+        <input type="number" name="entranceCount" value="{{entranceCount}}" min="1" max="4" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>随机种子 <span class="hint">(留空为随机)</span></label>
+      <input type="text" name="randomSeed" value="{{randomSeed}}" placeholder="留空为随机" />
+    </div>
+  </fieldset>
+
+  {{!-- Endpoint Rooms --}}
+  <fieldset>
+    <legend><i class="fas fa-flag-checkered"></i> 终点房配置</legend>
+    <div class="endpoint-list" id="endpoint-list">
+      {{#each endpoints}}
+      <div class="endpoint-row" data-idx="{{@index}}">
+        <select name="ep-type-{{@index}}">
+          {{#each ../allRoomTypes}}
+          <option value="{{this.id}}" {{#if (eq this.id ../roomType)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+        <input type="number" name="ep-count-{{@index}}" value="{{this.count}}" min="1" max="10" title="数量" />
+        <input type="number" name="ep-minDepth-{{@index}}" value="{{this.minDepth}}" min="0" max="50" title="最小深度" placeholder="最小深度" />
+        <input type="number" name="ep-maxDepth-{{@index}}" value="{{this.maxDepth}}" min="0" max="50" title="最大深度" placeholder="最大深度" />
+        <button type="button" class="remove-endpoint" data-idx="{{@index}}" title="移除"><i class="fas fa-trash"></i></button>
+      </div>
+      {{/each}}
+    </div>
+    <button type="button" class="add-endpoint" style="margin-top:4px;"><i class="fas fa-plus"></i> 添加终点房</button>
+  </fieldset>
+
+  {{!-- Room Pool --}}
+  <fieldset>
+    <legend><i class="fas fa-th"></i> 房间池</legend>
+    <div class="room-pool-list" id="room-pool-list">
+      {{#each roomPool}}
+      <div class="pool-row" data-idx="{{@index}}">
+        <select name="rp-type-{{@index}}">
+          {{#each ../allRoomTypes}}
+          <option value="{{this.id}}" {{#if (eq this.id ../roomType)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+        <input type="number" name="rp-weight-{{@index}}" value="{{this.weight}}" min="0" max="100" step="0.1" title="权重" placeholder="权重" />
+        <input type="number" name="rp-max-{{@index}}" value="{{this.maxCount}}" min="0" max="100" title="最大数量" placeholder="不限" />
+        <button type="button" class="remove-pool" data-idx="{{@index}}" title="移除"><i class="fas fa-trash"></i></button>
+      </div>
+      {{/each}}
+    </div>
+    <button type="button" class="add-pool" style="margin-top:4px;"><i class="fas fa-plus"></i> 添加房间类型</button>
+  </fieldset>
+
+  {{!-- Advanced Options --}}
+  <fieldset>
+    <legend><i class="fas fa-sliders-h"></i> 高级选项</legend>
+    <div class="form-group">
+      <label>
+        <input type="checkbox" name="allowRotation" {{#if allowRotation}}checked{{/if}} />
+        允许旋转图块
+      </label>
+    </div>
+    <div class="form-group">
+      <label>
+        <input type="checkbox" name="wallMergeEnabled" {{#if wallMergeEnabled}}checked{{/if}} />
+        启用墙体合并
+      </label>
+    </div>
+    <div class="form-group-row" style="display:flex;gap:8px;">
+      <div class="form-group" style="flex:1;">
+        <label>分支因子 <span class="hint">(0-1)</span></label>
+        <input type="number" name="branchingFactor" value="{{branchingFactor}}" min="0" max="1" step="0.05" />
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label>死胡同比例 <span class="hint">(0-1)</span></label>
+        <input type="number" name="deadEndRatio" value="{{deadEndRatio}}" min="0" max="1" step="0.05" />
+      </div>
+    </div>
+    <div class="form-group-row" style="display:flex;gap:8px;">
+      <div class="form-group" style="flex:1;">
+        <label>环路概率 <span class="hint">(0-1)</span></label>
+        <input type="number" name="loopChance" value="{{loopChance}}" min="0" max="1" step="0.05" />
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label>走廊密度 <span class="hint">(0-1)</span></label>
+        <input type="number" name="corridorDensity" value="{{corridorDensity}}" min="0" max="1" step="0.05" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>最大求解时间 (毫秒)</label>
+      <input type="number" name="maxSolveTimeMs" value="{{maxSolveTimeMs}}" min="1000" max="60000" step="1000" />
+    </div>
+  </fieldset>
+
+  {{!-- Preview & Generate --}}
+  <fieldset>
+    <legend><i class="fas fa-eye"></i> 预览与生成</legend>
+    <div class="maze-preview-area" style="text-align:center;min-height:120px;background:#1a1a2e;border:1px solid #333;border-radius:4px;padding:8px;margin-bottom:8px;">
+      <canvas id="maze-preview-canvas" width="400" height="400" style="max-width:100%;"></canvas>
+      <p class="hint" id="maze-preview-hint">点击「预览」按钮生成布局预览</p>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;">
+      <button type="button" class="maze-preview-btn"><i class="fas fa-search"></i> 预览</button>
+      <button type="button" class="maze-generate-btn"><i class="fas fa-magic"></i> 生成迷宫</button>
+    </div>
+  </fieldset>
+</div>

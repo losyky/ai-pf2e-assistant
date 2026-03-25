@@ -726,6 +726,139 @@
   color: #555 !important;
 }
 
+/* ---------- 迷宫构造器 ---------- */
+
+.maze-config-app .window-content {
+  padding: 8px 12px;
+  overflow-y: auto;
+}
+
+.maze-config fieldset {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.maze-config fieldset legend {
+  font-weight: 600;
+  font-size: 0.9em;
+  color: #495057;
+  padding: 0 6px;
+}
+
+/* 终点房 / 房间池的每行布局 */
+.maze-config .endpoint-row,
+.maze-config .pool-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.maze-config .endpoint-row select,
+.maze-config .pool-row select {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 6px;
+  height: 28px;
+  font-size: 0.85em;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.maze-config .endpoint-row input[type="number"],
+.maze-config .pool-row input[type="number"] {
+  width: 48px;
+  min-width: 0;
+  flex: 0 0 48px;
+  padding: 3px 4px;
+  height: 28px;
+  font-size: 0.85em;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  text-align: center;
+}
+
+/* 删除按钮：小巧图标样式 */
+.maze-config .remove-endpoint,
+.maze-config .remove-pool {
+  flex: 0 0 auto;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: none !important;
+  border: none !important;
+  color: #c0392b !important;
+  opacity: 0.65;
+  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.8em;
+  border-radius: 3px;
+  transition: opacity 0.15s, background 0.15s;
+  font-weight: normal !important;
+}
+
+.maze-config .remove-endpoint:hover,
+.maze-config .remove-pool:hover {
+  opacity: 1;
+  background: rgba(192, 57, 43, 0.12) !important;
+}
+
+/* 添加按钮 */
+.maze-config .add-endpoint,
+.maze-config .add-pool {
+  width: 100%;
+  padding: 4px 8px !important;
+  font-size: 0.85em !important;
+  font-weight: normal !important;
+  background: rgba(67, 97, 238, 0.08) !important;
+  border: 1px dashed #aab !important;
+  border-radius: 3px !important;
+  color: #4361ee !important;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+
+.maze-config .add-endpoint:hover,
+.maze-config .add-pool:hover {
+  background: rgba(67, 97, 238, 0.16) !important;
+}
+
+/* 预览与生成按钮 */
+.maze-config .maze-preview-btn,
+.maze-config .maze-generate-btn {
+  padding: 5px 14px !important;
+  font-size: 0.9em !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+  border: none !important;
+  cursor: pointer;
+}
+
+.maze-config .maze-preview-btn {
+  background: #6c757d !important;
+  color: #fff !important;
+}
+
+.maze-config .maze-preview-btn:hover {
+  background: #5a6268 !important;
+}
+
+.maze-config .maze-generate-btn {
+  background: #4361ee !important;
+  color: #fff !important;
+}
+
+.maze-config .maze-generate-btn:hover {
+  background: #3451d1 !important;
+}
+
 /* ---------- 放置预览覆盖层 ---------- */
 
 #map-placement-overlay {

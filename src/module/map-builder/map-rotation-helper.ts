@@ -120,14 +120,14 @@ export class MapRotationHelper {
   ): { x: number; y: number } {
     switch (rotation) {
       case 90:
-        // 顺时针90度：新x = y, 新y = cols - x
-        return { x: y, y: cols - x };
+        // 顺时针90度：原左下→新左上，新x = rows - y，新y = x
+        return { x: rows - y, y: x };
       case 180:
         // 180度：新x = cols - x, 新y = rows - y
         return { x: cols - x, y: rows - y };
       case 270:
-        // 顺时针270度：新x = rows - y, 新y = x
-        return { x: rows - y, y: x };
+        // 顺时针270度（逆时针90度）：原右上→新左上，新x = y，新y = cols - x
+        return { x: y, y: cols - x };
       default:
         return { x, y };
     }

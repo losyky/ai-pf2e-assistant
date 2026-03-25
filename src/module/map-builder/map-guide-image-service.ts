@@ -170,7 +170,10 @@ export class MapGuideImageService {
 
     await this.ensureDirectory(MAP_GUIDES_DIR);
 
-    const filename = `guide-${template.id}.png`;
+    // 文件名包含旋转角度，避免同模板不同旋转时互相覆盖
+    const rotation = template.rotation ?? 0;
+    const rotationSuffix = rotation !== 0 ? `-r${rotation}` : '';
+    const filename = `guide-${template.id}${rotationSuffix}.png`;
     const file = new File([blob], filename, { type: 'image/png' });
 
     // 兼容 Foundry VTT v13+ 的 FilePicker 命名空间

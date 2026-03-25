@@ -100,13 +100,14 @@ export class MapTileGalleryApp extends Application {
     });
   }
 
-  private async _onPlace(templateId: string, imagePath: string, rotation?: MapRotation): Promise<void> {
+  private async _onPlace(templateId: string, imagePath: string, imageRotation: MapRotation = 0): Promise<void> {
     if (!canvas?.scene) {
       ui.notifications.warn('请先打开一个场景');
       return;
     }
     this.close();
-    await MapDropHandler.placeWithExistingImage(templateId, imagePath, rotation);
+    // 传入图像文件生成时的旋转角度，放置预览以此为基础方向
+    await MapDropHandler.placeWithExistingImage(templateId, imagePath, imageRotation);
   }
 
   private _onDelete(path: string): void {

@@ -17,6 +17,28 @@
       </select>
       <span class="grid-info hint">{{gridInfo}}</span>
     </div>
+    <div class="form-group-row" style="display:flex;gap:8px;">
+      <div class="form-group" style="flex:1;">
+        <label>房间类型</label>
+        <select name="roomType">
+          {{#each roomTypes}}
+          <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label>稀有度</label>
+        <select name="rarity">
+          {{#each rarities}}
+          <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>标签 <span class="hint">(逗号分隔)</span></label>
+      <input type="text" name="roomTags" value="{{roomTagsStr}}" placeholder="如：火焰,地下,古代" />
+    </div>
   </div>
 
   <div class="editor-body">

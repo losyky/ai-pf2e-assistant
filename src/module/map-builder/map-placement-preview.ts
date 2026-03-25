@@ -21,12 +21,18 @@ export class MapPlacementPreview {
   
   private placementStep: 'position' | 'rotation' = 'position';
   private selectedPosition: { x: number; y: number } | null = null;
+  /** 用户在本次放置预览中选择的旋转角度，初始为 defaultRotation */
   private currentRotation: MapRotation = 0;
   private rotationIndicator: any = null;
 
-  constructor(template: MapTemplate, defaultRotation?: MapRotation) {
-    this.template = template;
-    this.currentRotation = defaultRotation || template.rotation || 0;
+  /**
+   * @param template 原始（未旋转）的模板
+   * @param defaultRotation 放置预览开始时的默认旋转角度（通常对应图像文件生成时的角度）
+   */
+  constructor(template: MapTemplate, defaultRotation: MapRotation = 0) {
+    // 始终使用原始模板（不含 rotation 字段），旋转状态由 currentRotation 单独管理
+    this.template = { ...template, rotation: 0 };
+    this.currentRotation = defaultRotation;
   }
 
   private get totalWidth(): number {

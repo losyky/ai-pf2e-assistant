@@ -1,0 +1,89 @@
+<div class="roguelike-collection-manager">
+  <div class="rcm-header">
+    <h2><i class="fas fa-layer-group"></i> Roguelike 集合宏配置</h2>
+    <p class="rcm-description">创建集合宏，允许玩家从多个抽取宏中选择一个执行</p>
+  </div>
+
+  <div class="rcm-content">
+    {{!-- 基础配置 --}}
+    <div class="rcm-basic-config">
+      <div class="form-group">
+        <label>集合宏名称</label>
+        <input type="text" name="title" value="{{config.title}}" placeholder="输入集合宏名称" />
+        <span class="hint">此名称将作为创建的宏的名称</span>
+      </div>
+    </div>
+
+    {{!-- 宏列表 --}}
+    <div class="rcm-macro-section">
+      <h4>包含的抽取宏</h4>
+
+      <div class="collection-macro-drop-zone">
+        <i class="fas fa-arrows-alt"></i>
+        <span>拖拽 Roguelike 抽取宏到此处添加</span>
+      </div>
+
+      {{#if config.macros.length}}
+      <ol class="rcm-macro-list">
+        {{#each config.macros}}
+        <li class="rcm-macro-row" data-index="{{@index}}">
+          <div class="rcm-macro-order">{{add @index 1}}</div>
+          <img src="{{this.img}}" class="rcm-macro-img" alt="{{this.name}}" />
+          <span class="rcm-macro-name">{{this.name}}</span>
+          <div class="rcm-macro-controls">
+            {{#unless (eq @index 0)}}
+            <button type="button" class="move-up-btn" data-index="{{@index}}" title="上移">
+              <i class="fas fa-chevron-up"></i>
+            </button>
+            {{/unless}}
+            {{#unless (eq @index (subtract ../config.macros.length 1))}}
+            <button type="button" class="move-down-btn" data-index="{{@index}}" title="下移">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            {{/unless}}
+            <button type="button" class="remove-macro-btn" data-index="{{@index}}" title="删除">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </li>
+        {{/each}}
+      </ol>
+      {{else}}
+      <div class="rcm-empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>暂无抽取宏，请拖拽宏到上方区域添加</p>
+      </div>
+      {{/if}}
+    </div>
+
+    {{!-- Ban List 配置 --}}
+    <div class="rcm-banlist-section">
+      <h4>Ban List（可选）</h4>
+      <div class="rcm-banlist-checkboxes">
+        {{#if allBanLists.length}}
+          {{#each allBanLists}}
+          <label class="rcm-checkbox-label">
+            <input type="checkbox" class="banlist-checkbox" value="{{id}}" 
+                   {{#if (includes ../config.banListIds id)}}checked{{/if}} />
+            {{name}}
+          </label>
+          {{/each}}
+        {{else}}
+          <p class="hint">暂无可用的 Ban List，请先在 Ban List 管理器中创建。</p>
+        {{/if}}
+      </div>
+      <span class="hint">选中的 Ban List 将应用于集合中的所有抽取宏，且不会污染原宏的配置</span>
+    </div>
+  </div>
+
+  <div class="rcm-footer">
+    <div class="rcm-button-group">
+      <button type="button" class="create-collection-macro-btn">
+        <i class="fas fa-save"></i> 创建集合宏
+      </button>
+      <button type="button" class="test-collection-btn">
+        <i class="fas fa-vial"></i> 测试集合
+      </button>
+    </div>
+  </div>
+</div>

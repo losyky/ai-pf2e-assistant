@@ -1090,9 +1090,64 @@
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
+.roguelike-summary-item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .roguelike-summary-name {
   font-weight: bold;
   color: #1a1a1a;
+}
+
+.roguelike-summary-meta {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+/* 连续抽取特定样式 */
+.sequential-progress-bar {
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.sequential-progress-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.sequential-progress-info i {
+  color: #7209b7;
+}
+
+.sequential-progress-track {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sequential-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4361ee 0%, #7209b7 100%);
+  transition: width 0.3s ease;
+}
+
+.sequential-macro-info {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 
 .roguelike-finish-btn {

@@ -1,0 +1,15 @@
+{
+    "_id": "RLCollectionMgr01",
+    "name": "Roguelike 集合宏管理器",
+    "type": "script",
+    "scope": "global",
+    "img": "icons/svg/dice-target.svg",
+    "command": "// ======================================\n// Roguelike 集合宏管理器\n// ======================================\n// 打开集合宏管理器，GM可以创建集合宏。\n// 集合宏允许玩家从多个配置的抽取宏中选择一个执行。\n// ======================================\n\nif (!game.user.isGM) {\n  ui.notifications.error('只有 GM 可以使用集合宏管理器');\n} else {\n  const mod = game.modules.get('ai-pf2e-assistant');\n  if (!mod?.api?.roguelike?.openCollectionManager) {\n    ui.notifications.warn('Roguelike 集合宏管理器不可用，请确认模块已启用');\n  } else {\n    mod.api.roguelike.openCollectionManager();\n  }\n}",
+    "author": "AIPf2eBuilder000",
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+        "default": 0
+    },
+    "flags": {}
+}

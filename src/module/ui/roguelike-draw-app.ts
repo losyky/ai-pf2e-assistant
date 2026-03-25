@@ -192,6 +192,7 @@ export class RoguelikeDrawApp extends Application {
   private advanceRound(): void {
     if (this.currentRound >= this.config.totalDraws!) {
       this.isFinished = true;
+      this.broadcastToChat();
       this.render(false);
       return;
     }
@@ -199,6 +200,47 @@ export class RoguelikeDrawApp extends Application {
     this.currentRound++;
     this.drawNewRound();
     this.render(false);
+  }
+
+  private async broadcastToChat(): Promise<void> {
+    if (this.allSelectedItems.length === 0) {
+      return;
+    }
+
+    const actor = this.config.actor;
+    const actorName = actor?.name || '未知角色';
+    const macroTitle = this.config.title || 'Roguelike 抽取';
+
+    const itemListHtml = this.allSelectedItems.map(item => {
+      const typeLabel = this.getTypeLabel(item.type);
+      return `<li style="display: flex; align-items: center; margin: 4px 0;">
+        <img src="${item.img}" style="width: 32px; height: 32px; border: none; margin-right: 8px;" />
+        <span><strong>${item.name}</strong> (${typeLabel})</span>
+      </li>`;
+    }).join('');
+
+    const content = `
+      <div class="roguelike-draw-broadcast" style="padding: 8px;">
+        <h3 style="margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
+          <i class="fas fa-dice"></i> ${macroTitle}
+        </h3>
+        <p><strong>${actorName}</strong> 完成了抽取，选择了以下内容：</p>
+        <ul style="list-style: none; padding: 0; margin: 8px 0;">
+          ${itemListHtml}
+        </ul>
+      </div>
+    `;
+
+    try {
+      await (ChatMessage as any).create({
+        user: (game as any).user?.id,
+        speaker: { alias: actorName },
+        content,
+        whisper: [],
+      });
+    } catch (error) {
+      console.error('[RoguelikeDrawApp] 广播到聊天失败:', error);
+    }
   }
 
   private async storeItem(actor: any, itemData: any): Promise<void> {

@@ -23,7 +23,7 @@ import { RoguelikeBanlistManagerApp } from './ui/roguelike-banlist-manager-app';
 import { VaultRulesConfigManager } from './ui/config-managers/vault-rules-config-manager';
 import { MerchantConfigApp } from './ui/merchant-config-app';
 import { ArchetypeGeneratorApp } from './ui/archetype-generator-app';
-import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler, MapTileGalleryApp } from './map-builder';
+import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler, MapTileGalleryApp, MazeConfigApp } from './map-builder';
 // 不直接导入game对象，而是在需要时使用全局访问
 // import { Hooks, ui, game } from '../foundry-imports';
 import { Hooks, ui } from '../foundry-imports';
@@ -677,6 +677,17 @@ export class AIPF2eAssistant {
           new MapTileGalleryApp().render(true);
         }
       };
+      aiTools['ai-maze-config'] = {
+        name: 'ai-maze-config',
+        title: game.i18n.localize('AIPF2E.tools.mazeConfig'),
+        icon: 'fas fa-dungeon',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 迷宫构造器按钮被点击`);
+          MazeConfigApp.open();
+        }
+      };
     }
     
     // 添加所有工具
@@ -875,6 +886,14 @@ export class AIPF2eAssistant {
             button: true,
             visible: true,
             onClick: () => { new MapTileGalleryApp().render(true); }
+          },
+          {
+            name: 'ai-maze-config',
+            title: game.i18n.localize('AIPF2E.tools.mazeConfig'),
+            icon: 'fas fa-dungeon',
+            button: true,
+            visible: true,
+            onClick: () => { MazeConfigApp.open(); }
           }
         );
       }
@@ -8105,6 +8124,35 @@ function registerHandlebarsHelpers() {
     
     Handlebars.registerHelper('gte', function(a: any, b: any) {
       return a >= b;
+    });
+    
+    // 数学运算
+    Handlebars.registerHelper('add', function(a: any, b: any) {
+      return (Number(a) || 0) + (Number(b) || 0);
+    });
+
+    Handlebars.registerHelper('subtract', function(a: any, b: any) {
+      return (Number(a) || 0) - (Number(b) || 0);
+    });
+
+    Handlebars.registerHelper('multiply', function(a: any, b: any) {
+      return (Number(a) || 0) * (Number(b) || 0);
+    });
+
+    Handlebars.registerHelper('divide', function(a: any, b: any) {
+      const divisor = Number(b) || 1;
+      return (Number(a) || 0) / divisor;
+    });
+
+    // 数组/字符串包含检查
+    Handlebars.registerHelper('includes', function(array: any, value: any) {
+      if (Array.isArray(array)) {
+        return array.includes(value);
+      }
+      if (typeof array === 'string') {
+        return array.includes(value);
+      }
+      return false;
     });
     
     Logger.debug('Handlebars辅助函数注册成功');

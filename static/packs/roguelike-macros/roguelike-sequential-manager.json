@@ -1,0 +1,15 @@
+{
+    "_id": "RLSequentialMgr01",
+    "name": "Roguelike 连续抽取宏管理器",
+    "type": "script",
+    "scope": "global",
+    "img": "icons/svg/clockwork.svg",
+    "command": "// ======================================\n// Roguelike 连续抽取宏管理器\n// ======================================\n// 打开连续抽取宏管理器，GM可以创建连续抽取宏。\n// 连续抽取宏会按顺序串行执行多个配置的抽取宏。\n// ======================================\n\nif (!game.user.isGM) {\n  ui.notifications.error('只有 GM 可以使用连续抽取宏管理器');\n} else {\n  const mod = game.modules.get('ai-pf2e-assistant');\n  if (!mod?.api?.roguelike?.openSequentialManager) {\n    ui.notifications.warn('Roguelike 连续抽取宏管理器不可用，请确认模块已启用');\n  } else {\n    mod.api.roguelike.openSequentialManager();\n  }\n}",
+    "author": "AIPf2eBuilder000",
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+        "default": 0
+    },
+    "flags": {}
+}

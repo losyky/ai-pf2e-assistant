@@ -1,0 +1,27 @@
+<div class="roguelike-collection-selector">
+  <div class="collection-header">
+    <p>角色: <strong>{{actorName}}</strong></p>
+    <p>请选择要使用的抽取宏：</p>
+  </div>
+
+  <div class="collection-macro-list">
+    {{#each macros}}
+    <div class="collection-macro-card {{#unless exists}}disabled{{/unless}}" data-uuid="{{uuid}}">
+      <img src="{{img}}" alt="{{name}}" class="macro-img" />
+      <div class="macro-info">
+        <h4 class="macro-name">{{name}}</h4>
+        {{#unless exists}}
+        <span class="macro-unavailable">（宏不存在）</span>
+        {{/unless}}
+      </div>
+      <i class="fas fa-chevron-right"></i>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="collection-footer">
+    <button type="button" class="collection-cancel-btn">
+      <i class="fas fa-times"></i> 取消
+    </button>
+  </div>
+</div>

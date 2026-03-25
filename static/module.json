@@ -35,9 +35,12 @@
     "styles/ai-pf2e-assistant.css",
     "styles/feat-storage-sheet.css",
     "styles/tactical-manual.css",
+    "styles/config-managers.css",
+    "styles/merchant.css",
     "styles/map-builder.css",
     "styles/roguelike-draw-point-manager.css",
-    "styles/merchant.css"
+    "styles/roguelike-collection-manager.css",
+    "styles/roguelike-sequential-manager.css"
   ],
   "socket": false,
   "url": "",
@@ -83,7 +86,7 @@
     },
     {
       "name": "roguelike-macros",
-      "label": "Roguelike 工具宏",
+      "label": "Roguelike 实用宏",
       "path": "packs/roguelike-macros",
       "type": "Macro"
     },

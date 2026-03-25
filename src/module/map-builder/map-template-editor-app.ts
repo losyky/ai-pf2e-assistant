@@ -1,5 +1,6 @@
 import { MODULE_ID, MAP_SIZE_PRESETS } from '../constants';
-import { MapTemplate, MapWallSegment, MapWallType, WALL_TYPE_CONFIG } from './types';
+import { MapTemplate, MapWallSegment, MapWallType, WALL_TYPE_CONFIG, RoomType, RoomRarity } from './types';
+import { ROOM_TYPE_CONFIG, ROOM_RARITY_CONFIG } from './maze-types';
 import { MapTemplateService } from './map-template-service';
 import { MapGuideImageService } from './map-guide-image-service';
 
@@ -91,6 +92,17 @@ export class MapTemplateEditorApp extends Application {
         selected: wt === this.currentWallType,
       })),
       currentWallType: this.currentWallType,
+      roomTypes: (Object.keys(ROOM_TYPE_CONFIG) as RoomType[]).map(rt => ({
+        id: rt,
+        label: ROOM_TYPE_CONFIG[rt].label,
+        selected: rt === (t.roomType || 'empty'),
+      })),
+      rarities: (Object.keys(ROOM_RARITY_CONFIG) as RoomRarity[]).map(r => ({
+        id: r,
+        label: ROOM_RARITY_CONFIG[r].label,
+        selected: r === (t.rarity || 'common'),
+      })),
+      roomTagsStr: (t.roomTags || []).join(', '),
     };
   }
 
@@ -138,6 +150,17 @@ export class MapTemplateEditorApp extends Application {
 
     html.find('select[name="sizePreset"]').on('change', (ev: any) => {
       this._onSizePresetChange(ev.target.value);
+    });
+
+    html.find('select[name="roomType"]').on('change', (ev: any) => {
+      this.templateData.roomType = ev.target.value as RoomType;
+    });
+    html.find('select[name="rarity"]').on('change', (ev: any) => {
+      this.templateData.rarity = ev.target.value as RoomRarity;
+    });
+    html.find('input[name="roomTags"]').on('change', (ev: any) => {
+      const raw = (ev.target as HTMLInputElement).value;
+      this.templateData.roomTags = raw.split(/[,，]/).map((s: string) => s.trim()).filter(Boolean);
     });
 
     this._drawEditor();
@@ -449,6 +472,9 @@ export class MapTemplateEditorApp extends Application {
         this.templateData.description = imported.description;
         this.templateData.gridCols = imported.gridCols;
         this.templateData.gridRows = imported.gridRows;
+        this.templateData.roomType = imported.roomType;
+        this.templateData.rarity = imported.rarity;
+        this.templateData.roomTags = imported.roomTags;
         this._updateCanvasSize();
         this._drawEditor();
         this._drawPreview();

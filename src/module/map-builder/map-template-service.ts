@@ -1,5 +1,5 @@
 import { MODULE_ID, MAP_CELL_SIZE, MAP_DEFAULT_COLS, MAP_DEFAULT_ROWS } from '../constants';
-import { MapTemplate, MapWallSegment, MapWallType } from './types';
+import { MapTemplate, MapWallSegment, MapWallType, RoomType, RoomRarity } from './types';
 
 declare const game: any;
 declare const foundry: any;
@@ -13,10 +13,13 @@ interface StoredMapTemplate {
   gridSize?: number;
   cells: string;
   walls: string;
+  roomType?: RoomType;
+  roomTags?: string;
+  rarity?: RoomRarity;
 }
 
 function serialize(t: MapTemplate): StoredMapTemplate {
-  return {
+  const s: StoredMapTemplate = {
     id: t.id,
     name: t.name,
     description: t.description,
@@ -25,6 +28,10 @@ function serialize(t: MapTemplate): StoredMapTemplate {
     cells: t.cells.map(row => row.map(c => c ? '1' : '0').join('')).join(''),
     walls: JSON.stringify(t.walls),
   };
+  if (t.roomType) s.roomType = t.roomType;
+  if (t.rarity) s.rarity = t.rarity;
+  if (t.roomTags && t.roomTags.length > 0) s.roomTags = JSON.stringify(t.roomTags);
+  return s;
 }
 
 function deserialize(s: StoredMapTemplate): MapTemplate {
@@ -41,7 +48,11 @@ function deserialize(s: StoredMapTemplate): MapTemplate {
   }
   let walls: MapWallSegment[] = [];
   try { walls = JSON.parse(s.walls || '[]'); } catch { /* empty */ }
-  return {
+  let roomTags: string[] | undefined;
+  if (s.roomTags) {
+    try { roomTags = JSON.parse(s.roomTags); } catch { /* empty */ }
+  }
+  const t: MapTemplate = {
     id: s.id,
     name: s.name,
     description: s.description,
@@ -51,6 +62,10 @@ function deserialize(s: StoredMapTemplate): MapTemplate {
     cells,
     walls,
   };
+  if (s.roomType) t.roomType = s.roomType;
+  if (s.rarity) t.rarity = s.rarity;
+  if (roomTags && roomTags.length > 0) t.roomTags = roomTags;
+  return t;
 }
 
 function migrateOldFormat(raw: any): StoredMapTemplate | null {
