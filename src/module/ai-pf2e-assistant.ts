@@ -9245,7 +9245,7 @@ class BalanceKeywordsManagerDialog extends FormApplication {
     const foundry = (window as any).foundry;
     return foundry?.utils?.mergeObject ? foundry.utils.mergeObject(super.defaultOptions, {
       id: "ai-pf2e-balance-keywords-manager-dialog",
-      classes: ["ai-pf2e-assistant"],
+      classes: ["ai-pf2e-assistant-container"],
       dragDrop: [],
       tabs: [],
       filters: [],
@@ -9253,7 +9253,7 @@ class BalanceKeywordsManagerDialog extends FormApplication {
     }) : {
       ...super.defaultOptions,
       id: "ai-pf2e-balance-keywords-manager-dialog",
-      classes: ["ai-pf2e-assistant"],
+      classes: ["ai-pf2e-assistant-container"],
       dragDrop: [],
       tabs: [],
       filters: [],

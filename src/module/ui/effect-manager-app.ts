@@ -19,7 +19,7 @@ export class EffectManagerApp extends Application {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       id: 'effect-manager',
-      classes: [MODULE_ID, 'effect-manager'],
+      classes: ['ai-pf2e-assistant-container', 'effect-manager'],
       title: 'Effect管理器',
       template: `modules/${MODULE_ID}/templates/effect-manager-app.hbs`,
       width: 700,

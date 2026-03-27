@@ -16,7 +16,7 @@ export class MapStyleConfigApp extends FormApplication {
       template: `modules/${MODULE_ID}/templates/map-style-config.hbs`,
       width: 520,
       height: 'auto',
-      classes: ['ai-pf2e-assistant', 'config-manager', 'map-style-config-app'],
+      classes: ['config-manager', 'map-style-config-app'],
       closeOnSubmit: true,
       submitOnChange: false,
     });

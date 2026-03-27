@@ -13,7 +13,7 @@ export abstract class BaseConfigManager extends FormApplication {
     return foundry.utils.mergeObject(super.defaultOptions, {
       width: 600,
       height: 'auto',
-      classes: ['ai-pf2e-assistant', 'config-manager'],
+      classes: ['config-manager'],
       resizable: true,
       closeOnSubmit: false,
       submitOnChange: false,

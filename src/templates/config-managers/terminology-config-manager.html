@@ -22,11 +22,11 @@
   {{#if stats.byCategory}}
   <div class="form-group">
     <label>按类别统计</label>
-    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #dee2e6;">
+    <div style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-border-light-tertiary, #555);">
       {{#each stats.byCategory}}
-        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f0f0;">
+        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
           <span>{{@key}}</span>
-          <span style="font-weight: 600; color: #4361ee;">{{this}} 个</span>
+          <span style="font-weight: 600;">{{this}} 个</span>
         </div>
       {{/each}}
     </div>

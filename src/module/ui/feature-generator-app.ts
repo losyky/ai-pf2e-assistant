@@ -41,7 +41,7 @@ export class FeatureGeneratorApp extends FormApplication {
       width: 800,
       height: 700,
       resizable: true,
-      classes: ['ai-pf2e-assistant', 'feature-generator']
+      classes: ['ai-pf2e-assistant-container', 'feature-generator-app']
     };
   }
 
