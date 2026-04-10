@@ -1,11 +1,13 @@
 import { MODULE_ID } from '../constants';
-import { MapTemplate, MapDropData } from './types';
+import { MapTemplate, MapDropData, MapRotation, MapStyleConfig } from './types';
 import { MapTemplateService } from './map-template-service';
 import { MapGuideImageService } from './map-guide-image-service';
 import { MapTemplateEditorApp } from './map-template-editor-app';
 import { MapStyleConfigApp } from './map-style-config-app';
 import { MapDropHandler } from './map-drop-handler';
 import { MapTileGalleryApp } from './map-tile-gallery-app';
+import { MapImageGenerationService } from './map-image-generation-service';
+import { MapRotationHelper } from './map-rotation-helper';
 
 declare const Application: any;
 declare const foundry: any;
@@ -79,6 +81,7 @@ export class MapTemplatePanelApp extends Application {
       if (!id) return;
       switch (action) {
         case 'place': this._onPlace(id); break;
+        case 'generate': this._onGenerate(id); break;
         case 'template-gallery': this._onTemplateGallery(id); break;
         case 'edit': this._onEdit(id); break;
         case 'duplicate': this._onDuplicate(id); break;
@@ -107,6 +110,67 @@ export class MapTemplatePanelApp extends Application {
       return;
     }
     MapDropHandler.placeAtCenter(id);
+  }
+
+  private _onGenerate(id: string): void {
+    const service = MapTemplateService.getInstance();
+    const template = service.getById(id);
+    if (!template) return;
+
+    const content = `
+      <div style="padding:8px;">
+        <p style="margin-bottom:8px;">选择生成方向（可同时选择多个）：</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <label style="cursor:pointer;"><input type="checkbox" name="rot" value="0" checked /> ↑ 北 (0°)</label>
+          <label style="cursor:pointer;"><input type="checkbox" name="rot" value="90" /> → 东 (90°)</label>
+          <label style="cursor:pointer;"><input type="checkbox" name="rot" value="180" /> ↓ 南 (180°)</label>
+          <label style="cursor:pointer;"><input type="checkbox" name="rot" value="270" /> ← 西 (270°)</label>
+        </div>
+      </div>`;
+
+    Dialog.confirm({
+      title: `生成图块 — ${template.name}`,
+      content,
+      yes: async (html: any) => {
+        const checked = html.find('input[name="rot"]:checked');
+        const rotations: MapRotation[] = [];
+        checked.each((_: number, el: HTMLInputElement) => {
+          rotations.push(parseInt(el.value, 10) as MapRotation);
+        });
+        if (rotations.length === 0) {
+          ui.notifications.warn('请至少选择一个方向');
+          return;
+        }
+        for (const rot of rotations) {
+          await this._generateTileImage(template, rot);
+        }
+      },
+    });
+  }
+
+  private async _generateTileImage(template: MapTemplate, rotation: MapRotation): Promise<void> {
+    const scene = canvas?.scene;
+    if (!scene) {
+      ui.notifications.warn('请先打开一个场景（需要场景的风格配置）');
+      return;
+    }
+    const styleConfig = (scene.getFlag(MODULE_ID, 'mapStyle') as MapStyleConfig) || {} as MapStyleConfig;
+    if (!styleConfig.stylePrompt) {
+      ui.notifications.warn('请先在「风格配置」中设置提示词');
+      return;
+    }
+
+    const rotLabel = ['↑北', '→东', '↓南', '←西'][rotation / 90] || `${rotation}°`;
+    ui.notifications.info(`开始生成「${template.name}」(${rotLabel}) 的图块...`);
+
+    try {
+      const rotated = MapRotationHelper.rotateTemplate(template, rotation);
+      const genService = MapImageGenerationService.getInstance();
+      await genService.generateMapImage(rotated, styleConfig, rotation);
+      ui.notifications.info(`「${template.name}」(${rotLabel}) 图块生成完成！`);
+    } catch (err: any) {
+      ui.notifications.error(`图块生成失败: ${err.message}`);
+    }
   }
 
   private _onNew(): void {

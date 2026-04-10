@@ -1,0 +1,55 @@
+<div class="maze-blueprint-panel">
+  <div class="panel-header">
+    <h3>迷宫蓝图</h3>
+    <div class="panel-actions">
+      <button class="panel-btn" data-action="new" title="AI 生成新迷宫">
+        <i class="fas fa-magic"></i> 新建
+      </button>
+      <button class="panel-btn" data-action="import" title="导入蓝图 JSON">
+        <i class="fas fa-file-import"></i> 导入
+      </button>
+    </div>
+  </div>
+
+  <div class="panel-hint">
+    <i class="fas fa-info-circle"></i> 点击 <i class="fas fa-magic"></i> 新建 使用 AI 生成迷宫，或将蓝图拖入场景放置
+  </div>
+
+  {{#if hasBlueprints}}
+  <div class="blueprint-list">
+    {{#each blueprints}}
+    <div class="blueprint-card" data-blueprint-id="{{this.id}}" draggable="true">
+      <div class="blueprint-thumbnail">
+        <canvas class="blueprint-thumb-canvas" data-blueprint-id="{{this.id}}" width="96" height="96"></canvas>
+      </div>
+      <div class="blueprint-info">
+        <span class="blueprint-name">{{this.name}}</span>
+        <span class="blueprint-desc">{{this.gridWidth}}×{{this.gridHeight}} | {{this.placementCount}} 图块</span>
+        {{#if this.hasIntegrityIssue}}
+        <span class="blueprint-warning"><i class="fas fa-exclamation-triangle"></i> 模板缺失</span>
+        {{/if}}
+      </div>
+      <div class="blueprint-actions">
+        <button class="blueprint-action-btn" data-action="place" data-blueprint-id="{{this.id}}" title="放置到场景">
+          <i class="fas fa-crosshairs"></i>
+        </button>
+        <button class="blueprint-action-btn" data-action="edit" data-blueprint-id="{{this.id}}" title="在构造器中编辑">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="blueprint-action-btn" data-action="export" data-blueprint-id="{{this.id}}" title="导出 JSON">
+          <i class="fas fa-file-export"></i>
+        </button>
+        <button class="blueprint-action-btn danger" data-action="delete" data-blueprint-id="{{this.id}}" title="删除">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{else}}
+  <div class="empty-state">
+    <i class="fas fa-dungeon"></i>
+    <p>暂无蓝图，点击「新建」使用 AI 生成迷宫</p>
+  </div>
+  {{/if}}
+</div>

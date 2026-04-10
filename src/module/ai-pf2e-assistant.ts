@@ -23,7 +23,7 @@ import { RoguelikeBanlistManagerApp } from './ui/roguelike-banlist-manager-app';
 import { VaultRulesConfigManager } from './ui/config-managers/vault-rules-config-manager';
 import { MerchantConfigApp } from './ui/merchant-config-app';
 import { ArchetypeGeneratorApp } from './ui/archetype-generator-app';
-import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler, MapTileGalleryApp, MazeConfigApp } from './map-builder';
+import { MapTemplatePanelApp, MapStyleConfigApp, MapDropHandler, MapTileGalleryApp, MazeConfigApp, MazeBlueprintPanelApp } from './map-builder';
 // 不直接导入game对象，而是在需要时使用全局访问
 // import { Hooks, ui, game } from '../foundry-imports';
 import { Hooks, ui } from '../foundry-imports';
@@ -685,7 +685,18 @@ export class AIPF2eAssistant {
         visible: true,
         onClick: () => {
           console.log(`${MODULE_ID} | 迷宫构造器按钮被点击`);
-          MazeConfigApp.open();
+          MazeConfigApp.open(moduleInstance?.getAIServiceInstance());
+        }
+      };
+      aiTools['ai-maze-blueprint-panel'] = {
+        name: 'ai-maze-blueprint-panel',
+        title: game.i18n.localize('AIPF2E.tools.mazeBlueprintPanel'),
+        icon: 'fas fa-map',
+        button: true,
+        visible: true,
+        onClick: () => {
+          console.log(`${MODULE_ID} | 迷宫蓝图面板按钮被点击`);
+          MazeBlueprintPanelApp.open(moduleInstance?.getAIServiceInstance());
         }
       };
     }
@@ -893,7 +904,15 @@ export class AIPF2eAssistant {
             icon: 'fas fa-dungeon',
             button: true,
             visible: true,
-            onClick: () => { MazeConfigApp.open(); }
+            onClick: () => { MazeConfigApp.open(moduleInstance?.getAIServiceInstance()); }
+          },
+          {
+            name: 'ai-maze-blueprint-panel',
+            title: game.i18n.localize('AIPF2E.tools.mazeBlueprintPanel'),
+            icon: 'fas fa-map',
+            button: true,
+            visible: true,
+            onClick: () => { MazeBlueprintPanelApp.open(moduleInstance?.getAIServiceInstance()); }
           }
         );
       }
@@ -4033,6 +4052,10 @@ ${JSON.stringify(structureData, null, 2)}
       usePlayerKey?: boolean;
       // 指定使用的模型（优先级高于通用设置）
       model?: string;
+      // 温度参数（控制生成随机性）
+      temperature?: number;
+      // 最大 token 数（覆盖默认的 4000）
+      max_tokens?: number;
     }
   ): Promise<ApiResponse> {
     // 获取适用的API配置
@@ -4054,7 +4077,8 @@ ${JSON.stringify(structureData, null, 2)}
     const requestBody: ApiRequest = {
       model: model,
       messages: messages,
-      max_tokens: 4000
+      max_tokens: options?.max_tokens ?? 4000,
+      ...(options?.temperature !== undefined && { temperature: options.temperature }),
     };
     
     // 检测模型类型以确定使用哪种函数调用格式
@@ -8406,6 +8430,15 @@ function registerSettings() {
     // 地图模板数据（数组存储，元素为纯字符串属性的对象）
     game.settings.register(MODULE_ID, 'mapTemplates', {
       name: '地图模板数据',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: [],
+    });
+
+    // 迷宫蓝图数据
+    game.settings.register(MODULE_ID, 'mazeBlueprints', {
+      name: '迷宫蓝图数据',
       scope: 'world',
       config: false,
       type: Array,

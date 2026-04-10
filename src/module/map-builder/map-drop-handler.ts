@@ -1,10 +1,13 @@
 import { MODULE_ID, MAP_CELL_SIZE, MAP_TILES_DIR } from '../constants';
 import { MapDropData, MapTemplate, MapStyleConfig, WALL_TYPE_CONFIG, MapRotation } from './types';
+import type { MazeBlueprintDropData } from './maze-blueprint-types';
 import { MapTemplateService } from './map-template-service';
 import { MapGuideImageService } from './map-guide-image-service';
 import { MapImageGenerationService } from './map-image-generation-service';
 import { MapPlacementPreview, PlacementResult } from './map-placement-preview';
 import { MapRotationHelper } from './map-rotation-helper';
+import { MazeBlueprintService } from './maze-blueprint-service';
+import { MazeBuilderService } from './maze-builder-service';
 import { Logger } from '../utils/logger';
 
 declare const game: any;
@@ -26,6 +29,12 @@ export class MapDropHandler {
         Logger.debug('dropCanvasData hook received MapTemplate:', data.templateId);
         MapDropHandler._lastHandledTimestamp = Date.now();
         MapDropHandler.handleDrop(data as MapDropData);
+        return false;
+      }
+      if (data?.type === 'MazeBlueprint') {
+        Logger.debug('dropCanvasData hook received MazeBlueprint:', data.blueprintId);
+        MapDropHandler._lastHandledTimestamp = Date.now();
+        MapDropHandler.handleBlueprintDrop(data as MazeBlueprintDropData);
         return false;
       }
     });
@@ -63,6 +72,12 @@ export class MapDropHandler {
       if (!raw) return;
       data = JSON.parse(raw);
     } catch {
+      return;
+    }
+    if (data?.type === 'MazeBlueprint') {
+      Logger.debug('Board fallback drop received MazeBlueprint:', data.blueprintId);
+      MapDropHandler._lastHandledTimestamp = Date.now();
+      MapDropHandler.handleBlueprintDrop(data as MazeBlueprintDropData, event);
       return;
     }
     if (data?.type !== 'MapTemplate') return;
@@ -125,6 +140,57 @@ export class MapDropHandler {
     }
 
     return MapDropHandler.handleDropAt(data, dropX, dropY);
+  }
+
+  static async handleBlueprintDrop(data: MazeBlueprintDropData, dropEvent?: DragEvent): Promise<void> {
+    const scene = canvas?.scene;
+    if (!scene) {
+      ui.notifications.error('没有活动场景');
+      return;
+    }
+
+    const gridSize = scene.grid?.size || MAP_CELL_SIZE;
+    let dropX: number;
+    let dropY: number;
+
+    if (dropEvent) {
+      const pos = MapDropHandler._clientToCanvas(dropEvent.clientX, dropEvent.clientY);
+      dropX = Math.round(pos.x / gridSize) * gridSize;
+      dropY = Math.round(pos.y / gridSize) * gridSize;
+    } else if (canvas.mousePosition) {
+      const pos = canvas.mousePosition;
+      dropX = Math.round(pos.x / gridSize) * gridSize;
+      dropY = Math.round(pos.y / gridSize) * gridSize;
+    } else {
+      const viewCenter = MapDropHandler._getViewportCenter();
+      dropX = Math.round(viewCenter.x / gridSize) * gridSize;
+      dropY = Math.round(viewCenter.y / gridSize) * gridSize;
+    }
+
+    const service = MazeBlueprintService.getInstance();
+    const bp = service.getById(data.blueprintId);
+    if (!bp) {
+      ui.notifications.error('找不到迷宫蓝图');
+      return;
+    }
+
+    const missing = service.checkIntegrity(bp);
+    if (missing.length > 0) {
+      ui.notifications.warn(`蓝图引用了 ${missing.length} 个已删除的模板，无法放置`);
+      return;
+    }
+
+    try {
+      const builderService = MazeBuilderService.getInstance();
+      const result = await builderService.placeBlueprint(bp, dropX, dropY);
+      if (result) {
+        ui.notifications.info(
+          `迷宫已放置: ${result.tileIds.length} 图块, ${result.wallCount} 墙壁`,
+        );
+      }
+    } catch (err: any) {
+      ui.notifications.error(`迷宫放置失败: ${err.message || err}`);
+    }
   }
 
   static async handleDropAt(data: MapDropData, dropX: number, dropY: number): Promise<void> {

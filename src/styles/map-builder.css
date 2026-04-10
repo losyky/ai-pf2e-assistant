@@ -726,136 +726,331 @@
   color: #555 !important;
 }
 
-/* ---------- 迷宫构造器 ---------- */
+/* ---------- 迷宫构造器 (AI prompt-first) ---------- */
 
 .maze-config-app .window-content {
-  padding: 8px 12px;
+  padding: 0;
   overflow-y: auto;
 }
 
-.maze-config fieldset {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px 10px;
-  margin-bottom: 8px;
+/* -- Prompt section: the hero input -- */
+.maze-config .maze-prompt-section {
+  padding: 12px 14px 10px;
+  background: linear-gradient(135deg, rgba(67,97,238,0.04) 0%, rgba(67,97,238,0.01) 100%);
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.maze-config fieldset legend {
+.maze-config .maze-prompt-header {
   font-weight: 600;
-  font-size: 0.9em;
-  color: #495057;
-  padding: 0 6px;
+  font-size: 0.95em;
+  margin-bottom: 6px;
+  color: #333;
 }
 
-/* 终点房 / 房间池的每行布局 */
-.maze-config .endpoint-row,
-.maze-config .pool-row {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  margin-bottom: 4px;
+.maze-config .maze-prompt-header i {
+  margin-right: 6px;
+  color: #4361ee;
 }
 
-.maze-config .endpoint-row select,
-.maze-config .pool-row select {
-  flex: 1;
-  min-width: 0;
-  padding: 3px 6px;
-  height: 28px;
-  font-size: 0.85em;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  background: #fff;
-}
-
-.maze-config .endpoint-row input[type="number"],
-.maze-config .pool-row input[type="number"] {
-  width: 48px;
-  min-width: 0;
-  flex: 0 0 48px;
-  padding: 3px 4px;
-  height: 28px;
-  font-size: 0.85em;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  text-align: center;
-}
-
-/* 删除按钮：小巧图标样式 */
-.maze-config .remove-endpoint,
-.maze-config .remove-pool {
-  flex: 0 0 auto;
-  width: 24px !important;
-  height: 24px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: none !important;
-  border: none !important;
-  color: #c0392b !important;
-  opacity: 0.65;
-  cursor: pointer;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 0.8em;
-  border-radius: 3px;
-  transition: opacity 0.15s, background 0.15s;
-  font-weight: normal !important;
-}
-
-.maze-config .remove-endpoint:hover,
-.maze-config .remove-pool:hover {
-  opacity: 1;
-  background: rgba(192, 57, 43, 0.12) !important;
-}
-
-/* 添加按钮 */
-.maze-config .add-endpoint,
-.maze-config .add-pool {
+.maze-config textarea {
   width: 100%;
-  padding: 4px 8px !important;
-  font-size: 0.85em !important;
-  font-weight: normal !important;
-  background: rgba(67, 97, 238, 0.08) !important;
-  border: 1px dashed #aab !important;
-  border-radius: 3px !important;
-  color: #4361ee !important;
+  resize: vertical;
+  font-size: 0.9em;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.maze-config textarea:focus {
+  border-color: #4361ee;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(67,97,238,0.15);
+}
+
+.maze-config .maze-prompt-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.maze-config .maze-generate-btn {
+  flex: 1;
+  padding: 8px 16px !important;
+  font-size: 0.95em !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  border: none !important;
+  background: #4361ee !important;
+  color: #fff !important;
   cursor: pointer;
-  margin-top: 4px;
   transition: background 0.15s;
 }
 
-.maze-config .add-endpoint:hover,
-.maze-config .add-pool:hover {
-  background: rgba(67, 97, 238, 0.16) !important;
+.maze-config .maze-generate-btn:hover {
+  background: #3451d1 !important;
 }
 
-/* 预览与生成按钮 */
-.maze-config .maze-preview-btn,
-.maze-config .maze-generate-btn {
-  padding: 5px 14px !important;
-  font-size: 0.9em !important;
+.maze-config .maze-generate-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.maze-config .maze-advanced-toggle {
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  background: #fff !important;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #666;
+  font-size: 0.9em;
+  transition: background 0.15s, color 0.15s;
+}
+
+.maze-config .maze-advanced-toggle:hover {
+  background: #f0f0f0 !important;
+  color: #4361ee;
+}
+
+/* -- Advanced config (collapsed) -- */
+.maze-config .maze-advanced-panel {
+  padding: 8px 14px;
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.maze-config .maze-adv-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 0.85em;
+}
+
+.maze-config .maze-adv-row label {
+  color: #555;
+  white-space: nowrap;
+}
+
+.maze-config .maze-adv-row input[type="number"] {
+  width: 48px;
+  padding: 2px 4px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.maze-config .maze-adv-row select {
+  padding: 2px 4px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* -- Reasoning block -- */
+.maze-config .maze-reasoning-block {
+  margin: 10px 14px 0;
+  padding: 8px 12px;
+  background: rgba(67,97,238,0.05);
+  border: 1px solid rgba(67,97,238,0.15);
+  border-radius: 6px;
+}
+
+.maze-config .maze-reasoning-header {
+  font-weight: 600;
+  font-size: 0.85em;
+  color: #4361ee;
+  margin-bottom: 4px;
+}
+
+.maze-config .maze-reasoning-block p {
+  margin: 0;
+  font-size: 0.85em;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* -- Section labels -- */
+.maze-config .maze-section-label {
+  padding: 6px 14px 4px;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 0.85em;
+  color: #555;
+}
+
+.maze-config .maze-section-label i {
+  margin-right: 4px;
+  color: #4361ee;
+}
+
+/* -- Template gallery: horizontal card strip -- */
+.maze-config .maze-template-gallery {
+  display: flex;
+  gap: 8px;
+  padding: 6px 14px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.maze-config .maze-tpl-card {
+  flex: 0 0 auto;
+  width: 96px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+
+.maze-config .maze-tpl-card:hover {
+  border-color: #4361ee;
+}
+
+.maze-config .maze-tpl-thumb {
+  display: block;
+  width: 80px;
+  height: 80px;
+  margin: 8px auto 0;
+  border-radius: 3px;
+  background: #1a1a2e;
+}
+
+.maze-config .maze-tpl-info {
+  padding: 4px 6px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.maze-config .maze-tpl-name {
+  font-size: 0.75em;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.maze-config .maze-tpl-type {
+  font-size: 0.7em;
+  font-weight: 500;
+}
+
+/* -- Maze preview area -- */
+.maze-config .maze-preview-area {
+  text-align: center;
+  padding: 8px 14px;
+}
+
+.maze-config .maze-preview-area canvas {
+  max-width: 100%;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #111;
+}
+
+/* -- Connectivity warnings -- */
+.maze-config .maze-warn-bar {
+  margin: 0 14px 4px;
+  padding: 5px 10px;
+  background: rgba(255,102,0,0.08);
+  border: 1px solid rgba(255,102,0,0.25);
+  border-radius: 4px;
+  font-size: 0.82em;
+  color: #cc6600;
+}
+
+/* -- Modify section -- */
+.maze-config .maze-modify-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 14px;
+}
+
+.maze-config .maze-modify-section textarea {
+  width: 100%;
+  min-height: 40px;
+}
+
+.maze-config .maze-modify-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.maze-config .maze-modify-btn {
+  padding: 6px 20px !important;
+  font-size: 0.85em !important;
   font-weight: 600 !important;
-  border-radius: 4px !important;
+  border-radius: 6px !important;
+  border: none !important;
+  background: #e67e22 !important;
+  color: #fff !important;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.maze-config .maze-modify-btn:hover {
+  background: #d35400 !important;
+}
+
+/* -- Bottom bar: save/place -- */
+.maze-config .maze-bottom-bar {
+  display: flex;
+  gap: 6px;
+  padding: 8px 14px 12px;
+  border-top: 1px solid #e0e0e0;
+  background: #fafafa;
+  align-items: center;
+}
+
+.maze-config .maze-bottom-bar input[type="text"] {
+  flex: 1;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.maze-config .maze-save-btn,
+.maze-config .maze-place-btn {
+  flex: 0 0 auto;
+  padding: 6px 12px !important;
+  font-size: 0.85em !important;
+  font-weight: 600 !important;
+  border-radius: 5px !important;
   border: none !important;
   cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
 }
 
-.maze-config .maze-preview-btn {
-  background: #6c757d !important;
+.maze-config .maze-save-btn {
+  background: #27ae60 !important;
   color: #fff !important;
 }
 
-.maze-config .maze-preview-btn:hover {
-  background: #5a6268 !important;
+.maze-config .maze-save-btn:hover {
+  background: #219a52 !important;
 }
 
-.maze-config .maze-generate-btn {
+.maze-config .maze-place-btn {
   background: #4361ee !important;
   color: #fff !important;
 }
 
-.maze-config .maze-generate-btn:hover {
+.maze-config .maze-place-btn:hover {
   background: #3451d1 !important;
 }
 
@@ -888,4 +1083,157 @@
 
 #map-placement-overlay .placement-hint i {
   margin-right: 6px;
+}
+
+/* ---------- 迷宫蓝图面板 ---------- */
+
+.maze-blueprint-panel-app .window-content {
+  padding: 0;
+  overflow-y: auto;
+}
+
+.maze-blueprint-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.maze-blueprint-panel .panel-header h3 {
+  margin: 0;
+  font-size: 1em;
+}
+
+.maze-blueprint-panel .panel-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.maze-blueprint-panel .panel-btn {
+  padding: 3px 10px !important;
+  font-size: 0.85em !important;
+  border-radius: 3px !important;
+  cursor: pointer;
+}
+
+.maze-blueprint-panel .panel-hint {
+  padding: 6px 12px;
+  font-size: 0.8em;
+  color: #777;
+  background: rgba(0,0,0,0.02);
+  border-bottom: 1px solid #eee;
+}
+
+.maze-blueprint-panel .blueprint-list {
+  padding: 6px;
+}
+
+.maze-blueprint-panel .blueprint-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  cursor: grab;
+  transition: background 0.15s;
+}
+
+.maze-blueprint-panel .blueprint-card:hover {
+  background: rgba(67, 97, 238, 0.05);
+}
+
+.maze-blueprint-panel .blueprint-thumbnail {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #1a1a2e;
+}
+
+.maze-blueprint-panel .blueprint-thumbnail canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.maze-blueprint-panel .blueprint-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.maze-blueprint-panel .blueprint-name {
+  font-weight: 600;
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.maze-blueprint-panel .blueprint-desc {
+  font-size: 0.8em;
+  color: #777;
+}
+
+.maze-blueprint-panel .blueprint-warning {
+  font-size: 0.75em;
+  color: #ff6600;
+}
+
+.maze-blueprint-panel .blueprint-actions {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.maze-blueprint-panel .blueprint-action-btn {
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.85em;
+  border-radius: 3px;
+  opacity: 0.6;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.maze-blueprint-panel .blueprint-action-btn:hover {
+  opacity: 1;
+  background: rgba(0,0,0,0.05) !important;
+}
+
+.maze-blueprint-panel .blueprint-action-btn.danger {
+  color: #c0392b !important;
+}
+
+.maze-blueprint-panel .blueprint-action-btn.danger:hover {
+  background: rgba(192, 57, 43, 0.1) !important;
+}
+
+.maze-blueprint-panel .empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #aaa;
+}
+
+.maze-blueprint-panel .empty-state i {
+  font-size: 2.5em;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.maze-blueprint-panel .empty-state p {
+  margin: 0;
+  font-size: 0.9em;
 }
