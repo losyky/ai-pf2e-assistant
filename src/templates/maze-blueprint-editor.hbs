@@ -1,0 +1,90 @@
+<div class="maze-blueprint-editor">
+  <div class="editor-top-bar">
+    <div class="editor-field">
+      <label>名称</label>
+      <input type="text" name="blueprintName" value="{{name}}" />
+    </div>
+    <div class="editor-field">
+      <label>描述</label>
+      <input type="text" name="blueprintDescription" value="{{description}}" />
+    </div>
+    <div class="editor-meta">
+      <span>{{gridWidth}}×{{gridHeight}} | {{cellSize}}格 | {{placementCount}} 位置 | {{templateCount}} 模板</span>
+    </div>
+  </div>
+
+  <div class="editor-body">
+    <div class="editor-canvas-area">
+      <canvas id="blueprint-editor-canvas" width="480" height="480"></canvas>
+      <div class="canvas-hint">点击格子选中位置进行编辑</div>
+    </div>
+
+    <div class="editor-sidebar">
+      {{#if selectedPosition}}
+      <div class="sidebar-section selected-info">
+        <h4><i class="fas fa-map-pin"></i> 位置 ({{selectedPosition.gridX}}, {{selectedPosition.gridY}})</h4>
+
+        <div class="info-row">
+          <label>模板</label>
+          <span class="info-value template-name-display">{{selectedPosition.templateName}}</span>
+        </div>
+
+        <div class="info-row">
+          <label>旋转</label>
+          <select name="placementRotation" class="placement-edit-control">
+            <option value="0" {{#if (eq selectedPosition.rotation 0)}}selected{{/if}}>0° ↑ 北</option>
+            <option value="90" {{#if (eq selectedPosition.rotation 90)}}selected{{/if}}>90° → 东</option>
+            <option value="180" {{#if (eq selectedPosition.rotation 180)}}selected{{/if}}>180° ↓ 南</option>
+            <option value="270" {{#if (eq selectedPosition.rotation 270)}}selected{{/if}}>270° ← 西</option>
+          </select>
+        </div>
+
+        <div class="info-row">
+          <label>房间类型</label>
+          <select name="roomType" class="placement-edit-control">
+            {{#each roomTypes}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.icon}} {{this.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="info-row">
+          <label>替换模板</label>
+          <select name="swapTemplate" class="placement-edit-control">
+            <option value="">— 当前模板 —</option>
+            {{#each availableTemplates}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="sidebar-thumb-area">
+          <canvas id="selected-thumb-canvas" width="128" height="128"></canvas>
+        </div>
+      </div>
+      {{else}}
+      <div class="sidebar-section no-selection">
+        <i class="fas fa-mouse-pointer"></i>
+        <p>点击左侧地图格子<br/>查看和编辑位置详情</p>
+      </div>
+      {{/if}}
+
+      <div class="sidebar-section template-list-section">
+        <h4><i class="fas fa-layer-group"></i> 模板列表 ({{templateCount}})</h4>
+        <div class="mini-template-list">
+          {{#each templateList}}
+          <div class="mini-template-item" data-template-id="{{this.id}}">
+            <span class="mini-tpl-name">{{this.name}}</span>
+            <span class="mini-tpl-usage">×{{this.usageCount}}</span>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="editor-footer">
+    <button class="editor-btn cancel-btn">取消</button>
+    <button class="editor-btn save-btn"><i class="fas fa-save"></i> 保存</button>
+  </div>
+</div>

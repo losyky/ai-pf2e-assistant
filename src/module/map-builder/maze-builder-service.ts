@@ -258,6 +258,18 @@ export class MazeBuilderService {
     // Pre-scan tile gallery for existing tile images
     const tileCache = await this._scanExistingTiles(blueprint.templateIds);
 
+    // Build rotated cells grid for boundary wall fixing
+    const placementGrid = new Map<string, { cells: boolean[][]; roomType: string }>();
+    for (const p of blueprint.placements) {
+      const base = templateMap.get(p.templateId);
+      if (!base) continue;
+      const rotated = MapRotationHelper.rotateTemplate(base, p.rotation);
+      placementGrid.set(`${p.gridX},${p.gridY}`, {
+        cells: rotated.cells,
+        roomType: base.roomType || 'empty',
+      });
+    }
+
     const tileIds: string[] = [];
     const allWallTiles: Array<{
       walls: MapWallSegment[];
@@ -280,6 +292,10 @@ export class MazeBuilderService {
 
       const dropX = originX + p.gridX * N * MAP_CELL_SIZE;
       const dropY = originY + p.gridY * N * MAP_CELL_SIZE;
+
+      // Generate walls from the rotated template and fix boundary walls
+      let walls = templateService.autoGenerateWalls(rotated);
+      walls = this._fixBoundaryWalls(walls, rotated.cells, N, p.gridX, p.gridY, placementGrid);
 
       // Resolve texture: existing tile > rotated tile > guide image
       const resolved = this._resolveTexture(
@@ -320,6 +336,7 @@ export class MazeBuilderService {
             isMapTile: true,
             isMazeTile: true,
             mazeBlueprintId: blueprint.id,
+            mazeRotation: p.rotation,
             isGenerating: false,
           },
         },
@@ -330,7 +347,7 @@ export class MazeBuilderService {
       if (tileId) tileIds.push(tileId);
 
       allWallTiles.push({
-        walls: rotated.walls,
+        walls,
         offsetX: dropX,
         offsetY: dropY,
         cellSize: MAP_CELL_SIZE,
@@ -351,9 +368,9 @@ export class MazeBuilderService {
     }
 
     const stats = [];
-    if (usedExisting > 0) stats.push(`${usedExisting} 已有图块`);
+    if (usedExisting > 0) stats.push(`${usedExisting} 同角度图块`);
     if (usedRotated > 0) stats.push(`${usedRotated} 旋转图块`);
-    if (usedGuide > 0) stats.push(`${usedGuide} 垫图`);
+    if (usedGuide > 0) stats.push(`${usedGuide} 模板垫图`);
     ui.notifications.info(
       `迷宫放置完成: ${tileIds.length} 图块 (${stats.join(', ')}), ${wallDocs.length} 墙壁`,
     );
@@ -420,6 +437,97 @@ export class MazeBuilderService {
     const best = tiles[0];
     const fvttRotation = ((desiredRotation - best.rotation + 360) % 360);
     return { path: best.path, fvttRotation };
+  }
+
+  /**
+   * Rebuild boundary walls at connected edges: replace normal walls with
+   * doors/openings based on neighbor passability.
+   */
+  private _fixBoundaryWalls(
+    walls: MapWallSegment[],
+    cells: boolean[][],
+    N: number,
+    gx: number,
+    gy: number,
+    grid: Map<string, { cells: boolean[][]; roomType: string }>,
+  ): MapWallSegment[] {
+    const edges: {
+      dx: number; dy: number;
+      fixedAxis: 'x' | 'y'; fixedVal: number;
+      myCell: (i: number) => boolean;
+      nbrCell: (i: number, nc: boolean[][]) => boolean;
+    }[] = [
+      { dx: 1, dy: 0, fixedAxis: 'x', fixedVal: N,
+        myCell: (i) => cells[i]?.[N - 1] ?? false,
+        nbrCell: (i, nc) => nc[i]?.[0] ?? false },
+      { dx: -1, dy: 0, fixedAxis: 'x', fixedVal: 0,
+        myCell: (i) => cells[i]?.[0] ?? false,
+        nbrCell: (i, nc) => nc[i]?.[N - 1] ?? false },
+      { dx: 0, dy: 1, fixedAxis: 'y', fixedVal: N,
+        myCell: (i) => cells[N - 1]?.[i] ?? false,
+        nbrCell: (i, nc) => nc[0]?.[i] ?? false },
+      { dx: 0, dy: -1, fixedAxis: 'y', fixedVal: 0,
+        myCell: (i) => cells[0]?.[i] ?? false,
+        nbrCell: (i, nc) => nc[N - 1]?.[i] ?? false },
+    ];
+
+    const edgesToFix: typeof edges[0][] = [];
+    for (const edge of edges) {
+      if (grid.has(`${gx + edge.dx},${gy + edge.dy}`)) {
+        edgesToFix.push(edge);
+      }
+    }
+    if (edgesToFix.length === 0) return walls;
+
+    const isOnFixedEdge = (w: MapWallSegment): boolean => {
+      for (const edge of edgesToFix) {
+        if (edge.fixedAxis === 'x') {
+          if (w.x1 === edge.fixedVal && w.x2 === edge.fixedVal) return true;
+        } else {
+          if (w.y1 === edge.fixedVal && w.y2 === edge.fixedVal) return true;
+        }
+      }
+      return false;
+    };
+    const result = walls.filter(w => !isOnFixedEdge(w));
+
+    const myRoomType = grid.get(`${gx},${gy}`)?.roomType || 'empty';
+
+    for (const edge of edgesToFix) {
+      const neighbor = grid.get(`${gx + edge.dx},${gy + edge.dy}`)!;
+
+      for (let i = 0; i < N; i++) {
+        const myOpen = edge.myCell(i);
+        const nbrOpen = edge.nbrCell(i, neighbor.cells);
+
+        let wallType: MapWallType | null;
+        if (myOpen && nbrOpen) {
+          wallType = this._getPassageWallType(myRoomType, neighbor.roomType);
+        } else if (myOpen && !nbrOpen) {
+          wallType = 'normal';
+        } else {
+          wallType = null;
+        }
+
+        if (wallType) {
+          if (edge.fixedAxis === 'x') {
+            result.push({ x1: edge.fixedVal, y1: i, x2: edge.fixedVal, y2: i + 1, wallType });
+          } else {
+            result.push({ x1: i, y1: edge.fixedVal, x2: i + 1, y2: edge.fixedVal, wallType });
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  private _getPassageWallType(roomTypeA: string, roomTypeB: string): MapWallType | null {
+    const openTypes = ['corridor', 'empty'];
+    if (openTypes.includes(roomTypeA) && openTypes.includes(roomTypeB)) return null;
+    if (roomTypeA === 'entrance' || roomTypeB === 'entrance') return 'door';
+    if (roomTypeA === 'trap' || roomTypeB === 'trap') return 'secret-door';
+    if (roomTypeA === 'treasure' || roomTypeB === 'treasure') return 'secret-door';
+    return 'door';
   }
 
   private _buildBlueprintWallDocs(
@@ -498,6 +606,23 @@ export class MazeBuilderService {
     return docs;
   }
 
+  /**
+   * Compute passage-fixed walls for a rotated template at a given maze grid position.
+   * Replaces boundary walls with appropriate passage types (door/ethereal/none).
+   * Used by preview renderers and placement flows.
+   */
+  fixWallsForPosition(
+    rotatedTemplate: MapTemplate,
+    gridX: number,
+    gridY: number,
+    placementGrid: Map<string, { cells: boolean[][]; roomType: string }>,
+  ): MapWallSegment[] {
+    const templateService = MapTemplateService.getInstance();
+    const walls = templateService.autoGenerateWalls(rotatedTemplate);
+    const N = rotatedTemplate.gridCols;
+    return this._fixBoundaryWalls(walls, rotatedTemplate.cells, N, gridX, gridY, placementGrid);
+  }
+
   // ------------------------------------------------------------------
   // Internal: place onto scene (legacy algorithm-based)
   // ------------------------------------------------------------------
@@ -511,6 +636,7 @@ export class MazeBuilderService {
     const scene = canvas.scene;
     const templateMap = new Map(pool.map(t => [t.id, t]));
     const guideService = MapGuideImageService.getInstance();
+    const templateService = MapTemplateService.getInstance();
 
     const tileIds: string[] = [];
 
@@ -521,6 +647,19 @@ export class MazeBuilderService {
       offsetY: number;
       cellSize: number;
     }> = [];
+
+    // Build placement grid for boundary wall passage detection
+    const refN = pool[0]?.gridCols ?? 16;
+    const placementGrid = new Map<string, { cells: boolean[][]; roomType: string }>();
+    for (const p of layout.placements) {
+      const base = templateMap.get(p.templateId);
+      if (!base) continue;
+      const rot = MapRotationHelper.rotateTemplate(base, p.rotation);
+      placementGrid.set(`${p.gridX},${p.gridY}`, {
+        cells: rot.cells,
+        roomType: base.roomType || 'empty',
+      });
+    }
 
     // 1. Create tiles (with guide images)
     for (const p of layout.placements) {
@@ -561,8 +700,11 @@ export class MazeBuilderService {
       const tileId = tiles[0]?.id;
       if (tileId) tileIds.push(tileId);
 
+      let walls = templateService.autoGenerateWalls(rotated);
+      walls = this._fixBoundaryWalls(walls, rotated.cells, refN, p.gridX, p.gridY, placementGrid);
+
       allWallTiles.push({
-        walls: rotated.walls,
+        walls,
         offsetX: dropX,
         offsetY: dropY,
         cellSize: MAP_CELL_SIZE,

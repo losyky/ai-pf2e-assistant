@@ -278,6 +278,77 @@
   margin-right: 4px;
 }
 
+/* -- Search & batch actions -- */
+
+.map-template-panel .template-search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 0 4px;
+}
+
+.map-template-panel .search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background: #2a2a3e;
+}
+
+.map-template-panel .search-input-wrap i {
+  color: #666;
+  font-size: 0.85em;
+}
+
+.map-template-panel .search-input-wrap input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #e0e0e0;
+  font-size: 0.85em;
+  outline: none;
+  padding: 2px 0;
+}
+
+.map-template-panel .search-input-wrap input::placeholder {
+  color: #666;
+}
+
+.map-template-panel .batch-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.map-template-panel .batch-delete-btn.danger {
+  background: #5a2020 !important;
+  color: #ff6b6b !important;
+  border-color: #733 !important;
+}
+
+.map-template-panel .batch-delete-btn.danger:hover {
+  background: #7a2828 !important;
+}
+
+.map-template-panel .template-checkbox-wrap {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  cursor: pointer;
+}
+
+.map-template-panel .template-select-cb {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: #4361ee;
+}
+
 .map-template-panel .template-list {
   display: flex;
   flex-direction: column;
@@ -959,7 +1030,7 @@
   background: #111;
 }
 
-/* -- Connectivity warnings -- */
+/* -- Connectivity status -- */
 .maze-config .maze-warn-bar {
   margin: 0 14px 4px;
   padding: 5px 10px;
@@ -968,6 +1039,42 @@
   border-radius: 4px;
   font-size: 0.82em;
   color: #cc6600;
+}
+.maze-config .maze-ok-bar {
+  margin: 0 14px 4px;
+  padding: 5px 10px;
+  background: rgba(51,204,51,0.08);
+  border: 1px solid rgba(51,204,51,0.25);
+  border-radius: 4px;
+  font-size: 0.82em;
+  color: #33aa33;
+}
+.maze-config .maze-wall-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 2px 14px 6px;
+  font-size: 0.75em;
+  color: #aaa;
+}
+.maze-config .maze-wall-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.maze-config .maze-wall-legend .legend-color {
+  display: inline-block;
+  width: 16px;
+  height: 3px;
+  border-radius: 1px;
+}
+.maze-config .maze-wall-legend .legend-dashed {
+  background: repeating-linear-gradient(90deg, #44DDAA 0, #44DDAA 4px, transparent 4px, transparent 7px) !important;
+}
+.maze-config .maze-wall-legend .legend-open {
+  height: 2px;
+  border: 1px dashed #44CC44;
+  background: transparent !important;
 }
 
 /* -- Modify section -- */
@@ -1236,4 +1343,258 @@
 .maze-blueprint-panel .empty-state p {
   margin: 0;
   font-size: 0.9em;
+}
+
+/* ---------- 迷宫蓝图编辑器 ---------- */
+
+.maze-blueprint-editor-app .window-content {
+  padding: 0;
+  overflow: hidden;
+}
+
+.maze-blueprint-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #1a1a2e;
+  color: #e0e0e0;
+}
+
+.maze-blueprint-editor .editor-top-bar {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #22223a;
+  border-bottom: 1px solid #333;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.maze-blueprint-editor .editor-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.maze-blueprint-editor .editor-field label {
+  font-size: 0.8em;
+  color: #888;
+  white-space: nowrap;
+}
+
+.maze-blueprint-editor .editor-field input {
+  padding: 3px 8px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #2a2a3e;
+  color: #e0e0e0;
+  font-size: 0.85em;
+  min-width: 100px;
+}
+
+.maze-blueprint-editor .editor-meta {
+  font-size: 0.75em;
+  color: #666;
+  margin-left: auto;
+}
+
+.maze-blueprint-editor .editor-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.maze-blueprint-editor .editor-canvas-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  overflow: auto;
+}
+
+.maze-blueprint-editor .editor-canvas-area canvas {
+  border: 2px solid #444;
+  border-radius: 6px;
+  cursor: pointer;
+  image-rendering: pixelated;
+  max-width: 100%;
+}
+
+.maze-blueprint-editor .canvas-hint {
+  font-size: 0.75em;
+  color: #555;
+  margin-top: 4px;
+}
+
+.maze-blueprint-editor .editor-sidebar {
+  flex: 0 0 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 1px solid #333;
+  overflow-y: auto;
+  background: #22223a;
+}
+
+.maze-blueprint-editor .sidebar-section {
+  padding: 8px 10px;
+  border-bottom: 1px solid #333;
+}
+
+.maze-blueprint-editor .sidebar-section h4 {
+  margin: 0 0 6px;
+  font-size: 0.85em;
+  color: #aaa;
+}
+
+.maze-blueprint-editor .sidebar-section h4 i {
+  margin-right: 4px;
+  color: #4361ee;
+}
+
+.maze-blueprint-editor .no-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 30px 10px;
+  color: #555;
+  text-align: center;
+}
+
+.maze-blueprint-editor .no-selection i {
+  font-size: 2em;
+  opacity: 0.4;
+}
+
+.maze-blueprint-editor .no-selection p {
+  font-size: 0.8em;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.maze-blueprint-editor .info-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.maze-blueprint-editor .info-row label {
+  font-size: 0.78em;
+  color: #888;
+  white-space: nowrap;
+  min-width: 48px;
+}
+
+.maze-blueprint-editor .info-row .info-value {
+  font-size: 0.82em;
+  color: #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.maze-blueprint-editor .placement-edit-control {
+  flex: 1;
+  padding: 2px 4px;
+  border: 1px solid #444;
+  border-radius: 3px;
+  background: #2a2a3e;
+  color: #e0e0e0;
+  font-size: 0.8em;
+  min-width: 0;
+}
+
+.maze-blueprint-editor .sidebar-thumb-area {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.maze-blueprint-editor .sidebar-thumb-area canvas {
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #1a1a2e;
+  image-rendering: pixelated;
+}
+
+.maze-blueprint-editor .mini-template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.maze-blueprint-editor .mini-template-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.78em;
+  background: rgba(255,255,255,0.03);
+  transition: background 0.1s;
+}
+
+.maze-blueprint-editor .mini-template-item:hover {
+  background: rgba(67,97,238,0.1);
+}
+
+.maze-blueprint-editor .mini-tpl-name {
+  color: #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.maze-blueprint-editor .mini-tpl-usage {
+  color: #666;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.maze-blueprint-editor .editor-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid #333;
+  background: #22223a;
+}
+
+.maze-blueprint-editor .editor-btn {
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.maze-blueprint-editor .save-btn {
+  border: none;
+  background: #4361ee;
+  color: #fff;
+}
+
+.maze-blueprint-editor .save-btn:hover {
+  background: #3451d1;
+}
+
+.maze-blueprint-editor .cancel-btn {
+  border: 1px solid #555;
+  background: transparent;
+  color: #ccc;
+}
+
+.maze-blueprint-editor .cancel-btn:hover {
+  background: #3a3a5e;
 }

@@ -73,6 +73,63 @@ export class MapTemplatePanelApp extends Application {
     html.find('.panel-btn[data-action="style"]').on('click', () => this._onOpenStyle());
     html.find('.panel-btn[data-action="gallery"]').on('click', () => this._onOpenGallery());
 
+    // Search & batch actions
+    const searchInput = html.find('input[name="templateSearch"]');
+    const batchActions = html.find('.batch-actions');
+    const batchCount = html.find('.batch-count');
+    const cards = html.find('.template-card');
+    const checkboxes = html.find('.template-select-cb');
+
+    const updateBatchUI = () => {
+      const checked = html.find('.template-select-cb:checked');
+      const count = checked.length;
+      if (count > 0) {
+        batchActions.show();
+      } else {
+        batchActions.hide();
+      }
+      batchCount.text(count.toString());
+    };
+
+    searchInput.on('input', (ev: any) => {
+      const query = (ev.target.value || '').toLowerCase().trim();
+      cards.each((_: number, card: HTMLElement) => {
+        const name = card.querySelector('.template-name')?.textContent?.toLowerCase() || '';
+        const desc = card.querySelector('.template-desc')?.textContent?.toLowerCase() || '';
+        const visible = !query || name.includes(query) || desc.includes(query);
+        card.style.display = visible ? '' : 'none';
+      });
+    });
+
+    checkboxes.on('change', () => updateBatchUI());
+
+    // Prevent checkbox click from triggering card drag
+    html.find('.template-checkbox-wrap').on('click', (ev: any) => ev.stopPropagation());
+
+    html.find('.batch-select-all-btn').on('click', () => {
+      cards.each((_: number, card: HTMLElement) => {
+        if (card.style.display !== 'none') {
+          const cb = card.querySelector('.template-select-cb') as HTMLInputElement;
+          if (cb) cb.checked = true;
+        }
+      });
+      updateBatchUI();
+    });
+
+    html.find('.batch-deselect-btn').on('click', () => {
+      checkboxes.prop('checked', false);
+      updateBatchUI();
+    });
+
+    html.find('.batch-delete-btn').on('click', () => {
+      const selected: string[] = [];
+      html.find('.template-select-cb:checked').each((_: number, cb: HTMLInputElement) => {
+        if (cb.dataset.templateId) selected.push(cb.dataset.templateId);
+      });
+      if (selected.length === 0) return;
+      this._onBatchDelete(selected);
+    });
+
     // Template card actions
     html.find('.template-action-btn').on('click', (ev: any) => {
       ev.stopPropagation();
@@ -231,6 +288,24 @@ export class MapTemplatePanelApp extends Application {
         await service.remove(id);
         this.render(false);
         ui.notifications.info('模板已删除');
+      },
+    });
+  }
+
+  private _onBatchDelete(ids: string[]): void {
+    const service = MapTemplateService.getInstance();
+    const names = ids
+      .map(id => service.getById(id)?.name || id)
+      .slice(0, 5)
+      .join('、');
+    const suffix = ids.length > 5 ? `…等共 ${ids.length} 个` : `共 ${ids.length} 个`;
+    Dialog.confirm({
+      title: '批量删除模板',
+      content: `<p>确定要删除以下模板吗？此操作不可撤销。</p><p style="color:#cc6600;font-size:0.9em;">${names}（${suffix}）</p>`,
+      yes: async () => {
+        await service.removeMany(ids);
+        this.render(false);
+        ui.notifications.info(`已删除 ${ids.length} 个模板`);
       },
     });
   }

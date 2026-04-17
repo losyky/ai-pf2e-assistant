@@ -312,6 +312,7 @@
       "mapStyleConfig": "地图风格配置",
       "mapTileGallery": "已生成图块库",
       "mazeConfig": "迷宫构造器",
+      "mazeBlueprintPanel": "迷宫蓝图面板",
       "monsterDraw": "怪物抽取器",
       "monsterModifier": "怪物改造工作台",
       "portraitGeneration": "AI立绘生成",

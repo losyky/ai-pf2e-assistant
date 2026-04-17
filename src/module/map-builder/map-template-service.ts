@@ -155,6 +155,13 @@ export class MapTemplateService {
     await game.settings.set(MODULE_ID, 'mapTemplates', stored);
   }
 
+  async removeMany(ids: string[]): Promise<void> {
+    const idSet = new Set(ids);
+    const all = this.getAll().filter(t => !idSet.has(t.id));
+    const stored = all.map(t => serialize(t));
+    await game.settings.set(MODULE_ID, 'mapTemplates', stored);
+  }
+
   validate(template: MapTemplate): void {
     if (!template.id) throw new Error('模板缺少 ID');
     if (!template.name) throw new Error('模板缺少名称');

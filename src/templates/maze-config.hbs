@@ -76,7 +76,18 @@
   <div class="maze-warn-bar">
     <i class="fas fa-exclamation-triangle"></i> {{connectivityWarnings}} 处连通性不一致
   </div>
+  {{else}}
+  <div class="maze-ok-bar">
+    <i class="fas fa-check-circle"></i> 连通性正常
+  </div>
   {{/if}}
+  <div class="maze-wall-legend">
+    <span class="legend-item"><span class="legend-color" style="background:#FF3333;"></span>墙壁</span>
+    <span class="legend-item"><span class="legend-color" style="background:#33AAFF;"></span>门</span>
+    <span class="legend-item"><span class="legend-color" style="background:#AA33FF;"></span>暗门</span>
+    <span class="legend-item"><span class="legend-color legend-dashed" style="background:#44DDAA;"></span>幽灵墙</span>
+    <span class="legend-item"><span class="legend-color legend-open" style="background:#44CC44;"></span>开放通路</span>
+  </div>
 
   {{!-- Modify --}}
   <div class="maze-modify-section">

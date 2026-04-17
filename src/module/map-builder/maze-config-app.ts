@@ -13,6 +13,7 @@ import { MazeBuilderService } from './maze-builder-service';
 import { MapTemplateService } from './map-template-service';
 import { MapGuideImageService } from './map-guide-image-service';
 import { MapRotationHelper } from './map-rotation-helper';
+import { MazePlacementPreview } from './maze-placement-preview';
 import { ROOM_TYPE_COLORS, ROOM_TYPE_CONFIG } from './maze-types';
 import type { RoomType } from './types';
 
@@ -88,17 +89,15 @@ export class MazeConfigApp extends Application {
   private _buildTemplateCards(): Array<{
     name: string; typeLabel: string; typeColor: string; templateId: string;
   }> {
-    if (!this.currentResult || !this.currentBlueprint) return [];
+    if (!this.currentResult || !this.currentBlueprint || !this.mazeAIService) return [];
 
     const templateService = MapTemplateService.getInstance();
     const cards: Array<{ name: string; typeLabel: string; typeColor: string; templateId: string }> = [];
 
-    // Show unique AI-designed template types, not per-position copies
     for (const tDef of this.currentResult.templates) {
       const rt = (tDef.roomType || 'empty') as RoomType;
-      // Find a stored template that matches this AI definition (by name pattern)
       const matchId = this.currentBlueprint.templateIds.find(tid => {
-        const t = templateService.getById(tid);
+        const t = this.mazeAIService!.getPendingTemplate(tid) || templateService.getById(tid);
         return t?.name?.includes(tDef.name);
       });
       cards.push({
@@ -284,9 +283,15 @@ export class MazeConfigApp extends Application {
     }
 
     try {
+      if (this.mazeAIService) {
+        const committed = await this.mazeAIService.commitPendingTemplates();
+        if (committed > 0) {
+          console.log(`[MazeConfigApp] Committed ${committed} templates to storage`);
+        }
+      }
       const service = MazeBlueprintService.getInstance();
       await service.save(bp);
-      ui.notifications.info(`蓝图「${bp.name}」已保存`);
+      ui.notifications.info(`蓝图「${bp.name}」已保存（含 ${bp.templateIds.length} 个模板）`);
     } catch (err: any) {
       ui.notifications.error(`保存失败: ${err.message || err}`);
     }
@@ -308,11 +313,25 @@ export class MazeConfigApp extends Application {
     }
 
     try {
+      if (this.mazeAIService) {
+        await this.mazeAIService.commitPendingTemplates();
+      }
+
+      const pendingProvider = this.mazeAIService
+        ? (id: string) => this.mazeAIService!.getPendingTemplate(id)
+        : undefined;
+      const preview = new MazePlacementPreview(this.currentBlueprint, pendingProvider);
+      const placement = await preview.start();
+      if (!placement) {
+        ui.notifications.info('已取消放置');
+        return;
+      }
+
       const builderService = MazeBuilderService.getInstance();
       const result = await builderService.placeBlueprint(
         this.currentBlueprint,
-        this._getViewportCenterX(),
-        this._getViewportCenterY(),
+        placement.originX,
+        placement.originY,
       );
       if (result) {
         ui.notifications.info(
@@ -329,7 +348,7 @@ export class MazeConfigApp extends Application {
   // ------------------------------------------------------------------
 
   private _renderTemplateThumbnails(html: any): void {
-    if (!this.currentBlueprint) return;
+    if (!this.currentBlueprint || !this.mazeAIService) return;
     const templateService = MapTemplateService.getInstance();
     const guideService = MapGuideImageService.getInstance();
     const cards = this._buildTemplateCards();
@@ -339,7 +358,7 @@ export class MazeConfigApp extends Application {
       const card = cards[idx];
       if (!card?.templateId) return;
 
-      const t = templateService.getById(card.templateId);
+      const t = this.mazeAIService!.getPendingTemplate(card.templateId) || templateService.getById(card.templateId);
       if (!t) return;
 
       const thumbSize = 80;
@@ -358,7 +377,7 @@ export class MazeConfigApp extends Application {
   }
 
   private _renderMazePreview(html: any): void {
-    if (!this.currentBlueprint) return;
+    if (!this.currentBlueprint || !this.mazeAIService) return;
 
     const previewCanvas = html.find('#maze-preview-canvas')[0] as HTMLCanvasElement;
     if (!previewCanvas) return;
@@ -366,13 +385,15 @@ export class MazeConfigApp extends Application {
     const bp = this.currentBlueprint;
     const templateService = MapTemplateService.getInstance();
     const guideService = MapGuideImageService.getInstance();
+    const builderService = MazeBuilderService.getInstance();
 
     const templates = bp.templateIds
-      .map(id => templateService.getById(id))
+      .map(id => this.mazeAIService!.getPendingTemplate(id) || templateService.getById(id))
       .filter((t): t is MapTemplate => t !== null);
     if (templates.length === 0) return;
 
     const N = bp.cellSize;
+    const mid = Math.floor(N / 2);
     const totalCols = bp.gridWidth * N;
     const totalRows = bp.gridHeight * N;
     const maxDim = 480;
@@ -388,13 +409,34 @@ export class MazeConfigApp extends Application {
 
     const templateMap = new Map(templates.map(t => [t.id, t]));
 
+    // Build placement grid for boundary passage detection
+    const placementGrid = new Map<string, { cells: boolean[][]; roomType: string }>();
+    const rotatedCache = new Map<string, MapTemplate>();
+
     for (const p of bp.placements) {
       const t = templateMap.get(p.templateId);
       if (!t) continue;
-
       const rotated = MapRotationHelper.rotateTemplate(t, p.rotation);
+      placementGrid.set(`${p.gridX},${p.gridY}`, {
+        cells: rotated.cells,
+        roomType: t.roomType || 'empty',
+      });
+      rotatedCache.set(`${p.gridX},${p.gridY}`, rotated);
+    }
+
+    // Render tiles with passage-fixed walls (doors, ethereal, open gaps)
+    for (const p of bp.placements) {
+      const t = templateMap.get(p.templateId);
+      if (!t) continue;
+      const rotated = rotatedCache.get(`${p.gridX},${p.gridY}`)!;
+
+      const fixedWalls = builderService.fixWallsForPosition(
+        rotated, p.gridX, p.gridY, placementGrid,
+      );
+      const fixedTemplate = { ...rotated, walls: fixedWalls };
+
       const tileCvs = guideService.renderToCanvas(
-        rotated,
+        fixedTemplate,
         rotated.gridCols * cellPx,
         rotated.gridRows * cellPx,
       );
@@ -403,7 +445,68 @@ export class MazeConfigApp extends Application {
       const dy = p.gridY * tilePxH;
       ctx.drawImage(tileCvs, dx, dy);
 
-      // Room type badge
+      ctx.strokeStyle = 'rgba(255,215,0,0.3)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(dx, dy, tilePxW, tilePxH);
+    }
+
+    // Connectivity overlay: lines between connected rooms
+    const drawnEdges = new Set<string>();
+    for (const p of bp.placements) {
+      const myData = placementGrid.get(`${p.gridX},${p.gridY}`);
+      if (!myData) continue;
+
+      const neighbors = [
+        { dx: 1, dy: 0 },
+        { dx: 0, dy: 1 },
+      ];
+
+      for (const nb of neighbors) {
+        const nx = p.gridX + nb.dx;
+        const ny = p.gridY + nb.dy;
+        const edgeKey = `${p.gridX},${p.gridY}-${nx},${ny}`;
+        if (drawnEdges.has(edgeKey)) continue;
+        drawnEdges.add(edgeKey);
+
+        const nData = placementGrid.get(`${nx},${ny}`);
+        if (!nData) continue;
+
+        let myOpen: boolean;
+        let nbrOpen: boolean;
+        if (nb.dx === 1) {
+          myOpen = myData.cells[mid]?.[N - 1] ?? false;
+          nbrOpen = nData.cells[mid]?.[0] ?? false;
+        } else {
+          myOpen = myData.cells[N - 1]?.[mid] ?? false;
+          nbrOpen = nData.cells[0]?.[mid] ?? false;
+        }
+
+        if (myOpen && nbrOpen) {
+          const fx = p.gridX * tilePxW + tilePxW / 2;
+          const fy = p.gridY * tilePxH + tilePxH / 2;
+          const tx = nx * tilePxW + tilePxW / 2;
+          const ty = ny * tilePxH + tilePxH / 2;
+
+          ctx.strokeStyle = '#FFD700';
+          ctx.lineWidth = Math.max(2, cellPx * 0.3);
+          ctx.globalAlpha = 0.5;
+          ctx.setLineDash([]);
+          ctx.beginPath();
+          ctx.moveTo(fx, fy);
+          ctx.lineTo(tx, ty);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+
+    // Room type badges (drawn last, on top of everything)
+    for (const p of bp.placements) {
+      const t = templateMap.get(p.templateId);
+      if (!t) continue;
+
+      const dx = p.gridX * tilePxW;
+      const dy = p.gridY * tilePxH;
       const cx = dx + tilePxW / 2;
       const cy = dy + tilePxH / 2;
       const radius = Math.max(6, Math.min(tilePxW, tilePxH) * 0.2);
@@ -426,37 +529,7 @@ export class MazeConfigApp extends Application {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(label, cx, cy);
-
-      ctx.strokeStyle = 'rgba(255,215,0,0.3)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(dx, dy, tilePxW, tilePxH);
     }
-  }
-
-  // ------------------------------------------------------------------
-  // Viewport helpers
-  // ------------------------------------------------------------------
-
-  private _getViewportCenterX(): number {
-    try {
-      const stage = canvas?.stage;
-      if (stage?.worldTransform) {
-        const wt = stage.worldTransform;
-        return (window.innerWidth / 2 - wt.tx) / wt.a;
-      }
-    } catch { /* fallback */ }
-    return 0;
-  }
-
-  private _getViewportCenterY(): number {
-    try {
-      const stage = canvas?.stage;
-      if (stage?.worldTransform) {
-        const wt = stage.worldTransform;
-        return (window.innerHeight / 2 - wt.ty) / wt.d;
-      }
-    } catch { /* fallback */ }
-    return 0;
   }
 
   // ------------------------------------------------------------------

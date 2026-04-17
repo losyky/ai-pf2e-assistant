@@ -34,6 +34,7 @@ export { MazeAIService } from './maze-ai-service';
 export type { ConnectivityIssue } from './maze-ai-service';
 export { MazeBlueprintService } from './maze-blueprint-service';
 export { MazeBlueprintPanelApp } from './maze-blueprint-panel-app';
+export { MazeBlueprintEditorApp } from './maze-blueprint-editor-app';
 export type {
   MazeBlueprint, MazeBlueprintPlacement, MazeAIConfig,
   MazeAIGenerationResult, MazeAITemplateDef, MazeBlueprintDropData,

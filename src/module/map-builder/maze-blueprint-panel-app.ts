@@ -7,7 +7,9 @@ import { MapTemplateService } from './map-template-service';
 import { MapGuideImageService } from './map-guide-image-service';
 import { MapRotationHelper } from './map-rotation-helper';
 import { ROOM_TYPE_COLORS } from './maze-types';
+import { MazePlacementPreview } from './maze-placement-preview';
 import { MazeConfigApp } from './maze-config-app';
+import { MazeBlueprintEditorApp } from './maze-blueprint-editor-app';
 
 declare const Application: any;
 declare const foundry: any;
@@ -185,8 +187,14 @@ export class MazeBlueprintPanelApp extends Application {
     MazeConfigApp.open(this.aiService || undefined);
   }
 
-  private _onEdit(_id: string): void {
-    MazeConfigApp.open(this.aiService || undefined);
+  private _onEdit(id: string): void {
+    const service = MazeBlueprintService.getInstance();
+    const bp = service.getById(id);
+    if (!bp) {
+      ui.notifications.warn('蓝图不存在');
+      return;
+    }
+    new MazeBlueprintEditorApp(bp, () => this.render(false)).render(true);
   }
 
   private async _onPlace(id: string): Promise<void> {
@@ -206,17 +214,15 @@ export class MazeBlueprintPanelApp extends Application {
     }
 
     try {
-      const stage = canvas?.stage;
-      let originX = 0;
-      let originY = 0;
-      if (stage?.worldTransform) {
-        const wt = stage.worldTransform;
-        originX = (window.innerWidth / 2 - wt.tx) / wt.a;
-        originY = (window.innerHeight / 2 - wt.ty) / wt.d;
+      const preview = new MazePlacementPreview(bp);
+      const placement = await preview.start();
+      if (!placement) {
+        ui.notifications.info('已取消放置');
+        return;
       }
 
       const builderService = MazeBuilderService.getInstance();
-      const result = await builderService.placeBlueprint(bp, originX, originY);
+      const result = await builderService.placeBlueprint(bp, placement.originX, placement.originY);
       if (result) {
         ui.notifications.info(
           `迷宫已放置: ${result.tileIds.length} 图块, ${result.wallCount} 墙壁`,

@@ -229,6 +229,7 @@
       "mapStyleConfig": "Map Style Config",
       "mapTileGallery": "Generated Tile Gallery",
       "mazeConfig": "Maze Builder",
+      "mazeBlueprintPanel": "Maze Blueprint Panel",
       "monsterDraw": "Monster Draw",
       "monsterModifier": "Monster Modifier",
       "portraitGeneration": "AI Portrait",
